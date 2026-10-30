@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **268**
-- Not yet fully ported: **226**
+- Fully ported: **269**
+- Not yet fully ported: **225**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -236,7 +236,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/SIDEBARGlyphx.CPP` | — |
 | Not started | `REDALERT/SLIDER.CPP` | — |
 | Not started | `REDALERT/SMUDGE.CPP` | — |
-| Not started | `REDALERT/SOUNDDLG.CPP` | — |
+| Complete | `REDALERT/SOUNDDLG.CPP` | rts-core/src/red_alert_sound_controls.rs — French/German/default layout and FIXIT_CSII listbox sizing, theme catalogue and prefixed IDs, immediate 1/256 volume/shuffle/repeat option updates, FIXIT_VERSION_3 multiplayer volume mirror, stop/quiet and play actions, focus-redraw handling and list cleanup. |
 | Not started | `REDALERT/SPECIAL.CPP` | — |
 | Complete | `REDALERT/SPRITE.CPP` | rts-core/src/scale_rotate.rs — exact lookup tables, fixed-point rotated corner geometry, both Bresenham rasterization cases, source pixel stepping, transparency and destination writes; Rust safely bounds framebuffer access. |
 | Not started | `REDALERT/STARTUP.CPP` | — |

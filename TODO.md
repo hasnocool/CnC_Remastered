@@ -305,3 +305,4 @@
 - [x] Port REDALERT/RADIO.CPP Red Alert message catalogue, distinct-message receive history, HELLO/OVER_OUT contact rules, explicit/default-LParam transmit overloads, debug snapshot and limbo cleanup.
 - [x] Port REDALERT/TAB.CPP TabClass timers, One_Time asset setup, disabled Draw_It path, credits and mission warning pulse frames, Win32/non-Win32 tab highlights, click activation rules, money flash and credit/sidebar AI calls.
 - [x] Port REDALERT/CCMPATH.CPP MPATH compile-gated behavior: default no-op/success, optional packet-buffer/settings/init sequence, player ping/discovery/retry loop, focus redraw/ESC handling and destroy-connection house/player cleanup.
+- [x] Port REDALERT/SOUNDDLG.CPP: locale-dependent layout, FIXIT_CSII Win32 listbox height, theme enumeration/prefix ID, selected-track mapping, sliders and immediate sound/score options, shuffle/repeat, stop/quiet, play, FIXIT_VERSION_3 multiplayer score mirror and cleanup.
