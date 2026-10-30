@@ -1,0 +1,24 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/rts-core",
+    "crates/rts-formats",
+    "crates/rts-sim",
+    "crates/map-editor-model",
+    "crates/tiberian-dawn",
+    "crates/red-alert",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+authors = ["CnC_Remastered contributors"]
+
+[workspace.dependencies]
+rts-core = { path = "crates/rts-core" }
+rts-formats = { path = "crates/rts-formats" }
+rts-sim = { path = "crates/rts-sim" }
+map-editor-model = { path = "crates/map-editor-model" }
+tiberian-dawn = { path = "crates/tiberian-dawn" }
+red-alert = { path = "crates/red-alert" }
