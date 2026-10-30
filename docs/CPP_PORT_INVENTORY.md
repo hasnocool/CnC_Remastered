@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 57 | 218 |
+| `REDALERT/` | 275 | 58 | 217 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 9 | 152 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
@@ -44,7 +44,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/BLOWFISH.CPP` | rts-formats/src/blowfish.rs — Blowfish key schedule, P/S tables, encrypt/decrypt. |
 | Complete | `REDALERT/BLOWPIPE.CPP` | rts-formats/src/blowfish_streams.rs — Blowfish push adapter. |
 | Complete | `REDALERT/BLWSTRAW.CPP` | rts-formats/src/blowfish_streams.rs — Blowfish demand-driven adapter. |
-| Not started | `REDALERT/BMP8.CPP` | — |
+| Complete | `REDALERT/BMP8.CPP` | rts-formats/src/bmp8.rs — 8-bit BMP headers, 256-entry palette conversion, pixel payload, RAII resource ownership and COLORONCOLOR stretch-draw plan; stale GDI member names are normalized. |
 | Not started | `REDALERT/BUFF.CPP` | — |
 | Not started | `REDALERT/BUILDING.CPP` | — |
 | Not started | `REDALERT/BULLET.CPP` | — |
