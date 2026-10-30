@@ -9,6 +9,8 @@
 - [x] Add a bounds-checked legacy MIX parser based on upstream `MixFileClass`.
 - [x] Add a deterministic ordered event queue.
 - [x] Add a starter editor document model.
+- [x] Port the map-editor cell metric operations: row-major conversion, 8-way adjacency, and clipping.
+- [x] Port the map-editor standard CRC-32 helper.
 - [ ] Run formatting, tests, and Clippy with an installed Rust toolchain.
 
 ## Milestone 1 — behavior inventory and fixtures
