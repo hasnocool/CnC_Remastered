@@ -327,12 +327,13 @@ mod tests {
     #[test]
     fn encrypt_and_decrypt_process_whole_blocks_and_ignore_partial_tail() {
         // A 16-bit modulus gives 1-byte plaintext and 2-byte ciphertext blocks.
-        let key = key_with_modulus(0xFFFF, 17);
+        let public_key = key_with_modulus(3_233, 17);
+        let private_key = key_with_modulus(3_233, 2_753);
         let mut encrypted = [0_u8; 6];
-        let written = key.encrypt(&[2, 3, 4, 99], &mut encrypted).unwrap();
+        let written = public_key.encrypt(&[2, 3, 4, 99], &mut encrypted).unwrap();
         assert_eq!(written, 6);
         let mut decrypted = [0_u8; 4];
-        let restored = key.decrypt(&encrypted, &mut decrypted).unwrap();
+        let restored = private_key.decrypt(&encrypted, &mut decrypted).unwrap();
         assert_eq!(restored, 3);
         assert_eq!(&decrypted[..3], &[2, 3, 4]);
     }
@@ -362,12 +363,13 @@ mod tests {
 
     #[test]
     fn encrypted_blocks_round_trip_under_small_test_key() {
-        let key = key_with_modulus(0xFFFF, 17);
+        let public_key = key_with_modulus(3_233, 17);
+        let private_key = key_with_modulus(3_233, 2_753);
         let input = [10, 22, 33, 44, 55];
         let mut encrypted = [0; 10];
-        let written = key.encrypt(&input, &mut encrypted).unwrap();
+        let written = public_key.encrypt(&input, &mut encrypted).unwrap();
         let mut output = [0; 5];
-        let decoded = key.decrypt(&encrypted[..written], &mut output).unwrap();
+        let decoded = private_key.decrypt(&encrypted[..written], &mut output).unwrap();
         assert_eq!(decoded, input.len());
         assert_eq!(output, input);
     }
