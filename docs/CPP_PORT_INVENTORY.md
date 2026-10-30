@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **39**
-- Not yet fully ported: **455**
+- Fully ported: **42**
+- Not yet fully ported: **452**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 37 | 238 |
+| `REDALERT/` | 275 | 40 | 235 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 2 | 159 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
@@ -79,7 +79,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/CRCSTRAW.CPP` | rts-formats/src/crc_streams.rs — checksum-aware pull adapter. |
 | Not started | `REDALERT/CREDITS.CPP` | — |
 | Not started | `REDALERT/CREW.CPP` | — |
-| Not started | `REDALERT/CSTRAW.CPP` | — |
+| Complete | `REDALERT/CSTRAW.CPP` | rts-formats/src/cache_straw.rs — buffered read-ahead adapter |
 | Not started | `REDALERT/DDE.CPP` | — |
 | Not started | `REDALERT/DEBUG.CPP` | — |
 | Not started | `REDALERT/DESCDLG.CPP` | — |
@@ -230,8 +230,8 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/SESSION.CPP` | — |
 | Complete | `REDALERT/SHA.CPP` | rts-formats/src/sha1.rs — streaming SHA-1 engine and non-destructive result snapshots. |
 | Not started | `REDALERT/SHAPEBTN.CPP` | — |
-| Not started | `REDALERT/SHAPIPE.CPP` | — |
-| Not started | `REDALERT/SHASTRAW.CPP` | — |
+| Complete | `REDALERT/SHAPIPE.CPP` | rts-formats/src/sha_streams.rs — non-transforming SHA push adapter |
+| Complete | `REDALERT/SHASTRAW.CPP` | rts-formats/src/sha_streams.rs — SHA pull adapter hashing returned bytes |
 | Not started | `REDALERT/SIDEBAR.CPP` | — |
 | Not started | `REDALERT/SIDEBARGlyphx.CPP` | — |
 | Not started | `REDALERT/SLIDER.CPP` | — |
