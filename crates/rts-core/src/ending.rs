@@ -17,7 +17,8 @@ pub enum EndingEvent {
     ClearPseudoSeenBuffer,
     LoadPalette(&'static str),
     LoadUncompressed(&'static str),
-    CopyHiddenPixelsToSeen { bytes: usize },
+    CopyHiddenPixelsToSatSelection { bytes: usize },
+    CopySatSelectionToSeen { bytes: usize },
     BlitSystemPageToPseudo,
     HideMouse,
     ShowMouse,
@@ -32,6 +33,7 @@ pub enum EndingEvent {
     PlaySample { name: &'static str, volume: u8, pan: u8 },
     ShowTargetText { x: i32, y: i32 },
     CallbackDelay(u32),
+    WaitForKey,
     ClearKeyBuffer,
     DeleteSatSelectionPixels,
     DeletePseudoSeenBuffer,
@@ -85,7 +87,7 @@ impl NodEndingState {
             EndingEvent::LoadUncompressed("SATSEL.CPS"),
         ];
         if not_for_win95 {
-            events.push(EndingEvent::CopyHiddenPixelsToSeen { bytes: 64000 });
+            events.push(EndingEvent::CopyHiddenPixelsToSatSelection { bytes: 64000 });
         } else {
             events.push(EndingEvent::BlitSystemPageToPseudo);
         }
@@ -98,7 +100,7 @@ impl NodEndingState {
             EndingEvent::SetPalette,
         ]);
         if not_for_win95 {
-            events.push(EndingEvent::CopyHiddenPixelsToSeen { bytes: 64000 });
+            events.push(EndingEvent::CopySatSelectionToSeen { bytes: 64000 });
         }
         events.extend([
             EndingEvent::ShowMouse,
@@ -213,7 +215,7 @@ pub fn gdi_ending(demo: bool, temple_ioned: bool, trailer_available: bool) -> Ve
             EndingEvent::BlitHiddenPageToSeen,
             EndingEvent::FadeToPalette,
             EndingEvent::ClearKeyBuffer,
-            EndingEvent::CallbackDelay(0), // host waits for one key event
+            EndingEvent::WaitForKey,
             EndingEvent::FadeToBlack,
             EndingEvent::ClearVisiblePage,
         ];
