@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 254 C++ translation units with source-specific tests.
+- [ ] Port the remaining 253 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -276,3 +276,5 @@
 - [x] Verify REDALERT/ROTBMP.CPP is entirely disabled by #if(0), and REDALERT/SEDITDLG.CPP is guarded by undefined WOLAPI_INTEGRATION; record both as inactive in the pinned build.
 
 - [x] Port REDALERT/WARHEAD.CPP constructor defaults, indexed heap registration/lookup/free, INI configuration values and fixed-point Verses modifiers.
+
+- [x] Port REDALERT/WEAPON.CPP WeaponTypeClass defaults/destruction, indexed registry, INI data parsing, warhead/bullet references, allowed-threat calculation and weapon/armor name lookup.
