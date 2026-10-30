@@ -23,6 +23,7 @@ Future platform crates should isolate rendering, audio, input, filesystem, netwo
 4. Both variants use 4×4 map regions with a two-region border in the region-grid dimensions.
 5. The legacy MIX implementation reads a 16-bit count followed by a 32-bit data size, then 12-byte entries (CRC, data-relative offset, size). The engine project sets structure member alignment to one byte. The parser here validates bounds and keeps CRCs as signed 32-bit values to preserve the legacy comparison ordering.
 6. The editor is a separate C# WinForms application targeting .NET Framework 4.6.2; porting it requires translating editor semantics, not merely replacing its window toolkit.
+7. The editor's CellMetrics uses row-major indexing (y × width + x), eight adjacent facings, an unchanged-location None direction, and edge clipping. Its Utility/CRC.cs helper is standard reflected CRC-32; it is not the legacy MIX filename checksum.
 
 ## Determinism
 
