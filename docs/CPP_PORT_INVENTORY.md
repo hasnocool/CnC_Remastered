@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 53 | 222 |
+| `REDALERT/` | 275 | 54 | 221 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 5 | 156 |
+| `TIBERIANDAWN/` | 161 | 6 | 155 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
 
 ## File-by-file coverage
@@ -59,7 +59,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/CDATA.CPP` | — |
 | Not started | `REDALERT/CDFILE.CPP` | — |
 | Not started | `REDALERT/CELL.CPP` | — |
-| Not started | `REDALERT/CHECKBOX.CPP` | — |
+| Complete | `REDALERT/CHECKBOX.CPP` | rts-core/src/checkbox.rs — ToggleClass draw gate, depressed frame/fill, green checked fill, and LEFTRELEASE toggle before base action. |
 | Not started | `REDALERT/CHEKLIST.CPP` | — |
 | Complete | `REDALERT/CLASS.CPP` | Intentionally empty translation unit; no executable definitions. |
 | Not started | `REDALERT/COLRLIST.CPP` | — |
@@ -352,7 +352,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/CDATA.CPP` | — |
 | Not started | `TIBERIANDAWN/CDFILE.CPP` | — |
 | Not started | `TIBERIANDAWN/CELL.CPP` | — |
-| Not started | `TIBERIANDAWN/CHECKBOX.CPP` | — |
+| Complete | `TIBERIANDAWN/CHECKBOX.CPP` | rts-core/src/checkbox.rs — ToggleClass draw gate, green depressed frame, dark fill, and two diagonal checked-state lines. |
 | Not started | `TIBERIANDAWN/CHEKLIST.CPP` | — |
 | Not started | `TIBERIANDAWN/COLRLIST.CPP` | — |
 | Not started | `TIBERIANDAWN/COMBAT.CPP` | — |
