@@ -82,12 +82,6 @@ impl StrawSource for EmptyStraw {
     }
 }
 
-impl StrawSource for EmptyStraw {
-    fn get(&mut self, _destination: &mut [u8]) -> usize {
-        0
-    }
-}
-
 /// CRC-observing pull adapter corresponding to CRCStraw.
 #[derive(Debug, Clone)]
 pub struct CrcStraw<S> {
@@ -227,5 +221,11 @@ mod tests {
         let mut output = [0; 8];
         assert_eq!(straw.get(&mut output), 4);
         assert_eq!(&output[..4], b"data");
+    }
+}
+
+impl<S: StrawSource> StrawSource for CrcStraw<S> {
+    fn get(&mut self, destination: &mut [u8]) -> usize {
+        CrcStraw::get(self, destination)
     }
 }
