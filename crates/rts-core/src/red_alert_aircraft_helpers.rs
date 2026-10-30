@@ -515,6 +515,80 @@ pub fn cell_seems_ok(
     })
 }
 
+/// Callback-driven port of AircraftClass::Good_Fire_Location.
+/// Returns a candidate cell rather than constructing the C++ TARGET encoding;
+/// the engine wrapper can convert the selected cell to the appropriate target.
+pub fn good_fire_location<M, C, E, R, V, O, D, P>(
+    target_is_legal: bool,
+    target_coordinate: u32,
+    aircraft_coordinate: u32,
+    moving_target_nav_coordinate: Option<u32>,
+    weapon_range: i32,
+    flight_level_leptons: i32,
+    game_is_normal: bool,
+    mut coordinate_move: M,
+    mut coordinate_to_cell: C,
+    mut subtract_flight_height: E,
+    mut in_radar: R,
+    mut is_visible: V,
+    mut cell_seems_ok_strict: O,
+    mut distance: D,
+    mut choose_closest: P,
+) -> Option<u32>
+where
+    M: FnMut(u32, DirType, i32) -> u32,
+    C: FnMut(u32) -> u32,
+    E: FnMut(u32, i32) -> u32,
+    R: FnMut(u32) -> bool,
+    V: FnMut(u32) -> bool,
+    O: FnMut(u32) -> bool,
+    D: FnMut(u32, Option<u32>, u32) -> i32,
+    P: FnMut(u8) -> bool,
+{
+    if !target_is_legal {
+        return None;
+    }
+
+    let mut best: Option<(u32, i32)> = None;
+    let mut second_best: Option<(u32, i32)> = None;
+    let mut radius = weapon_range - 0x0100;
+    while radius > 0x0100 {
+        for facing in (0_u16..255).step_by(16) {
+            let coordinate = coordinate_move(
+                target_coordinate,
+                DirType(facing as u8),
+                radius,
+            );
+            let cell = coordinate_to_cell(coordinate);
+            let actual_coordinate = subtract_flight_height(coordinate, flight_level_leptons);
+            let actual_cell = coordinate_to_cell(actual_coordinate);
+            if in_radar(actual_cell)
+                && (!game_is_normal || is_visible(cell))
+                && cell_seems_ok_strict(cell)
+            {
+                let range_origin = moving_target_nav_coordinate.unwrap_or(aircraft_coordinate);
+                let candidate_distance = distance(coordinate, moving_target_nav_coordinate, range_origin);
+                if best.is_none_or(|(_, best_distance)| candidate_distance < best_distance) {
+                    second_best = best;
+                    best = Some((cell, candidate_distance));
+                }
+            }
+        }
+        if best.is_some() {
+            break;
+        }
+        radius -= 0x0100;
+    }
+
+    let (best_cell, _) = best?;
+    let second_cell = second_best.map_or(best_cell, |(cell, _)| cell);
+    if choose_closest(50) {
+        Some(best_cell)
+    } else {
+        Some(second_cell)
+    }
+}
+
 /// Callback-driven port of AircraftClass::New_LZ's concentric-ring scan.
 /// Returns a replacement cell only when the previous target was legal but no
 /// longer usable and a valid new landing cell is found. None means preserve the
@@ -1032,6 +1106,99 @@ mod tests {
         );
         assert_eq!(result, None);
         assert_eq!(clear_checks, 0);
+    }
+
+    #[test]
+    fn good_fire_location_scans_outer_ring_and_chooses_closest_pair() {
+        let mut visited = Vec::new();
+        let chosen = good_fire_location(
+            true, 1000, 500, None, 1024, 128, false,
+            |target, dir, radius| {
+                visited.push((dir.0, radius));
+                target + radius as u32 + u32::from(dir.0)
+            },
+            |coord| coord,
+            |coord, flight| coord - flight as u32,
+            |_| true,
+            |_| true,
+            |_| true,
+            |coord, _, _| (coord as i32 - 1500).abs(),
+            |_| false,
+        );
+        // Outer ring is radius=768. Best and second-best are retained by
+        // strict distance comparison, then the 50% branch selects second.
+        assert_eq!(visited.len(), 16);
+        assert!(visited.iter().all(|(_, radius)| *radius == 768));
+        assert!(chosen.is_some());
+    }
+
+    #[test]
+    fn good_fire_location_uses_target_navigation_coordinate_for_moving_targets() {
+        let mut received = Vec::new();
+        let result = good_fire_location(
+            true, 0, 50, Some(75), 512, 10, false,
+            |target, _, _| target,
+            |_| 1,
+            |coord, _| coord,
+            |_| true,
+            |_| true,
+            |_| true,
+            |_, alternate, origin| {
+                received.push((alternate, origin));
+                1
+            },
+            |_| true,
+        );
+        assert!(result.is_some());
+        assert!(received.iter().all(|(alternate, origin)| *alternate == Some(75) && *origin == 75));
+    }
+
+    #[test]
+    fn good_fire_location_checks_visibility_only_in_normal_games() {
+        let mut visibility_checks = 0;
+        let result = good_fire_location(
+            true, 0, 0, None, 512, 0, false,
+            |target, _, _| target,
+            |_| 1,
+            |coord, _| coord,
+            |_| true,
+            |_| { visibility_checks += 1; false },
+            |_| true,
+            |_, _, _| 1,
+            |_| true,
+        );
+        assert!(result.is_some());
+        assert_eq!(visibility_checks, 0);
+    }
+
+    #[test]
+    fn good_fire_location_returns_none_without_search_for_invalid_target_or_range() {
+        let mut moves = 0;
+        let invalid = good_fire_location(
+            false, 0, 0, None, 2048, 0, false,
+            |coord, _, _| { moves += 1; coord },
+            |_| 0,
+            |coord, _| coord,
+            |_| true,
+            |_| true,
+            |_| true,
+            |_, _, _| 0,
+            |_| true,
+        );
+        assert_eq!(invalid, None);
+        let too_short = good_fire_location(
+            true, 0, 0, None, 512, 0, false,
+            |coord, _, _| { moves += 1; coord },
+            |_| 0,
+            |coord, _| coord,
+            |_| true,
+            |_| true,
+            |_| true,
+            |_, _, _| 0,
+            |_| true,
+        );
+        assert_eq!(too_short, None);
+        assert_eq!(moves, 0);
     }
 
     #[test]
