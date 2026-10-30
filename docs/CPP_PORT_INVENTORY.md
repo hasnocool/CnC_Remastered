@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **33**
-- Not yet fully ported: **461**
+- Fully ported: **36**
+- Not yet fully ported: **458**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 32 | 243 |
+| `REDALERT/` | 275 | 35 | 240 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 1 | 160 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
@@ -41,9 +41,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/BENCH.CPP` | — |
 | Not started | `REDALERT/BFIOFILE.CPP` | — |
 | Not started | `REDALERT/BIGCHECK.CPP` | — |
-| Not started | `REDALERT/BLOWFISH.CPP` | — |
-| Not started | `REDALERT/BLOWPIPE.CPP` | — |
-| Not started | `REDALERT/BLWSTRAW.CPP` | — |
+| Complete | `REDALERT/BLOWFISH.CPP` | rts-formats/src/blowfish.rs — Blowfish key schedule, P/S tables, encrypt/decrypt. |
+| Complete | `REDALERT/BLOWPIPE.CPP` | rts-formats/src/blowfish_streams.rs — Blowfish push adapter. |
+| Complete | `REDALERT/BLWSTRAW.CPP` | rts-formats/src/blowfish_streams.rs — Blowfish demand-driven adapter. |
 | Not started | `REDALERT/BMP8.CPP` | — |
 | Not started | `REDALERT/BUFF.CPP` | — |
 | Not started | `REDALERT/BUILDING.CPP` | — |
