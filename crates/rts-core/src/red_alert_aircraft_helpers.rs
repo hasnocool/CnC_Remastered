@@ -1439,6 +1439,61 @@ where
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftDamageResult {
+    None,
+    Half,
+    Destroyed,
+    Other(i32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftDamagePlan {
+    /// Damage passed to FootClass::Take_Damage after the aircraft's in-flight
+    /// halving rule.
+    pub adjusted_damage: i32,
+    pub kill_cargo: bool,
+    pub announce_death: bool,
+    pub fireball_coordinate: Option<u32>,
+    pub attempt_crew_paradrop: bool,
+    pub delete_aircraft: bool,
+}
+
+/// Port of AircraftClass::Take_Damage's aircraft-specific wrapper. The base
+/// Take_Damage result and the combined crew/chance/landing-cell eligibility
+/// check are supplied by the engine adapter.
+pub fn aircraft_damage_plan(
+    damage: i32,
+    height: i32,
+    base_result: AircraftDamageResult,
+    target_coordinate: u32,
+    high_coordinate_mask: u32,
+    is_crew_aircraft: bool,
+    crew_paradrop_chance_and_cell_are_valid: bool,
+) -> AircraftDamagePlan {
+    let adjusted_damage = if height != 0 { damage / 2 } else { damage };
+    if base_result == AircraftDamageResult::Destroyed {
+        AircraftDamagePlan {
+            adjusted_damage,
+            kill_cargo: true,
+            announce_death: true,
+            fireball_coordinate: (target_coordinate & high_coordinate_mask == 0)
+                .then_some(target_coordinate),
+            attempt_crew_paradrop: is_crew_aircraft && crew_paradrop_chance_and_cell_are_valid,
+            delete_aircraft: true,
+        }
+    } else {
+        AircraftDamagePlan {
+            adjusted_damage,
+            kill_cargo: false,
+            announce_death: false,
+            fireball_coordinate: None,
+            attempt_crew_paradrop: false,
+            delete_aircraft: false,
+        }
+    }
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -2409,6 +2464,52 @@ mod tests {
         assert_eq!((plan.draw_requests[1].x, plan.draw_requests[1].y), (10, 28));
         assert_eq!(calls[0], ((20, 30), DirType::EAST, 10));
         assert_eq!(calls[1], ((30, 30), DirType::WEST, 20));
+    }
+
+    #[test]
+    fn aircraft_damage_is_halved_only_while_airborne_before_base_result() {
+        let flying = aircraft_damage_plan(
+            9, 1, AircraftDamageResult::Half, 100, 0x8000_0000, false, false,
+        );
+        assert_eq!(flying.adjusted_damage, 4);
+        assert!(!flying.delete_aircraft);
+        let landed = aircraft_damage_plan(
+            9, 0, AircraftDamageResult::None, 100, 0x8000_0000, false, false,
+        );
+        assert_eq!(landed.adjusted_damage, 9);
+    }
+
+    #[test]
+    fn destroyed_aircraft_kill_cargo_announce_and_conditionally_create_fireball() {
+        let plan = aircraft_damage_plan(
+            20, 0, AircraftDamageResult::Destroyed, 0x1234_5678,
+            0x8000_0000, false, true,
+        );
+        assert!(plan.kill_cargo);
+        assert!(plan.announce_death);
+        assert_eq!(plan.fireball_coordinate, Some(0x1234_5678));
+        assert!(!plan.attempt_crew_paradrop);
+        assert!(plan.delete_aircraft);
+        let high = aircraft_damage_plan(
+            20, 1, AircraftDamageResult::Destroyed, 0x9234_5678,
+            0x8000_0000, true, true,
+        );
+        assert_eq!(high.adjusted_damage, 10);
+        assert_eq!(high.fireball_coordinate, None);
+        assert!(high.attempt_crew_paradrop);
+    }
+
+    #[test]
+    fn non_destroying_aircraft_damage_has_no_crash_aftermath() {
+        for result in [AircraftDamageResult::None, AircraftDamageResult::Half, AircraftDamageResult::Other(7)] {
+            let plan = aircraft_damage_plan(15, 1, result, 1, 0x8000_0000, true, true);
+            assert_eq!(plan.adjusted_damage, 7);
+            assert!(!plan.kill_cargo);
+            assert!(!plan.announce_death);
+            assert_eq!(plan.fireball_coordinate, None);
+            assert!(!plan.attempt_crew_paradrop);
+            assert!(!plan.delete_aircraft);
+        }
     }
 
     #[test]
