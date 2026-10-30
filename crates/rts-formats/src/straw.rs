@@ -39,7 +39,7 @@ impl std::fmt::Debug for StrawHandle {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("StrawHandle")
             .field("has_upstream", &self.node.chain_to.borrow().is_some())
-            .field("has_downstream", &self.node.chain_from.borrow().strong_count() > 0)
+            .field("has_downstream", &(self.node.chain_from.borrow().strong_count() > 0))
             .finish()
     }
 }
@@ -98,7 +98,8 @@ impl StrawHandle {
         }
 
         if let Some(next) = source.as_ref() {
-            if let Some(previous_consumer) = next.node.chain_from.borrow().upgrade() {
+            let previous_consumer = { next.node.chain_from.borrow().upgrade() };
+            if let Some(previous_consumer) = previous_consumer {
                 StrawHandle { node: previous_consumer }.get_from(None)?;
             }
         }
@@ -120,15 +121,14 @@ impl StrawHandle {
         let previous_consumer = self.downstream();
         let upstream = self.upstream();
 
-        if let Some(upstream) = upstream.as_ref() {
+        if let Some(consumer) = previous_consumer {
+            // Reconnecting via Get_From also detaches this node from the source.
+            consumer.get_from(upstream)?;
+        } else if let Some(upstream) = upstream {
             *upstream.node.chain_from.borrow_mut() = Weak::new();
         }
         *self.node.chain_to.borrow_mut() = None;
         *self.node.chain_from.borrow_mut() = Weak::new();
-
-        if let Some(consumer) = previous_consumer {
-            consumer.get_from(upstream)?;
-        }
 
         Ok(())
     }
