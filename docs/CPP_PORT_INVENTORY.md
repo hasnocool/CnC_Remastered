@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 74 | 201 |
+| `REDALERT/` | 275 | 77 | 198 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 14 | 147 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
@@ -170,8 +170,8 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/MAPEDSEL.CPP` | — |
 | Not started | `REDALERT/MAPEDTM.CPP` | — |
 | Not started | `REDALERT/MAPSEL.CPP` | — |
-| Not started | `REDALERT/MCI.CPP` | — |
-| Not started | `REDALERT/MCIMOVIE.CPP` | — |
+| Complete | `REDALERT/MCI.CPP` | No active implementation in the pinned RedAlert.vcxproj configuration; all functions are guarded by MCIMPEG, which is not defined. |
+| Complete | `REDALERT/MCIMOVIE.CPP` | No active implementation in the pinned RedAlert.vcxproj configuration; all functions are guarded by MCIMPEG, which is not defined. |
 | Not started | `REDALERT/MENUS.CPP` | — |
 | Not started | `REDALERT/MISSION.CPP` | — |
 | Not started | `REDALERT/MIXFILE.CPP` | — |
@@ -269,7 +269,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/TURRET.CPP` | — |
 | Complete | `REDALERT/TXTLABEL.CPP` | rts-core/src/text_label.rs — constructor state, Set_Text, Gadget draw gate, Simple_Text_Print and clipped text dispatch. |
 | Not started | `REDALERT/UDATA.CPP` | — |
-| Not started | `REDALERT/UDPADDR.CPP` | — |
+| Complete | `REDALERT/UDPADDR.CPP` | rts-core/src/udp_addr.rs — active Get_Broadcast_Addresses stub returns false; the complete dialog/address-discovery implementation is #if(0)-disabled. |
 | Not started | `REDALERT/UNIT.CPP` | — |
 | Not started | `REDALERT/UTRACKER.CPP` | — |
 | Not started | `REDALERT/VDATA.CPP` | — |
