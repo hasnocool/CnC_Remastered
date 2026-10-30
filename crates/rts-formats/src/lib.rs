@@ -3,6 +3,7 @@
 pub mod adpcm;
 pub mod base64;
 pub mod base64_streams;
+pub mod cache_straw;
 pub mod binary;
 pub mod blowfish;
 pub mod blowfish_streams;
@@ -19,6 +20,7 @@ pub mod pipe;
 pub mod random_straw;
 pub mod readline;
 pub mod sha1;
+pub mod sha_streams;
 pub mod straw;
 pub mod mix;
 
