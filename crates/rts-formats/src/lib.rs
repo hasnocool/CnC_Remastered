@@ -24,6 +24,7 @@ pub mod sha1;
 pub mod sha_streams;
 pub mod straw;
 pub mod mix;
+pub mod palette;
 
 pub use binary::{BinaryReadError, BinaryReader};
 pub use mix::{MixArchive, MixEntry, MixParseError};
