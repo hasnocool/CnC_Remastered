@@ -29,6 +29,7 @@ pub mod text_label;
 pub mod description_dialog;
 pub mod mgen;
 pub mod wol_strings;
+pub mod ending;
 pub mod window_mouse;
 pub mod mouse_ww;
 pub mod com_init;
