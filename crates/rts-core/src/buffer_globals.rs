@@ -6,7 +6,6 @@ pub type BlitToVvpc = unsafe extern "C" fn(*mut c_void, *mut c_void, i32, i32, i
 pub type ScaleToVvpc = unsafe extern "C" fn(*mut c_void, *mut c_void, i32, i32, i32, i32, i32, i32, i32, i32, bool, *mut c_char) -> bool;
 
 /// Default state of the legacy graphics-buffer globals before a video mode is set.
-#[derive(Default)]
 pub struct BufferGlobalState {
     /// Installed blit implementation; null in the upstream static initializer.
     pub blit_to_vvpc: Option<BlitToVvpc>,
@@ -18,6 +17,10 @@ pub struct BufferGlobalState {
     pub icon_cache_allowed: bool,
     /// Optional callback invoked by the graphics system on focus loss.
     pub focus_loss: Option<unsafe extern "C" fn()>,
+}
+
+impl Default for BufferGlobalState {
+    fn default() -> Self { Self::initial() }
 }
 
 impl BufferGlobalState {
