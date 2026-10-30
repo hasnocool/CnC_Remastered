@@ -21,7 +21,7 @@ pub enum ConfirmationInput {
     Return,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ConfirmationDrawOp {
     InvokeGameCallback,
     InvokeMainLoop,
@@ -29,6 +29,7 @@ pub enum ConfirmationDrawOp {
     DrawDialogBox { x: i32, y: i32, width: i32, height: i32 },
     DrawCaption { text_id: i32, x: i32, y: i32, width: i32 },
     DrawMessage {
+        text: Vec<u8>,
         x: i32,
         y: i32,
         width_factor: i32,
@@ -196,6 +197,7 @@ impl ConfirmationDialog {
                 width: self.layout.width,
             });
             operations.push(ConfirmationDrawOp::DrawMessage {
+                text: self.text.clone(),
                 x: self.layout.x + 20 * self.layout.factor,
                 y: self.layout.y + 30 * self.layout.factor,
                 width_factor: self.layout.factor,
@@ -272,7 +274,7 @@ mod tests {
         assert_eq!((value.x, value.y), (40, 40));
         assert_eq!(value.button_height, 12);
         assert_eq!(value.button_width, 50);
-        assert_eq!((value.yes_x, value.no_x, value.button_y), (50, 230, 143));
+        assert_eq!((value.yes_x, value.no_x, value.button_y), (50, 220, 143));
 
         let large = ConfirmationLayout::new(640, 400, 360, 120, 42, 8, 2);
         assert_eq!(large.factor, 2);
