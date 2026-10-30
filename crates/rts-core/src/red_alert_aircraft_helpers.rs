@@ -8,7 +8,7 @@
 //! missions, radio, combat, movement state machines, rendering, INI and save /
 //! load integration remain outstanding and are not claimed as complete.
 
-use crate::facing::DirType;
+use crate::facing::{DirType, FacingClass};
 use crate::fixed16::Fixed16;
 use crate::coordinate::Coordinate;
 use crate::red_alert_aircraft_types::{AircraftType, AircraftTypeRecord, AIRCRAFT_TYPES, MAP_CELL_W, REFRESH_EOL};
@@ -832,6 +832,40 @@ pub fn edge_of_world_plan(
     plan
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct RotationAiResult {
+    /// Number of source Mark(MARK_CHANGE_REDRAW) calls for each facing.
+    pub primary_redraw_marks: u8,
+    pub secondary_redraw_marks: u8,
+}
+
+/// Port of AircraftClass::Rotation_AI, including the source's fixed-wing copy
+/// of PrimaryFacing before SecondaryFacing is independently advanced.
+pub fn rotation_ai(
+    primary: &mut FacingClass,
+    secondary: &mut FacingClass,
+    is_fixed_wing: bool,
+    rotation_rate: i32,
+) -> RotationAiResult {
+    let mut result = RotationAiResult::default();
+    if primary.is_rotating() {
+        result.primary_redraw_marks += 1;
+        if primary.rotation_adjust(rotation_rate) {
+            result.primary_redraw_marks += 1;
+        }
+    }
+    if is_fixed_wing {
+        *secondary = *primary;
+    }
+    if secondary.is_rotating() {
+        result.secondary_redraw_marks += 1;
+        if secondary.rotation_adjust(rotation_rate) {
+            result.secondary_redraw_marks += 1;
+        }
+    }
+    result
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -1398,6 +1432,33 @@ mod tests {
         assert!(!plan.stun_aircraft);
         assert!(!plan.delete_aircraft);
         assert!(!plan.mark_aircraft_team_to_leave);
+    }
+
+    #[test]
+    fn rotation_ai_advances_primary_and_secondary_and_marks_zone_changes() {
+        use crate::facing::FacingClass;
+        let mut primary = FacingClass::with_direction(DirType::NORTH);
+        primary.set_desired(DirType::EAST);
+        let mut secondary = FacingClass::with_direction(DirType::SOUTH);
+        secondary.set_desired(DirType::WEST);
+        let result = rotation_ai(&mut primary, &mut secondary, false, 16);
+        assert_eq!(result.primary_redraw_marks, 2);
+        assert_eq!(result.secondary_redraw_marks, 2);
+        assert_eq!(primary.current(), DirType(16));
+        assert_eq!(secondary.current(), DirType(144));
+    }
+
+    #[test]
+    fn fixed_wing_rotation_copies_primary_then_advances_secondary_again() {
+        use crate::facing::FacingClass;
+        let mut primary = FacingClass::with_direction(DirType::NORTH);
+        primary.set_desired(DirType::EAST);
+        let mut secondary = FacingClass::with_direction(DirType::SOUTH);
+        let result = rotation_ai(&mut primary, &mut secondary, true, 16);
+        assert_eq!(primary.current(), DirType(16));
+        assert_eq!(secondary.current(), DirType(32));
+        assert_eq!(result.primary_redraw_marks, 2);
+        assert_eq!(result.secondary_redraw_marks, 2);
     }
 
     #[test]
