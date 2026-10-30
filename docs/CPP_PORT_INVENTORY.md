@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 61 | 214 |
+| `REDALERT/` | 275 | 63 | 212 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 10 | 151 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
@@ -283,7 +283,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WEAPON.CPP` | — |
 | Not started | `REDALERT/WINSTUB.CPP` | — |
 | Not started | `REDALERT/WOLAPIOB.CPP` | — |
-| Not started | `REDALERT/WOLEDIT.CPP` | — |
+| Complete | `REDALERT/WOLEDIT.CPP` | No active implementation in the pinned project; the entire translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Not started | `REDALERT/WOLSTRNG.CPP` | — |
 | Not started | `REDALERT/WOL_CGAM.CPP` | — |
 | Not started | `REDALERT/WOL_CHAT.CPP` | — |
@@ -291,7 +291,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WOL_GSUP.CPP` | — |
 | Not started | `REDALERT/WOL_LOGN.CPP` | — |
 | Not started | `REDALERT/WOL_MAIN.CPP` | — |
-| Not started | `REDALERT/WOL_OPT.CPP` | — |
+| Complete | `REDALERT/WOL_OPT.CPP` | No active implementation in the pinned project; the entire translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Not started | `REDALERT/WSPIPX.CPP` | — |
 | Not started | `REDALERT/WSPROTO.CPP` | — |
 | Not started | `REDALERT/WSPUDP.CPP` | — |
