@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **181**
-- Not yet fully ported: **313**
+- Fully ported: **183**
+- Not yet fully ported: **311**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 102 | 173 |
+| `REDALERT/` | 275 | 103 | 172 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 26 | 135 |
+| `TIBERIANDAWN/` | 161 | 27 | 134 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -83,7 +83,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/DDE.CPP` | — |
 | Complete | `REDALERT/DEBUG.CPP` | No active implementation in the pinned RedAlert.vcxproj configuration; the entire translation unit is guarded by `#ifdef CHEAT_KEYS`, which is not defined by the project or its headers. |
 | Complete | `REDALERT/DESCDLG.CPP` | rts-core/src/description_dialog.rs — dialog geometry, gadget setup, redraw/callback loop, OK/cancel handling and text trimming. |
-| Not started | `REDALERT/DIAL8.CPP` | — |
+| Complete | `REDALERT/DIAL8.CPP` | rts-core/src/dial8.rs — exact 8-position geometry, shared static drag-selection state, Desired_Facing8 pointer tracking, facing-change event suppression, parent gadget delegation, mouse hiding/restoring, standard box styles and remap-scheme shadow/highlight lines. |
 | Not started | `REDALERT/DIALOG.CPP` | — |
 | Not started | `REDALERT/DIBFILE.CPP` | — |
 | Not started | `REDALERT/DIBUTIL.CPP` | — |
@@ -369,7 +369,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/DDE.CPP` | — |
 | Complete | `TIBERIANDAWN/DEBUG.CPP` | No active implementation in the pinned TiberianDawn.vcxproj configuration; the entire translation unit is guarded by `#ifdef CHEAT_KEYS`, which is not defined by the project or its headers. |
 | Complete | `TIBERIANDAWN/DESCDLG.CPP` | rts-core/src/description_dialog.rs — shared dialog flow with GreenBorder style, SeenBuff-sized background and surface-restore redraw handling. |
-| Not started | `TIBERIANDAWN/DIAL8.CPP` | — |
+| Complete | `TIBERIANDAWN/DIAL8.CPP` | rts-core/src/dial8.rs — shared geometry and event state with Tiberian Dawn green depressed/raised box styles and fixed green pointer shadow/highlight colors supplied by the host palette adapter. |
 | Not started | `TIBERIANDAWN/DIALOG.CPP` | — |
 | Not started | `TIBERIANDAWN/DISPLAY.CPP` | — |
 | Not started | `TIBERIANDAWN/DLLInterface.cpp` | — |
