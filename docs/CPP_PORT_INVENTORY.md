@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **218**
-- Not yet fully ported: **276**
+- Fully ported: **220**
+- Not yet fully ported: **274**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 121 | 154 |
+| `REDALERT/` | 275 | 122 | 153 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 41 | 120 |
+| `TIBERIANDAWN/` | 161 | 42 | 119 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -67,7 +67,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/COMBUF.CPP` | — |
 | Complete | `REDALERT/COMINIT.CPP` | rts-core/src/com_init.rs — RAII OLE lifecycle adapter; host supplies platform calls. |
 | Not started | `REDALERT/COMQUEUE.CPP` | — |
-| Not started | `REDALERT/CONFDLG.CPP` | — |
+| Complete | `REDALERT/CONFDLG.CPP` | rts-core/src/confirmation_dialog.rs — active Process(int) returns true exactly as the source does; the interactive string overload body is disabled under #if (0). |
 | Not started | `REDALERT/CONNECT.CPP` | — |
 | Not started | `REDALERT/CONQUER.CPP` | — |
 | Not started | `REDALERT/CONST.CPP` | — |
@@ -358,7 +358,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/COMBAT.CPP` | — |
 | Not started | `TIBERIANDAWN/COMBUF.CPP` | — |
 | Not started | `TIBERIANDAWN/COMQUEUE.CPP` | — |
-| Not started | `TIBERIANDAWN/CONFDLG.CPP` | — |
+| Complete | `TIBERIANDAWN/CONFDLG.CPP` | rts-core/src/confirmation_dialog.rs — interactive modal confirmation state machine, exact factor-scaled window/button geometry, default No focus, Yes/No/Escape/Enter/arrow input, game callback/main-loop exit handling and surface-restore redraw. |
 | Not started | `TIBERIANDAWN/CONNECT.CPP` | — |
 | Not started | `TIBERIANDAWN/CONQUER.CPP` | — |
 | Not started | `TIBERIANDAWN/CONST.CPP` | — |
