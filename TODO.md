@@ -139,3 +139,5 @@
 - [x] Record REDALERT/WOLEDIT.CPP and WOL_OPT.CPP as inactive because WOLAPI_INTEGRATION is not defined in the pinned Red Alert project.
 
 - [x] Record RAWOLAPI, WOLAPIOB, WOL_CGAM, WOL_CHAT, WOL_DNLD, WOL_GSUP, WOL_LOGN and WOL_MAIN as inactive because WOLAPI_INTEGRATION is not defined in the pinned project.
+
+- [x] Record REDALERT/INICODE.CPP as inactive because the entire implementation is guarded by #ifdef TOFIX.
