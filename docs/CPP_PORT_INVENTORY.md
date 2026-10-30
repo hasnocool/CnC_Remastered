@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 80 | 195 |
+| `REDALERT/` | 275 | 81 | 194 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 16 | 145 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
@@ -262,7 +262,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/TEXTBTN.CPP` | — |
 | Not started | `REDALERT/THEME.CPP` | — |
 | Complete | `REDALERT/TOGGLE.CPP` | rts-core/src/toggle.rs — constructor state, forced redraw hit-testing, sticky processing, press capture, toggle-on-release and Red Alert release-inside check. |
-| Not started | `REDALERT/TOOLTIP.CPP` | — |
+| Complete | `REDALERT/TOOLTIP.CPP` | No active implementation in the pinned source; the entire tooltip, icon-list hover and surface save/restore implementation is enclosed by #if (0)//PG. |
 | Complete | `REDALERT/TRACKER.CPP` | rts-core/src/tracker.rs — legal-target guard, ordered global registry/singleton detachment, dependent-trigger recursion and deletion. |
 | Not started | `REDALERT/TRIGGER.CPP` | — |
 | Not started | `REDALERT/TRIGTYPE.CPP` | — |
