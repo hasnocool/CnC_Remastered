@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **194**
-- Not yet fully ported: **300**
+- Fully ported: **196**
+- Not yet fully ported: **298**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 107 | 168 |
+| `REDALERT/` | 275 | 109 | 166 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 32 | 129 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 30 | 2 |
@@ -85,8 +85,8 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/DESCDLG.CPP` | rts-core/src/description_dialog.rs — dialog geometry, gadget setup, redraw/callback loop, OK/cancel handling and text trimming. |
 | Complete | `REDALERT/DIAL8.CPP` | rts-core/src/dial8.rs — exact 8-position geometry, shared static drag-selection state, Desired_Facing8 pointer tracking, facing-change event suppression, parent gadget delegation, mouse hiding/restoring, standard box styles and remap-scheme shadow/highlight lines. |
 | Not started | `REDALERT/DIALOG.CPP` | — |
-| Not started | `REDALERT/DIBFILE.CPP` | — |
-| Not started | `REDALERT/DIBUTIL.CPP` | — |
+| Complete | `REDALERT/DIBFILE.CPP` | No active implementation in the pinned source; SaveDIB, ReadDIBFile, LoadDIB_FromMemory and chunked I/O helpers are all enclosed by unconditional `#if (0)`. |
+| Complete | `REDALERT/DIBUTIL.CPP` | No active implementation in the pinned source; the entire Microsoft DIB helper API (CreateDIB, DIB geometry/palette helpers, palette creation, DIB/bitmap conversion and format conversion) is enclosed by unconditional `#if (0)`. |
 | Not started | `REDALERT/DISPLAY.CPP` | — |
 | Not started | `REDALERT/DLLInterface.cpp` | — |
 | Not started | `REDALERT/DLLInterfaceEditor.cpp` | — |
