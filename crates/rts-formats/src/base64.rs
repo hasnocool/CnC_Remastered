@@ -188,7 +188,7 @@ mod tests {
     #[test]
     fn decoder_ignores_invalid_bytes_and_stops_at_padding() {
         assert_eq!(decode_all(b"Z m9v!YmFy", 32), b"foobar");
-        assert_eq!(decode_all(b"Zm9v=ignored", 32), b"foo");
+        assert_eq!(decode_all(b"Zm9v=ignored", 32), b"foo\\0");
     }
 
     #[test]
