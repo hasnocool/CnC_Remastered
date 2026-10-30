@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **148**
-- Not yet fully ported: **346**
+- Fully ported: **150**
+- Not yet fully ported: **344**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -186,7 +186,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/MPU.CPP` | No active implementation for the pinned MSVC Win32 project; Get_CPU_Clock exists only under __BORLANDC__. |
 | Not started | `REDALERT/MSGBOX.CPP` | — |
 | Not started | `REDALERT/MSGLIST.CPP` | — |
-| Not started | `REDALERT/MiscAsm.cpp` | — |
+| Complete | `REDALERT/MiscAsm.cpp` | rts-core/src/misc_asm.rs — shared facing/distance algorithms, bit-array helpers, Q16.16 conversion, fading-table search, endian helpers, text trimming, viewport fat-pixel drawing, palette update and no-op screen shake. |
 | Not started | `REDALERT/NETDLG.CPP` | — |
 | Not started | `REDALERT/NOSEQCON.CPP` | — |
 | Not started | `REDALERT/NULLCONN.CPP` | — |
@@ -436,7 +436,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/MPLAYER.CPP` | — |
 | Not started | `TIBERIANDAWN/MSGBOX.CPP` | — |
 | Not started | `TIBERIANDAWN/MSGLIST.CPP` | — |
-| Not started | `TIBERIANDAWN/MiscAsm.cpp` | — |
+| Complete | `TIBERIANDAWN/MiscAsm.cpp` | rts-core/src/misc_asm.rs — shared algorithms plus Tiberian Dawn's 8-bit fractional cardinal conversion/saturation. |
 | Not started | `TIBERIANDAWN/NETDLG.CPP` | — |
 | Not started | `TIBERIANDAWN/NOSEQCON.CPP` | — |
 | Not started | `TIBERIANDAWN/NULLCONN.CPP` | — |
