@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 81 | 194 |
+| `REDALERT/` | 275 | 82 | 193 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 16 | 145 |
+| `TIBERIANDAWN/` | 161 | 17 | 144 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -222,7 +222,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/SAVELOAD.CPP` | — |
 | Not started | `REDALERT/SCENARIO.CPP` | — |
 | Not started | `REDALERT/SCORE.CPP` | — |
-| Not started | `REDALERT/SCROLL.CPP` | — |
+| Complete | `REDALERT/SCROLL.CPP` | rts-core/src/scroll.rs — active constructor timer setup, autoscroll toggle, Init_IO reset and HelpClass::AI delegation; map-scroll algorithm is #if 0. |
 | Not started | `REDALERT/SDATA.CPP` | — |
 | Not started | `REDALERT/SEDITDLG.CPP` | — |
 | Not started | `REDALERT/SENDFILE.CPP` | — |
@@ -459,7 +459,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/SAVELOAD.CPP` | — |
 | Not started | `TIBERIANDAWN/SCENARIO.CPP` | — |
 | Not started | `TIBERIANDAWN/SCORE.CPP` | — |
-| Not started | `TIBERIANDAWN/SCROLL.CPP` | — |
+| Complete | `TIBERIANDAWN/SCROLL.CPP` | rts-core/src/scroll.rs — active constructor/countdown start, autoscroll toggle and HelpClass::AI delegation; map-scroll algorithm is #if 0. |
 | Not started | `TIBERIANDAWN/SDATA.CPP` | — |
 | Not started | `TIBERIANDAWN/SEQCONN.CPP` | — |
 | Not started | `TIBERIANDAWN/SHAPEBTN.CPP` | — |
