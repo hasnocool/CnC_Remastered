@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 280 C++ translation units with source-specific tests.
+- [ ] Port the remaining 278 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -242,3 +242,5 @@
 - [x] Port REDALERT/IPXADDR.CPP and TIBERIANDAWN/IPXADDR.CPP constructors, source/destination header transfer, broadcast detection, NETX zero-network equality exception, all relational operators, RA Winsock UDP address copy and TD virtual-subnet host mask.
 
 - [x] Verify REDALERT/DYNAVEC.CPP is entirely #if (0)-guarded through EOF; record it as inactive because DynamicVectorClass's active template implementation is in VECTOR.H.
+
+- [x] Port REDALERT/LIST.CPP and TIBERIANDAWN/LIST.CPP list items, selection, keyboard/mouse actions, scrollbar lifecycle, view clamping, peer notifications, drawing and gadget link operations.
