@@ -25,6 +25,7 @@ pub mod w95_trace;
 pub mod draw_rect;
 pub mod font;
 pub mod font_metrics;
+pub mod load_font;
 pub mod buffer;
 pub mod legacy_timer;
 pub mod legacy_alloc;
