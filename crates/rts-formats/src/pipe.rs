@@ -154,8 +154,11 @@ impl PipeHandle {
         let next = self.downstream();
 
         if let Some(previous) = previous {
-            // Let the previous node detach this one and flush through its still-
-            // connected downstream link, matching Pipe::~Pipe ordering.
+            // Pipe::~Pipe first transfers ChainFrom to ChainTo, then asks the
+            // previous node to replace this node with that downstream node.
+            if let Some(next) = next.as_ref() {
+                *next.node.chain_from.borrow_mut() = Rc::downgrade(&previous.node);
+            }
             previous.put_to(next)?;
         } else if let Some(next) = next {
             *next.node.chain_from.borrow_mut() = Weak::new();
