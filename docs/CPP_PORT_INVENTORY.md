@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **82**
-- Not yet fully ported: **412**
+- Fully ported: **83**
+- Not yet fully ported: **411**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -13,7 +13,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 14 | 12 |
+| `REDALERT/WIN32LIB/` | 26 | 15 | 11 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 18 | 14 |
 
@@ -327,7 +327,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/WIN32LIB/TIMERINI.CPP` | rts-core/src/legacy_timer_system.rs — timer-system state, callback tick counters, active flag, frequency and teardown. |
 | Not started | `REDALERT/WIN32LIB/WINDOWS.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/WINHIDE.CPP` | rts-core/src/window_mouse.rs — mouse hide/show calls are commented out upstream; observable no-op. |
-| Not started | `REDALERT/WIN32LIB/WRITEPCX.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/WRITEPCX.CPP` | rts-formats/src/pcx.rs — 128-byte PCX header, source-compatible scanline RLE, 256-colour palette trailer. |
 | Complete | `REDALERT/WIN32LIB/_DIPTABL.CPP` | rts-formats/src/dipthong_tables.rs — exact common-character and diphthong lookup tables. |
 
 ### `TIBERIANDAWN/`
