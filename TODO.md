@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 283 C++ translation units with source-specific tests.
+- [ ] Port the remaining 281 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -238,3 +238,5 @@
 - [x] Port REDALERT/NULLDLG.CPP active Select_Serial_Dialog() fallback returning GAME_NORMAL; remaining content is disabled.
 
 - [x] Port REDALERT/WINSTUB.CPP and TIBERIANDAWN/WINSTUB.CPP focus, palette queue, title screen, lock-state, debug and memory-error behaviors.
+
+- [x] Port REDALERT/IPXADDR.CPP and TIBERIANDAWN/IPXADDR.CPP constructors, source/destination header transfer, broadcast detection, NETX zero-network equality exception, all relational operators, RA Winsock UDP address copy and TD virtual-subnet host mask.
