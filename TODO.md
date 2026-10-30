@@ -147,3 +147,5 @@
 - [x] Port REDALERT/MPLIB.CPP interrupt register packing, MGen ordinal calls, queue/node/master operations and return-register semantics to `rts-core::mgen`.
 
 - [x] Port all 187 ENGLISH branch TXT_WOL resources from REDALERT/WOLSTRNG.CPP.
+
+- [x] Record REDALERT/ENDING.CPP as inactive because both function bodies are guarded by #ifdef NEVER.
