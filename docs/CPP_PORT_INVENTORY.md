@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 6 | 20 |
+| `REDALERT/WIN32LIB/` | 26 | 9 | 17 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 7 | 25 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 10 | 22 |
 
 ## File-by-file coverage
 
@@ -308,15 +308,15 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/WIN32LIB/BUFFGLBL.CPP` | rts-core/src/buffer_globals.rs — callback/viewport null defaults and icon-cache enabled state. |
 | Not started | `REDALERT/WIN32LIB/DDRAW.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/DELAY.CPP` | rts-core/src/delay.rs — timer threshold and duration loop. |
-| Not started | `REDALERT/WIN32LIB/DIPTHONG.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/DIPTHONG.CPP` | rts-formats/src/dipthong.rs — dip/undip/fixup transforms and legacy string-block lookup. |
 | Complete | `REDALERT/WIN32LIB/DRAWRECT.CPP` | rts-core/src/draw_rect.rs — locked four-edge Draw_Line sequence. |
 | Not started | `REDALERT/WIN32LIB/DrawMisc.cpp` | — |
-| Not started | `REDALERT/WIN32LIB/FONT.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/FONT.CPP` | rts-core/src/font_metrics.rs — character/string pixel widths and Text_Print cursor coordinate conversion. |
 | Not started | `REDALERT/WIN32LIB/GBUFFER.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/GETSHAPE.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/ICONSET.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/IFF.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/IRANDOM.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — assembly-compatible Random state and injectable CRT IRandom range sampling. |
 | Not started | `REDALERT/WIN32LIB/LOAD.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/LOADFONT.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/MOUSEWW.CPP` | — |
@@ -504,15 +504,15 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/WIN32LIB/BUFFER.CPP` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/BUFFGLBL.CPP` | rts-core/src/buffer_globals.rs — identical shared global initializers. |
 | Not started | `TIBERIANDAWN/WIN32LIB/DDRAW.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/DIPTHONG.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/DIPTHONG.CPP` | rts-formats/src/dipthong.rs — shared implementation; Internet string table and little-endian offset lookup. |
 | Complete | `TIBERIANDAWN/WIN32LIB/DRAWRECT.CPP` | rts-core/src/draw_rect.rs — identical shared implementation. |
 | Not started | `TIBERIANDAWN/WIN32LIB/DrawMisc.cpp` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/FONT.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/FONT.CPP` | rts-core/src/font_metrics.rs — shared font metrics and print cursor implementation. |
 | Not started | `TIBERIANDAWN/WIN32LIB/GBUFFER.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/GETSHAPE.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/ICONSET.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/IFF.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/IRANDOM.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — shared implementation; same source routine in both variants. |
 | Not started | `TIBERIANDAWN/WIN32LIB/KEYBOARD.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/LOAD.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/LOADFONT.CPP` | — |
