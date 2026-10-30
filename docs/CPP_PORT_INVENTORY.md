@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 58 | 217 |
+| `REDALERT/` | 275 | 59 | 216 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 9 | 152 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
@@ -54,7 +54,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/CCFILE.CPP` | — |
 | Not started | `REDALERT/CCINI.CPP` | — |
 | Not started | `REDALERT/CCMPATH.CPP` | — |
-| Not started | `REDALERT/CCPTR.CPP` | — |
+| Complete | `REDALERT/CCPTR.CPP` | rts-core/src/ccptr.rs — stable heap-ID pointer resolution, case-insensitive Name comparison, 31 explicit template instantiations and exact relational-operator expressions. |
 | Not started | `REDALERT/CCTEN.CPP` | — |
 | Not started | `REDALERT/CDATA.CPP` | — |
 | Not started | `REDALERT/CDFILE.CPP` | — |
