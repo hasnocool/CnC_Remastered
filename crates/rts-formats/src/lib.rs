@@ -35,6 +35,7 @@ pub use mix::{MixArchive, MixEntry, MixParseError};
 
 pub mod pcx;
 pub mod keyframe;
+pub mod wsa;
 pub mod iff;
 pub mod load;
 pub mod iconset;
