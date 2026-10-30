@@ -38,6 +38,7 @@ pub mod misc_asm;
 pub mod direct_draw;
 pub mod keyboard_runtime;
 pub mod layer;
+pub mod special_options;
 pub mod mouse_control;
 pub mod rgb_palette;
 pub mod null_modem_connection;
