@@ -79,4 +79,4 @@ No Rust build/test result is claimed in this commit. The execution environment u
 Latest addition: `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` → `crates/rts-core/src/legacy_new_delete.rs` (scalar/array allocation operator delegation).
 
 Latest additions: `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` and `MORPHPAL.CPP` → `crates/rts-formats/src/palette_fade.rs`.
-Latest additions: all eight additional WOLAPI_INTEGRATION-only units (RAWOLAPI, WOLAPIOB, WOL_CGAM, WOL_CHAT, WOL_DNLD, WOL_GSUP, WOL_LOGN, WOL_MAIN) are inactive under the pinned Red Alert project.
+Latest addition: REDALERT/INICODE.CPP is entirely inactive under #ifdef TOFIX in the pinned source.
