@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 22 | 4 |
+| `REDALERT/WIN32LIB/` | 26 | 23 | 3 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 25 | 7 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 26 | 6 |
 
 ## File-by-file coverage
 
@@ -325,7 +325,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/WIN32LIB/TIMER.CPP` | rts-core/src/legacy_timer.rs — tick-source selection, accumulated elapsed time, start/stop/set/reset. |
 | Complete | `REDALERT/WIN32LIB/TIMERDWN.CPP` | rts-core/src/legacy_timer.rs — countdown timer set/time/start/stop/reset semantics. |
 | Complete | `REDALERT/WIN32LIB/TIMERINI.CPP` | rts-core/src/legacy_timer_system.rs — timer-system state, callback tick counters, active flag, frequency and teardown. |
-| Not started | `REDALERT/WIN32LIB/WINDOWS.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/WINDOWS.CPP` | rts-formats/src/window_text.rs — text window state, cursor bookkeeping, control codes, dipthong expansion, substitutions, word wrapping, scrolling and draw-operation emission. |
 | Complete | `REDALERT/WIN32LIB/WINHIDE.CPP` | rts-core/src/window_mouse.rs — mouse hide/show calls are commented out upstream; observable no-op. |
 | Complete | `REDALERT/WIN32LIB/WRITEPCX.CPP` | rts-formats/src/pcx.rs — 128-byte PCX header, source-compatible scanline RLE, 256-colour palette trailer. |
 | Complete | `REDALERT/WIN32LIB/_DIPTABL.CPP` | rts-formats/src/dipthong_tables.rs — exact common-character and diphthong lookup tables. |
@@ -527,7 +527,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/TIMER.CPP` | rts-core/src/legacy_timer.rs — shared TimerClass elapsed-time implementation. |
 | Complete | `TIBERIANDAWN/WIN32LIB/TIMERDWN.CPP` | rts-core/src/legacy_timer.rs — shared CountDownTimerClass implementation. |
 | Complete | `TIBERIANDAWN/WIN32LIB/TIMERINI.CPP` | rts-core/src/legacy_timer_system.rs — timer-system state, callback tick counters, active flag, frequency and teardown. |
-| Not started | `TIBERIANDAWN/WIN32LIB/WINDOWS.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/WINDOWS.CPP` | rts-formats/src/window_text.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/WINHIDE.CPP` | rts-core/src/window_mouse.rs — shared upstream no-op implementation. |
 | Complete | `TIBERIANDAWN/WIN32LIB/WRITEPCX.CPP` | rts-formats/src/pcx.rs — byte-identical shared implementation with Red Alert; same 128-byte header, scanline RLE, and 256-colour palette trailer. |
 | Not started | `TIBERIANDAWN/WIN32LIB/WSA.CPP` | — |
