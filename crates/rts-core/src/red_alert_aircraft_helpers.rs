@@ -136,8 +136,6 @@ pub fn counts_as_civ_evac(candidate: Option<CivEvacCandidate>, scenario_tanya_ev
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::fixed16::Fixed16;
-
     fn candidate(kind: EvacueeKind, civilian: bool, technician: bool) -> CivEvacCandidate {
         CivEvacCandidate { is_infantry: true, kind, is_civilian: civilian, is_technician: technician }
     }
