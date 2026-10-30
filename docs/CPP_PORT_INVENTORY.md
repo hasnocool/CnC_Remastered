@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **209**
-- Not yet fully ported: **285**
+- Fully ported: **211**
+- Not yet fully ported: **283**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 116 | 159 |
+| `REDALERT/` | 275 | 117 | 158 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 37 | 124 |
+| `TIBERIANDAWN/` | 161 | 38 | 123 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -281,7 +281,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/W95TRACE.CPP` | rts-core/src/w95_trace.rs — active implementation is disabled under #if 0. |
 | Not started | `REDALERT/WARHEAD.CPP` | — |
 | Not started | `REDALERT/WEAPON.CPP` | — |
-| Not started | `REDALERT/WINSTUB.CPP` | — |
+| Complete | `REDALERT/WINSTUB.CPP` | rts-core/src/win_stub.rs — focus suspend/restore, lock count, null main-window/dialog/focus-check stubs, no-op debug string/colour helper, queued VQA palette mutation/luminance/interpolation, debug-only Assert_Failure, fatal memory-error event flow and PCX title-screen read/blit/free. |
 | Complete | `REDALERT/WOLAPIOB.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Complete | `REDALERT/WOLEDIT.CPP` | No active implementation in the pinned project; the entire translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Complete | `REDALERT/WOLSTRNG.CPP` | rts-core/src/wol_strings.rs — all 187 English TXT_WOL string constants selected by the pinned ENGLISH project configuration. |
@@ -494,7 +494,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/UTRACKER.CPP` | — |
 | Complete | `TIBERIANDAWN/VECTOR.CPP` | rts-core/src/vector.rs and bool_vector.rs — shared VectorClass/DynamicVectorClass and packed BooleanVectorClass behavior; also ports Tiberian Dawn's Raw_Count() and mutable Raw()/Raw(context) accessors. |
 | Not started | `TIBERIANDAWN/VISUDLG.CPP` | — |
-| Not started | `TIBERIANDAWN/WINSTUB.CPP` | — |
+| Complete | `TIBERIANDAWN/WINSTUB.CPP` | rts-core/src/win_stub.rs — sound-aware theme capture/stop on focus loss, focus restore, lock count, no-op main-window/dialog/focus pump and debug string, VQA palette pipeline, non-terminating GlyphX memory-error flow, and PCX title-screen blit/free. |
 
 ### `TIBERIANDAWN/WIN32LIB/`
 
