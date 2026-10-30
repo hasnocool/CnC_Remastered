@@ -1494,6 +1494,228 @@ pub fn aircraft_damage_plan(
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftMission {
+    Hunt,
+    Guard,
+    Retreat,
+    Unload,
+    Enter,
+    Move,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum IdleModeDestination {
+    Clear,
+    GoodLandingZone(u32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct IdleModeContext {
+    pub fixed_wing: bool,
+    pub is_ground_layer: bool,
+    pub is_loaner: bool,
+    pub has_primary_weapon: bool,
+    pub has_ammo: bool,
+    pub has_team: bool,
+    pub team_has_entered_map: bool,
+    pub house_is_human: bool,
+    pub has_attached_passengers: bool,
+    pub is_landing: bool,
+    /// Accepted docking building after the source's contact/Find_Docking_Bay
+    /// and RADIO_HELLO checks. A failed or missing result is None.
+    pub accepted_docking_building_cell: Option<u32>,
+    pub good_landing_zone_cell: u32,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct IdleModePlan {
+    /// None means the source returned early because the aircraft remained
+    /// attached to a team that controls its current mission.
+    pub mission: Option<AircraftMission>,
+    pub destination: Option<IdleModeDestination>,
+    pub clear_target: bool,
+    pub remove_from_team: bool,
+    pub reset_status: bool,
+    pub process_takeoff: bool,
+    pub commence: bool,
+}
+
+/// Port of AircraftClass::Enter_Idle_Mode with engine queries pre-resolved in
+/// IdleModeContext. Team removal and radio/docking handshakes are represented
+/// as actions; source-disabled FIXIT_CARRIER branches are intentionally absent.
+pub fn enter_idle_mode_plan(context: IdleModeContext) -> IdleModePlan {
+    let mut mission = if context.fixed_wing && context.is_loaner && context.has_primary_weapon {
+        AircraftMission::Hunt
+    } else {
+        AircraftMission::Guard
+    };
+    let mut destination = None;
+    let mut clear_target = false;
+    let mut remove_from_team = false;
+    let mut reset_status = false;
+    let mut process_takeoff = false;
+
+    if context.fixed_wing {
+        if context.is_ground_layer {
+            if context.is_loaner {
+                mission = AircraftMission::Retreat;
+            } else {
+                destination = Some(IdleModeDestination::Clear);
+                clear_target = true;
+                mission = AircraftMission::Guard;
+            }
+        } else {
+            let remove_entered_team = context.has_team
+                && context.team_has_entered_map
+                && ((context.is_loaner && context.house_is_human)
+                    || (!context.house_is_human && !context.has_ammo));
+            remove_from_team = remove_entered_team;
+            let team_remains = context.has_team && !remove_entered_team;
+            if team_remains {
+                return IdleModePlan {
+                    mission: None,
+                    destination: None,
+                    clear_target: false,
+                    remove_from_team,
+                    reset_status: false,
+                    process_takeoff: false,
+                    commence: false,
+                };
+            }
+            if !(context.is_loaner && context.has_primary_weapon && !context.has_ammo) {
+                if !context.is_loaner {
+                    destination = Some(IdleModeDestination::Clear);
+                    if context.accepted_docking_building_cell.is_some() {
+                        mission = AircraftMission::Enter;
+                        reset_status = true;
+                        process_takeoff = context.is_landing;
+                    } else {
+                        mission = AircraftMission::Retreat;
+                    }
+                }
+            }
+        }
+    } else if context.is_ground_layer {
+        if context.is_loaner {
+            if context.has_attached_passengers {
+                mission = if context.has_team {
+                    AircraftMission::Guard
+                } else {
+                    AircraftMission::Unload
+                };
+            } else {
+                mission = AircraftMission::Retreat;
+            }
+        } else {
+            destination = Some(IdleModeDestination::Clear);
+            clear_target = true;
+            mission = AircraftMission::Guard;
+        }
+    } else if context.has_attached_passengers {
+        if context.is_loaner {
+            if context.has_team {
+                mission = AircraftMission::Guard;
+            } else {
+                mission = AircraftMission::Unload;
+                destination = Some(IdleModeDestination::GoodLandingZone(context.good_landing_zone_cell));
+            }
+        } else {
+            destination = Some(IdleModeDestination::GoodLandingZone(context.good_landing_zone_cell));
+            mission = AircraftMission::Move;
+        }
+    } else {
+        let remove_entered_team = context.has_team
+            && context.team_has_entered_map
+            && ((context.is_loaner && context.house_is_human)
+                || (!context.house_is_human && !context.has_ammo));
+        remove_from_team = remove_entered_team;
+        let team_remains = context.has_team && !remove_entered_team;
+        if context.has_primary_weapon {
+            if context.is_loaner {
+                if !context.has_ammo {
+                    if team_remains {
+                        remove_from_team = true;
+                    }
+                    mission = AircraftMission::Retreat;
+                } else if !team_remains {
+                    mission = AircraftMission::Hunt;
+                }
+            } else {
+                destination = Some(IdleModeDestination::Clear);
+                if context.accepted_docking_building_cell.is_some() {
+                    mission = AircraftMission::Enter;
+                } else {
+                    destination = Some(IdleModeDestination::GoodLandingZone(context.good_landing_zone_cell));
+                    mission = AircraftMission::Move;
+                }
+            }
+        } else {
+            if team_remains {
+                return IdleModePlan {
+                    mission: None,
+                    destination: None,
+                    clear_target: false,
+                    remove_from_team,
+                    reset_status: false,
+                    process_takeoff: false,
+                    commence: false,
+                };
+            }
+            destination = Some(IdleModeDestination::GoodLandingZone(context.good_landing_zone_cell));
+            mission = AircraftMission::Move;
+        }
+    }
+
+    IdleModePlan {
+        mission: Some(mission),
+        destination,
+        clear_target,
+        remove_from_team,
+        reset_status,
+        process_takeoff,
+        commence: true,
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftScatterPlan {
+    pub enter_idle_mode: bool,
+    pub is_landing: bool,
+    pub is_taking_off: bool,
+}
+
+/// Port of AircraftClass::Scatter's gates and takeoff transition. The idle-mode
+/// mission selection is supplied by enter_idle_mode_plan.
+pub const fn aircraft_scatter_plan(
+    mission_allows_scatter: bool,
+    fixed_wing: bool,
+    is_landing: bool,
+    height: i32,
+    is_taking_off: bool,
+) -> AircraftScatterPlan {
+    if !mission_allows_scatter || fixed_wing {
+        return AircraftScatterPlan {
+            enter_idle_mode: false,
+            is_landing,
+            is_taking_off,
+        };
+    }
+    if is_landing || height == 0 {
+        AircraftScatterPlan {
+            enter_idle_mode: true,
+            is_landing: false,
+            is_taking_off: true,
+        }
+    } else {
+        AircraftScatterPlan {
+            enter_idle_mode: true,
+            is_landing,
+            is_taking_off,
+        }
+    }
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -2510,6 +2732,165 @@ mod tests {
             assert!(!plan.attempt_crew_paradrop);
             assert!(!plan.delete_aircraft);
         }
+    }
+
+    fn idle_context() -> IdleModeContext {
+        IdleModeContext {
+            fixed_wing: false,
+            is_ground_layer: false,
+            is_loaner: false,
+            has_primary_weapon: true,
+            has_ammo: true,
+            has_team: false,
+            team_has_entered_map: false,
+            house_is_human: true,
+            has_attached_passengers: false,
+            is_landing: false,
+            accepted_docking_building_cell: None,
+            good_landing_zone_cell: 900,
+        }
+    }
+
+    #[test]
+    fn idle_mode_fixed_wing_uses_retreat_on_ground_and_enter_or_retreat_in_air() {
+        let ground_loaner = enter_idle_mode_plan(IdleModeContext {
+            fixed_wing: true, is_ground_layer: true, is_loaner: true, ..idle_context()
+        });
+        assert_eq!(ground_loaner.mission, Some(AircraftMission::Retreat));
+
+        let ground_owned = enter_idle_mode_plan(IdleModeContext {
+            fixed_wing: true, is_ground_layer: true, ..idle_context()
+        });
+        assert_eq!(ground_owned.mission, Some(AircraftMission::Guard));
+        assert_eq!(ground_owned.destination, Some(IdleModeDestination::Clear));
+        assert!(ground_owned.clear_target);
+
+        let air_dock = enter_idle_mode_plan(IdleModeContext {
+            fixed_wing: true, accepted_docking_building_cell: Some(12), is_landing: true,
+            ..idle_context()
+        });
+        assert_eq!(air_dock.mission, Some(AircraftMission::Enter));
+        assert!(air_dock.reset_status);
+        assert!(air_dock.process_takeoff);
+
+        let air_no_dock = enter_idle_mode_plan(IdleModeContext {
+            fixed_wing: true, ..idle_context()
+        });
+        assert_eq!(air_no_dock.mission, Some(AircraftMission::Retreat));
+    }
+
+    #[test]
+    fn idle_mode_fixed_wing_loaner_weapon_and_team_rules_preserve_early_return() {
+        let armed_loaner = enter_idle_mode_plan(IdleModeContext {
+            fixed_wing: true, is_loaner: true, has_primary_weapon: true,
+            ..idle_context()
+        });
+        assert_eq!(armed_loaner.mission, Some(AircraftMission::Hunt));
+
+        let team_not_entered = enter_idle_mode_plan(IdleModeContext {
+            fixed_wing: true, has_team: true, team_has_entered_map: false,
+            ..idle_context()
+        });
+        assert_eq!(team_not_entered.mission, None);
+        assert!(!team_not_entered.commence);
+
+        let team_entered = enter_idle_mode_plan(IdleModeContext {
+            fixed_wing: true, is_loaner: true, has_team: true,
+            team_has_entered_map: true, house_is_human: true,
+            ..idle_context()
+        });
+        assert!(team_entered.remove_from_team);
+        assert!(team_entered.commence);
+    }
+
+    #[test]
+    fn idle_mode_helicopter_ground_and_cargo_branches_select_guard_unload_or_retreat() {
+        let own_ground = enter_idle_mode_plan(IdleModeContext {
+            is_ground_layer: true, ..idle_context()
+        });
+        assert_eq!(own_ground.mission, Some(AircraftMission::Guard));
+        assert!(own_ground.clear_target);
+
+        let loaner_empty = enter_idle_mode_plan(IdleModeContext {
+            is_ground_layer: true, is_loaner: true, ..idle_context()
+        });
+        assert_eq!(loaner_empty.mission, Some(AircraftMission::Retreat));
+
+        let loaner_cargo_team = enter_idle_mode_plan(IdleModeContext {
+            is_ground_layer: true, is_loaner: true, has_team: true,
+            has_attached_passengers: true, ..idle_context()
+        });
+        assert_eq!(loaner_cargo_team.mission, Some(AircraftMission::Guard));
+
+        let loaner_cargo_solo = enter_idle_mode_plan(IdleModeContext {
+            is_ground_layer: true, is_loaner: true, has_attached_passengers: true,
+            ..idle_context()
+        });
+        assert_eq!(loaner_cargo_solo.mission, Some(AircraftMission::Unload));
+    }
+
+    #[test]
+    fn idle_mode_airborne_heli_assigns_lz_or_docking_target_based_on_role() {
+        let normal_cargo = enter_idle_mode_plan(IdleModeContext {
+            has_attached_passengers: true, ..idle_context()
+        });
+        assert_eq!(normal_cargo.mission, Some(AircraftMission::Move));
+        assert_eq!(normal_cargo.destination, Some(IdleModeDestination::GoodLandingZone(900)));
+
+        let loaner_cargo = enter_idle_mode_plan(IdleModeContext {
+            is_loaner: true, has_attached_passengers: true, ..idle_context()
+        });
+        assert_eq!(loaner_cargo.mission, Some(AircraftMission::Unload));
+        assert_eq!(loaner_cargo.destination, Some(IdleModeDestination::GoodLandingZone(900)));
+
+        let owned_weapon_dock = enter_idle_mode_plan(IdleModeContext {
+            accepted_docking_building_cell: Some(77), ..idle_context()
+        });
+        assert_eq!(owned_weapon_dock.mission, Some(AircraftMission::Enter));
+        assert_eq!(owned_weapon_dock.destination, Some(IdleModeDestination::Clear));
+
+        let owned_weapon_no_dock = enter_idle_mode_plan(idle_context());
+        assert_eq!(owned_weapon_no_dock.mission, Some(AircraftMission::Move));
+        assert_eq!(owned_weapon_no_dock.destination, Some(IdleModeDestination::GoodLandingZone(900)));
+    }
+
+    #[test]
+    fn idle_mode_helicopter_team_removal_and_no_weapon_early_return_match_source() {
+        let loaner_empty_ammo = enter_idle_mode_plan(IdleModeContext {
+            is_loaner: true, has_team: true, team_has_entered_map: false,
+            has_ammo: false, ..idle_context()
+        });
+        assert_eq!(loaner_empty_ammo.mission, Some(AircraftMission::Retreat));
+        assert!(loaner_empty_ammo.remove_from_team);
+
+        let no_weapon_team = enter_idle_mode_plan(IdleModeContext {
+            has_primary_weapon: false, has_team: true, ..idle_context()
+        });
+        assert_eq!(no_weapon_team.mission, None);
+        assert!(!no_weapon_team.commence);
+
+        let loaner_ammo_team = enter_idle_mode_plan(IdleModeContext {
+            is_loaner: true, has_team: true, has_ammo: true, ..idle_context()
+        });
+        assert_eq!(loaner_ammo_team.mission, Some(AircraftMission::Guard));
+        assert!(!loaner_ammo_team.remove_from_team);
+    }
+
+    #[test]
+    fn scatter_respects_mission_and_fixed_wing_gates_and_starts_rotor_takeoff() {
+        let forbidden = aircraft_scatter_plan(false, false, true, 0, false);
+        assert!(!forbidden.enter_idle_mode);
+        assert!(forbidden.is_landing);
+        let fixed = aircraft_scatter_plan(true, true, false, 0, false);
+        assert!(!fixed.enter_idle_mode);
+        let grounded = aircraft_scatter_plan(true, false, false, 0, false);
+        assert!(grounded.enter_idle_mode);
+        assert!(!grounded.is_landing);
+        assert!(grounded.is_taking_off);
+        let airborne = aircraft_scatter_plan(true, false, true, 100, false);
+        assert!(airborne.enter_idle_mode);
+        assert!(!airborne.is_landing);
+        assert!(airborne.is_taking_off);
     }
 
     #[test]
