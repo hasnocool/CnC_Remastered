@@ -40,6 +40,7 @@ pub mod tracker;
 pub mod drop_list;
 pub mod udp_addr;
 pub mod carryover;
+pub mod cargo;
 pub mod window_mouse;
 pub mod mouse_ww;
 pub mod com_init;
