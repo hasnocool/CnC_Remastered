@@ -4,16 +4,16 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **51**
-- Not yet fully ported: **443**
+- Fully ported: **53**
+- Not yet fully ported: **441**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 44 | 231 |
-| `REDALERT/WIN32LIB/` | 26 | 1 | 25 |
+| `REDALERT/` | 275 | 45 | 230 |
+| `REDALERT/WIN32LIB/` | 26 | 2 | 24 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 3 | 29 |
 
@@ -65,7 +65,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/COLRLIST.CPP` | — |
 | Not started | `REDALERT/COMBAT.CPP` | — |
 | Not started | `REDALERT/COMBUF.CPP` | — |
-| Not started | `REDALERT/COMINIT.CPP` | — |
+| Complete | `REDALERT/COMINIT.CPP` | rts-core/src/com_init.rs — RAII OLE lifecycle adapter; host supplies platform calls. |
 | Not started | `REDALERT/COMQUEUE.CPP` | — |
 | Not started | `REDALERT/CONFDLG.CPP` | — |
 | Not started | `REDALERT/CONNECT.CPP` | — |
@@ -307,7 +307,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/BUFFER.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/BUFFGLBL.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/DDRAW.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/DELAY.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/DELAY.CPP` | rts-core/src/delay.rs — timer threshold and duration loop. |
 | Not started | `REDALERT/WIN32LIB/DIPTHONG.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/DRAWRECT.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/DrawMisc.cpp` | — |
