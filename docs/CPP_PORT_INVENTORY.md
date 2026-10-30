@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **183**
-- Not yet fully ported: **311**
+- Fully ported: **185**
+- Not yet fully ported: **309**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 103 | 172 |
+| `REDALERT/` | 275 | 104 | 171 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 27 | 134 |
+| `TIBERIANDAWN/` | 161 | 28 | 133 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -60,7 +60,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/CDFILE.CPP` | — |
 | Not started | `REDALERT/CELL.CPP` | — |
 | Complete | `REDALERT/CHECKBOX.CPP` | rts-core/src/checkbox.rs — ToggleClass draw gate, depressed frame/fill, green checked fill, and LEFTRELEASE toggle before base action. |
-| Not started | `REDALERT/CHEKLIST.CPP` | — |
+| Complete | `REDALERT/CHEKLIST.CPP` | rts-core/src/check_list.rs — CheckObject text/checked storage, add/get/current/remove/search/select operations, read-only parent-action gate, LEFTPRESS toggle after ListClass::Action, checkmark row construction, selected shadow fill and clipped text styling. |
 | Complete | `REDALERT/CLASS.CPP` | Intentionally empty translation unit; no executable definitions. |
 | Not started | `REDALERT/COLRLIST.CPP` | — |
 | Not started | `REDALERT/COMBAT.CPP` | — |
@@ -353,7 +353,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/CDFILE.CPP` | — |
 | Not started | `TIBERIANDAWN/CELL.CPP` | — |
 | Complete | `TIBERIANDAWN/CHECKBOX.CPP` | rts-core/src/checkbox.rs — ToggleClass draw gate, green depressed frame, dark fill, and two diagonal checked-state lines. |
-| Not started | `TIBERIANDAWN/CHEKLIST.CPP` | — |
+| Complete | `TIBERIANDAWN/CHEKLIST.CPP` | rts-core/src/check_list.rs — in-place first-character check marker, Is_Checked lookup, read-only gate and parent-first LEFTPRESS toggle; row rendering remains delegated to ListClass. |
 | Not started | `TIBERIANDAWN/COLRLIST.CPP` | — |
 | Not started | `TIBERIANDAWN/COMBAT.CPP` | — |
 | Not started | `TIBERIANDAWN/COMBUF.CPP` | — |
