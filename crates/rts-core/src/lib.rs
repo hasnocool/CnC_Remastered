@@ -10,6 +10,7 @@ pub mod random_class;
 pub mod vector;
 pub mod rect;
 pub mod legacy_stub;
+pub mod link;
 pub mod map;
 
 pub use clock::{SimTick, TICKS_PER_MINUTE, TICKS_PER_SECOND};
