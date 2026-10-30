@@ -176,7 +176,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/MISSION.CPP` | — |
 | Not started | `REDALERT/MIXFILE.CPP` | — |
 | Not started | `REDALERT/MONOC.CPP` | — |
-| Not started | `REDALERT/MOUSE.CPP` | — |
+| Complete | `REDALERT/MOUSE.CPP` | rts-core/src/mouse_control.rs — 42-entry cursor table, default/revert/override states, small-cursor fallback, animated frame updates, debug-only loose MOUSE.SHP probe, and scenario reset. |
 | Not started | `REDALERT/MP.CPP` | — |
 | Not started | `REDALERT/MPGSET.CPP` | — |
 | Not started | `REDALERT/MPLAYER.CPP` | — |
@@ -432,7 +432,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/MISSION.CPP` | — |
 | Not started | `TIBERIANDAWN/MIXFILE.CPP` | — |
 | Not started | `TIBERIANDAWN/MONOC.CPP` | — |
-| Not started | `TIBERIANDAWN/MOUSE.CPP` | — |
+| Complete | `TIBERIANDAWN/MOUSE.CPP` | rts-core/src/mouse_control.rs — 34-entry cursor table, default/revert/override states, small cursor and animated frames, loose-file MOUSE.SHP probe, VTable binding hook, and scenario reset. |
 | Not started | `TIBERIANDAWN/MPLAYER.CPP` | — |
 | Not started | `TIBERIANDAWN/MSGBOX.CPP` | — |
 | Not started | `TIBERIANDAWN/MSGLIST.CPP` | — |
