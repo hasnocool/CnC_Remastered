@@ -1507,6 +1507,7 @@ pub enum AircraftMission {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum IdleModeDestination {
     Clear,
+    CurrentCell,
     GoodLandingZone(u32),
 }
 
@@ -2273,7 +2274,7 @@ pub fn aircraft_mission_guard(context: AircraftGuardContext) -> AircraftGuardPla
         }
         if !context.has_primary_weapon {
             return AircraftGuardPlan {
-                destination: Some(IdleModeDestination::GoodLandingZone(0)),
+                destination: Some(IdleModeDestination::CurrentCell),
                 clear_target: false,
                 target_juicy_threat: false,
                 mission_to_assign: Some(AircraftMission::Move),
@@ -2396,9 +2397,9 @@ pub fn aircraft_mission_guard(context: AircraftGuardContext) -> AircraftGuardPla
             mission_to_assign: Some(AircraftMission::Attack),
             enter_idle_mode: false,
             scatter: false,
-            delegate_to_base_guard: false,
-            delay: normal,
-            return_immediately: false,
+            delegate_to_base_guard: true,
+            delay: HuntDelay::Ticks(context.base_guard_delay),
+            return_immediately: true,
         };
     }
 
@@ -4082,7 +4083,7 @@ mod tests {
             height: 100, has_primary_weapon: false, ..guard_context()
         });
         assert_eq!(weaponless.mission_to_assign, Some(AircraftMission::Move));
-        assert!(matches!(weaponless.destination, Some(IdleModeDestination::GoodLandingZone(_))));
+        assert_eq!(weaponless.destination, Some(IdleModeDestination::CurrentCell));
 
         let armed_idle = aircraft_mission_guard(AircraftGuardContext {
             height: 100, has_primary_weapon: true, ..guard_context()
@@ -4149,7 +4150,8 @@ mod tests {
         });
         assert!(juicy.target_juicy_threat);
         assert_eq!(juicy.mission_to_assign, Some(AircraftMission::Attack));
-        assert!(!juicy.return_immediately);
+        assert!(juicy.delegate_to_base_guard);
+        assert!(juicy.return_immediately);
         let attacked = aircraft_mission_guard(AircraftGuardContext {
             house_is_attacked: true, juicy_target_is_legal: true, ..guard_context()
         });
