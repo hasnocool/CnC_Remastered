@@ -83,6 +83,7 @@ impl BooleanVector {
 
         let old_size = self.bit_count;
         self.bytes.resize(byte_count(new_size), 0);
+        self.bit_count = new_size;
 
         if new_size > old_size {
             // The source explicitly clears every new bit after resizing.
@@ -148,7 +149,7 @@ mod tests {
         assert!(vector.set_bit(8, true));
         assert_eq!(vector.packed_bytes(), &[0x81, 0x01]);
         assert_eq!(vector.get(0), Some(true));
-        assert_eq!(vector.get(7), Some(true));
+        assert_eq!(vector.get(7), Some(false));
         assert_eq!(vector.get(8), Some(true));
         assert_eq!(vector.get(10), None);
     }
@@ -195,7 +196,7 @@ mod tests {
     }
 
     #[test]
-    fn shrinking_and_growing_preserves_existing_unused_packed_bits() {
+    fn growing_after_shrink_clears_bits_that_become_logically_new() {
         let mut vector = BooleanVector::new(8);
         vector.set_bit(7, true);
         vector.resize(7);
