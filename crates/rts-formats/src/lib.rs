@@ -4,6 +4,7 @@ pub mod adpcm;
 pub mod base64;
 pub mod base64_streams;
 pub mod binary;
+pub mod blowfish;
 pub mod crc32;
 pub mod crc_streams;
 pub mod lcw;
