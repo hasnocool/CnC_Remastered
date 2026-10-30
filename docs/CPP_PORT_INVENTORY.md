@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **239**
-- Not yet fully ported: **255**
+- Fully ported: **240**
+- Not yet fully ported: **254**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 134 | 141 |
+| `REDALERT/` | 275 | 135 | 140 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 49 | 112 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -279,7 +279,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/VISUDLG.CPP` | — |
 | Not started | `REDALERT/VORTEX.CPP` | — |
 | Complete | `REDALERT/W95TRACE.CPP` | rts-core/src/w95_trace.rs — active implementation is disabled under #if 0. |
-| Not started | `REDALERT/WARHEAD.CPP` | — |
+| Complete | `REDALERT/WARHEAD.CPP` | rts-core/src/warhead.rs — WarheadTypeClass defaults, five armor modifiers, fixed-index heap allocation/free and ID lookup, INI property reads, Verses fixed-point parsing and organic-warhead detection. |
 | Not started | `REDALERT/WEAPON.CPP` | — |
 | Complete | `REDALERT/WINSTUB.CPP` | rts-core/src/win_stub.rs — focus suspend/restore, lock count, null main-window/dialog/focus-check stubs, no-op debug string/colour helper, queued VQA palette mutation/luminance/interpolation, debug-only Assert_Failure, fatal memory-error event flow and PCX title-screen read/blit/free. |
 | Complete | `REDALERT/WOLAPIOB.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
