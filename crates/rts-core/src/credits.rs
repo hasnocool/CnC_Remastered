@@ -241,3 +241,276 @@ mod tests {
         assert_eq!(host.tab_draws, 2);
     }
 }
+
+
+
+/// Red Alert's separate frame-throttled credit display implementation.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct RedAlertCreditAiContext {
+    /// The original _last variable is static in CreditClass::AI and shared
+    /// between every instance; pass one shared context to all instances.
+    pub last_frame: u32,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum RedAlertCreditSound { MoneyUp, MoneyDown }
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum RedAlertCreditStyle {
+    /// Non-Win32 path actively paints grey bright gradient text.
+    GreyBrightGradient,
+    /// Win32 Fancy_Text_Print call is commented out in the pinned source.
+    Win32CreditTextDisabled,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct RedAlertCreditRenderRequest {
+    pub x: i32,
+    pub y: i32,
+    pub value: i32,
+    pub style: RedAlertCreditStyle,
+}
+
+pub trait RedAlertCreditDisplayHost {
+    fn play_sound(&mut self, sound: RedAlertCreditSound);
+    fn draw_credit_value(&mut self, request: RedAlertCreditRenderRequest);
+    fn draw_mission_timer(&mut self, formatted_time: &str);
+    fn flag_map_for_redraw(&mut self, full_redraw: bool);
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RedAlertCreditClass {
+    pub credits: i32,
+    pub current: i32,
+    pub is_to_redraw: bool,
+    pub is_up: bool,
+    pub is_audible: bool,
+    countdown: i32,
+}
+
+impl Default for RedAlertCreditClass {
+    fn default() -> Self {
+        Self {
+            credits: 0,
+            current: 0,
+            is_to_redraw: false,
+            is_up: false,
+            is_audible: false,
+            countdown: 0,
+        }
+    }
+}
+
+impl RedAlertCreditClass {
+    pub fn new() -> Self { Self::default() }
+    pub const fn countdown(&self) -> i32 { self.countdown }
+
+    /// Port of REDALERT/CREDITS.CPP::AI. The caller supplies global Frame,
+    /// money, and the mission-timer state; one shared context reproduces the
+    /// function-static _last value.
+    pub fn ai(
+        &mut self,
+        forced: bool,
+        available_money: Option<i32>,
+        logic_only: bool,
+        frame: u32,
+        mission_timer_active: bool,
+        mission_timer_value: i32,
+        context: &mut RedAlertCreditAiContext,
+        host: &mut impl RedAlertCreditDisplayHost,
+    ) {
+        if !forced && !logic_only && frame == context.last_frame { return; }
+        if !logic_only { context.last_frame = frame; }
+
+        let Some(money) = available_money else { return; };
+        self.credits = money.max(0);
+
+        if mission_timer_active || mission_timer_value != 0 {
+            self.is_to_redraw = true;
+            host.flag_map_for_redraw(false);
+        }
+
+        if self.current == self.credits { return; }
+
+        if forced {
+            self.is_audible = false;
+            self.current = self.credits;
+        } else {
+            if self.countdown != 0 { self.countdown -= 1; }
+            if self.countdown != 0 { return; }
+
+            let mut adder = self.credits.wrapping_sub(self.current);
+            self.countdown = if adder > 0 { 1 } else { 3 };
+            adder = adder.wrapping_abs();
+            adder >>= 3;
+            adder = adder.clamp(CREDIT_MIN_ADDER, CREDIT_MAX_ADDER);
+            if self.current > self.credits { adder = adder.wrapping_neg(); }
+            self.current = self.current.wrapping_add(adder);
+
+            if self.current.wrapping_sub(adder) != self.current {
+                self.is_audible = true;
+                self.is_up = adder > 0;
+            }
+        }
+
+        self.is_to_redraw = true;
+        if !logic_only { host.flag_map_for_redraw(false); }
+    }
+
+    /// Red Alert's graphic path uses RESFACTOR and, under WIN32, adds an
+    /// additional 80*RESFACTOR horizontal offset. The WIN32 credit text call
+    /// is disabled; the mission timer text calls are also #if (0).
+    pub fn graphic_logic(
+        &mut self,
+        forced: bool,
+        seen_buffer_width: i32,
+        resolution_factor: i32,
+        win32: bool,
+        mission_timer_active: bool,
+        mission_timer_ticks: i32,
+        ticks_per_second: i32,
+        host: &mut impl RedAlertCreditDisplayHost,
+    ) {
+        if !forced && !self.is_to_redraw { return; }
+
+        let x = seen_buffer_width
+            .wrapping_sub(120i32.wrapping_mul(resolution_factor))
+            .wrapping_add(if win32 { 80i32.wrapping_mul(resolution_factor) } else { 0 });
+
+        if self.is_audible {
+            host.play_sound(if self.is_up {
+                RedAlertCreditSound::MoneyUp
+            } else {
+                RedAlertCreditSound::MoneyDown
+            });
+        }
+
+        host.draw_credit_value(RedAlertCreditRenderRequest {
+            x,
+            y: 0,
+            value: self.current,
+            style: if win32 {
+                RedAlertCreditStyle::Win32CreditTextDisabled
+            } else {
+                RedAlertCreditStyle::GreyBrightGradient
+            },
+        });
+
+        // Timer formatting is active only in the non-Win32 branch. In Win32
+        // both timer text calls are disabled under #if (0).
+        if mission_timer_active && !win32 && ticks_per_second > 0 {
+            let mut seconds = mission_timer_ticks / ticks_per_second;
+            let mut minutes = seconds / 60;
+            let hours = minutes / 60;
+            seconds %= 60;
+            minutes %= 60;
+            let formatted = if hours != 0 {
+                format!("{hours:02}:{minutes:02}:{seconds:02}")
+            } else {
+                format!("{minutes:02}:{seconds:02}")
+            };
+            host.draw_mission_timer(&formatted);
+        }
+
+        self.is_to_redraw = false;
+        self.is_audible = false;
+    }
+}
+
+#[cfg(test)]
+mod red_alert_tests {
+    use super::*;
+
+    #[derive(Default)]
+    struct FakeHost {
+        sounds: Vec<RedAlertCreditSound>,
+        credit_draws: Vec<RedAlertCreditRenderRequest>,
+        timers: Vec<String>,
+        redraws: Vec<bool>,
+    }
+
+    impl RedAlertCreditDisplayHost for FakeHost {
+        fn play_sound(&mut self, sound: RedAlertCreditSound) { self.sounds.push(sound); }
+        fn draw_credit_value(&mut self, request: RedAlertCreditRenderRequest) {
+            self.credit_draws.push(request);
+        }
+        fn draw_mission_timer(&mut self, value: &str) { self.timers.push(value.to_owned()); }
+        fn flag_map_for_redraw(&mut self, full_redraw: bool) { self.redraws.push(full_redraw); }
+    }
+
+    #[test]
+    fn frame_throttle_is_shared_and_logic_only_bypasses_it() {
+        let mut context = RedAlertCreditAiContext::default();
+        let mut one = RedAlertCreditClass::new();
+        let mut two = RedAlertCreditClass::new();
+        let mut host = FakeHost::default();
+        one.ai(false, Some(800), false, 10, false, 0, &mut context, &mut host);
+        assert_eq!(one.current, 100);
+        two.ai(false, Some(800), false, 10, false, 0, &mut context, &mut host);
+        assert_eq!(two.current, 0);
+        two.ai(false, Some(800), true, 10, false, 0, &mut context, &mut host);
+        assert_eq!(two.current, 100);
+    }
+
+    #[test]
+    fn up_and_down_changes_have_distinct_countdown_intervals() {
+        let mut context = RedAlertCreditAiContext::default();
+        let mut credits = RedAlertCreditClass::new();
+        let mut host = FakeHost::default();
+
+        credits.ai(false, Some(800), true, 0, false, 0, &mut context, &mut host);
+        assert_eq!(credits.current, 100);
+        assert_eq!(credits.countdown(), 1);
+        credits.ai(false, Some(800), true, 1, false, 0, &mut context, &mut host);
+        assert_eq!(credits.current, 200);
+
+        credits.current = 800;
+        credits.ai(false, Some(0), true, 2, false, 0, &mut context, &mut host);
+        assert_eq!(credits.current, 700);
+        assert_eq!(credits.countdown(), 3);
+        credits.ai(false, Some(0), true, 3, false, 0, &mut context, &mut host);
+        assert_eq!(credits.current, 700);
+    }
+
+    #[test]
+    fn negative_money_is_clamped_and_mission_timer_marks_map_dirty() {
+        let mut context = RedAlertCreditAiContext::default();
+        let mut credits = RedAlertCreditClass::new();
+        let mut host = FakeHost::default();
+        credits.ai(false, Some(-500), false, 1, true, 1000, &mut context, &mut host);
+        assert_eq!(credits.credits, 0);
+        assert!(credits.is_to_redraw);
+        assert_eq!(host.redraws, vec![false]);
+    }
+
+    #[test]
+    fn forced_update_snaps_without_audible_effect() {
+        let mut context = RedAlertCreditAiContext::default();
+        let mut credits = RedAlertCreditClass::new();
+        let mut host = FakeHost::default();
+        credits.ai(false, Some(900), false, 1, false, 0, &mut context, &mut host);
+        credits.ai(true, Some(55), false, 2, false, 0, &mut context, &mut host);
+        assert_eq!(credits.current, 55);
+        assert!(!credits.is_audible);
+    }
+
+    #[test]
+    fn graphic_logic_formats_timer_only_in_non_win32_branch() {
+        let mut credits = RedAlertCreditClass {
+            credits: 100, current: 100, is_to_redraw: true, is_up: true,
+            is_audible: true, countdown: 0,
+        };
+        let mut host = FakeHost::default();
+        credits.graphic_logic(false, 640, 1, false, true, 125, 25, &mut host);
+        assert_eq!(host.credit_draws[0].x, 520);
+        assert_eq!(host.credit_draws[0].style, RedAlertCreditStyle::GreyBrightGradient);
+        assert_eq!(host.timers, vec!["00:05"]);
+        assert_eq!(host.sounds, vec![RedAlertCreditSound::MoneyUp]);
+
+        credits.is_to_redraw = true;
+        credits.graphic_logic(false, 640, 1, true, true, 125, 25, &mut host);
+        assert_eq!(host.credit_draws[1].x, 600);
+        assert_eq!(host.credit_draws[1].style, RedAlertCreditStyle::Win32CreditTextDisabled);
+        assert_eq!(host.timers.len(), 1);
+    }
+}
