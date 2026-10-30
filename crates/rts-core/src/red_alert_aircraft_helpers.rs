@@ -1957,8 +1957,8 @@ pub fn aircraft_mission_hunt(context: AircraftHuntContext) -> AircraftHuntPlan {
             }
         }
         AircraftHuntStage::TakeOff => {
+            plan.process_takeoff = true;
             if context.takeoff_completed {
-                plan.process_takeoff = true;
                 plan.set_speed = Some(u8::MAX);
                 plan.break_radio_contact = context.in_radio_contact;
                 plan.next_stage = Some(AircraftHuntStage::FlyToTarget);
@@ -3370,6 +3370,20 @@ mod tests {
         });
         assert_eq!(tiberium_found.threat_search_order, [AircraftThreatKind::Tiberium]);
         assert!(!tiberium_found.assign_target_from_normal_threat);
+    }
+
+    #[test]
+    fn fixed_wing_hunt_calls_takeoff_processor_until_completion() {
+        let pending = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::TakeOff,
+            takeoff_completed: false,
+            ..hunt_context()
+        });
+        assert!(pending.process_takeoff);
+        assert_eq!(pending.set_speed, None);
+        assert_eq!(pending.next_stage, None);
+        assert_eq!(pending.delay, HuntDelay::Ticks(1));
+        assert!(pending.return_immediately);
     }
 
     #[test]
