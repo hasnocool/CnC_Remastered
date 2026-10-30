@@ -24,6 +24,7 @@ pub mod buffer_globals;
 pub mod w95_trace;
 pub mod draw_rect;
 pub mod font;
+pub mod font_metrics;
 pub mod legacy_irandom;
 
 pub use clock::{SimTick, TICKS_PER_MINUTE, TICKS_PER_SECOND};
