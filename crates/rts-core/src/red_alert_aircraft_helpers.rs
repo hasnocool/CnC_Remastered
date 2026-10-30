@@ -2496,6 +2496,248 @@ pub fn aircraft_mission_guard_area(context: AircraftGuardAreaContext) -> Aircraf
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftAttackStage {
+    ValidateAttackZone,
+    PickAttackLocation,
+    TakeOff,
+    FlyToPosition,
+    FireAtTarget,
+    FireAtTargetSecondShot,
+    ReturnToBase,
+    Unknown(i32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftAttackFireResult {
+    Ok,
+    Cloaked,
+    Rearm,
+    Facing,
+    InRange,
+    Ammo,
+    Cant,
+    Illegal,
+    Other(i32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftAttackContext {
+    pub fixed_wing: bool,
+    pub stage: AircraftAttackStage,
+    pub target_is_legal: bool,
+    pub navcom_is_legal: bool,
+    pub selected_attack_cell: Option<u32>,
+    pub takeoff_completed: bool,
+    pub in_radio_contact_with_building: bool,
+    pub direction_to_navcom: DirType,
+    pub secondary_facing_current: DirType,
+    pub direction_to_target: DirType,
+    pub fire_direction_from_aircraft_to_navcom: DirType,
+    pub distance_to_navcom: i32,
+    pub fire_result: AircraftAttackFireResult,
+    pub ammo: i32,
+    pub target_is_in_weapon_range: bool,
+    pub is_loaner: bool,
+    pub house_is_human: bool,
+    pub curley_shuffle: bool,
+    pub normal_delay: i32,
+    pub random_delay_0_to_2: i32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AircraftAttackPlan {
+    pub delegate_to_hunt: bool,
+    pub next_stage: Option<AircraftAttackStage>,
+    pub assign_destination_to_attack_cell: Option<u32>,
+    pub clear_destination: bool,
+    pub clear_target: bool,
+    pub process_takeoff: bool,
+    pub set_primary_current: Option<DirType>,
+    pub primary_desired: Option<DirType>,
+    pub secondary_desired: Option<DirType>,
+    pub break_radio_contact: bool,
+    pub do_uncloak: bool,
+    pub fire_target: bool,
+    pub notify_target_incoming: bool,
+    pub enter_idle_mode: bool,
+    pub delay: HuntDelay,
+    pub return_immediately: bool,
+}
+
+impl AircraftAttackPlan {
+    fn new(normal_delay: i32, random_delay_0_to_2: i32) -> Self {
+        Self {
+            delegate_to_hunt: false,
+            next_stage: None,
+            assign_destination_to_attack_cell: None,
+            clear_destination: false,
+            clear_target: false,
+            process_takeoff: false,
+            set_primary_current: None,
+            primary_desired: None,
+            secondary_desired: None,
+            break_radio_contact: false,
+            do_uncloak: false,
+            fire_target: false,
+            notify_target_incoming: false,
+            enter_idle_mode: false,
+            delay: HuntDelay::NormalPlusRandom2 {
+                normal_delay,
+                random_value: random_delay_0_to_2.clamp(0, 2),
+            },
+            return_immediately: false,
+        }
+    }
+}
+
+/// Port of AircraftClass::Mission_Attack for rotorcraft. Fixed-wing aircraft
+/// use the source Mission_Hunt state machine; target movement, facing,
+/// incoming markers, weapon execution and radio are expressed as actions.
+pub fn aircraft_mission_attack(context: AircraftAttackContext) -> AircraftAttackPlan {
+    let mut plan = AircraftAttackPlan::new(
+        context.normal_delay,
+        context.random_delay_0_to_2,
+    );
+    if context.fixed_wing {
+        plan.delegate_to_hunt = true;
+        plan.return_immediately = true;
+        return plan;
+    }
+
+    match context.stage {
+        AircraftAttackStage::ValidateAttackZone => {
+            plan.next_stage = Some(if context.target_is_legal {
+                AircraftAttackStage::PickAttackLocation
+            } else {
+                AircraftAttackStage::ReturnToBase
+            });
+        }
+        AircraftAttackStage::PickAttackLocation => {
+            if context.target_is_legal {
+                plan.assign_destination_to_attack_cell = context.selected_attack_cell;
+                plan.next_stage = Some(if context.selected_attack_cell.is_some() {
+                    AircraftAttackStage::TakeOff
+                } else {
+                    AircraftAttackStage::ReturnToBase
+                });
+            } else {
+                plan.next_stage = Some(AircraftAttackStage::ReturnToBase);
+            }
+        }
+        AircraftAttackStage::TakeOff => {
+            if !context.target_is_legal {
+                plan.next_stage = Some(AircraftAttackStage::ReturnToBase);
+            } else {
+                plan.process_takeoff = true;
+                if context.takeoff_completed {
+                    plan.next_stage = Some(AircraftAttackStage::FlyToPosition);
+                    plan.break_radio_contact = context.in_radio_contact_with_building;
+                    let difference = context.direction_to_navcom.signed_difference(
+                        context.secondary_facing_current,
+                    ) as i32;
+                    let skew = difference.clamp(-128, 128);
+                    plan.set_primary_current = Some(context.secondary_facing_current.wrapping_add(skew));
+                }
+                plan.delay = HuntDelay::Ticks(1);
+                plan.return_immediately = true;
+            }
+        }
+        AircraftAttackStage::FlyToPosition => {
+            if !context.target_is_legal {
+                plan.next_stage = Some(AircraftAttackStage::ReturnToBase);
+            } else if !context.navcom_is_legal {
+                plan.next_stage = Some(AircraftAttackStage::PickAttackLocation);
+                plan.delay = HuntDelay::Ticks(1);
+                plan.return_immediately = true;
+                return plan;
+            } else if context.distance_to_navcom < 0x0200 {
+                plan.secondary_desired = Some(context.direction_to_target);
+                if context.distance_to_navcom < 0x0010 {
+                    plan.next_stage = Some(AircraftAttackStage::FireAtTarget);
+                    plan.clear_destination = true;
+                }
+            } else {
+                plan.secondary_desired = Some(context.fire_direction_from_aircraft_to_navcom);
+                plan.delay = HuntDelay::Ticks(1);
+                plan.return_immediately = true;
+            }
+            if !plan.return_immediately {
+                plan.delay = HuntDelay::Ticks(1);
+                plan.return_immediately = true;
+            }
+        }
+        AircraftAttackStage::FireAtTarget | AircraftAttackStage::FireAtTargetSecondShot => {
+            if !context.target_is_legal {
+                plan.next_stage = Some(AircraftAttackStage::ReturnToBase);
+                plan.delay = HuntDelay::Ticks(1);
+                plan.return_immediately = true;
+                return plan;
+            }
+            plan.primary_desired = Some(context.direction_to_target);
+            plan.secondary_desired = Some(context.direction_to_target);
+            let second_shot = context.stage == AircraftAttackStage::FireAtTargetSecondShot;
+            match context.fire_result {
+                AircraftAttackFireResult::Cloaked => {
+                    plan.do_uncloak = true;
+                }
+                AircraftAttackFireResult::Ok => {
+                    plan.fire_target = true;
+                    plan.notify_target_incoming = true;
+                    if !second_shot {
+                        plan.next_stage = Some(AircraftAttackStage::FireAtTargetSecondShot);
+                    } else if context.ammo != 0 {
+                        plan.next_stage = Some(if context.curley_shuffle {
+                            AircraftAttackStage::PickAttackLocation
+                        } else {
+                            AircraftAttackStage::FireAtTarget
+                        });
+                    } else {
+                        plan.next_stage = Some(AircraftAttackStage::ReturnToBase);
+                    }
+                }
+                AircraftAttackFireResult::Rearm => {}
+                AircraftAttackFireResult::Facing if !second_shot => {}
+                AircraftAttackFireResult::Facing => {
+                    plan.next_stage = Some(if context.ammo == 0 {
+                        AircraftAttackStage::ReturnToBase
+                    } else if !context.target_is_in_weapon_range {
+                        AircraftAttackStage::PickAttackLocation
+                    } else if context.curley_shuffle {
+                        AircraftAttackStage::PickAttackLocation
+                    } else {
+                        AircraftAttackStage::FireAtTarget
+                    });
+                }
+                AircraftAttackFireResult::InRange
+                | AircraftAttackFireResult::Ammo
+                | AircraftAttackFireResult::Cant
+                | AircraftAttackFireResult::Illegal
+                | AircraftAttackFireResult::Other(_) => {
+                    plan.next_stage = Some(if context.ammo == 0 {
+                        AircraftAttackStage::ReturnToBase
+                    } else if !second_shot {
+                        AircraftAttackStage::FireAtTargetSecondShot
+                    } else if !context.target_is_in_weapon_range || context.curley_shuffle {
+                        AircraftAttackStage::PickAttackLocation
+                    } else {
+                        AircraftAttackStage::FireAtTarget
+                    });
+                }
+            }
+            plan.delay = HuntDelay::Ticks(1);
+            plan.return_immediately = true;
+        }
+        AircraftAttackStage::ReturnToBase => {
+            plan.clear_target = context.ammo == 0 && (context.is_loaner || context.house_is_human);
+            plan.clear_destination = true;
+            plan.enter_idle_mode = true;
+        }
+        AircraftAttackStage::Unknown(_) => {}
+    }
+    plan
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -4194,6 +4436,176 @@ mod tests {
             base_guard_area_delay: 7,
         });
         assert_eq!(attack.mission_to_assign, Some(AircraftMission::Attack));
+    }
+
+    fn attack_context() -> AircraftAttackContext {
+        AircraftAttackContext {
+            fixed_wing: false,
+            stage: AircraftAttackStage::ValidateAttackZone,
+            target_is_legal: true,
+            navcom_is_legal: true,
+            selected_attack_cell: Some(200),
+            takeoff_completed: false,
+            in_radio_contact_with_building: true,
+            direction_to_navcom: DirType::EAST,
+            secondary_facing_current: DirType::NORTH,
+            direction_to_target: DirType::SOUTH,
+            fire_direction_from_aircraft_to_navcom: DirType::NORTH_EAST,
+            distance_to_navcom: 1000,
+            fire_result: AircraftAttackFireResult::Other(0),
+            ammo: 5,
+            target_is_in_weapon_range: true,
+            is_loaner: false,
+            house_is_human: false,
+            curley_shuffle: false,
+            normal_delay: 5,
+            random_delay_0_to_2: 1,
+        }
+    }
+
+    #[test]
+    fn fixed_wing_attack_delegates_to_hunt_mission() {
+        let plan = aircraft_mission_attack(AircraftAttackContext {
+            fixed_wing: true, ..attack_context()
+        });
+        assert!(plan.delegate_to_hunt);
+        assert!(plan.return_immediately);
+    }
+
+    #[test]
+    fn rotor_attack_validates_zone_and_selects_attack_position_before_takeoff() {
+        let valid = aircraft_mission_attack(attack_context());
+        assert_eq!(valid.next_stage, Some(AircraftAttackStage::PickAttackLocation));
+        let invalid = aircraft_mission_attack(AircraftAttackContext {
+            target_is_legal: false, ..attack_context()
+        });
+        assert_eq!(invalid.next_stage, Some(AircraftAttackStage::ReturnToBase));
+
+        let pick = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::PickAttackLocation, ..attack_context()
+        });
+        assert_eq!(pick.assign_destination_to_attack_cell, Some(200));
+        assert_eq!(pick.next_stage, Some(AircraftAttackStage::TakeOff));
+        let no_cell = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::PickAttackLocation,
+            selected_attack_cell: None, ..attack_context()
+        });
+        assert_eq!(no_cell.next_stage, Some(AircraftAttackStage::ReturnToBase));
+    }
+
+    #[test]
+    fn rotor_attack_takeoff_skews_body_and_breaks_helipad_contact() {
+        let pending = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::TakeOff,
+            takeoff_completed: false, ..attack_context()
+        });
+        assert!(pending.process_takeoff);
+        assert_eq!(pending.delay, HuntDelay::Ticks(1));
+        assert_eq!(pending.next_stage, None);
+
+        let complete = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::TakeOff,
+            takeoff_completed: true, ..attack_context()
+        });
+        assert_eq!(complete.next_stage, Some(AircraftAttackStage::FlyToPosition));
+        assert!(complete.break_radio_contact);
+        assert_eq!(complete.set_primary_current, Some(DirType::EAST));
+    }
+
+    #[test]
+    fn rotor_attack_flies_to_navcom_then_faces_target_and_stops_at_fire_point() {
+        let approach = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::FlyToPosition,
+            distance_to_navcom: 0x0300, ..attack_context()
+        });
+        assert_eq!(approach.secondary_desired, Some(DirType::NORTH_EAST));
+        assert_eq!(approach.delay, HuntDelay::Ticks(1));
+
+        let near = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::FlyToPosition,
+            distance_to_navcom: 0x0100, ..attack_context()
+        });
+        assert_eq!(near.secondary_desired, Some(DirType::SOUTH));
+        assert_eq!(near.next_stage, None);
+
+        let arrived = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::FlyToPosition,
+            distance_to_navcom: 0x000F, ..attack_context()
+        });
+        assert_eq!(arrived.next_stage, Some(AircraftAttackStage::FireAtTarget));
+        assert!(arrived.clear_destination);
+
+        let missing_navcom = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::FlyToPosition,
+            navcom_is_legal: false, ..attack_context()
+        });
+        assert_eq!(missing_navcom.next_stage, Some(AircraftAttackStage::PickAttackLocation));
+    }
+
+    #[test]
+    fn rotor_attack_firing_handles_cloak_rearm_first_and_second_shot() {
+        let cloaked = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::FireAtTarget,
+            fire_result: AircraftAttackFireResult::Cloaked, ..attack_context()
+        });
+        assert!(cloaked.do_uncloak);
+        assert!(!cloaked.fire_target);
+
+        let first = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::FireAtTarget,
+            fire_result: AircraftAttackFireResult::Ok, ..attack_context()
+        });
+        assert!(first.fire_target && first.notify_target_incoming);
+        assert_eq!(first.next_stage, Some(AircraftAttackStage::FireAtTargetSecondShot));
+
+        let rearm = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::FireAtTarget,
+            fire_result: AircraftAttackFireResult::Rearm, ..attack_context()
+        });
+        assert_eq!(rearm.next_stage, None);
+
+        let second = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::FireAtTargetSecondShot,
+            fire_result: AircraftAttackFireResult::Ok,
+            ammo: 3,
+            curley_shuffle: true,
+            ..attack_context()
+        });
+        assert_eq!(second.next_stage, Some(AircraftAttackStage::PickAttackLocation));
+    }
+
+    #[test]
+    fn rotor_attack_failed_second_shot_repositions_or_returns_to_base() {
+        let reposition = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::FireAtTargetSecondShot,
+            fire_result: AircraftAttackFireResult::Other(1),
+            target_is_in_weapon_range: false,
+            ammo: 3,
+            ..attack_context()
+        });
+        assert_eq!(reposition.next_stage, Some(AircraftAttackStage::PickAttackLocation));
+        let dry = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::FireAtTargetSecondShot,
+            fire_result: AircraftAttackFireResult::Ammo,
+            ammo: 0,
+            ..attack_context()
+        });
+        assert_eq!(dry.next_stage, Some(AircraftAttackStage::ReturnToBase));
+    }
+
+    #[test]
+    fn rotor_attack_return_clears_targets_for_empty_loaner_or_human_aircraft() {
+        let human = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::ReturnToBase,
+            ammo: 0, house_is_human: true, ..attack_context()
+        });
+        assert!(human.clear_target && human.clear_destination && human.enter_idle_mode);
+        let computer_with_ammo = aircraft_mission_attack(AircraftAttackContext {
+            stage: AircraftAttackStage::ReturnToBase,
+            ammo: 1, house_is_human: false, is_loaner: false, ..attack_context()
+        });
+        assert!(!computer_with_ammo.clear_target);
+        assert!(computer_with_ammo.clear_destination && computer_with_ammo.enter_idle_mode);
     }
 
     #[test]
