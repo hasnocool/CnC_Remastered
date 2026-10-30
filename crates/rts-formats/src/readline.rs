@@ -133,7 +133,7 @@ mod tests {
         let mut eof = false;
 
         assert_eq!(read_line(&mut source, &mut output, &mut eof).unwrap(), 4);
-        assert_eq!(&output, b"abcd");
+        assert_eq!(&output[..], b"abcd\\0");
         assert_eq!(read_line(&mut source, &mut output, &mut eof).unwrap(), 1);
         assert_eq!(&output[..2], b"Z\0");
     }
