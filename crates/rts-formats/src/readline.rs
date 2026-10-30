@@ -38,7 +38,10 @@ pub fn trim_c_buffer(buffer: &mut [u8]) -> usize {
         return 0;
     }
 
-    let nul = buffer.iter().position(|byte| *byte == 0).unwrap_or(buffer.len());
+    let nul = buffer
+        .iter()
+        .position(|byte| *byte == 0)
+        .unwrap_or_else(|| buffer.len().saturating_sub(1));
     let mut start = 0;
     while start < nul && buffer[start].is_ascii_whitespace() {
         start += 1;
