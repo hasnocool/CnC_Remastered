@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **213**
-- Not yet fully ported: **281**
+- Fully ported: **214**
+- Not yet fully ported: **280**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 118 | 157 |
+| `REDALERT/` | 275 | 119 | 156 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 39 | 122 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -95,7 +95,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/DRIVE.CPP` | — |
 | Complete | `REDALERT/DROP.CPP` | rts-core/src/drop_list.rs — dropdown construction geometry, item selection, peer routing, expand/collapse, position updates, redraw and zap/remove lifecycle. |
 | Complete | `REDALERT/DTABLE.CPP` | rts-formats/src/adpcm.rs — exact 1,424-entry ADPCM difference table. |
-| Not started | `REDALERT/DYNAVEC.CPP` | — |
+| Complete | `REDALERT/DYNAVEC.CPP` | No active implementation in the pinned translation unit; the entire DynamicVectorClass template implementation is enclosed by unconditional `#if (0)` through end-of-file. The active template is defined in VECTOR.H and is covered by the existing vector module. |
 | Not started | `REDALERT/EDIT.CPP` | — |
 | Not started | `REDALERT/EGOS.CPP` | — |
 | Complete | `REDALERT/ENDING.CPP` | No active implementation in the pinned source; both GDI_Ending and Nod_Ending bodies are enclosed by #ifdef NEVER. |
