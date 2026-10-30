@@ -1124,6 +1124,100 @@ pub fn what_action_cell(
     action
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftSightRequest {
+    pub house_id: u32,
+    pub sight_range: u8,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftFireAtPath {
+    ParadropCargo,
+    CameraSnapshot,
+    StandardWeapon,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AircraftFireAtPlan {
+    pub path: AircraftFireAtPath,
+    pub sight_requests: Vec<AircraftSightRequest>,
+    pub clear_ammo: bool,
+    pub rearm_timer_after_call: Option<i32>,
+    pub call_base_fire: bool,
+    pub return_bullet: bool,
+    pub dropping_bullet_speed: Option<(u8, &'static str)>,
+}
+
+/// Port of AircraftClass::Fire_At. Sight recipients are supplied by the
+/// multiplayer/session adapter after applying the source's player-house
+/// alliance checks. The plan contains no renderer, network or sound calls.
+pub fn aircraft_fire_at_plan(
+    has_attached_passenger: bool,
+    primary_weapon_is_camera: bool,
+    is_glyphx_multiplayer: bool,
+    own_house_id: u32,
+    own_house_is_ally_to_player: bool,
+    glyphx_visible_allied_house_ids: &[u32],
+    owner_house_id_if_human: Option<u32>,
+    base_bullet_created: bool,
+    base_bullet_is_dropping: bool,
+    second_shot: bool,
+    rearm_delay: i32,
+) -> AircraftFireAtPlan {
+    if has_attached_passenger {
+        return AircraftFireAtPlan {
+            path: AircraftFireAtPath::ParadropCargo,
+            sight_requests: Vec::new(),
+            clear_ammo: false,
+            rearm_timer_after_call: None,
+            call_base_fire: false,
+            return_bullet: false,
+            dropping_bullet_speed: None,
+        };
+    }
+    if primary_weapon_is_camera {
+        let sight_requests = if is_glyphx_multiplayer {
+            glyphx_visible_allied_house_ids.iter().copied()
+                .map(|house_id| AircraftSightRequest { house_id, sight_range: 9 })
+                .collect()
+        } else if own_house_is_ally_to_player {
+            vec![AircraftSightRequest { house_id: own_house_id, sight_range: 9 }]
+        } else {
+            Vec::new()
+        };
+        let _ = second_shot; // used by the upstream Rearm_Delay callback, not the result itself.
+        return AircraftFireAtPlan {
+            path: AircraftFireAtPath::CameraSnapshot,
+            sight_requests,
+            clear_ammo: true,
+            rearm_timer_after_call: Some(rearm_delay),
+            call_base_fire: false,
+            return_bullet: false,
+            dropping_bullet_speed: None,
+        };
+    }
+
+    let mut sight_requests = Vec::new();
+    if base_bullet_created {
+        if let Some(owner_house_id) = owner_house_id_if_human {
+            sight_requests.push(AircraftSightRequest { house_id: owner_house_id, sight_range: 1 });
+        }
+    }
+    AircraftFireAtPlan {
+        path: AircraftFireAtPath::StandardWeapon,
+        sight_requests,
+        clear_ammo: false,
+        rearm_timer_after_call: None,
+        call_base_fire: true,
+        return_bullet: base_bullet_created,
+        dropping_bullet_speed: if base_bullet_created && base_bullet_is_dropping {
+            Some((40, "MPH_MEDIUM_SLOW"))
+        } else {
+            None
+        },
+    }
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -1876,6 +1970,63 @@ mod tests {
             what_action_object(Select, AircraftObjectActionContext { repair_building_has_attached_object: true, ..repair }),
             Select
         );
+    }
+
+    #[test]
+    fn fire_at_prioritizes_paradrop_cargo_over_camera_and_base_weapon() {
+        let plan = aircraft_fire_at_plan(
+            true, true, true, 1, true, &[1, 2], Some(1),
+            true, true, false, 10,
+        );
+        assert_eq!(plan.path, AircraftFireAtPath::ParadropCargo);
+        assert!(plan.sight_requests.is_empty());
+        assert!(!plan.clear_ammo);
+        assert!(!plan.call_base_fire);
+        assert!(!plan.return_bullet);
+        assert_eq!(plan.dropping_bullet_speed, None);
+    }
+
+    #[test]
+    fn camera_fire_consumes_ammo_rearms_and_reveals_correct_houses() {
+        let single = aircraft_fire_at_plan(
+            false, true, false, 7, true, &[7, 8], Some(7),
+            false, false, true, 30,
+        );
+        assert_eq!(single.path, AircraftFireAtPath::CameraSnapshot);
+        assert_eq!(single.sight_requests, [AircraftSightRequest { house_id: 7, sight_range: 9 }]);
+        assert!(single.clear_ammo);
+        assert_eq!(single.rearm_timer_after_call, Some(30));
+        assert!(!single.call_base_fire);
+
+        let multiplayer = aircraft_fire_at_plan(
+            false, true, true, 7, false, &[7, 9, 12], Some(7),
+            false, false, false, 40,
+        );
+        assert_eq!(multiplayer.sight_requests, [
+            AircraftSightRequest { house_id: 7, sight_range: 9 },
+            AircraftSightRequest { house_id: 9, sight_range: 9 },
+            AircraftSightRequest { house_id: 12, sight_range: 9 },
+        ]);
+    }
+
+    #[test]
+    fn standard_fire_reveals_for_human_owner_and_speeds_dropping_bullets() {
+        let plan = aircraft_fire_at_plan(
+            false, false, false, 7, false, &[], Some(8),
+            true, true, false, 0,
+        );
+        assert_eq!(plan.path, AircraftFireAtPath::StandardWeapon);
+        assert_eq!(plan.sight_requests, [AircraftSightRequest { house_id: 8, sight_range: 1 }]);
+        assert!(plan.call_base_fire);
+        assert!(plan.return_bullet);
+        assert_eq!(plan.dropping_bullet_speed, Some((40, "MPH_MEDIUM_SLOW")));
+        let no_bullet = aircraft_fire_at_plan(
+            false, false, false, 7, false, &[], None,
+            false, true, false, 0,
+        );
+        assert!(no_bullet.sight_requests.is_empty());
+        assert!(!no_bullet.return_bullet);
+        assert_eq!(no_bullet.dropping_bullet_speed, None);
     }
 
     #[test]
