@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 343 C++ translation units with source-specific tests.
+- [ ] Port the remaining 341 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -181,3 +181,5 @@
 - [x] Record REDALERT/TOOLTIP.CPP as inactive because its complete implementation is guarded by #if (0).
 
 - [x] Port both SCROLL.CPP variants' constructor/timer setup, autoscroll state, Init_IO and active HelpClass::AI delegation.
+
+- [x] Port both SHAPEBTN.CPP variants' shape assignment, draw gate, frame selection and conditional mouse visibility.
