@@ -154,7 +154,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/LINK.CPP` | rts-core/src/link.rs — arena-backed LinkClass insertion, traversal, head/tail, unlink, and list-position assignment. |
 | Complete | `REDALERT/LIST.CPP` | rts-core/src/list_box.rs — ListClass item management, pointer-equivalent item lookup/removal, selection correction, keyboard/mouse actions, viewport clamping, auto-scrollbar lifecycle, peer notifications, gadget-chain insertion/removal ordering, row painting, gradient/selection colors and mouse hide/restore callbacks. |
 | Not started | `REDALERT/LOADDLG.CPP` | — |
-| Not started | `REDALERT/LOGIC.CPP` | — |
+| Partial | `REDALERT/LOGIC.CPP` | rts-core/src/red_alert_logic.rs — AI frame scheduling, mission timer trigger/reminder handling, shadow growth, team/object/factory/house order, Chronal Vortex and time-quake adapters, mutation-safe object iteration, version-gated house/auto-sonar behavior, trigger detach, and recently-created cleanup. The optional CHEAT_KEYS monochrome Debug_Dump visualization remains unported; not included in completed count. |
 | Complete | `REDALERT/LZO1X_C.CPP` | rts-formats/src/lzo1x.rs — deterministic LZO1X-1 compressor. |
 | Complete | `REDALERT/LZO1X_D.CPP` | rts-formats/src/lzo1x.rs — bounds-checked LZO1X decoder. |
 | Complete | `REDALERT/LZOPIPE.CPP` | rts-formats/src/lzo_blocks.rs — framed push block stream. |
