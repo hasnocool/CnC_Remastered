@@ -79,4 +79,4 @@ No Rust build/test result is claimed in this commit. The execution environment u
 Latest addition: `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` → `crates/rts-core/src/legacy_new_delete.rs` (scalar/array allocation operator delegation).
 
 Latest additions: `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` and `MORPHPAL.CPP` → `crates/rts-formats/src/palette_fade.rs`.
-Latest addition: REDALERT/ENDING.CPP has no active implementation; both ending functions are entirely #ifdef NEVER-disabled.
+Latest addition: TIBERIANDAWN/ENDING.CPP → rts-core/src/ending.rs with GDI/Nod endings, target selection, cleanup and trailer flows.
