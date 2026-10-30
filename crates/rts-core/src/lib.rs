@@ -110,3 +110,4 @@ pub mod game_constants;
 pub mod message_box;
 pub mod visual_controls;
 pub mod tab;
+pub mod progress_bar;

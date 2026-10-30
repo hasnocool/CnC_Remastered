@@ -286,3 +286,4 @@
 - [x] Port `TIBERIANDAWN/MSGBOX.CPP` overloads and modal behavior as a resumable Rust state machine, including bounded message staging, geometry, 1–3 button mapping, keyboard focus, no-button timer callback, surface restoration and preserved-region restore.
 - [x] Port `TIBERIANDAWN/VISUDLG.CPP` and its `SliderClass` interaction semantics: 320/640 dialog layout, four option sliders, 20-unit bump behavior, reset values, six-position keyboard navigation, callback and restored-surface redraw.
 - [x] Port `TIBERIANDAWN/TAB.CPP`, retaining its active code paths and `#if 0` tab-painting behavior: One_Time geometry/asset setup, highlight, click activation, scroll-mod hit testing, credits AI, sidebar AI/draw delegation and redraw invalidation.
+- [x] Port `REDALERT/BAR.CPP` using the existing Fixed16 type, including Q16.16 update threshold, unsigned subtraction wrap, redraw cache, outline and source-specific horizontal/vertical rectangle coordinates.

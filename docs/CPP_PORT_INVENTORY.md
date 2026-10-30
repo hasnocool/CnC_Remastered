@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **249**
-- Not yet fully ported: **245**
+- Fully ported: **250**
+- Not yet fully ported: **244**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -33,7 +33,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/AUDIO.CPP` | — |
 | Complete | `REDALERT/B64PIPE.CPP` | rts-formats/src/base64_streams.rs — Base64 push adapter. |
 | Complete | `REDALERT/B64STRAW.CPP` | rts-formats/src/base64_streams.rs — Base64 pull adapter. |
-| Not started | `REDALERT/BAR.CPP` | — |
+| Complete | `REDALERT/BAR.CPP` | rts-core/src/progress_bar.rs — Q16.16 update threshold, unsigned wraparound redraw behavior, orientation, optional outline, exact horizontal/vertical fill and background rectangles, mouse hide/show and last-rendered tracking. |
 | Not started | `REDALERT/BASE.CPP` | — |
 | Complete | `REDALERT/BASE64.CPP` | rts-formats/src/base64.rs — Base64 packet encoder/decoder. |
 | Not started | `REDALERT/BBDATA.CPP` | — |
