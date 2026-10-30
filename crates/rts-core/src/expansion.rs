@@ -6,7 +6,6 @@
 //! narrow adapters; the scenario ranges, ordering, state changes and redraw
 //! decisions remain in this module.
 
-use std::collections::BTreeMap;
 use std::collections::VecDeque;
 
 /// Scenario factions used by the expansion list and the original filename builder.
@@ -96,7 +95,7 @@ pub fn read_basic_name(ini_prefix: &[u8]) -> String {
     let mut in_basic_section = false;
 
     for raw_line in text.lines() {
-        let line = raw_line.trim_matches([' ', '\t', '\r', '\0']);
+        let line = raw_line.trim_matches(|character| matches!(character, ' ' | '\t' | '\r' | '\0'));
         if line.is_empty() || line.starts_with(';') || line.starts_with('#') {
             continue;
         }
@@ -761,7 +760,8 @@ mod tests {
     #[test]
     fn cancel_resets_player_to_gdi_but_keeps_selected_scenario_number() {
         let mut source = MockSource::default();
-        source.files.insert((24, ExpansionFaction::Nod), b"[Basic]\nName=N\n".to_vec());
+        source.files.insert((61, ExpansionFaction::Nod), Vec::new());
+        source.bonus_names.insert(4, "Bonus five".to_owned());
         let mut host = MockHost {
             width: 640,
             inputs: VecDeque::from([
@@ -769,10 +769,15 @@ mod tests {
             ]),
             ..MockHost::default()
         };
-        let selected = bonus_dialog(&source, &mut host);
-        // Bonus_Dialog has its own 60-series catalogue; the single 24 entry is
-        // not exposed there, so its empty-list guard safely avoids null access.
-        assert_eq!(selected, Err(ExpansionDialogError::NoAvailableScenarios));
+        let selected = bonus_dialog(&source, &mut host).unwrap();
+        assert_eq!(selected, ExpansionSelection {
+            accepted: false,
+            scenario: 61,
+            player: ExpansionFaction::Gdi,
+            direction_east: true,
+            house_good: true,
+        });
+        assert_eq!(host.captions, vec![ExpansionCaption::BonusMissions]);
     }
 
     #[test]
