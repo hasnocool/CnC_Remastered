@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **222**
-- Not yet fully ported: **272**
+- Fully ported: **223**
+- Not yet fully ported: **271**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 123 | 152 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 43 | 118 |
+| `TIBERIANDAWN/` | 161 | 44 | 117 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -468,7 +468,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/SLIDER.CPP` | — |
 | Not started | `TIBERIANDAWN/SMUDGE.CPP` | — |
 | Not started | `TIBERIANDAWN/SOUNDDLG.CPP` | — |
-| Not started | `TIBERIANDAWN/SPECIAL.CPP` | — |
+| Complete | `TIBERIANDAWN/SPECIAL.CPP` | rts-core/src/special_options.rs — SpecialClass default initialization, exact ten-option checkbox table, local snapshot editing, checkbox toggles, OK/Escape event commit, Cancel discard, non-normal Main_Loop exit and surface-restore redraw/cleanup. |
 | Not started | `TIBERIANDAWN/STARTUP.CPP` | — |
 | Not started | `TIBERIANDAWN/STATS.CPP` | — |
 | Not started | `TIBERIANDAWN/SUPER.CPP` | — |
