@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 262 C++ translation units with source-specific tests.
+- [ ] Port the remaining 261 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -266,3 +266,5 @@
 - [x] Verify REDALERT/LZWOTRAW.CPP is excluded from both pinned project files and contains unresolved staging-buffer/pointer references; record it as a non-build orphan rather than fabricating an implementation.
 
 - [x] Port TIBERIANDAWN/TARCOM.CPP target-computer AI: parent turret callback, primary/secondary firing fallback, sound, facing/error handling, cloak, and target-dependent hull/turret alignment.
+
+- [x] Port REDALERT/FACE.CPP Desired_Facing8/256, DirType values and wrapping direction arithmetic using its exact ratio/diagonal logic.
