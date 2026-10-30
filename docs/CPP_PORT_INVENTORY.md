@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **245**
-- Not yet fully ported: **249**
+- Fully ported: **246**
+- Not yet fully ported: **248**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 136 | 139 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 53 | 108 |
+| `TIBERIANDAWN/` | 161 | 54 | 107 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -361,7 +361,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/CONFDLG.CPP` | rts-core/src/confirmation_dialog.rs — interactive modal confirmation state machine, exact factor-scaled window/button geometry, default No focus, Yes/No/Escape/Enter/arrow input, game callback/main-loop exit handling and surface-restore redraw. |
 | Complete | `TIBERIANDAWN/CONNECT.CPP` | rts-core/src/connection.rs — abstract connection base state, 8-byte Win32 packet header layout, queue-service short-circuit semantics, retry/timeout settings, 60 Hz legacy time conversion and command names. |
 | Not started | `TIBERIANDAWN/CONQUER.CPP` | — |
-| Not started | `TIBERIANDAWN/CONST.CPP` | — |
+| Complete | `TIBERIANDAWN/CONST.CPP` | rts-core/src/game_constants.rs — source names, coordinate/facing tables, 25 weapon profiles, 12 warheads, seven ground movement profiles, four theater records and all seven 256-byte remap tables. |
 | Not started | `TIBERIANDAWN/CONTROL.CPP` | — |
 | Not started | `TIBERIANDAWN/COORD.CPP` | — |
 | Complete | `TIBERIANDAWN/CREDITS.CPP` | rts-core/src/credits.rs — CreditClass constructor, nullable-player handling, nonnegative balance clamp, 1..143 step approach, countdown/audio direction, forced synchronization, logic-only redraw suppression, resolution-aware tab position and dirty/forced rendering. |
