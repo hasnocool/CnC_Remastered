@@ -79,4 +79,4 @@ No Rust build/test result is claimed in this commit. The execution environment u
 Latest addition: `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` → `crates/rts-core/src/legacy_new_delete.rs` (scalar/array allocation operator delegation).
 
 Latest additions: `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` and `MORPHPAL.CPP` → `crates/rts-formats/src/palette_fade.rs`.
-Latest addition: REDALERT/MPLIB.CPP → rts-core/src/mgen.rs with injectable MGen VxD register/interrupt operations.
+Latest addition: REDALERT/WOLSTRNG.CPP → rts-core/src/wol_strings.rs with all 187 English resource constants from the active project language branch.
