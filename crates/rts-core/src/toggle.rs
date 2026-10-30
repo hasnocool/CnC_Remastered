@@ -154,7 +154,8 @@ mod tests {
         state.is_toggle_type = true;
         state.is_pressed = true;
         let mut host = FakeHost::default();
-        state.action(LEFT_RELEASE, &mut 0, 100, 100, &mut host);
+        let mut key = 0;
+        state.action(LEFT_RELEASE, &mut key, 100, 100, &mut host);
         assert!(!state.is_on);
         assert!(!state.is_pressed);
         assert_eq!(host.redraws, 1);
@@ -177,8 +178,9 @@ mod tests {
         let mut ra = ToggleState::new(ToggleVariant::RedAlert, 1, 10, 10, 20, 20);
         let mut td = ToggleState::new(ToggleVariant::TiberianDawn, 1, 10, 10, 20, 20);
         let mut host = FakeHost::default();
-        ra.action(0, &mut 0, 0, 0, &mut host);
-        td.action(0, &mut 0, 0, 0, &mut host);
+        let mut key = 0;
+        ra.action(0, &mut key, 0, 0, &mut host);
+        td.action(0, &mut key, 0, 0, &mut host);
         assert!(ra.is_pressed);
         assert!(!td.is_pressed);
     }
