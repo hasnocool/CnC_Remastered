@@ -196,10 +196,12 @@ impl LzoPipe {
                 let mut output = Vec::new();
 
                 if let Some(header) = self.header.take() {
-                    // Source LZOPipe flushes an incomplete compressed block
-                    // as its original header followed by the incomplete body.
-                    header.write(&mut output);
-                    output.extend_from_slice(&self.raw);
+                    // Source LZOPipe only forwards a partial block when at
+                    // least one compressed payload byte has accumulated.
+                    if !self.raw.is_empty() {
+                        header.write(&mut output);
+                        output.extend_from_slice(&self.raw);
+                    }
                     self.raw.clear();
                 } else {
                     // A truncated header is passed through as raw data.
