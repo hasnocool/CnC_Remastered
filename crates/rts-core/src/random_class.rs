@@ -122,7 +122,7 @@ mod tests {
     fn maximum_supported_significance_is_fifteen_bits() {
         let mut random = RandomClass::new(1);
         for _ in 0..1_000 {
-            assert!(u32::from(random.next()) <= Self::MAX_VALUE);
+            assert!(u32::from(random.next()) <= RandomClass::MAX_VALUE);
         }
     }
 }
