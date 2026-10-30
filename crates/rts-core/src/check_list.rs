@@ -224,9 +224,7 @@ impl CheckListController {
                 }
             }
             CheckListVariant::TiberianDawn => {
-                if let Some(first) = unsafe_free_first_byte_mut(&mut item.text) {
-                    *first = if checked { CHECK_CHAR } else { UNCHECK_CHAR };
-                }
+                set_first_marker(&mut item.text, if checked { CHECK_CHAR } else { UNCHECK_CHAR });
             }
         }
     }
@@ -309,12 +307,11 @@ impl CheckListController {
 
 /// Accesses and updates the first UTF-8 byte for the legacy Tiberian Dawn
 /// row-string representation. The checkmark is ASCII control byte 0x03.
-fn unsafe_free_first_byte_mut(text: &mut String) -> Option<&mut u8> {
-    if text.is_empty() { return None; }
-    // The first byte is always overwritten with a single-byte ASCII value.
-    // Use safe byte-vector replacement to preserve UTF-8 validity.
-    let bytes = unsafe { text.as_mut_vec() };
-    bytes.first_mut()
+fn set_first_marker(text: &mut String, marker: u8) -> bool {
+    let Some(first) = text.chars().next() else { return false };
+    let replacement = char::from(marker).to_string();
+    text.replace_range(0..first.len_utf8(), &replacement);
+    true
 }
 
 #[cfg(test)]
