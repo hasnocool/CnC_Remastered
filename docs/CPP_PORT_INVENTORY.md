@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **280**
-- Not yet fully ported: **214**
+- Fully ported: **281**
+- Not yet fully ported: **213**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 147 | 128 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 63 | 98 |
+| `TIBERIANDAWN/` | 161 | 64 | 97 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -393,7 +393,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/GAMEDLG.CPP` | rts-core/src/game_controls.rs — exact resolution-scaled layout, inverted 0–6 speed/scroll sliders, keyboard focus traversal, event-queued multiplayer gamespeed update, save-time temporary GameSpeed substitution/restoration, visual/sound subdialog routing and no-sound-card message path. |
 | Not started | `TIBERIANDAWN/GAUGE.CPP` | — |
 | Not started | `TIBERIANDAWN/GLOBALS.CPP` | — |
-| Not started | `TIBERIANDAWN/GOPTIONS.CPP` | — |
+| Complete | `TIBERIANDAWN/GOPTIONS.CPP` | rts-core/src/tiberian_dawn_game_options.rs — resolution geometry, seven-button layout and multiplayer visibility, French Resume sizing, keyboard/mouse cursor navigation, resumable Process loop, load/save/delete/resign/game/quit/restate actions, Japanese quit result mapping, briefing/action movie and palette sequence, version display metadata, caption filigree selection/underline geometry, and two-callback final cleanup. |
 | Not started | `TIBERIANDAWN/GSCREEN.CPP` | — |
 | Complete | `TIBERIANDAWN/HDATA.CPP` | rts-core/src/house.rs — ten-house catalogue, names/IDs, INI names, three-character suffixes, display-name resources, radar colors, remap table/color mapping, default gameplay biases, case-insensitive name lookup and One_Time Jurassic Park color adjustment. |
 | Complete | `TIBERIANDAWN/HEAP.CPP` | rts-core/src/heap.rs — fixed and indexed heaps with first-false allocation, free-map and active-pointer management, byte-slot clearing, FileClass Save / raw block Load representation, and pointer code/decode callbacks. |
