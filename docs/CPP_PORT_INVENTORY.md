@@ -13,7 +13,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 15 | 11 |
+| `REDALERT/WIN32LIB/` | 26 | 16 | 10 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 19 | 13 |
 
@@ -320,7 +320,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/LOAD.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/LOADFONT.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/MOUSEWW.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/PALETTE.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/PALETTE.CPP` | rts-formats/src/palette_fade.rs — byte-identical shared implementation with Tiberian Dawn; IBM palette copy/set, bump-rate calculation, bounded fade steps. |
 | Complete | `REDALERT/WIN32LIB/SET_FONT.CPP` | rts-core/src/font.rs — previous font return, little-endian block offsets, width/height metrics. |
 | Complete | `REDALERT/WIN32LIB/TIMER.CPP` | rts-core/src/legacy_timer.rs — tick-source selection, accumulated elapsed time, start/stop/set/reset. |
 | Complete | `REDALERT/WIN32LIB/TIMERDWN.CPP` | rts-core/src/legacy_timer.rs — countdown timer set/time/start/stop/reset semantics. |
