@@ -280,3 +280,31 @@ mod tests {
         assert_eq!(*flushes.borrow(), 1);
     }
 }
+
+
+/// Compatibility sink interface used by streaming codecs and checksum adapters.
+pub trait PipeSink {
+    fn put(&mut self, source: &[u8]) -> usize;
+
+    fn flush(&mut self) -> usize {
+        0
+    }
+
+    fn end(&mut self) -> usize {
+        self.flush()
+    }
+}
+
+impl PipeSink for PipeHandle {
+    fn put(&mut self, source: &[u8]) -> usize {
+        PipeHandle::put(self, source)
+    }
+
+    fn flush(&mut self) -> usize {
+        PipeHandle::flush(self)
+    }
+
+    fn end(&mut self) -> usize {
+        PipeHandle::end(self)
+    }
+}
