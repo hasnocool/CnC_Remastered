@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 300 C++ translation units with source-specific tests.
+- [ ] Port the remaining 298 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -217,3 +217,5 @@
 - [x] Port both identical WIN32LIB/DDRAW.CPP translation units: active DirectDraw globals, capabilities, Set_DD_Palette conversion, Wait_Vert_Blank, Process_DD_Result and 20-entry SurfaceMonitorClass; Set_Video_Mode is the source's unconditional TRUE stub.
 
 - [x] Port REDALERT/CCDDE.CPP and TIBERIANDAWN/CCDDE.CPP DDE server identity, callback lifecycle, advisory packets, multiplayer-start payload ownership, tickle/heartbeat processing, heartbeat elapsed time and network-order WChat POKE framing.
+
+- [x] Verify REDALERT/DIBUTIL.CPP and REDALERT/DIBFILE.CPP are each entirely enclosed in #if (0) and record the Win32 DIB helpers as intentionally inactive.
