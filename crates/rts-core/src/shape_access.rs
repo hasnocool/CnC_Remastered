@@ -1,8 +1,8 @@
 //! Checked accessors ported from both variants' WIN32LIB/GETSHAPE.CPP.
 //!
 //! The packed legacy Shape_Type fields are decoded explicitly rather than
-//! relying on host alignment: Height@2, Width@4, OriginalHeight@6,
-//! ShapeSize@8, DataLength@10. Shape block offsets are signed 32-bit values
+//! relying on host alignment: Height@2, Width@3, OriginalHeight@5,
+//! ShapeSize@6, DataLength@8. Shape block offsets are signed 32-bit values
 //! beginning immediately after the 16-bit shape count.
 
 use std::fmt;
@@ -11,10 +11,10 @@ pub const SHAPE_HEADER_SIZE: usize = 12;
 pub const SHAPE_BLOCK_COUNT_SIZE: usize = 2;
 pub const SHAPE_BLOCK_OFFSET_SIZE: usize = 4;
 pub const SHAPE_HEIGHT_OFFSET: usize = 2;
-pub const SHAPE_WIDTH_OFFSET: usize = 4;
-pub const SHAPE_ORIGINAL_HEIGHT_OFFSET: usize = 6;
-pub const SHAPE_SIZE_OFFSET: usize = 8;
-pub const SHAPE_DATA_LENGTH_OFFSET: usize = 10;
+pub const SHAPE_WIDTH_OFFSET: usize = 3;
+pub const SHAPE_ORIGINAL_HEIGHT_OFFSET: usize = 5;
+pub const SHAPE_SIZE_OFFSET: usize = 6;
+pub const SHAPE_DATA_LENGTH_OFFSET: usize = 8;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ShapeAccessError {
@@ -110,10 +110,10 @@ mod tests {
     fn sample_shape() -> Vec<u8> {
         let mut shape = vec![0u8; SHAPE_HEADER_SIZE];
         shape[2] = 20;
-        shape[4..6].copy_from_slice(&48u16.to_le_bytes());
-        shape[6] = 24;
-        shape[8..10].copy_from_slice(&64u16.to_le_bytes());
-        shape[10..12].copy_from_slice(&96u16.to_le_bytes());
+        shape[3..5].copy_from_slice(&48u16.to_le_bytes());
+        shape[5] = 24;
+        shape[6..8].copy_from_slice(&64u16.to_le_bytes());
+        shape[8..10].copy_from_slice(&96u16.to_le_bytes());
         shape
     }
 
