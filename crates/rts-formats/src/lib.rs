@@ -26,6 +26,7 @@ pub mod straw;
 pub mod mix;
 pub mod palette;
 pub mod dipthong_tables;
+pub mod dipthong;
 
 pub use binary::{BinaryReadError, BinaryReader};
 pub use mix::{MixArchive, MixEntry, MixParseError};
