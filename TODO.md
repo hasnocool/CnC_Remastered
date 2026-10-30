@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 317 C++ translation units with source-specific tests.
+- [ ] Port the remaining 315 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -199,3 +199,5 @@
 - [x] Verify REDALERT/DEBUG.CPP and TIBERIANDAWN/DEBUG.CPP are entirely CHEAT_KEYS-guarded and that the pinned project configurations/headers do not define CHEAT_KEYS; record both as intentionally inactive.
 
 - [x] Verify TIBERIANDAWN/ALLOC.CPP has an unconditional #if (0) around its implementation and record it as intentionally inactive.
+
+- [x] Port REDALERT/NULLCONN.CPP active constructor/initialization, staging-buffer sizing, no-send stub, custom CRC and packet-overhead calculation; verify TIBERIANDAWN/NULLCONN.CPP is wholly #if (0).
