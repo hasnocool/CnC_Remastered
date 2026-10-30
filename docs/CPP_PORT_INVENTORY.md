@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **278**
-- Not yet fully ported: **216**
+- Fully ported: **279**
+- Not yet fully ported: **215**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 145 | 130 |
+| `REDALERT/` | 275 | 146 | 129 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 63 | 98 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -199,7 +199,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/PACKET.CPP` | — |
 | Complete | `REDALERT/PALETTEC.CPP` | rts-core/src/rgb_palette.rs — 256-entry palette construction/copy/equality, full and LUT-gated adjustment, closest-color search, 6-bit palette serialization and timed callback-driven palette fading. |
 | Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, unlink. |
-| Not started | `REDALERT/PK.CPP` | — |
+| Complete | `REDALERT/PK.CPP` | rts-core/src/public_key_class.rs — PKey constructor and DER import/export, modulus precision, plaintext/cipher block sizing and Block_Count edge behavior, whole-block modular-exponentiation Encrypt/Decrypt, fast exponent constant, active Generate no-op (its key-pair generation body is disabled by upstream #if (0)), and adapter into PKPipe/PKStraw's PublicKeyCipher contract. Multiprecision storage and modular exponentiation are supplied through a safe PKeyInteger backend trait. |
 | Complete | `REDALERT/PKPIPE.CPP` | rts-core/src/public_key_streams.rs — PKPipe constructor/state, PKey key enable/disable and flush, 56-byte Blowfish key generation, public-key block padding, key-first output, incremental decrypt-key accumulation, encrypted/plain key sizing, BlowPipe handoff, and intrusive Put_To rewiring. |
 | Complete | `REDALERT/PKSTRAW.CPP` | rts-core/src/public_key_streams.rs — PKStraw constructor/state, key changes and staging reset, RSA key-block fetch/decrypt, random session-key generation, split-read encrypted-key output, base Straw handoff, encrypted/plain key sizing, and intrusive Get_From rewiring. |
 | Not started | `REDALERT/POWER.CPP` | — |
