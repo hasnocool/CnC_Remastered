@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **250**
-- Not yet fully ported: **244**
+- Fully ported: **251**
+- Not yet fully ported: **243**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -169,7 +169,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/MAPEDPLC.CPP` | — |
 | Not started | `REDALERT/MAPEDSEL.CPP` | — |
 | Not started | `REDALERT/MAPEDTM.CPP` | — |
-| Not started | `REDALERT/MAPSEL.CPP` | — |
+| Complete | `REDALERT/MAPSEL.CPP` | rts-core/src/map_selection.rs — exact 2×14×3 country/scenario coordinate table, ant-mission filenames, inclusive mouse hit boxes, cursor animation parameters and persistent 1/6-second palette pulse state; preserves the source-disabled Map_Selection return-NULL behavior. |
 | Complete | `REDALERT/MCI.CPP` | No active implementation in the pinned RedAlert.vcxproj configuration; all functions are guarded by MCIMPEG, which is not defined. |
 | Complete | `REDALERT/MCIMOVIE.CPP` | No active implementation in the pinned RedAlert.vcxproj configuration; all functions are guarded by MCIMPEG, which is not defined. |
 | Not started | `REDALERT/MENUS.CPP` | — |

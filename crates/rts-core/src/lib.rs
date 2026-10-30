@@ -111,3 +111,4 @@ pub mod message_box;
 pub mod visual_controls;
 pub mod tab;
 pub mod progress_bar;
+pub mod map_selection;
