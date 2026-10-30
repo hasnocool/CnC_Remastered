@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 393 C++ translation units with source-specific tests.
+- [ ] Port the remaining 387 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -112,3 +112,6 @@
 - [x] Port byte-identical Red Alert/Tiberian Dawn `WINDOWS.CPP` text window state, control codes, dipthong decoding, substitutions, wrapping, scrolling and more-prompt operations to `rts-formats::window_text`.
 
 - [x] Port byte-identical Red Alert/Tiberian Dawn `GBUFFER.CPP` buffer/viewport geometry, DirectDraw state, lock nesting, restore handling and blit geometry to `rts-core::graphic_buffer`.
+
+- [x] Record both include-only CREW.CPP translation units and both #if (0)-disabled DPMI.CPP translation units as having no active implementation.
+- [x] Record REDALERT/MPU.CPP as inactive under the pinned MSVC target and port REDALERT/_WSPROTO.CPP's null PacketTransport initializer.
