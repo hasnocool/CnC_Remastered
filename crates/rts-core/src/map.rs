@@ -69,7 +69,7 @@ impl MapDimensions {
         cell.x < self.width && cell.y < self.height
     }
 
-    /// Row-major cell index, matching the engine's packed global cell grid.
+    /// Row-major cell index, matching the upstream editor's y * width + x calculation.
     pub const fn index(self, cell: CellCoord) -> Option<usize> {
         if self.contains(cell) {
             Some(cell.y as usize * self.width as usize + cell.x as usize)
