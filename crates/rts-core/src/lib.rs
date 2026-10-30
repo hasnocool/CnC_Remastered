@@ -119,3 +119,4 @@ pub mod movie_settings;
 pub mod radio;
 pub mod red_alert_visual_controls;
 pub mod legacy_buffer;
+pub mod control_gadget;

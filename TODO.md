@@ -295,3 +295,4 @@
 - [x] Port TIBERIANDAWN/RADIO.CPP RadioClass message table, base receive delegation, contact-gated HELLO negotiation, OVER_OUT teardown, transmit target fallback and limbo cleanup through a peer-network adapter.
 - [x] Port REDALERT/VISUDLG.CPP as a distinct Red Alert visual-controls variant: resolution-scaled geometry/thumb bump, normalized slider-to-fixed option writes, Reset to 1/2, keyboard/button navigation and click-outside exit.
 - [x] Port REDALERT/BUFF.CPP Buffer constructors, owned allocation, borrowed pointer wrappers, shallow copy/assignment ownership flags, null/zero-size edge cases and Reset/destructor semantics using safe shared leases and nonblocking access.
+- [x] Port TIBERIANDAWN/CONTROL.CPP ControlClass constructor, peer setup, ID access, Action event-to-key mapping, peer notification order and Draw_Me peer/base forwarding.
