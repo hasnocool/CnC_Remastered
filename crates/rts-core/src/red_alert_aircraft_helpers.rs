@@ -1716,6 +1716,56 @@ pub const fn aircraft_scatter_plan(
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ProcessFlyToPlan {
+    pub destination_coordinate: u32,
+    pub primary_facing: DirType,
+    pub speed_updates: Vec<u32>,
+    pub returned_distance: i32,
+}
+
+/// Port of AircraftClass::Process_Fly_To. Destination resolution (building
+/// docking coordinate versus ordinary coordinate), distance and direction are
+/// supplied by the variant's map/target adapters.
+pub fn process_fly_to<D, F>(
+    target_coordinate: u32,
+    building_docking_coordinate: Option<u32>,
+    aircraft_coordinate: u32,
+    fixed_wing: bool,
+    slowdown_requested: bool,
+    current_speed: u32,
+    distance_between: D,
+    direction_to: F,
+) -> ProcessFlyToPlan
+where
+    D: FnOnce(u32, u32) -> i32,
+    F: FnOnce(u32, u32) -> DirType,
+{
+    let destination_coordinate = building_docking_coordinate.unwrap_or(target_coordinate);
+    let mut distance = distance_between(aircraft_coordinate, destination_coordinate);
+    let primary_facing = direction_to(aircraft_coordinate, destination_coordinate);
+    let slowdown = slowdown_requested && !fixed_wing;
+    let mut speed_updates = Vec::with_capacity(2);
+    if slowdown {
+        let speed = (distance.min(0x0300) / 3).clamp(0x0020, 0x00FF) as u32;
+        if current_speed != speed {
+            speed_updates.push(speed);
+        }
+    }
+    if distance < 0x0010 {
+        if slowdown {
+            speed_updates.push(0);
+        }
+        distance = 0;
+    }
+    ProcessFlyToPlan {
+        destination_coordinate,
+        primary_facing,
+        speed_updates,
+        returned_distance: distance,
+    }
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -2891,6 +2941,54 @@ mod tests {
         assert!(airborne.enter_idle_mode);
         assert!(!airborne.is_landing);
         assert!(airborne.is_taking_off);
+    }
+
+    #[test]
+    fn process_fly_to_prefers_building_docking_coordinate_and_sets_heading() {
+        let plan = process_fly_to(
+            100, Some(200), 0, false, false, 0,
+            |from, to| (to - from) as i32,
+            |_, _| DirType::SOUTH_EAST,
+        );
+        assert_eq!(plan.destination_coordinate, 200);
+        assert_eq!(plan.primary_facing, DirType::SOUTH_EAST);
+        assert_eq!(plan.returned_distance, 200);
+        assert!(plan.speed_updates.is_empty());
+    }
+
+    #[test]
+    fn process_fly_to_slows_rotorcraft_with_bounded_distance_speed() {
+        let plan = process_fly_to(
+            0x1000, None, 0, false, true, 0,
+            |_, _| 0x0180,
+            |_, _| DirType::EAST,
+        );
+        assert_eq!(plan.speed_updates, [0x0080]);
+        assert_eq!(plan.returned_distance, 0x0180);
+        let far = process_fly_to(
+            0x1000, None, 0, false, true, 0,
+            |_, _| 0x1000,
+            |_, _| DirType::EAST,
+        );
+        assert_eq!(far.speed_updates, [0x00FF]);
+    }
+
+    #[test]
+    fn process_fly_to_stops_near_target_but_fixed_wing_disables_slowdown() {
+        let near = process_fly_to(
+            0, None, 0, false, true, 0x20,
+            |_, _| 0x000F,
+            |_, _| DirType::NORTH,
+        );
+        assert_eq!(near.returned_distance, 0);
+        assert_eq!(near.speed_updates, [0]);
+        let fixed = process_fly_to(
+            0, None, 0, true, true, 0x80,
+            |_, _| 0x0001,
+            |_, _| DirType::NORTH,
+        );
+        assert_eq!(fixed.returned_distance, 0);
+        assert!(fixed.speed_updates.is_empty());
     }
 
     #[test]
