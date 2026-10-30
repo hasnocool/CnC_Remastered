@@ -1031,6 +1031,99 @@ pub fn aircraft_voice_plan(
     })
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftAction {
+    None,
+    SelfAction,
+    Move,
+    NoMove,
+    Attack,
+    Select,
+    Enter,
+    Other(i32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftObjectActionContext {
+    pub has_passengers: bool,
+    pub height_above_ground: bool,
+    pub is_tethered: bool,
+    pub has_primary_weapon: bool,
+    pub player_controls_house: bool,
+    pub target_is_ally: bool,
+    pub target_is_building: bool,
+    /// Result of Transmit_Message(RADIO_CAN_LOAD, target) when that check is
+    /// applicable; the caller should not send it for irrelevant target types.
+    pub radio_can_load_approved: bool,
+    pub is_fixed_wing: bool,
+    /// Result of the cell overload, evaluated by the engine only when needed.
+    pub fallback_cell_action: AircraftAction,
+    pub target_is_repair_building: bool,
+    pub repair_building_in_radio_contact: bool,
+    pub repair_building_has_attached_object: bool,
+}
+
+/// Port of AircraftClass::What_Action(ObjectClass const *). The caller supplies
+/// the base-class action and the results of target/radio queries; this function
+/// preserves the C++ override order and the conditional cell-action fallback.
+pub fn what_action_object(
+    mut action: AircraftAction,
+    context: AircraftObjectActionContext,
+) -> AircraftAction {
+    if action == AircraftAction::SelfAction
+        && (!context.has_passengers || context.height_above_ground || context.is_tethered)
+    {
+        action = AircraftAction::None;
+    }
+    if action == AircraftAction::Attack && !context.has_primary_weapon {
+        action = AircraftAction::None;
+    }
+    if context.player_controls_house
+        && context.target_is_ally
+        && context.target_is_building
+        && context.radio_can_load_approved
+    {
+        action = AircraftAction::Enter;
+    }
+    if context.is_fixed_wing && action == AircraftAction::Move {
+        action = AircraftAction::NoMove;
+    }
+    if action == AircraftAction::None {
+        action = context.fallback_cell_action;
+    }
+    if context.player_controls_house
+        && action == AircraftAction::Select
+        && context.target_is_building
+        && context.target_is_repair_building
+        && !context.repair_building_in_radio_contact
+        && !context.repair_building_has_attached_object
+    {
+        action = AircraftAction::Enter;
+    }
+    action
+}
+
+/// Port of AircraftClass::What_Action(CELL).
+pub fn what_action_cell(
+    mut action: AircraftAction,
+    cell_is_visible_to_player: bool,
+    has_primary_weapon: bool,
+    is_fixed_wing: bool,
+) -> AircraftAction {
+    if matches!(action, AircraftAction::Move | AircraftAction::Attack)
+        && !cell_is_visible_to_player
+    {
+        action = AircraftAction::NoMove;
+    }
+    if action == AircraftAction::Attack && !has_primary_weapon {
+        action = AircraftAction::None;
+    }
+    if is_fixed_wing && action == AircraftAction::Move {
+        action = AircraftAction::NoMove;
+    }
+    action
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -1714,6 +1807,75 @@ mod tests {
         assert_eq!(muted.volume.raw(), Fixed16::ONE.raw());
         assert_eq!(muted.speaker_id, -5);
         assert_eq!(aircraft_voice_plan(AircraftVoicePrompt::Select, 6, true, 0), None);
+    }
+
+    #[test]
+    fn what_action_cell_applies_visibility_weapon_and_fixed_wing_rules_in_order() {
+        use AircraftAction::*;
+        assert_eq!(what_action_cell(Move, false, true, false), NoMove);
+        assert_eq!(what_action_cell(Attack, false, true, false), NoMove);
+        assert_eq!(what_action_cell(Attack, true, false, false), None);
+        assert_eq!(what_action_cell(Move, true, true, true), NoMove);
+        assert_eq!(what_action_cell(Move, true, true, false), Move);
+        assert_eq!(what_action_cell(Select, false, false, true), Select);
+    }
+
+    #[test]
+    fn what_action_object_blocks_self_attack_and_fixed_wing_move_as_source_does() {
+        use AircraftAction::*;
+        let context = AircraftObjectActionContext {
+            has_passengers: false,
+            height_above_ground: false,
+            is_tethered: false,
+            has_primary_weapon: false,
+            player_controls_house: false,
+            target_is_ally: false,
+            target_is_building: false,
+            radio_can_load_approved: false,
+            is_fixed_wing: true,
+            fallback_cell_action: Other(9),
+            target_is_repair_building: false,
+            repair_building_in_radio_contact: false,
+            repair_building_has_attached_object: false,
+        };
+        assert_eq!(what_action_object(SelfAction, context), Other(9));
+        assert_eq!(what_action_object(Attack, context), Other(9));
+        assert_eq!(what_action_object(Move, context), NoMove);
+    }
+
+    #[test]
+    fn what_action_object_allied_load_and_repair_building_overrides_are_conditional() {
+        use AircraftAction::*;
+        let base = AircraftObjectActionContext {
+            has_passengers: true,
+            height_above_ground: false,
+            is_tethered: false,
+            has_primary_weapon: true,
+            player_controls_house: true,
+            target_is_ally: true,
+            target_is_building: true,
+            radio_can_load_approved: true,
+            is_fixed_wing: false,
+            fallback_cell_action: Select,
+            target_is_repair_building: false,
+            repair_building_in_radio_contact: false,
+            repair_building_has_attached_object: false,
+        };
+        assert_eq!(what_action_object(Select, base), Enter);
+        let repair = AircraftObjectActionContext {
+            radio_can_load_approved: false,
+            target_is_repair_building: true,
+            ..base
+        };
+        assert_eq!(what_action_object(Select, repair), Enter);
+        assert_eq!(
+            what_action_object(Select, AircraftObjectActionContext { repair_building_in_radio_contact: true, ..repair }),
+            Select
+        );
+        assert_eq!(
+            what_action_object(Select, AircraftObjectActionContext { repair_building_has_attached_object: true, ..repair }),
+            Select
+        );
     }
 
     #[test]
