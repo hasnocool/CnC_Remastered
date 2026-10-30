@@ -14,6 +14,7 @@ pub mod legacy_crc;
 pub mod lzo1x;
 pub mod lzo_blocks;
 pub mod pipe;
+pub mod random_straw;
 pub mod readline;
 pub mod sha1;
 pub mod straw;
