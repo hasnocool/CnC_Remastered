@@ -2965,6 +2965,186 @@ pub fn aircraft_mission_move(context: AircraftMoveContext) -> AircraftMovePlan {
     plan
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftUnloadStage {
+    SearchForLandingZone,
+    FlyToLandingZone,
+    LandOnLandingZone,
+    UnloadPassengers,
+    TakeOff,
+    Unknown(i32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum UnloadDestination {
+    Cell(u32),
+    Waypoint(i32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftUnloadContext {
+    pub fixed_wing: bool,
+    pub stage: AircraftUnloadStage,
+    pub height: i32,
+    pub flight_level: i32,
+    pub navcom_is_legal: bool,
+    pub aircraft_coordinate_matches_navcom: bool,
+    pub landing_zone_is_clear: bool,
+    pub attached_passenger_team_origin: Option<i32>,
+    pub reinforcement_waypoint: i32,
+    pub replacement_landing_cell: Option<u32>,
+    pub team_is_valid: bool,
+    pub is_tethered: bool,
+    pub has_attached_passenger: bool,
+    pub has_attached_passenger_after_exit: bool,
+    pub exit_object_succeeded: bool,
+    pub is_taking_off: bool,
+    pub takeoff_completed: bool,
+    pub landing_completed: bool,
+    pub distance_to_navcom: i32,
+    pub pose_direction: DirType,
+    pub primary_facing_desired: DirType,
+    pub in_radio_contact_with_origin_building: bool,
+    pub normal_delay: i32,
+    pub random_delay_0_to_2: i32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AircraftUnloadPlan {
+    pub delegate_to_hunt: bool,
+    pub next_stage: Option<AircraftUnloadStage>,
+    pub destination: Option<UnloadDestination>,
+    pub update_team_mission_target: bool,
+    pub process_takeoff: bool,
+    pub process_fly_to: bool,
+    pub process_landing: bool,
+    pub set_secondary_facing: Option<DirType>,
+    pub break_radio_contact: bool,
+    pub detach_passenger: bool,
+    pub pick_up_aircraft_from_map: bool,
+    pub attempt_exit_object: bool,
+    pub delete_passenger_on_exit_failure: bool,
+    pub place_aircraft_on_map: bool,
+    pub enter_idle_mode: bool,
+    pub delay: HuntDelay,
+    pub return_immediately: bool,
+}
+
+/// Port of AircraftClass::Mission_Unload. Fixed-wing transport delegates to
+/// Mission_Hunt after copying NavCom to TarCom; rotorcraft preserves the
+/// landing-zone, takeoff, unload, and retry stages.
+pub fn aircraft_mission_unload(context: AircraftUnloadContext) -> AircraftUnloadPlan {
+    let mut plan = AircraftUnloadPlan {
+        delegate_to_hunt: context.fixed_wing,
+        next_stage: None,
+        destination: None,
+        update_team_mission_target: false,
+        process_takeoff: false,
+        process_fly_to: false,
+        process_landing: false,
+        set_secondary_facing: None,
+        break_radio_contact: false,
+        detach_passenger: false,
+        pick_up_aircraft_from_map: false,
+        attempt_exit_object: false,
+        delete_passenger_on_exit_failure: false,
+        place_aircraft_on_map: false,
+        enter_idle_mode: false,
+        delay: HuntDelay::NormalPlusRandom2 {
+            normal_delay: context.normal_delay,
+            random_value: context.random_delay_0_to_2.clamp(0, 2),
+        },
+        return_immediately: false,
+    };
+    if context.fixed_wing {
+        plan.return_immediately = true;
+        return plan;
+    }
+
+    match context.stage {
+        AircraftUnloadStage::SearchForLandingZone => {
+            if context.height == 0
+                && (context.navcom_is_legal || context.aircraft_coordinate_matches_navcom)
+            {
+                plan.next_stage = Some(AircraftUnloadStage::UnloadPassengers);
+            } else if !context.landing_zone_is_clear {
+                plan.destination = if let Some(origin) = context.attached_passenger_team_origin.filter(|origin| *origin != -1) {
+                    Some(UnloadDestination::Waypoint(origin))
+                } else {
+                    context.replacement_landing_cell.map(UnloadDestination::Cell)
+                };
+                plan.update_team_mission_target = plan.destination.is_some() && context.team_is_valid;
+            } else if context.height == context.flight_level {
+                plan.next_stage = Some(AircraftUnloadStage::FlyToLandingZone);
+            } else {
+                plan.next_stage = Some(AircraftUnloadStage::TakeOff);
+            }
+        }
+        AircraftUnloadStage::FlyToLandingZone => {
+            if context.landing_zone_is_clear {
+                plan.process_fly_to = true;
+                if context.distance_to_navcom < 0x0100 {
+                    plan.set_secondary_facing = Some(context.pose_direction);
+                    if context.distance_to_navcom < 0x0010 {
+                        plan.next_stage = Some(AircraftUnloadStage::LandOnLandingZone);
+                    }
+                    plan.delay = HuntDelay::Ticks(1);
+                    plan.return_immediately = true;
+                } else {
+                    plan.set_secondary_facing = Some(context.primary_facing_desired);
+                    plan.delay = HuntDelay::Ticks(5);
+                    plan.return_immediately = true;
+                }
+            } else {
+                plan.next_stage = Some(AircraftUnloadStage::SearchForLandingZone);
+            }
+        }
+        AircraftUnloadStage::LandOnLandingZone => {
+            if context.is_taking_off {
+                plan.next_stage = Some(AircraftUnloadStage::TakeOff);
+            } else {
+                plan.process_landing = true;
+                if context.landing_completed {
+                    plan.next_stage = Some(AircraftUnloadStage::UnloadPassengers);
+                }
+            }
+            plan.delay = HuntDelay::Ticks(1);
+            plan.return_immediately = true;
+        }
+        AircraftUnloadStage::UnloadPassengers => {
+            if !context.is_tethered {
+                if context.has_attached_passenger {
+                    plan.detach_passenger = true;
+                    plan.pick_up_aircraft_from_map = true;
+                    plan.attempt_exit_object = true;
+                    plan.delete_passenger_on_exit_failure = !context.exit_object_succeeded;
+                    plan.place_aircraft_on_map = true;
+                    if !context.has_attached_passenger_after_exit {
+                        plan.enter_idle_mode = true;
+                    }
+                } else {
+                    plan.enter_idle_mode = true;
+                }
+            }
+        }
+        AircraftUnloadStage::TakeOff => {
+            plan.process_takeoff = true;
+            if context.takeoff_completed {
+                if context.has_attached_passenger {
+                    plan.next_stage = Some(AircraftUnloadStage::SearchForLandingZone);
+                    plan.break_radio_contact = context.in_radio_contact_with_origin_building;
+                } else {
+                    plan.enter_idle_mode = true;
+                }
+            }
+            plan.delay = HuntDelay::Ticks(1);
+            plan.return_immediately = true;
+        }
+        AircraftUnloadStage::Unknown(_) => {}
+    }
+    plan
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -5017,6 +5197,162 @@ mod tests {
             distance_to_navcom: 0x00BF, ..move_context()
         });
         assert!(!loaner_team.enter_idle_mode);
+    }
+
+    fn unload_context() -> AircraftUnloadContext {
+        AircraftUnloadContext {
+            fixed_wing: false,
+            stage: AircraftUnloadStage::SearchForLandingZone,
+            height: 100,
+            flight_level: 100,
+            navcom_is_legal: true,
+            aircraft_coordinate_matches_navcom: false,
+            landing_zone_is_clear: true,
+            attached_passenger_team_origin: None,
+            reinforcement_waypoint: 3,
+            replacement_landing_cell: Some(700),
+            team_is_valid: false,
+            is_tethered: false,
+            has_attached_passenger: true,
+            has_attached_passenger_after_exit: false,
+            exit_object_succeeded: true,
+            is_taking_off: false,
+            takeoff_completed: false,
+            landing_completed: false,
+            distance_to_navcom: 500,
+            pose_direction: DirType::NORTH_EAST,
+            primary_facing_desired: DirType::EAST,
+            in_radio_contact_with_origin_building: true,
+            normal_delay: 5,
+            random_delay_0_to_2: 1,
+        }
+    }
+
+    #[test]
+    fn fixed_wing_unload_delegates_to_hunt_after_target_copy() {
+        let plan = aircraft_mission_unload(AircraftUnloadContext {
+            fixed_wing: true, ..unload_context()
+        });
+        assert!(plan.delegate_to_hunt);
+        assert!(plan.return_immediately);
+    }
+
+    #[test]
+    fn unload_search_accepts_grounded_destination_or_selects_replacement_zone() {
+        let grounded = aircraft_mission_unload(AircraftUnloadContext {
+            height: 0, aircraft_coordinate_matches_navcom: true,
+            ..unload_context()
+        });
+        assert_eq!(grounded.next_stage, Some(AircraftUnloadStage::UnloadPassengers));
+
+        let team_waypoint = aircraft_mission_unload(AircraftUnloadContext {
+            landing_zone_is_clear: false,
+            attached_passenger_team_origin: Some(12),
+            team_is_valid: true,
+            ..unload_context()
+        });
+        assert_eq!(team_waypoint.destination, Some(UnloadDestination::Waypoint(12)));
+        assert!(team_waypoint.update_team_mission_target);
+
+        let fallback = aircraft_mission_unload(AircraftUnloadContext {
+            landing_zone_is_clear: false,
+            attached_passenger_team_origin: Some(-1),
+            ..unload_context()
+        });
+        assert_eq!(fallback.destination, Some(UnloadDestination::Cell(700)));
+
+        let airborne = aircraft_mission_unload(AircraftUnloadContext {
+            height: 100, flight_level: 100, ..unload_context()
+        });
+        assert_eq!(airborne.next_stage, Some(AircraftUnloadStage::FlyToLandingZone));
+        let below_level = aircraft_mission_unload(AircraftUnloadContext {
+            height: 40, flight_level: 100, ..unload_context()
+        });
+        assert_eq!(below_level.next_stage, Some(AircraftUnloadStage::TakeOff));
+    }
+
+    #[test]
+    fn unload_flight_and_landing_keep_source_thresholds_and_facing() {
+        let far = aircraft_mission_unload(AircraftUnloadContext {
+            stage: AircraftUnloadStage::FlyToLandingZone,
+            distance_to_navcom: 0x0100,
+            ..unload_context()
+        });
+        assert!(far.process_fly_to);
+        assert_eq!(far.set_secondary_facing, Some(DirType::EAST));
+        assert_eq!(far.delay, HuntDelay::Ticks(5));
+
+        let near = aircraft_mission_unload(AircraftUnloadContext {
+            stage: AircraftUnloadStage::FlyToLandingZone,
+            distance_to_navcom: 0x00FF,
+            ..unload_context()
+        });
+        assert_eq!(near.set_secondary_facing, Some(DirType::NORTH_EAST));
+        assert_eq!(near.delay, HuntDelay::Ticks(1));
+
+        let arrived = aircraft_mission_unload(AircraftUnloadContext {
+            stage: AircraftUnloadStage::FlyToLandingZone,
+            distance_to_navcom: 0x000F,
+            ..unload_context()
+        });
+        assert_eq!(arrived.next_stage, Some(AircraftUnloadStage::LandOnLandingZone));
+
+        let landed = aircraft_mission_unload(AircraftUnloadContext {
+            stage: AircraftUnloadStage::LandOnLandingZone,
+            landing_completed: true,
+            ..unload_context()
+        });
+        assert!(landed.process_landing);
+        assert_eq!(landed.next_stage, Some(AircraftUnloadStage::UnloadPassengers));
+    }
+
+    #[test]
+    fn unload_passenger_detach_pickup_exit_and_map_restore_are_ordered() {
+        let success = aircraft_mission_unload(AircraftUnloadContext {
+            stage: AircraftUnloadStage::UnloadPassengers,
+            has_attached_passenger: true,
+            exit_object_succeeded: true,
+            has_attached_passenger_after_exit: false,
+            ..unload_context()
+        });
+        assert!(success.detach_passenger);
+        assert!(success.pick_up_aircraft_from_map);
+        assert!(success.attempt_exit_object);
+        assert!(!success.delete_passenger_on_exit_failure);
+        assert!(success.place_aircraft_on_map);
+        assert!(success.enter_idle_mode);
+
+        let failure = aircraft_mission_unload(AircraftUnloadContext {
+            stage: AircraftUnloadStage::UnloadPassengers,
+            has_attached_passenger: true,
+            exit_object_succeeded: false,
+            has_attached_passenger_after_exit: false,
+            ..unload_context()
+        });
+        assert!(failure.delete_passenger_on_exit_failure);
+        let tethered = aircraft_mission_unload(AircraftUnloadContext {
+            stage: AircraftUnloadStage::UnloadPassengers,
+            is_tethered: true, ..unload_context()
+        });
+        assert!(!tethered.detach_passenger);
+        assert!(!tethered.enter_idle_mode);
+    }
+
+    #[test]
+    fn unload_takeoff_retries_search_with_cargo_or_enters_idle_without_cargo() {
+        let retry = aircraft_mission_unload(AircraftUnloadContext {
+            stage: AircraftUnloadStage::TakeOff, takeoff_completed: true,
+            has_attached_passenger: true, ..unload_context()
+        });
+        assert!(retry.process_takeoff);
+        assert_eq!(retry.next_stage, Some(AircraftUnloadStage::SearchForLandingZone));
+        assert!(retry.break_radio_contact);
+
+        let done = aircraft_mission_unload(AircraftUnloadContext {
+            stage: AircraftUnloadStage::TakeOff, takeoff_completed: true,
+            has_attached_passenger: false, ..unload_context()
+        });
+        assert!(done.enter_idle_mode);
     }
 
     #[test]
