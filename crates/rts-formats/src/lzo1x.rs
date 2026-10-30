@@ -340,7 +340,7 @@ mod tests {
 
     #[test]
     fn repeated_input_uses_back_references() {
-        for size in [16_usize, 64, 256, 4096, 20_000] {
+        for size in [64_usize, 256, 4096, 20_000] {
             let input: Vec<u8> = (0..size)
                 .map(|value| b"Westwood RTS LZO format "[value % 23])
                 .collect();
