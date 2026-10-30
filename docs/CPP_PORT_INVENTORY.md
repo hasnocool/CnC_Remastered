@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 23 | 3 |
+| `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 26 | 6 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
 
 ## File-by-file coverage
 
@@ -312,7 +312,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/WIN32LIB/DRAWRECT.CPP` | rts-core/src/draw_rect.rs — locked four-edge Draw_Line sequence. |
 | Not started | `REDALERT/WIN32LIB/DrawMisc.cpp` | — |
 | Complete | `REDALERT/WIN32LIB/FONT.CPP` | rts-core/src/font_metrics.rs — character/string pixel widths and Text_Print cursor coordinate conversion. |
-| Not started | `REDALERT/WIN32LIB/GBUFFER.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/GBUFFER.CPP` | rts-core/src/graphic_buffer.rs — system/DirectDraw buffer initialization, viewport attach/clamp/offset math, lock nesting, surface-loss restore, mouse exclusion and blit geometry. |
 | Complete | `REDALERT/WIN32LIB/GETSHAPE.CPP` | rts-core/src/shape_access.rs — packed Shape_Type metadata, special prefix words, shape-block indexing, extraction, height mutation and restoration. |
 | Complete | `REDALERT/WIN32LIB/ICONSET.CPP` | rts-formats/src/iconset.rs — parses ICON/SINF/SSET/TRNS/MAP IFF chunks, builds packed IControl_Type metadata and exposes bounded icon/map/transparency slices. |
 | Complete | `REDALERT/WIN32LIB/IFF.CPP` | rts-formats/src/iff.rs — FORM validation, first-match chunk search, even-byte chunk alignment, bounded reads, chunk writes and FORM-size update. |
@@ -508,7 +508,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/DRAWRECT.CPP` | rts-core/src/draw_rect.rs — identical shared implementation. |
 | Not started | `TIBERIANDAWN/WIN32LIB/DrawMisc.cpp` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/FONT.CPP` | rts-core/src/font_metrics.rs — shared font metrics and print cursor implementation. |
-| Not started | `TIBERIANDAWN/WIN32LIB/GBUFFER.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/GBUFFER.CPP` | rts-core/src/graphic_buffer.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/GETSHAPE.CPP` | rts-core/src/shape_access.rs — shared accessor implementation; variant source differs only in non-behavioral formatting. |
 | Complete | `TIBERIANDAWN/WIN32LIB/ICONSET.CPP` | rts-formats/src/iconset.rs — shared IFF icon-set loader; variant differences are pointer syntax/include details. |
 | Complete | `TIBERIANDAWN/WIN32LIB/IFF.CPP` | rts-formats/src/iff.rs — byte-identical shared implementation with Red Alert. |
