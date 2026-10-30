@@ -55,6 +55,7 @@ pub mod drop_list;
 pub mod udp_addr;
 pub mod carryover;
 pub mod cargo;
+pub mod heap;
 pub mod toggle;
 pub mod scroll;
 pub mod shape_button;
