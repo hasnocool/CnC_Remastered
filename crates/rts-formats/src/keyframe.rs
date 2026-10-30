@@ -511,9 +511,9 @@ impl KeyFrameCache {
         }
 
         let decoded = decode_frame(data, frame, header)?;
-        self.last_frame_length = decoded.len();
 
         if self.use_big_shape_buffer {
+            self.last_frame_length = decoded.len();
             let buffer = match cache_kind {
                 ShapeBufferKind::Big => &mut self.big_shape_buffer,
                 ShapeBufferKind::Theater => &mut self.theater_shape_buffer,
@@ -530,8 +530,6 @@ impl KeyFrameCache {
             }
             Ok(BuildFrameResult::Cached(handle))
         } else {
-            cache_kind = ShapeBufferKind::Big;
-            let _ = cache_kind;
             Ok(BuildFrameResult::Decoded(decoded))
         }
     }
@@ -576,19 +574,21 @@ fn write_u16(data: &mut [u8], offset: usize, value: u16) -> Result<(), KeyFrameE
     Ok(())
 }
 
-fn read_frame_offsets(data: &[u8], frame: usize) -> Result<FrameOffsets, KeyFrameError> {
+fn read_frame_offsets(data: &[u8], frame: usize, count: usize) -> Result<FrameOffsets, KeyFrameError> {
     let start = KEYFRAME_HEADER_SIZE
         .checked_add(frame.checked_mul(KEYFRAME_RECORD_SIZE)
             .ok_or(KeyFrameError::TruncatedFrameTable { frame, bytes_needed: usize::MAX })?)
         .ok_or(KeyFrameError::TruncatedFrameTable { frame, bytes_needed: usize::MAX })?;
-    let end = start.checked_add(KEYFRAME_SUBFRAME_OFFSETS * 4)
+    let byte_count = count.checked_mul(4)
+        .ok_or(KeyFrameError::TruncatedFrameTable { frame, bytes_needed: usize::MAX })?;
+    let end = start.checked_add(byte_count)
         .ok_or(KeyFrameError::TruncatedFrameTable { frame, bytes_needed: usize::MAX })?;
     let bytes = data.get(start..end).ok_or(KeyFrameError::TruncatedFrameTable {
         frame,
         bytes_needed: end,
     })?;
     let mut values = [0u32; KEYFRAME_SUBFRAME_OFFSETS];
-    for (index, value) in values.iter_mut().enumerate() {
+    for (index, value) in values.iter_mut().take(count).enumerate() {
         *value = read_u32(bytes, index * 4).ok_or(KeyFrameError::TruncatedFrameTable {
             frame,
             bytes_needed: end,
@@ -616,7 +616,7 @@ fn decode_lcw_payload(data: &[u8], offset: usize, palette_prefix: usize, maximum
 }
 
 fn decode_frame(data: &[u8], frame: usize, header: KeyFrameHeader) -> Result<Vec<u8>, KeyFrameError> {
-    let mut offsets = read_frame_offsets(data, frame)?.0;
+    let mut offsets = read_frame_offsets(data, frame, 3)?.0;
     let frame_flags = (offsets[0] >> 24) as u8;
     let palette_prefix = if header.has_palette() { KEYFRAME_PALETTE_SIZE } else { 0 };
     let frame_size = header.buffer_size();
@@ -629,7 +629,7 @@ fn decode_frame(data: &[u8], frame: usize, header: KeyFrameHeader) -> Result<Vec
     let mut current_frame = 0usize;
     if frame_flags & KF_DELTA != 0 {
         current_frame = (offsets[1] & 0xffff) as usize;
-        offsets = read_frame_offsets(data, current_frame)?.0;
+        offsets = read_frame_offsets(data, current_frame, KEYFRAME_SUBFRAME_OFFSETS)?.0;
     }
 
     let current_offset = offsets[1] & 0x00ff_ffff;
@@ -667,7 +667,7 @@ fn decode_frame(data: &[u8], frame: usize, header: KeyFrameHeader) -> Result<Vec
             subframe += 2;
 
             if subframe >= KEYFRAME_SUBFRAME_OFFSETS - 1 && current_frame <= frame {
-                offsets = read_frame_offsets(data, current_frame)?.0;
+                offsets = read_frame_offsets(data, current_frame, KEYFRAME_SUBFRAME_OFFSETS)?.0;
                 subframe = 0;
             }
         }
