@@ -2,6 +2,8 @@
 
 pub mod clock;
 pub mod facing;
+pub mod fixed16;
+pub mod random;
 pub mod map;
 
 pub use clock::{SimTick, TICKS_PER_MINUTE, TICKS_PER_SECOND};
