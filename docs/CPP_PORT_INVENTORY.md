@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **229**
-- Not yet fully ported: **265**
+- Fully ported: **230**
+- Not yet fully ported: **264**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 127 | 148 |
+| `REDALERT/` | 275 | 128 | 147 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 46 | 115 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -238,7 +238,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/SMUDGE.CPP` | — |
 | Not started | `REDALERT/SOUNDDLG.CPP` | — |
 | Not started | `REDALERT/SPECIAL.CPP` | — |
-| Not started | `REDALERT/SPRITE.CPP` | — |
+| Complete | `REDALERT/SPRITE.CPP` | rts-core/src/scale_rotate.rs — exact lookup tables, fixed-point rotated corner geometry, both Bresenham rasterization cases, source pixel stepping, transparency and destination writes; Rust safely bounds framebuffer access. |
 | Not started | `REDALERT/STARTUP.CPP` | — |
 | Not started | `REDALERT/STATBTN.CPP` | — |
 | Not started | `REDALERT/STATS.CPP` | — |
