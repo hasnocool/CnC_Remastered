@@ -37,6 +37,7 @@ pub mod keyboard_runtime;
 pub mod mouse_control;
 pub mod rgb_palette;
 pub mod null_modem_connection;
+pub mod nonsequenced_connection;
 pub mod keyboard;
 pub mod td_keyboard;
 pub mod player_manager;
