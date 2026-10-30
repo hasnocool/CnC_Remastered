@@ -30,6 +30,7 @@
 | CRC pipe/straw adapters | Ported | Checksum observing push and pull stream adapters |
 | CacheStraw | Ported | Buffered read-ahead over demand-driven input |
 | SHA pipe/straw adapters | Ported | Non-transforming SHA-1 observation over push and pull streams |
+| Buffer/file endpoints | Ported | Fixed-buffer, generic Read/Write, and lazy path-backed file endpoints |
 | Pipe/Straw chains | Ported | Push forwarding/relink/flush and pull-demand/relink chains; cycle detection added |
 | Rect geometry | Ported | Source-compatible validity, intersection, anchor adjustment, and union |
 | Packed Boolean vector | Ported | Packed bit operations, resizing, set/reset, search, and equality |
