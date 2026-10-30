@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **279**
-- Not yet fully ported: **215**
+- Fully ported: **280**
+- Not yet fully ported: **214**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 146 | 129 |
+| `REDALERT/` | 275 | 147 | 128 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 63 | 98 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -195,7 +195,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/OBJECT.CPP` | — |
 | Not started | `REDALERT/ODATA.CPP` | — |
 | Not started | `REDALERT/OPTIONS.CPP` | — |
-| Not started | `REDALERT/OVERLAY.CPP` | — |
+| Complete | `REDALERT/OVERLAY.CPP` | red-alert/src/overlay.rs — OverlayClass pool/constructor/delete/init behavior, wall and non-wall Mark branching/action order, crushable zone reset and temporary owner handling, OverlayPack and legacy INI load rules, multiplayer crate suppression, boundary-cell filtering, nearest-building wall ownership, and full-map signed-byte OverlayPack serialization through the 8 KiB framed LCW codec. |
 | Not started | `REDALERT/PACKET.CPP` | — |
 | Complete | `REDALERT/PALETTEC.CPP` | rts-core/src/rgb_palette.rs — 256-entry palette construction/copy/equality, full and LUT-gated adjustment, closest-color search, 6-bit palette serialization and timed callback-driven palette fading. |
 | Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, unlink. |
