@@ -1766,6 +1766,321 @@ where
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftHuntStage {
+    LookForTarget,
+    TakeOff,
+    FlyToTarget,
+    DropBombs,
+    Regroup,
+    Unknown(i32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftHuntFireResult {
+    Ok,
+    Ammo,
+    Range,
+    Facing,
+    Cant,
+    Illegal,
+    Rearm,
+    Other(i32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftThreatKind {
+    Tiberium,
+    Normal,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum HuntDelay {
+    Ticks(i32),
+    NormalPlusRandom2 { normal_delay: i32, random_value: i32 },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum HuntFireTarget {
+    ComputedForwardPoint,
+    CurrentTarget,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct HuntFireAction {
+    pub target: HuntFireTarget,
+    pub weapon_index: u8,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AircraftHuntPlan {
+    pub assign_destination_to_target: bool,
+    pub threat_search_order: Vec<AircraftThreatKind>,
+    pub assign_target_from_tiberium_threat: bool,
+    pub assign_target_from_normal_threat: bool,
+    pub next_stage: Option<AircraftHuntStage>,
+    pub mission_to_assign: Option<AircraftMission>,
+    pub enter_idle_mode: bool,
+    pub process_takeoff: bool,
+    pub set_speed: Option<u8>,
+    pub break_radio_contact: bool,
+    pub remove_from_team: bool,
+    pub commence: bool,
+    pub notify_target_incoming: bool,
+    pub fire_actions: Vec<HuntFireAction>,
+    pub attacks_remaining_delta: i8,
+    pub set_attacks_remaining_zero: bool,
+    pub rearm_delay_return: bool,
+    pub delay: HuntDelay,
+    pub return_immediately: bool,
+}
+
+/// Inputs are resolved snapshots from the simulation loop. Target acquisition,
+/// team membership, range/facing checks and Fire_At are expressed as actions;
+/// this function itself is a deterministic state transition with no global
+/// reads, random calls, radio operations or blocking I/O.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftHuntContext {
+    pub fixed_wing: bool,
+    pub stage: AircraftHuntStage,
+    pub mission_is_attack: bool,
+    pub target_is_legal: bool,
+    pub target_differs_from_navcom: bool,
+    pub team_is_valid: bool,
+    pub game_is_normal: bool,
+    pub tiberium_threat_is_legal: bool,
+    pub normal_threat_is_legal: bool,
+    pub takeoff_completed: bool,
+    pub in_radio_contact: bool,
+    pub fire_result: AircraftHuntFireResult,
+    pub target_is_in_weapon_range: bool,
+    pub passenger: bool,
+    pub primary_facing_is_rotating: bool,
+    pub target_is_legal_after_search: bool,
+    pub primary_weapon_is_camera: bool,
+    pub primary_bullet_is_homing: bool,
+    pub two_shooter: bool,
+    pub ammo: i32,
+    pub attacks_remaining: i32,
+    pub has_attached_passengers: bool,
+    pub is_loaner: bool,
+    pub ticks_per_second: i32,
+    pub normal_delay: i32,
+    pub random_delay_0_to_2: i32,
+}
+
+impl AircraftHuntPlan {
+    fn new(normal_delay: i32, random_delay_0_to_2: i32) -> Self {
+        Self {
+            assign_destination_to_target: false,
+            threat_search_order: Vec::new(),
+            assign_target_from_tiberium_threat: false,
+            assign_target_from_normal_threat: false,
+            next_stage: None,
+            mission_to_assign: None,
+            enter_idle_mode: false,
+            process_takeoff: false,
+            set_speed: None,
+            break_radio_contact: false,
+            remove_from_team: false,
+            commence: false,
+            notify_target_incoming: false,
+            fire_actions: Vec::new(),
+            attacks_remaining_delta: 0,
+            set_attacks_remaining_zero: false,
+            rearm_delay_return: false,
+            delay: HuntDelay::NormalPlusRandom2 {
+                normal_delay,
+                random_value: random_delay_0_to_2,
+            },
+            return_immediately: false,
+        }
+    }
+}
+
+/// Port of AircraftClass::Mission_Hunt. Fixed-wing status transitions and the
+/// rotorcraft target/mission handoff follow the source's switch ordering.
+pub fn aircraft_mission_hunt(context: AircraftHuntContext) -> AircraftHuntPlan {
+    let mut plan = AircraftHuntPlan::new(
+        context.normal_delay,
+        context.random_delay_0_to_2.clamp(0, 2),
+    );
+
+    if !context.fixed_wing {
+        if context.ammo == 0 {
+            plan.remove_from_team = context.team_is_valid;
+            plan.enter_idle_mode = true;
+        } else {
+            if !context.target_is_legal {
+                if !context.game_is_normal {
+                    plan.threat_search_order.push(AircraftThreatKind::Tiberium);
+                    plan.assign_target_from_tiberium_threat = true;
+                }
+                plan.threat_search_order.push(AircraftThreatKind::Normal);
+                plan.assign_target_from_normal_threat = true;
+                if !context.target_is_legal_after_search {
+                    plan.enter_idle_mode = true;
+                    plan.delay = HuntDelay::Ticks(1);
+                    plan.return_immediately = true;
+                    return plan;
+                }
+            }
+            plan.mission_to_assign = Some(AircraftMission::Attack);
+            plan.delay = HuntDelay::Ticks(1);
+            plan.return_immediately = true;
+        }
+        return plan;
+    }
+
+    if context.target_differs_from_navcom {
+        plan.assign_destination_to_target = true;
+    }
+
+    match context.stage {
+        AircraftHuntStage::LookForTarget => {
+            if context.target_is_legal {
+                plan.next_stage = Some(AircraftHuntStage::TakeOff);
+                plan.delay = HuntDelay::Ticks(1);
+                plan.return_immediately = true;
+            } else if !context.team_is_valid {
+                if !context.game_is_normal {
+                    plan.threat_search_order.push(AircraftThreatKind::Tiberium);
+                    plan.assign_target_from_tiberium_threat = true;
+                }
+                if context.game_is_normal || !context.tiberium_threat_is_legal {
+                    plan.threat_search_order.push(AircraftThreatKind::Normal);
+                    plan.assign_target_from_normal_threat = true;
+                }
+                if !context.target_is_legal_after_search {
+                    plan.enter_idle_mode = true;
+                }
+            }
+        }
+        AircraftHuntStage::TakeOff => {
+            if context.takeoff_completed {
+                plan.process_takeoff = true;
+                plan.set_speed = Some(u8::MAX);
+                plan.break_radio_contact = context.in_radio_contact;
+                plan.next_stage = Some(AircraftHuntStage::FlyToTarget);
+            }
+            plan.delay = HuntDelay::Ticks(1);
+            plan.return_immediately = true;
+        }
+        AircraftHuntStage::FlyToTarget => {
+            match context.fire_result {
+                AircraftHuntFireResult::Facing => {
+                    if context.target_is_in_weapon_range || context.passenger {
+                        plan.delay = HuntDelay::Ticks(context.ticks_per_second.saturating_mul(2));
+                        plan.return_immediately = true;
+                    } else if !context.primary_facing_is_rotating && context.target_is_legal {
+                        plan.next_stage = None; // caller re-aims primary facing at TarCom.
+                    }
+                }
+                AircraftHuntFireResult::Ammo => {
+                    plan.next_stage = Some(AircraftHuntStage::Regroup);
+                }
+                AircraftHuntFireResult::Cant | AircraftHuntFireResult::Illegal => {
+                    plan.next_stage = Some(if context.mission_is_attack {
+                        AircraftHuntStage::Regroup
+                    } else {
+                        AircraftHuntStage::LookForTarget
+                    });
+                }
+                AircraftHuntFireResult::Ok => {
+                    plan.next_stage = Some(AircraftHuntStage::DropBombs);
+                    plan.delay = HuntDelay::Ticks(1);
+                    plan.return_immediately = true;
+                }
+                AircraftHuntFireResult::Range
+                | AircraftHuntFireResult::Rearm
+                | AircraftHuntFireResult::Other(_) => {
+                    // The source turns toward a legal target when not already rotating.
+                    if !context.primary_facing_is_rotating && context.target_is_legal {
+                        plan.next_stage = None;
+                    }
+                }
+            }
+            if !plan.return_immediately {
+                plan.delay = HuntDelay::Ticks(context.ticks_per_second / 2);
+                plan.return_immediately = true;
+            }
+        }
+        AircraftHuntStage::DropBombs => {
+            match context.fire_result {
+                AircraftHuntFireResult::Ok => {
+                    plan.next_stage = if context.primary_weapon_is_camera {
+                        Some(AircraftHuntStage::Regroup)
+                    } else {
+                        None
+                    };
+                    plan.notify_target_incoming = !context.primary_weapon_is_camera;
+                    let target = if context.primary_bullet_is_homing {
+                        HuntFireTarget::CurrentTarget
+                    } else {
+                        HuntFireTarget::ComputedForwardPoint
+                    };
+                    plan.fire_actions.push(HuntFireAction { target, weapon_index: 0 });
+                    if context.two_shooter {
+                        plan.fire_actions.push(HuntFireAction { target, weapon_index: 0 });
+                    }
+                    plan.rearm_delay_return = true;
+                    plan.return_immediately = true;
+                }
+                AircraftHuntFireResult::Range | AircraftHuntFireResult::Facing => {
+                    plan.next_stage = Some(AircraftHuntStage::FlyToTarget);
+                    plan.delay = HuntDelay::Ticks(context.ticks_per_second.saturating_mul(4));
+                    plan.return_immediately = true;
+                }
+                AircraftHuntFireResult::Illegal => {
+                    plan.next_stage = Some(if context.mission_is_attack {
+                        AircraftHuntStage::Regroup
+                    } else {
+                        AircraftHuntStage::LookForTarget
+                    });
+                }
+                AircraftHuntFireResult::Cant => {
+                    plan.next_stage = Some(AircraftHuntStage::Regroup);
+                }
+                AircraftHuntFireResult::Ammo => {
+                    plan.attacks_remaining_delta = -1;
+                    plan.next_stage = Some(AircraftHuntStage::Regroup);
+                }
+                AircraftHuntFireResult::Rearm | AircraftHuntFireResult::Other(_) => {}
+            }
+            if !plan.return_immediately {
+                plan.delay = HuntDelay::Ticks(1);
+                plan.return_immediately = true;
+            }
+        }
+        AircraftHuntStage::Regroup => {
+            let mut attacks_remaining_zero = context.attacks_remaining == 0;
+            if context.ammo == 0 {
+                attacks_remaining_zero = true;
+                plan.set_attacks_remaining_zero = true;
+                plan.remove_from_team = context.team_is_valid;
+                plan.enter_idle_mode = true;
+            }
+            let must_leave_or_idle = context.mission_is_attack
+                || context.primary_weapon_is_camera
+                || (attacks_remaining_zero && !context.has_attached_passengers);
+            if must_leave_or_idle {
+                if context.is_loaner {
+                    plan.remove_from_team |= context.team_is_valid;
+                    plan.mission_to_assign = Some(AircraftMission::Retreat);
+                    plan.commence = true;
+                } else if !context.team_is_valid {
+                    plan.enter_idle_mode = true;
+                }
+                plan.commence = true;
+            } else {
+                plan.next_stage = Some(AircraftHuntStage::LookForTarget);
+            }
+        }
+        AircraftHuntStage::Unknown(_) => {}
+    }
+    plan
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -2989,6 +3304,242 @@ mod tests {
         );
         assert_eq!(fixed.returned_distance, 0);
         assert!(fixed.speed_updates.is_empty());
+    }
+
+    fn hunt_context() -> AircraftHuntContext {
+        AircraftHuntContext {
+            fixed_wing: true,
+            stage: AircraftHuntStage::LookForTarget,
+            mission_is_attack: false,
+            target_is_legal: false,
+            target_differs_from_navcom: false,
+            team_is_valid: false,
+            game_is_normal: true,
+            tiberium_threat_is_legal: false,
+            normal_threat_is_legal: false,
+            takeoff_completed: false,
+            in_radio_contact: false,
+            fire_result: AircraftHuntFireResult::Other(0),
+            target_is_in_weapon_range: false,
+            passenger: false,
+            primary_facing_is_rotating: false,
+            target_is_legal_after_search: false,
+            primary_weapon_is_camera: false,
+            primary_bullet_is_homing: false,
+            two_shooter: false,
+            ammo: 5,
+            attacks_remaining: 2,
+            has_attached_passengers: false,
+            is_loaner: false,
+            ticks_per_second: 15,
+            normal_delay: 5,
+            random_delay_0_to_2: 2,
+        }
+    }
+
+    #[test]
+    fn fixed_wing_hunt_acquires_and_prioritizes_targets_in_source_order() {
+        let initial = aircraft_mission_hunt(AircraftHuntContext {
+            target_is_legal: true,
+            target_differs_from_navcom: true,
+            ..hunt_context()
+        });
+        assert!(initial.assign_destination_to_target);
+        assert_eq!(initial.next_stage, Some(AircraftHuntStage::TakeOff));
+        assert_eq!(initial.delay, HuntDelay::Ticks(1));
+
+        let multiplayer = aircraft_mission_hunt(AircraftHuntContext {
+            game_is_normal: false,
+            tiberium_threat_is_legal: false,
+            target_is_legal_after_search: false,
+            ..hunt_context()
+        });
+        assert_eq!(multiplayer.threat_search_order, [
+            AircraftThreatKind::Tiberium,
+            AircraftThreatKind::Normal,
+        ]);
+        assert!(multiplayer.assign_target_from_tiberium_threat);
+        assert!(multiplayer.assign_target_from_normal_threat);
+        assert!(multiplayer.enter_idle_mode);
+
+        let tiberium_found = aircraft_mission_hunt(AircraftHuntContext {
+            game_is_normal: false,
+            tiberium_threat_is_legal: true,
+            target_is_legal_after_search: true,
+            ..hunt_context()
+        });
+        assert_eq!(tiberium_found.threat_search_order, [AircraftThreatKind::Tiberium]);
+        assert!(!tiberium_found.assign_target_from_normal_threat);
+    }
+
+    #[test]
+    fn fixed_wing_hunt_takeoff_and_fly_to_target_obey_return_delays() {
+        let takeoff = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::TakeOff,
+            takeoff_completed: true,
+            in_radio_contact: true,
+            ..hunt_context()
+        });
+        assert!(takeoff.process_takeoff);
+        assert_eq!(takeoff.set_speed, Some(255));
+        assert!(takeoff.break_radio_contact);
+        assert_eq!(takeoff.next_stage, Some(AircraftHuntStage::FlyToTarget));
+        assert_eq!(takeoff.delay, HuntDelay::Ticks(1));
+
+        let facing_close = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::FlyToTarget,
+            fire_result: AircraftHuntFireResult::Facing,
+            target_is_in_weapon_range: true,
+            ..hunt_context()
+        });
+        assert_eq!(facing_close.delay, HuntDelay::Ticks(30));
+        assert!(facing_close.return_immediately);
+
+        let can_fire = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::FlyToTarget,
+            fire_result: AircraftHuntFireResult::Ok,
+            ..hunt_context()
+        });
+        assert_eq!(can_fire.next_stage, Some(AircraftHuntStage::DropBombs));
+        assert_eq!(can_fire.delay, HuntDelay::Ticks(1));
+    }
+
+    #[test]
+    fn fixed_wing_hunt_fly_failure_routes_to_regroup_or_reacquisition() {
+        for result in [AircraftHuntFireResult::Cant, AircraftHuntFireResult::Illegal] {
+            let attack_mission = aircraft_mission_hunt(AircraftHuntContext {
+                stage: AircraftHuntStage::FlyToTarget,
+                mission_is_attack: true,
+                fire_result: result,
+                ..hunt_context()
+            });
+            assert_eq!(attack_mission.next_stage, Some(AircraftHuntStage::Regroup));
+            let hunt_mission = aircraft_mission_hunt(AircraftHuntContext {
+                stage: AircraftHuntStage::FlyToTarget,
+                mission_is_attack: false,
+                fire_result: result,
+                ..hunt_context()
+            });
+            assert_eq!(hunt_mission.next_stage, Some(AircraftHuntStage::LookForTarget));
+        }
+        let no_ammo = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::FlyToTarget,
+            fire_result: AircraftHuntFireResult::Ammo,
+            ..hunt_context()
+        });
+        assert_eq!(no_ammo.next_stage, Some(AircraftHuntStage::Regroup));
+    }
+
+    #[test]
+    fn fixed_wing_hunt_drop_bombs_selects_homing_target_and_two_shot_count() {
+        let plan = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::DropBombs,
+            fire_result: AircraftHuntFireResult::Ok,
+            primary_bullet_is_homing: true,
+            two_shooter: true,
+            ..hunt_context()
+        });
+        assert_eq!(plan.fire_actions, [
+            HuntFireAction { target: HuntFireTarget::CurrentTarget, weapon_index: 0 },
+            HuntFireAction { target: HuntFireTarget::CurrentTarget, weapon_index: 0 },
+        ]);
+        assert!(plan.notify_target_incoming);
+        assert!(plan.rearm_delay_return);
+        assert!(plan.return_immediately);
+
+        let camera = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::DropBombs,
+            fire_result: AircraftHuntFireResult::Ok,
+            primary_weapon_is_camera: true,
+            ..hunt_context()
+        });
+        assert_eq!(camera.next_stage, Some(AircraftHuntStage::Regroup));
+        assert!(!camera.notify_target_incoming);
+    }
+
+    #[test]
+    fn fixed_wing_hunt_drop_bombs_routes_range_ammo_and_invalid_results() {
+        let range = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::DropBombs,
+            fire_result: AircraftHuntFireResult::Range,
+            ..hunt_context()
+        });
+        assert_eq!(range.next_stage, Some(AircraftHuntStage::FlyToTarget));
+        assert_eq!(range.delay, HuntDelay::Ticks(60));
+
+        let ammo = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::DropBombs,
+            fire_result: AircraftHuntFireResult::Ammo,
+            ..hunt_context()
+        });
+        assert_eq!(ammo.attacks_remaining_delta, -1);
+        assert_eq!(ammo.next_stage, Some(AircraftHuntStage::Regroup));
+
+        let cant = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::DropBombs,
+            fire_result: AircraftHuntFireResult::Cant,
+            ..hunt_context()
+        });
+        assert_eq!(cant.next_stage, Some(AircraftHuntStage::Regroup));
+    }
+
+    #[test]
+    fn fixed_wing_hunt_regroup_handles_empty_ammo_loaners_and_remaining_passengers() {
+        let loaner = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::Regroup,
+            ammo: 0,
+            team_is_valid: true,
+            is_loaner: true,
+            ..hunt_context()
+        });
+        assert!(loaner.set_attacks_remaining_zero);
+        assert!(loaner.enter_idle_mode);
+        assert!(loaner.remove_from_team);
+        assert_eq!(loaner.mission_to_assign, Some(AircraftMission::Retreat));
+        assert!(loaner.commence);
+
+        let passenger = aircraft_mission_hunt(AircraftHuntContext {
+            stage: AircraftHuntStage::Regroup,
+            attacks_remaining: 0,
+            has_attached_passengers: true,
+            ..hunt_context()
+        });
+        assert_eq!(passenger.next_stage, Some(AircraftHuntStage::LookForTarget));
+    }
+
+    #[test]
+    fn rotorcraft_hunt_reacquires_or_hands_off_to_attack() {
+        let empty = aircraft_mission_hunt(AircraftHuntContext {
+            fixed_wing: false,
+            ammo: 0,
+            team_is_valid: true,
+            ..hunt_context()
+        });
+        assert!(empty.enter_idle_mode);
+        assert!(empty.remove_from_team);
+        assert!(!empty.return_immediately);
+
+        let no_target = aircraft_mission_hunt(AircraftHuntContext {
+            fixed_wing: false,
+            target_is_legal: false,
+            game_is_normal: false,
+            target_is_legal_after_search: false,
+            ..hunt_context()
+        });
+        assert_eq!(no_target.threat_search_order, [
+            AircraftThreatKind::Tiberium,
+            AircraftThreatKind::Normal,
+        ]);
+        assert!(no_target.enter_idle_mode);
+        assert_eq!(no_target.delay, HuntDelay::Ticks(1));
+
+        let attack = aircraft_mission_hunt(AircraftHuntContext {
+            fixed_wing: false,
+            target_is_legal_after_search: true,
+            ..hunt_context()
+        });
+        assert_eq!(attack.mission_to_assign, Some(AircraftMission::Attack));
+        assert_eq!(attack.delay, HuntDelay::Ticks(1));
     }
 
     #[test]
