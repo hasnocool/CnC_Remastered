@@ -87,3 +87,6 @@
 - [ ] Complete gameplay, asset-format, editor, rendering, audio, and networking parity matrices.
 - [ ] Document known deviations and supported data versions.
 - [ ] Make a release only after license/trademark review and full verification.
+
+
+- [x] Port `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` to `rts-core::legacy_new_delete`.
