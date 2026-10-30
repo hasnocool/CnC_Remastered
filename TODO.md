@@ -187,3 +187,5 @@
 - [x] Port both MiscAsm.cpp variants' coordinate/facing algorithms, fixed conversion, bit arrays, palette fading, endian helpers, string trim, fat-pixel output, palette range and screen-shake fallback.
 
 - [x] Port REDALERT/KEY.CPP ring-buffer operations, mouse triplets, keyboard modifiers, ASCII conversion adapter, async key state and system-message pump.
+
+- [x] Port REDALERT/MOUSE.CPP and TIBERIANDAWN/MOUSE.CPP cursor shape state, exact 42/34 entry animation tables, small cursor behavior, resource loading hooks and ScrollClass delegation.
