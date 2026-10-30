@@ -24,7 +24,7 @@ pub enum PKeyError {
     SizeOverflow,
 }
 
-pub trait PKeyInteger: Clone + Default {
+pub trait PKeyInteger: Clone + Default + Send + Sync + 'static {
     /// DERDecode equivalent. Implementations consume one DER integer from the
     /// supplied buffer and report the consumed byte count when available.
     fn der_decode(&mut self, source: &[u8]) -> Result<usize, PKeyError>;
@@ -192,6 +192,53 @@ impl<I: PKeyInteger> PKey<I> {
     }
 }
 
+/// Adapter connecting the PKey implementation to PKPipe/PKStraw's cipher
+/// contract. The integer engine remains an explicit host dependency.
+pub struct PKeyCipher<I: PKeyInteger> {
+    key: PKey<I>,
+}
+
+impl<I: PKeyInteger> PKeyCipher<I> {
+    pub fn new(key: PKey<I>) -> Self { Self { key } }
+    pub fn key(&self) -> &PKey<I> { &self.key }
+    pub fn into_key(self) -> PKey<I> { self.key }
+}
+
+impl<I: PKeyInteger> crate::public_key_streams::PublicKeyCipher for PKeyCipher<I> {
+    fn plain_block_size(&self) -> usize { self.key.plain_block_size() }
+    fn crypt_block_size(&self) -> usize { self.key.crypt_block_size() }
+
+    fn encrypt(
+        &self,
+        source: &[u8],
+        destination: &mut [u8],
+    ) -> Result<usize, crate::public_key_streams::StreamCryptoError> {
+        self.key.encrypt(source, destination).map_err(map_stream_crypto_error)
+    }
+
+    fn decrypt(
+        &self,
+        source: &[u8],
+        destination: &mut [u8],
+    ) -> Result<usize, crate::public_key_streams::StreamCryptoError> {
+        self.key.decrypt(source, destination).map_err(map_stream_crypto_error)
+    }
+}
+
+fn map_stream_crypto_error(
+    error: PKeyError,
+) -> crate::public_key_streams::StreamCryptoError {
+    use crate::public_key_streams::StreamCryptoError;
+    match error {
+        PKeyError::InvalidBlockSize | PKeyError::InvalidPrecision => StreamCryptoError::InvalidBlockSize,
+        PKeyError::DestinationTooSmall { .. } | PKeyError::SizeOverflow => StreamCryptoError::CipherOutputTooLarge,
+        PKeyError::SourceTooLarge
+        | PKeyError::IntegerBackend
+        | PKeyError::DerEncoding
+        | PKeyError::DerDecoding => StreamCryptoError::InvalidCiphertextLength,
+    }
+}
+
 pub trait RandomByteSource {
     fn fill_bytes(&mut self, destination: &mut [u8]);
 }
@@ -347,6 +394,16 @@ mod tests {
             Err(PKeyError::DestinationTooSmall { required: 2, available: 1 }),
         );
         assert_eq!(short, [0xCC]);
+    }
+
+    #[test]
+    fn pkey_cipher_implements_the_public_key_stream_adapter_contract() {
+        use crate::public_key_streams::PublicKeyCipher;
+        let cipher = PKeyCipher::new(key_with_modulus(3_233, 17));
+        assert_eq!(cipher.plain_block_size(), 1);
+        assert_eq!(cipher.crypt_block_size(), 2);
+        let mut encrypted = [0; 2];
+        assert_eq!(cipher.encrypt(&[7], &mut encrypted).unwrap(), 2);
     }
 
     #[test]
