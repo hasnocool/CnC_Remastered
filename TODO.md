@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 405 C++ translation units with source-specific tests.
+- [ ] Port the remaining 403 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -100,3 +100,5 @@
 - [x] Share `rts-core::load_font` across both variants' `LOADFONT.CPP` implementations.
 
 - [x] Port byte-identical Red Alert/Tiberian Dawn `IFF.CPP` FORM chunk read/write behavior to `rts-formats::iff`.
+
+- [x] Port byte-identical Red Alert/Tiberian Dawn `MOUSEWW.CPP` active mouse state and conditional-hide behavior to `rts-core::mouse_ww`.
