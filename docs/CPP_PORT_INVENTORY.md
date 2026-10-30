@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **233**
-- Not yet fully ported: **261**
+- Fully ported: **235**
+- Not yet fully ported: **259**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 130 | 145 |
+| `REDALERT/` | 275 | 131 | 144 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 47 | 114 |
+| `TIBERIANDAWN/` | 161 | 48 | 113 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -90,7 +90,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/DISPLAY.CPP` | — |
 | Not started | `REDALERT/DLLInterface.cpp` | — |
 | Not started | `REDALERT/DLLInterfaceEditor.cpp` | — |
-| Not started | `REDALERT/DOOR.CPP` | — |
+| Complete | `REDALERT/DOOR.CPP` | rts-core/src/door.rs — constructor defaults, opening/closing guards, stage/rate initialization, animation completion, redraw flag and reverse closing frame calculation. |
 | Complete | `REDALERT/DPMI.CPP` | No active implementation in the pinned source; the complete translation unit is enclosed by #if (0). |
 | Not started | `REDALERT/DRIVE.CPP` | — |
 | Complete | `REDALERT/DROP.CPP` | rts-core/src/drop_list.rs — dropdown construction geometry, item selection, peer routing, expand/collapse, position updates, redraw and zap/remove lifecycle. |
@@ -374,7 +374,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/DISPLAY.CPP` | — |
 | Not started | `TIBERIANDAWN/DLLInterface.cpp` | — |
 | Not started | `TIBERIANDAWN/DLLInterfaceEditor.cpp` | — |
-| Not started | `TIBERIANDAWN/DOOR.CPP` | — |
+| Complete | `TIBERIANDAWN/DOOR.CPP` | rts-core/src/door.rs — byte-identical state transitions and animation-stage handling shared with Red Alert. |
 | Complete | `TIBERIANDAWN/DPMI.CPP` | No active implementation in the pinned source; the complete translation unit is enclosed by #if (0). |
 | Not started | `TIBERIANDAWN/DRIVE.CPP` | — |
 | Not started | `TIBERIANDAWN/EDIT.CPP` | — |
