@@ -25,6 +25,7 @@ pub mod sha_streams;
 pub mod straw;
 pub mod mix;
 pub mod palette;
+pub mod palette_fade;
 pub mod dipthong_tables;
 pub mod dipthong;
 
