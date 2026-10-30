@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **228**
-- Not yet fully ported: **266**
+- Fully ported: **229**
+- Not yet fully ported: **265**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 126 | 149 |
+| `REDALERT/` | 275 | 127 | 148 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 46 | 115 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -266,7 +266,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/TRACKER.CPP` | rts-core/src/tracker.rs — legal-target guard, ordered global registry/singleton detachment, dependent-trigger recursion and deletion. |
 | Not started | `REDALERT/TRIGGER.CPP` | — |
 | Not started | `REDALERT/TRIGTYPE.CPP` | — |
-| Not started | `REDALERT/TURRET.CPP` | — |
+| Complete | `REDALERT/TURRET.CPP` | rts-core/src/turret.rs — empty default/destructor behavior and parameterized constructor forwarding UnitType/HousesType to DriveClass; DriveClass behavior remains in its own translation units. |
 | Complete | `REDALERT/TXTLABEL.CPP` | rts-core/src/text_label.rs — constructor state, Set_Text, Gadget draw gate, Simple_Text_Print and clipped text dispatch. |
 | Not started | `REDALERT/UDATA.CPP` | — |
 | Complete | `REDALERT/UDPADDR.CPP` | rts-core/src/udp_addr.rs — active Get_Broadcast_Addresses stub returns false; the complete dialog/address-discovery implementation is #if(0)-disabled. |
