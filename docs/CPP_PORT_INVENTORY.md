@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **224**
-- Not yet fully ported: **270**
+- Fully ported: **225**
+- Not yet fully ported: **269**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 123 | 152 |
+| `REDALERT/` | 275 | 124 | 151 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 45 | 116 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -77,7 +77,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/CRC.CPP` | rts-formats/src/legacy_crc.rs — rotate-add checksum engine. |
 | Complete | `REDALERT/CRCPIPE.CPP` | rts-formats/src/crc_streams.rs — checksum-aware push adapter. |
 | Complete | `REDALERT/CRCSTRAW.CPP` | rts-formats/src/crc_streams.rs — checksum-aware pull adapter. |
-| Not started | `REDALERT/CREDITS.CPP` | — |
+| Complete | `REDALERT/CREDITS.CPP` | rts-core/src/credits.rs — RedAlertCreditClass frame-static throttle, null-player handling, nonnegative credits, mission-timer redraw trigger, eighth-gap step, direction-specific countdown, sound flags, RESFACTOR/Win32 position, and non-Win32 timer formatting. |
 | Complete | `REDALERT/CREW.CPP` | Intentionally empty translation unit; contains only the function.h include and no executable definitions. |
 | Complete | `REDALERT/CSTRAW.CPP` | rts-formats/src/cache_straw.rs — buffered read-ahead adapter |
 | Complete | `REDALERT/DDE.CPP` | rts-core/src/dde_instance.rs — active Win32 wrapper state, no-op constructor before DdeInitialize, DdeUninitialize destructor, callback enable toggle, DdeConnect/DdeDisconnect, Test_Server_Running and CF_TEXT XTYP_POKE client transaction with 60-second timeout; registration and dispatcher are #if (0). |
