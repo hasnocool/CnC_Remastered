@@ -65,6 +65,7 @@ pub mod cargo;
 pub mod crate_manager;
 pub mod scale_rotate;
 pub mod turret;
+pub mod tarcom;
 pub mod heap;
 pub mod network_stubs;
 pub mod null_connection;
