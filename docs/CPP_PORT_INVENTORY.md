@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **260**
-- Not yet fully ported: **234**
+- Fully ported: **261**
+- Not yet fully ported: **233**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 136 | 139 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 61 | 100 |
+| `TIBERIANDAWN/` | 161 | 62 | 99 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -420,7 +420,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/LINK.CPP` | — |
 | Complete | `TIBERIANDAWN/LIST.CPP` | rts-core/src/list_box.rs — shared ListClass state machine plus Tiberian Dawn's green-box style, empty-list selection reset, current-item behavior, gradient row highlight and gadget-chain operations. |
 | Not started | `TIBERIANDAWN/LOADDLG.CPP` | — |
-| Not started | `TIBERIANDAWN/LOGIC.CPP` | — |
+| Complete | `TIBERIANDAWN/LOGIC.CPP` | rts-core/src/logic_runtime.rs — original AI phase ordering, crate regen timing, team/object/factory/house scheduling, deletion-safe dynamic object traversal, locked/revealed scan-bit updates, optional RA attribute recalculation and recently-created flag clearing. |
 | Not started | `TIBERIANDAWN/MAP.CPP` | — |
 | Not started | `TIBERIANDAWN/MAPEDDLG.CPP` | — |
 | Not started | `TIBERIANDAWN/MAPEDIT.CPP` | — |
