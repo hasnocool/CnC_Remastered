@@ -4,18 +4,18 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **56**
-- Not yet fully ported: **438**
+- Fully ported: **59**
+- Not yet fully ported: **435**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 46 | 229 |
-| `REDALERT/WIN32LIB/` | 26 | 3 | 23 |
+| `REDALERT/` | 275 | 47 | 228 |
+| `REDALERT/WIN32LIB/` | 26 | 4 | 22 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 4 | 28 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 5 | 27 |
 
 ## File-by-file coverage
 
@@ -278,7 +278,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/VESSEL.CPP` | — |
 | Not started | `REDALERT/VISUDLG.CPP` | — |
 | Not started | `REDALERT/VORTEX.CPP` | — |
-| Not started | `REDALERT/W95TRACE.CPP` | — |
+| Complete | `REDALERT/W95TRACE.CPP` | rts-core/src/w95_trace.rs — active implementation is disabled under #if 0. |
 | Not started | `REDALERT/WARHEAD.CPP` | — |
 | Not started | `REDALERT/WEAPON.CPP` | — |
 | Not started | `REDALERT/WINSTUB.CPP` | — |
@@ -305,7 +305,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---|---|
 | Not started | `REDALERT/WIN32LIB/ALLOC.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/BUFFER.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/BUFFGLBL.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/BUFFGLBL.CPP` | rts-core/src/buffer_globals.rs — callback/viewport null defaults and icon-cache enabled state. |
 | Not started | `REDALERT/WIN32LIB/DDRAW.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/DELAY.CPP` | rts-core/src/delay.rs — timer threshold and duration loop. |
 | Not started | `REDALERT/WIN32LIB/DIPTHONG.CPP` | — |
@@ -502,7 +502,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---|---|
 | Not started | `TIBERIANDAWN/WIN32LIB/ALLOC.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/BUFFER.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/BUFFGLBL.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/BUFFGLBL.CPP` | rts-core/src/buffer_globals.rs — identical shared global initializers. |
 | Not started | `TIBERIANDAWN/WIN32LIB/DDRAW.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/DIPTHONG.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/DRAWRECT.CPP` | — |
