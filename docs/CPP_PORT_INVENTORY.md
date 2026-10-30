@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **277**
-- Not yet fully ported: **217**
+- Fully ported: **278**
+- Not yet fully ported: **216**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 144 | 131 |
+| `REDALERT/` | 275 | 145 | 130 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 63 | 98 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -116,7 +116,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/GAUGE.CPP` | — |
 | Complete | `REDALERT/GETCPU.CPP` | rts-core/src/cpu_info.rs — MMX/CPU-type/vendor-ID wrapper with assembly probe injected through CpuProbe and source-compatible strncpy output behavior. |
 | Not started | `REDALERT/GLOBALS.CPP` | — |
-| Not started | `REDALERT/GOPTIONS.CPP` | — |
+| Complete | `REDALERT/GOPTIONS.CPP` | rts-core/src/red_alert_game_options.rs — resolution layout, compile-feature-gated button table, multiplayer save/delete/draw eligibility and labels, active-player checks, cursor fallback and wraparound navigation, redraw/callback order, non-Windows version display, all load/save/delete/restate/quit/draw/game-controls/resume action branches, outgoing events/palette/movie/settings effects, and final button/map cleanup. Blocking subsystem calls are exposed as asynchronous host action requests. |
 | Not started | `REDALERT/GSCREEN.CPP` | — |
 | Not started | `REDALERT/HDATA.CPP` | — |
 | Complete | `REDALERT/HEAP.CPP` | rts-core/src/heap.rs — FixedHeapClass and FixedIHeapClass allocation/free/clear/free-all, first-false bitmap selection, active-order iteration, logical IDs, zeroed indexed allocations, raw Pipe/Straw serialization, and pointer code/decode callbacks. |
