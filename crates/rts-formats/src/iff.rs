@@ -74,14 +74,19 @@ impl IffFile {
             if at.checked_add(8).filter(|&v| v <= self.bytes.len()).is_none() {
                 return if first { Err(IffError::TruncatedHeader) } else { Ok(None) };
             }
-            let (found, size, data) = self.chunk_at(at)?;
+            let head = &self.bytes[at..at + 8];
+            let found = [head[0], head[1], head[2], head[3]];
+            let size = u32::from_be_bytes([head[4], head[5], head[6], head[7]]) as usize;
             if found == id {
                 return Ok(Some((at, size)));
             }
             if first {
+                // Open_Iff_File leaves the cursor after FORM; the first scan
+                // sees the FORM type before resetting to the first real chunk.
                 at = FORM_HEADER_LEN;
                 first = false;
             } else {
+                let (_, size, data) = self.chunk_at(at)?;
                 let padded = size.checked_add(size & 1).ok_or(IffError::LengthOverflow)?;
                 at = data.checked_add(padded).ok_or(IffError::LengthOverflow)?;
             }
