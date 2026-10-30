@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 383 C++ translation units with source-specific tests.
+- [ ] Port the remaining 381 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -121,3 +121,5 @@
 - [x] Port REDALERT/GETCPU.CPP CPU/MMX/vendor wrapper and preserve bounded vendor-ID copying in `rts-core::cpu_info`.
 
 - [x] Port both variants' CHECKBOX.CPP drawing gates, frames, checked visuals and Red Alert LEFTRELEASE action.
+
+- [x] Port both variants' FLASHER.CPP per-player countdowns, IsBlushing state, flashing bitmask and debug text.
