@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **202**
-- Not yet fully ported: **292**
+- Fully ported: **204**
+- Not yet fully ported: **290**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 112 | 163 |
+| `REDALERT/` | 275 | 113 | 162 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 34 | 127 |
+| `TIBERIANDAWN/` | 161 | 35 | 126 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -119,7 +119,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/GOPTIONS.CPP` | — |
 | Not started | `REDALERT/GSCREEN.CPP` | — |
 | Not started | `REDALERT/HDATA.CPP` | — |
-| Not started | `REDALERT/HEAP.CPP` | — |
+| Complete | `REDALERT/HEAP.CPP` | rts-core/src/heap.rs — FixedHeapClass and FixedIHeapClass allocation/free/clear/free-all, first-false bitmap selection, active-order iteration, logical IDs, zeroed indexed allocations, raw Pipe/Straw serialization, and pointer code/decode callbacks. |
 | Not started | `REDALERT/HELP.CPP` | — |
 | Not started | `REDALERT/HOUSE.CPP` | — |
 | Complete | `REDALERT/HSV.CPP` | rts-core/src/rgb_palette.rs — HSV adjustment, squared component distance, HSV-to-RGB six-sector conversion and palette-index write through RGBClass. |
@@ -396,7 +396,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/GOPTIONS.CPP` | — |
 | Not started | `TIBERIANDAWN/GSCREEN.CPP` | — |
 | Not started | `TIBERIANDAWN/HDATA.CPP` | — |
-| Not started | `TIBERIANDAWN/HEAP.CPP` | — |
+| Complete | `TIBERIANDAWN/HEAP.CPP` | rts-core/src/heap.rs — fixed and indexed heaps with first-false allocation, free-map and active-pointer management, byte-slot clearing, FileClass Save / raw block Load representation, and pointer code/decode callbacks. |
 | Not started | `TIBERIANDAWN/HELP.CPP` | — |
 | Not started | `TIBERIANDAWN/HOUSE.CPP` | — |
 | Not started | `TIBERIANDAWN/IDATA.CPP` | — |
