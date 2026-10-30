@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 271 C++ translation units with source-specific tests.
+- [ ] Port the remaining 269 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -252,3 +252,5 @@
 - [x] Port REDALERT/LAYER.CPP and TIBERIANDAWN/LAYER.CPP LayerClass submit, sorted insertion, one-pass adjacent-swap sorting, init/no-op One_Time and vector allocation/growth rules.
 
 - [x] Port TIBERIANDAWN/SPECIAL.CPP and SPECIAL.H default settings plus Special_Dialog's ten checkbox settings, local transactional copy, OK/Escape event queue, Cancel discard and surface restore redraw.
+
+- [x] Port REDALERT/CREDITS.CPP and TIBERIANDAWN/CREDITS.CPP counter logic with their variant-specific animation step sizes, frame throttling, sound, mission-timer redraw, and UI positioning.
