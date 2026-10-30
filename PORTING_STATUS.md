@@ -27,7 +27,9 @@
 | Simulation RNG | Ported | Exact shared 256-byte table; byte index increments before lookup; both variant Sim_IRandom scaling routines |
 | Red Alert fixed point | Ported | Q16.16 constructors, arithmetic helpers, rounding, saturation, ASCII conversion |
 | Legacy checksum | Ported | Westwood rotate-left/add word checksum with partial-word staging |
-| CRC pipe/straw adapters | Ported | Checksum observing push and pull stream adapters; base Pipe/Straw chains remain separate |
+| CRC pipe/straw adapters | Ported | Checksum observing push and pull stream adapters |
+| Pipe/Straw chains | Ported | Push forwarding/relink/flush and pull-demand/relink chains; cycle detection added |
+| Rect geometry | Ported | Source-compatible validity, intersection, anchor adjustment, and union |
 | Map editor model | Initial | Cell layer IDs and waypoint storage only |
 | Tiberian Dawn gameplay | Not ported | Variant boundary only |
 | Red Alert gameplay | Not ported | Variant boundary only |
@@ -38,8 +40,8 @@
 ## C++ port coverage
 
 - Upstream translation units inventoried: 494.
-- Fully ported C++ translation units: 7 (`REDALERT/CRC.CPP`, `REDALERT/CRCPIPE.CPP`, `REDALERT/CRCSTRAW.CPP`, `REDALERT/FIXED.CPP`, `REDALERT/RAND.CPP`, `REDALERT/RANDOM.CPP`, `TIBERIANDAWN/RAND.CPP`).
-- Remaining C++ translation units: 487. See [the file-by-file inventory](docs/CPP_PORT_INVENTORY.md).
+- Fully ported C++ translation units: 10 (`REDALERT/CRC.CPP`, `REDALERT/CRCPIPE.CPP`, `REDALERT/CRCSTRAW.CPP`, `REDALERT/FIXED.CPP`, `REDALERT/PIPE.CPP`, `REDALERT/RAND.CPP`, `REDALERT/RANDOM.CPP`, `REDALERT/RECT.CPP`, `REDALERT/STRAW.CPP`, `TIBERIANDAWN/RAND.CPP`).
+- Remaining C++ translation units: 484. See [the file-by-file inventory](docs/CPP_PORT_INVENTORY.md).
 
 ## Compatibility references
 
