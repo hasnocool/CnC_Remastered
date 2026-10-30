@@ -44,6 +44,7 @@ pub mod check_list;
 pub mod color_list;
 pub mod text_button;
 pub mod dde_bridge;
+pub mod dde_instance;
 pub mod dialog_render;
 pub mod keyboard;
 pub mod td_keyboard;
