@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 17 | 9 |
+| `REDALERT/WIN32LIB/` | 26 | 18 | 8 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 20 | 12 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 21 | 11 |
 
 ## File-by-file coverage
 
@@ -315,7 +315,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/GBUFFER.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/GETSHAPE.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/ICONSET.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/IFF.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/IFF.CPP` | rts-formats/src/iff.rs — FORM validation, first-match chunk search, even-byte chunk alignment, bounded reads, chunk writes and FORM-size update. |
 | Complete | `REDALERT/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — assembly-compatible Random state and injectable CRT IRandom range sampling. |
 | Not started | `REDALERT/WIN32LIB/LOAD.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/LOADFONT.CPP` | rts-core/src/load_font.rs — validates the little-endian size prefix, uncompressed marker, five-block font layout, and retains the legacy allocation layout. |
@@ -511,7 +511,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/WIN32LIB/GBUFFER.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/GETSHAPE.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/ICONSET.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/IFF.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/IFF.CPP` | rts-formats/src/iff.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — shared implementation; same source routine in both variants. |
 | Not started | `TIBERIANDAWN/WIN32LIB/KEYBOARD.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/LOAD.CPP` | — |
