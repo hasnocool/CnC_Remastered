@@ -153,7 +153,7 @@ impl GameOptionsLayout {
     ) -> Self {
         let factor = resolution_factor.max(1);
         let option_width = 224 * factor;
-        let option_height = if build.fixit_version_3 { 111 } else { 100 } * factor;
+        let option_height = (if build.fixit_version_3 { 111 } else { 100 }) * factor;
         Self {
             resolution_factor: factor,
             option_width,
@@ -338,11 +338,7 @@ impl GameOptionsMenu {
             current_index - 1
         };
         self.current_button = self.buttons[next_index].id;
-        self.current_numeric_id = self.current_button.id(GameOptionsBuild {
-            fixit_version_3: self.buttons.iter().any(|button| button.id == GameOptionsButton::Draw),
-            fixit_multi_save: false,
-            windows_build: false,
-        });
+        self.current_numeric_id = self.buttons[next_index].numeric_id;
         (old, self.current_button)
     }
 
@@ -790,7 +786,7 @@ impl RedAlertGameOptions {
         &mut self,
         result: GameOptionsActionResult,
     ) -> Result<GameOptionsStep, GameOptionsError> {
-        let action = self.pending_action.take().ok_or(GameOptionsError::NoActionPending)?;
+        let action = self.pending_action.clone().ok_or(GameOptionsError::NoActionPending)?;
         let mut operations = Vec::new();
         match action {
             GameOptionsAction::RestateMission { brief_movie, .. } => {
@@ -830,15 +826,18 @@ impl RedAlertGameOptions {
                     self.display = true;
                 }
             }
-            GameOptionsAction::SaveMission | GameOptionsAction::DeleteMission => {
+            GameOptionsAction::SaveMission => {
                 if result != GameOptionsActionResult::Completed {
                     return Err(GameOptionsError::UnexpectedActionResult);
                 }
-                // Save has no explicit display=true in the source. Delete sets
-                // display before entering LoadOptionsClass.
-                if matches!(action, GameOptionsAction::DeleteMission) {
-                    self.display = true;
+                // Save has no explicit display=true in the source.
+            }
+            GameOptionsAction::DeleteMission => {
+                if result != GameOptionsActionResult::Completed {
+                    return Err(GameOptionsError::UnexpectedActionResult);
                 }
+                // Delete sets display=true before entering LoadOptionsClass.
+                self.display = true;
             }
             GameOptionsAction::Surrender(reason) => {
                 let accepted = match result {
@@ -897,7 +896,8 @@ impl RedAlertGameOptions {
             }
         }
 
-        if !self.process && self.pending_action.is_none() {
+        self.pending_action = None;
+        if !self.process {
             self.finish(&mut operations);
         }
         Ok(self.snapshot(operations))
