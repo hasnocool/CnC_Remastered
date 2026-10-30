@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 110 | 165 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 33 | 128 |
+| `TIBERIANDAWN/` | 161 | 34 | 127 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -80,7 +80,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/CREDITS.CPP` | — |
 | Complete | `REDALERT/CREW.CPP` | Intentionally empty translation unit; contains only the function.h include and no executable definitions. |
 | Complete | `REDALERT/CSTRAW.CPP` | rts-formats/src/cache_straw.rs — buffered read-ahead adapter |
-| Not started | `REDALERT/DDE.CPP` | — |
+| Complete | `REDALERT/DDE.CPP` | rts-core/src/dde_instance.rs — active Win32 wrapper state, no-op constructor before DdeInitialize, DdeUninitialize destructor, callback enable toggle, DdeConnect/DdeDisconnect, Test_Server_Running and CF_TEXT XTYP_POKE client transaction with 60-second timeout; registration and dispatcher are #if (0). |
 | Complete | `REDALERT/DEBUG.CPP` | No active implementation in the pinned RedAlert.vcxproj configuration; the entire translation unit is guarded by `#ifdef CHEAT_KEYS`, which is not defined by the project or its headers. |
 | Complete | `REDALERT/DESCDLG.CPP` | rts-core/src/description_dialog.rs — dialog geometry, gadget setup, redraw/callback loop, OK/cancel handling and text trimming. |
 | Complete | `REDALERT/DIAL8.CPP` | rts-core/src/dial8.rs — exact 8-position geometry, shared static drag-selection state, Desired_Facing8 pointer tracking, facing-change event suppression, parent gadget delegation, mouse hiding/restoring, standard box styles and remap-scheme shadow/highlight lines. |
@@ -366,7 +366,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/COORD.CPP` | — |
 | Not started | `TIBERIANDAWN/CREDITS.CPP` | — |
 | Complete | `TIBERIANDAWN/CREW.CPP` | Intentionally empty translation unit; contains only the function.h include and no executable definitions. |
-| Not started | `TIBERIANDAWN/DDE.CPP` | — |
+| Complete | `TIBERIANDAWN/DDE.CPP` | rts-core/src/dde_instance.rs — same active DDE instance/client POKE wrapper methods as Red Alert; DdeInitialize, registration and event callback dispatcher are compile-time inactive in the pinned source. |
 | Complete | `TIBERIANDAWN/DEBUG.CPP` | No active implementation in the pinned TiberianDawn.vcxproj configuration; the entire translation unit is guarded by `#ifdef CHEAT_KEYS`, which is not defined by the project or its headers. |
 | Complete | `TIBERIANDAWN/DESCDLG.CPP` | rts-core/src/description_dialog.rs — shared dialog flow with GreenBorder style, SeenBuff-sized background and surface-restore redraw handling. |
 | Complete | `TIBERIANDAWN/DIAL8.CPP` | rts-core/src/dial8.rs — shared geometry and event state with Tiberian Dawn green depressed/raised box styles and fixed green pointer shadow/highlight colors supplied by the host palette adapter. |
