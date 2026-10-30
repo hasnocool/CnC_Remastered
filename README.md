@@ -13,7 +13,7 @@ The native projects target Win32, Windows SDK 8.1, Visual Studio toolset v141, a
 ## Current implementation
 
 - `rts-core`: source-derived map extents, cell/region addressing, 8-way facing, 15 Hz clock, both variants' simulation RNGs (including Red Alert's seeded 15-bit LCG), and Red Alert Q16.16 fixed-point arithmetic.
-- `rts-formats`: checked binary readers, a bounds-checked legacy MIX parser, the original rotate-and-add `CRCEngine` checksum, plus checksum-aware push/pull stream adapters.
+- `rts-formats`: checked binary readers, a bounds-checked legacy MIX parser, the original rotate-and-add `CRCEngine` checksum, plus checksum-aware push/pull stream adapters, a bounds-checked LCW codec, and framed LCW block streams.
 - `rts-sim`: deterministic event scheduling with stable same-tick ordering.
 - `map-editor-model`: an initial typed map document with cell layers and waypoints.
 - `tiberian-dawn` / `red-alert`: separate variant boundary crates; actual game rules are not yet ported.
