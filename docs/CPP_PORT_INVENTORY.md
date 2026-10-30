@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **253**
-- Not yet fully ported: **241**
+- Fully ported: **254**
+- Not yet fully ported: **240**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -255,7 +255,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/TEAM.CPP` | — |
 | Not started | `REDALERT/TEAMTYPE.CPP` | — |
 | Not started | `REDALERT/TECHNO.CPP` | — |
-| Not started | `REDALERT/TEMPLATE.CPP` | — |
+| Complete | `REDALERT/TEMPLATE.CPP` | rts-core/src/red_alert_template.rs — template pool allocation/lifecycle, constructor unlimbo path, template type footprint/icon-set lookup, radar-bounded map marking, mark-up ownership checks, mark-down overlay/smudge clearing, redraw/recalc and safe self-removal without duplicate unmark. |
 | Not started | `REDALERT/TENMGR.CPP` | — |
 | Not started | `REDALERT/TERRAIN.CPP` | — |
 | Not started | `REDALERT/TEVENT.CPP` | — |

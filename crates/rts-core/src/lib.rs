@@ -114,3 +114,4 @@ pub mod progress_bar;
 pub mod map_selection;
 pub mod sound_controls;
 pub mod game_controls;
+pub mod red_alert_template;
