@@ -15,7 +15,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | `REDALERT/` | 275 | 47 | 228 |
 | `REDALERT/WIN32LIB/` | 26 | 15 | 11 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 18 | 14 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 19 | 13 |
 
 ## File-by-file coverage
 
@@ -529,7 +529,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/TIMERINI.CPP` | rts-core/src/legacy_timer_system.rs — timer-system state, callback tick counters, active flag, frequency and teardown. |
 | Not started | `TIBERIANDAWN/WIN32LIB/WINDOWS.CPP` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/WINHIDE.CPP` | rts-core/src/window_mouse.rs — shared upstream no-op implementation. |
-| Not started | `TIBERIANDAWN/WIN32LIB/WRITEPCX.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/WRITEPCX.CPP` | rts-formats/src/pcx.rs — byte-identical shared implementation with Red Alert; same 128-byte header, scanline RLE, and 256-colour palette trailer. |
 | Not started | `TIBERIANDAWN/WIN32LIB/WSA.CPP` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/_DIPTABL.CPP` | rts-formats/src/dipthong_tables.rs — identical shared lookup tables. |
 
