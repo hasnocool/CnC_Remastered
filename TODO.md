@@ -183,3 +183,5 @@
 - [x] Port both SCROLL.CPP variants' constructor/timer setup, autoscroll state, Init_IO and active HelpClass::AI delegation.
 
 - [x] Port both SHAPEBTN.CPP variants' shape assignment, draw gate, frame selection and conditional mouse visibility.
+
+- [x] Port both MiscAsm.cpp variants' coordinate/facing algorithms, fixed conversion, bit arrays, palette fading, endian helpers, string trim, fat-pixel output, palette range and screen-shake fallback.
