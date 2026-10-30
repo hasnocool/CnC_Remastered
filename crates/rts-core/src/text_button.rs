@@ -81,6 +81,7 @@ pub trait TextButtonHost {
     fn draw_box(&mut self, x: i32, y: i32, width: i32, height: i32, style: TextButtonBoxStyle, filled: bool);
     fn palette(&self) -> TextButtonPalette;
     fn print_flags(&self) -> TextButtonPrintFlags;
+    fn wolapi_integration_enabled(&self) -> bool { false }
 
     fn fancy_text_print(
         &mut self,
@@ -187,6 +188,11 @@ impl TextButtonController {
             redraw_requested: false,
         };
         button.set_text_id(host, text_id, false);
+        if (button.width == -1 || button.height == -1)
+            && variant == TextButtonVariant::TiberianDawn
+        {
+            host.prepare_tiberian_dawn_text_measurement(print_flags);
+        }
         button.resize_constructor(host, true);
         button
     }
@@ -312,8 +318,11 @@ impl TextButtonController {
         let style = match self.variant {
             TextButtonVariant::RedAlert => {
                 if self.state.disabled {
-                    // WOLAPI_INTEGRATION selects BOX instead of DIS_RAISED.
-                    TextButtonBoxStyle::DisabledRaised
+                    if host.wolapi_integration_enabled() {
+                        TextButtonBoxStyle::WolApiDisabledBox
+                    } else {
+                        TextButtonBoxStyle::DisabledRaised
+                    }
                 } else if self.state.pressed {
                     TextButtonBoxStyle::Down
                 } else {
@@ -459,6 +468,7 @@ mod tests {
         fn palette(&self) -> TextButtonPalette {
             TextButtonPalette { black: 0, white: 1, light_gray: 2, dark_gray: 3, red: 4, cc_green: 5 }
         }
+        fn wolapi_integration_enabled(&self) -> bool { false }
         fn print_flags(&self) -> TextButtonPrintFlags {
             TextButtonPrintFlags {
                 six_point_gradient: 1,
