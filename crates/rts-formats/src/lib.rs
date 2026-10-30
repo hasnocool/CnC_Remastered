@@ -34,3 +34,4 @@ pub use mix::{MixArchive, MixEntry, MixParseError};
 
 pub mod pcx;
 pub mod iff;
+pub mod load;
