@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **186**
-- Not yet fully ported: **308**
+- Fully ported: **192**
+- Not yet fully ported: **302**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 106 | 169 |
-| `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 29 | 132 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
+| `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
+| `TIBERIANDAWN/` | 161 | 31 | 130 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 30 | 2 |
 
 ## File-by-file coverage
 
@@ -306,7 +306,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/WIN32LIB/ALLOC.CPP` | rts-core/src/legacy_alloc.rs — Windows malloc/free/realloc behavior, allocation flags, counters, DPMI stubs and fixed RAM estimates. |
 | Complete | `REDALERT/WIN32LIB/BUFFER.CPP` | rts-core/src/buffer.rs — owned/borrowed storage, size-only allocation, default and destructor semantics. |
 | Complete | `REDALERT/WIN32LIB/BUFFGLBL.CPP` | rts-core/src/buffer_globals.rs — callback/viewport null defaults and icon-cache enabled state. |
-| Not started | `REDALERT/WIN32LIB/DDRAW.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/DDRAW.CPP` | rts-core/src/direct_draw.rs — identical to Tiberian Dawn's unit; active Set_Video_Mode returns TRUE, while caps, vertical blank, palette conversion, reset, surface registration/focus restore/release and the 20-surface monitor are ported. |
 | Complete | `REDALERT/WIN32LIB/DELAY.CPP` | rts-core/src/delay.rs — timer threshold and duration loop. |
 | Complete | `REDALERT/WIN32LIB/DIPTHONG.CPP` | rts-formats/src/dipthong.rs — dip/undip/fixup transforms and legacy string-block lookup. |
 | Complete | `REDALERT/WIN32LIB/DRAWRECT.CPP` | rts-core/src/draw_rect.rs — locked four-edge Draw_Line sequence. |
@@ -503,7 +503,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/ALLOC.CPP` | rts-core/src/legacy_alloc.rs — shared Windows allocator compatibility implementation. |
 | Complete | `TIBERIANDAWN/WIN32LIB/BUFFER.CPP` | rts-core/src/buffer.rs — shared BufferClass storage and ownership implementation. |
 | Complete | `TIBERIANDAWN/WIN32LIB/BUFFGLBL.CPP` | rts-core/src/buffer_globals.rs — identical shared global initializers. |
-| Not started | `TIBERIANDAWN/WIN32LIB/DDRAW.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/DDRAW.CPP` | rts-core/src/direct_draw.rs — byte-identical to Red Alert's unit; active DirectDraw state, capability flags, palette entries, vblank behavior and surface restoration are ported. |
 | Complete | `TIBERIANDAWN/WIN32LIB/DIPTHONG.CPP` | rts-formats/src/dipthong.rs — shared implementation; Internet string table and little-endian offset lookup. |
 | Complete | `TIBERIANDAWN/WIN32LIB/DRAWRECT.CPP` | rts-core/src/draw_rect.rs — identical shared implementation. |
 | Not started | `TIBERIANDAWN/WIN32LIB/DrawMisc.cpp` | — |
