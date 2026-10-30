@@ -376,11 +376,11 @@ mod tests {
         // A 16-bit modulus gives 1-byte plaintext and 2-byte ciphertext blocks.
         let public_key = key_with_modulus(3_233, 17);
         let private_key = key_with_modulus(3_233, 2_753);
-        let mut encrypted = [0_u8; 6];
+        let mut encrypted = [0_u8; 8];
         let written = public_key.encrypt(&[2, 3, 4, 99], &mut encrypted).unwrap();
-        assert_eq!(written, 6);
+        assert_eq!(written, 8);
         let mut decrypted = [0_u8; 4];
-        let restored = private_key.decrypt(&encrypted, &mut decrypted).unwrap();
+        let restored = private_key.decrypt(&encrypted[..7], &mut decrypted).unwrap();
         assert_eq!(restored, 3);
         assert_eq!(&decrypted[..3], &[2, 3, 4]);
     }
