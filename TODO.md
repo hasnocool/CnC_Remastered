@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 304 C++ translation units with source-specific tests.
+- [ ] Port the remaining 302 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -213,3 +213,5 @@
 - [x] Port REDALERT/COLRLIST.CPP and TIBERIANDAWN/COLRLIST.CPP per-row color storage, text/localized additions, removal, selection style, highlight/box/bar/invert rendering, gradient text flags and variant-specific selected-color semantics.
 
 - [x] Port REDALERT/TEXTBTN.CPP and TIBERIANDAWN/TEXTBTN.CPP default/string/localized constructors, text resize, box/background styles, black border, conditional mouse handling, gradient remap/text color behavior and WOLAPI branch.
+
+- [x] Port both identical WIN32LIB/DDRAW.CPP translation units: active DirectDraw globals, capabilities, Set_DD_Palette conversion, Wait_Vert_Blank, Process_DD_Result and 20-entry SurfaceMonitorClass; Set_Video_Mode is the source's unconditional TRUE stub.
