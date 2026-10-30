@@ -5,6 +5,7 @@ pub mod binary;
 pub mod crc32;
 pub mod crc_streams;
 pub mod lcw;
+pub mod lcw_blocks;
 pub mod legacy_crc;
 pub mod pipe;
 pub mod readline;
