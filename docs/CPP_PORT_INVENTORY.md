@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **196**
-- Not yet fully ported: **298**
+- Fully ported: **197**
+- Not yet fully ported: **297**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -15,7 +15,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | `REDALERT/` | 275 | 109 | 166 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 32 | 129 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 30 | 2 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
 
@@ -530,7 +530,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/WINDOWS.CPP` | rts-formats/src/window_text.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/WINHIDE.CPP` | rts-core/src/window_mouse.rs — shared upstream no-op implementation. |
 | Complete | `TIBERIANDAWN/WIN32LIB/WRITEPCX.CPP` | rts-formats/src/pcx.rs — byte-identical shared implementation with Red Alert; same 128-byte header, scanline RLE, and 256-colour palette trailer. |
-| Not started | `TIBERIANDAWN/WIN32LIB/WSA.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/WSA.CPP` | rts-formats/src/wsa.rs — WSA header/offset-table parsing, resident versus file-backed selection, optional palette capture, frame-zero LCW decode, shortest-direction frame stepping with wrap/linear-only behavior, per-frame LCW/XOR deltas, direct viewport and indirect-buffer host callbacks, metadata getters and close semantics. |
 | Complete | `TIBERIANDAWN/WIN32LIB/_DIPTABL.CPP` | rts-formats/src/dipthong_tables.rs — identical shared lookup tables. |
 
 ## Completion requirements
