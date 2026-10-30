@@ -1,6 +1,7 @@
 //! Platform-independent compatibility primitives for the two RTS variants.
 
 pub mod abstract_object;
+pub mod combat;
 pub mod confirmation_dialog;
 pub mod credits;
 pub mod fuse;

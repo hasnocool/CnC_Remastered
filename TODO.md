@@ -279,3 +279,4 @@
 
 - [x] Port REDALERT/WEAPON.CPP WeaponTypeClass defaults/destruction, indexed registry, INI data parsing, warhead/bullet references, allowed-threat calculation and weapon/armor name lookup.
 - [x] Port `TIBERIANDAWN/CONNECT.CPP` base connection constructor/destructor state, packet staging capacity, retry/timeout configuration, abstract send/receive queue service order, legacy 60 Hz time conversion and packet command names to `rts-core::connection`.
+- [x] Port `TIBERIANDAWN/COMBAT.CPP` damage modifiers and explosion collateral traversal into `rts-core::combat`, preserving source order, 32-object cap, `IsToDamage` duplicate suppression, building impact handling, HE aircraft bonus and post-damage terrain effects.
