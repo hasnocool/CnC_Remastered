@@ -284,3 +284,4 @@
 - [x] Port `TIBERIANDAWN/HDATA.CPP` house metadata, pointer-table ordering, case-insensitive INI-name resolution, safe house reference lookup, constructor bias defaults and one-time Jurassic Park radar-color override.
 - [x] Port active Tiberian Dawn tables from `TIBERIANDAWN/CONST.CPP`, including source names, coordinate/facing tables, weapons, warheads, terrain movement costs, theaters and remap palettes.
 - [x] Port `TIBERIANDAWN/MSGBOX.CPP` overloads and modal behavior as a resumable Rust state machine, including bounded message staging, geometry, 1–3 button mapping, keyboard focus, no-button timer callback, surface restoration and preserved-region restore.
+- [x] Port `TIBERIANDAWN/VISUDLG.CPP` and its `SliderClass` interaction semantics: 320/640 dialog layout, four option sliders, 20-unit bump behavior, reset values, six-position keyboard navigation, callback and restored-surface redraw.

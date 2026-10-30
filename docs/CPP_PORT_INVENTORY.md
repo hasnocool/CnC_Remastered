@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **247**
-- Not yet fully ported: **247**
+- Fully ported: **248**
+- Not yet fully ported: **246**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 136 | 139 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 55 | 106 |
+| `TIBERIANDAWN/` | 161 | 56 | 105 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -493,7 +493,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/UNIT.CPP` | — |
 | Not started | `TIBERIANDAWN/UTRACKER.CPP` | — |
 | Complete | `TIBERIANDAWN/VECTOR.CPP` | rts-core/src/vector.rs and bool_vector.rs — shared VectorClass/DynamicVectorClass and packed BooleanVectorClass behavior; also ports Tiberian Dawn's Raw_Count() and mutable Raw()/Raw(context) accessors. |
-| Not started | `TIBERIANDAWN/VISUDLG.CPP` | — |
+| Complete | `TIBERIANDAWN/VISUDLG.CPP` | rts-core/src/visual_controls.rs — resolution-scaled dialog geometry, four slider/value bindings, source 20-unit slider bump and 235 effective maximum, six-position keyboard navigation, reset-to-128 behavior, callback/surface-restoration redraw and exit handling. |
 | Complete | `TIBERIANDAWN/WINSTUB.CPP` | rts-core/src/win_stub.rs — sound-aware theme capture/stop on focus loss, focus restore, lock count, no-op main-window/dialog/focus pump and debug string, VQA palette pipeline, non-terminating GlyphX memory-error flow, and PCX title-screen blit/free. |
 
 ### `TIBERIANDAWN/WIN32LIB/`
