@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 274 C++ translation units with source-specific tests.
+- [ ] Port the remaining 272 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -248,3 +248,5 @@
 - [x] Port REDALERT/ABSTRACT.CPP and TIBERIANDAWN/ABSTRACT.CPP abstract object/type constructors, building-adjusted target distance, target identity, coordinate fixup, name buffers, ownership masks, active/recent flags and vtable-preserving deletion adapter.
 
 - [x] Port REDALERT/CONFDLG.CPP active Process(int) true stub and TIBERIANDAWN/CONFDLG.CPP modal confirmation behavior, layout, selection, input, game-loop callback and surface-restoration redraw.
+
+- [x] Port REDALERT/LAYER.CPP and TIBERIANDAWN/LAYER.CPP LayerClass submit, sorted insertion, one-pass adjacent-swap sorting, init/no-op One_Time and vector allocation/growth rules.
