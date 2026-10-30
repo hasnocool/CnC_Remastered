@@ -17,6 +17,7 @@ pub mod region_size;
 pub mod inibin;
 pub mod shape_buffer;
 pub mod shape_access;
+pub mod graphic_buffer;
 pub mod window_mouse;
 pub mod mouse_ww;
 pub mod com_init;
