@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **220**
-- Not yet fully ported: **274**
+- Fully ported: **222**
+- Not yet fully ported: **272**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 122 | 153 |
+| `REDALERT/` | 275 | 123 | 152 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 42 | 119 |
+| `TIBERIANDAWN/` | 161 | 43 | 118 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -146,7 +146,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/JSHELL.CPP` | — |
 | Complete | `REDALERT/KEY.CPP` | rts-core/src/keyboard_runtime.rs — 256-element ring buffer, key/mouse event packing, modifier capture, ASCII translation adapter, async key-state queries, double-clear/system pump and disabled window message handler. |
 | Complete | `REDALERT/KEYBOARD.CPP` | rts-core/src/keyboard.rs — 256-slot ring buffer, 255-entry capacity, modifier/release capture, ASCII translation, mouse coordinate triples, double-click expansion, async key state and message pumping. |
-| Not started | `REDALERT/LAYER.CPP` | — |
+| Complete | `REDALERT/LAYER.CPP` | rts-core/src/layer.rs — LayerClass submit/append, stable sorted insertion by Sort_Y, legacy single adjacent-swap Sort pass, and DynamicVectorClass allocation/growth policy. |
 | Complete | `REDALERT/LCW.CPP` | rts-formats/src/lcw.rs — LCW block decompression. |
 | Complete | `REDALERT/LCWPIPE.CPP` | rts-formats/src/lcw_blocks.rs — framed push compression/decompression and partial-block flush. |
 | Complete | `REDALERT/LCWSTRAW.CPP` | rts-formats/src/lcw_blocks.rs — framed pull compression/decompression and buffered reads. |
@@ -416,7 +416,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/IPXMGR.CPP` | — |
 | Not started | `TIBERIANDAWN/JSHELL.CPP` | — |
 | Complete | `TIBERIANDAWN/KEYFRAME.CPP` | rts-formats/src/keyframe.rs — shared keyframe and XOR-delta decoder plus Tiberian Dawn's 12,000 KiB/1,000 KiB shape buffers, memory-threshold cache decision, 200 KiB growth increment, and theater slot handling. |
-| Not started | `TIBERIANDAWN/LAYER.CPP` | — |
+| Complete | `TIBERIANDAWN/LAYER.CPP` | rts-core/src/layer.rs — shared LayerClass behavior with Tiberian Dawn's signed ActiveCount capacity check represented by bounded Rust counts. |
 | Not started | `TIBERIANDAWN/LINK.CPP` | — |
 | Complete | `TIBERIANDAWN/LIST.CPP` | rts-core/src/list_box.rs — shared ListClass state machine plus Tiberian Dawn's green-box style, empty-list selection reset, current-item behavior, gradient row highlight and gadget-chain operations. |
 | Not started | `TIBERIANDAWN/LOADDLG.CPP` | — |
