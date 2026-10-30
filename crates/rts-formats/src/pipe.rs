@@ -35,7 +35,6 @@ pub trait PipeStage {
     }
 }
 
-#[derive(Default)]
 struct PipeNode {
     stage: RefCell<Box<dyn PipeStage>>,
     chain_to: RefCell<Option<PipeHandle>>,
@@ -55,7 +54,7 @@ impl std::fmt::Debug for PipeHandle {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("PipeHandle")
             .field("has_downstream", &self.node.chain_to.borrow().is_some())
-            .field("has_upstream", &self.node.chain_from.borrow().strong_count() > 0)
+            .field("has_upstream", &(self.node.chain_from.borrow().strong_count() > 0))
             .finish()
     }
 }
@@ -127,7 +126,8 @@ impl PipeHandle {
         // Match Pipe::Put_To: the new destination must first be detached from
         // its former predecessor, if it has one.
         if let Some(next) = destination.as_ref() {
-            if let Some(previous) = next.node.chain_from.borrow().upgrade() {
+            let previous = { next.node.chain_from.borrow().upgrade() };
+            if let Some(previous) = previous {
                 PipeHandle { node: previous }.put_to(None)?;
             }
         }
@@ -153,15 +153,15 @@ impl PipeHandle {
         let previous = self.upstream();
         let next = self.downstream();
 
-        if let Some(next) = next.as_ref() {
+        if let Some(previous) = previous {
+            // Let the previous node detach this one and flush through its still-
+            // connected downstream link, matching Pipe::~Pipe ordering.
+            previous.put_to(next)?;
+        } else if let Some(next) = next {
             *next.node.chain_from.borrow_mut() = Weak::new();
         }
         *self.node.chain_to.borrow_mut() = None;
         *self.node.chain_from.borrow_mut() = Weak::new();
-
-        if let Some(previous) = previous {
-            previous.put_to(next)?;
-        }
 
         Ok(())
     }
