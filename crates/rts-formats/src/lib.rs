@@ -37,3 +37,4 @@ pub mod iff;
 pub mod load;
 pub mod iconset;
 pub mod window_text;
+pub mod bmp8;
