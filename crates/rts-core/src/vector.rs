@@ -376,8 +376,24 @@ impl<T: Clone + Default + PartialEq, const COUNT: usize, const DEFAULT: usize>
         &self.collections[self.active]
     }
 
+    /// Tiberian Dawn's DynamicVectorArrayClass::Raw_Count returns the
+    /// compile-time context count, independent of the active collection.
+    pub const fn raw_count(&self) -> usize {
+        COUNT
+    }
+
+    /// Mutable counterpart of the source's Raw() reference.
+    pub fn raw_mut(&mut self) -> &mut DynamicVectorClass<T> {
+        &mut self.collections[self.active]
+    }
+
     pub fn raw_at(&self, context: usize) -> Option<&DynamicVectorClass<T>> {
         self.collections.get(context)
+    }
+
+    /// Mutable counterpart of the source's Raw(context) reference.
+    pub fn raw_at_mut(&mut self, context: usize) -> Option<&mut DynamicVectorClass<T>> {
+        self.collections.get_mut(context)
     }
 
     /// Source's context-taking Add_Head overload mistakenly calls Add rather
@@ -484,6 +500,7 @@ mod tests {
     fn context_array_isolates_active_vectors() {
         let mut vectors = DynamicVectorArray::<i32, 3, 1>::new();
         assert_eq!(vectors.active_context(), 1);
+        assert_eq!(vectors.raw_count(), 3);
         assert!(vectors.add(11));
         assert!(vectors.set_active_context(2));
         assert!(vectors.add(22));
@@ -494,6 +511,8 @@ mod tests {
 
         assert!(vectors.set_active_context(1));
         assert_eq!(vectors.get(0), Some(&11));
+        assert!(vectors.raw_at_mut(2).unwrap().add(23));
+        assert_eq!(vectors.raw_at(2).unwrap().as_slice(), &[22, 23]);
         assert_eq!(vectors.delete_all_at(2, &22), Some(1));
         assert_eq!(vectors.count_at(2), Some(0));
     }
