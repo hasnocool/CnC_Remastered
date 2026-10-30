@@ -86,3 +86,5 @@ Latest addition: `TIBERIANDAWN/VECTOR.CPP` → `crates/rts-core/src/vector.rs` a
 Latest additions: both `WIN32LIB/DDRAW.CPP` variants → `crates/rts-core/src/direct_draw.rs` (disabled Set_Video_Mode branch, active capability, palette, vertical-blank and surface-monitor behavior).
 
 Latest addition: `TIBERIANDAWN/WIN32LIB/WSA.CPP` → `crates/rts-formats/src/wsa.rs` (WSA file parsing, resident/disk storage, LCW/XOR playback and viewport host adapter).
+
+Latest addition: `REDALERT/BENCH.CPP` is inactive under an unconditional #if (0); both `CARGO.CPP` variants share the cargo-chain implementation in `crates/rts-core/src/cargo.rs`.
