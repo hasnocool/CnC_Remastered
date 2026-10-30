@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **69**
-- Not yet fully ported: **425**
+- Fully ported: **75**
+- Not yet fully ported: **419**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 9 | 17 |
+| `REDALERT/WIN32LIB/` | 26 | 12 | 14 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 10 | 22 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 13 | 19 |
 
 ## File-by-file coverage
 
@@ -304,7 +304,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Status | Upstream C++ file | Rust port / notes |
 |---|---|---|
 | Not started | `REDALERT/WIN32LIB/ALLOC.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/BUFFER.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/BUFFER.CPP` | rts-core/src/buffer.rs — owned/borrowed storage, size-only allocation, default and destructor semantics. |
 | Complete | `REDALERT/WIN32LIB/BUFFGLBL.CPP` | rts-core/src/buffer_globals.rs — callback/viewport null defaults and icon-cache enabled state. |
 | Not started | `REDALERT/WIN32LIB/DDRAW.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/DELAY.CPP` | rts-core/src/delay.rs — timer threshold and duration loop. |
@@ -322,8 +322,8 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/MOUSEWW.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/PALETTE.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/SET_FONT.CPP` | rts-core/src/font.rs — previous font return, little-endian block offsets, width/height metrics. |
-| Not started | `REDALERT/WIN32LIB/TIMER.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/TIMERDWN.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/TIMER.CPP` | rts-core/src/legacy_timer.rs — tick-source selection, accumulated elapsed time, start/stop/set/reset. |
+| Complete | `REDALERT/WIN32LIB/TIMERDWN.CPP` | rts-core/src/legacy_timer.rs — countdown timer set/time/start/stop/reset semantics. |
 | Not started | `REDALERT/WIN32LIB/TIMERINI.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/WINDOWS.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/WINHIDE.CPP` | rts-core/src/window_mouse.rs — mouse hide/show calls are commented out upstream; observable no-op. |
@@ -501,7 +501,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Status | Upstream C++ file | Rust port / notes |
 |---|---|---|
 | Not started | `TIBERIANDAWN/WIN32LIB/ALLOC.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/BUFFER.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/BUFFER.CPP` | rts-core/src/buffer.rs — shared BufferClass storage and ownership implementation. |
 | Complete | `TIBERIANDAWN/WIN32LIB/BUFFGLBL.CPP` | rts-core/src/buffer_globals.rs — identical shared global initializers. |
 | Not started | `TIBERIANDAWN/WIN32LIB/DDRAW.CPP` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/DIPTHONG.CPP` | rts-formats/src/dipthong.rs — shared implementation; Internet string table and little-endian offset lookup. |
@@ -524,8 +524,8 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/REGIONSZ.CPP` | rts-core/src/region_size.rs — signed 32-bit width × height helper with explicit wrapping semantics. |
 | Complete | `TIBERIANDAWN/WIN32LIB/SET_FONT.CPP` | rts-core/src/font.rs — identical shared implementation. |
-| Not started | `TIBERIANDAWN/WIN32LIB/TIMER.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/TIMERDWN.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/TIMER.CPP` | rts-core/src/legacy_timer.rs — shared TimerClass elapsed-time implementation. |
+| Complete | `TIBERIANDAWN/WIN32LIB/TIMERDWN.CPP` | rts-core/src/legacy_timer.rs — shared CountDownTimerClass implementation. |
 | Not started | `TIBERIANDAWN/WIN32LIB/TIMERINI.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/WINDOWS.CPP` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/WINHIDE.CPP` | rts-core/src/window_mouse.rs — shared upstream no-op implementation. |
