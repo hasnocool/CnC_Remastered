@@ -59,6 +59,7 @@ pub struct ColorListController {
     selected_color: Option<ColorListColor>,
     items: Vec<String>,
     colors: Vec<ColorListColor>,
+    localized_ids: Vec<Option<i32>>,
 }
 
 impl ColorListController {
@@ -83,6 +84,7 @@ impl ColorListController {
             selected_color: None,
             items: Vec::new(),
             colors: Vec::new(),
+            localized_ids: Vec::new(),
         }
     }
 
@@ -98,6 +100,7 @@ impl ColorListController {
     /// insertion to ListClass and returns its list index.
     pub fn add_item(&mut self, text: impl Into<String>, color: ColorListColor) -> usize {
         self.colors.push(color);
+        self.localized_ids.push(None);
         self.items.push(text.into());
         self.items.len() - 1
     }
@@ -111,17 +114,12 @@ impl ColorListController {
         color: ColorListColor,
     ) -> usize {
         let index = self.add_item(resolved_text, color);
-        self.localized_ids_resize(index + 1);
         self.localized_ids[index] = Some(text_id);
         index
     }
 
     pub fn localized_id(&self, index: usize) -> Option<i32> {
         self.localized_ids.get(index).copied().flatten()
-    }
-
-    fn localized_ids_resize(&mut self, len: usize) {
-        if self.localized_ids.len() < len { self.localized_ids.resize(len, None); }
     }
 
     pub fn item(&self, index: usize) -> Option<&str> { self.items.get(index).map(String::as_str) }
@@ -133,7 +131,7 @@ impl ColorListController {
         let Some(index) = self.items.iter().position(|item| item == text) else { return false };
         self.items.remove(index);
         self.colors.remove(index);
-        if index < self.localized_ids.len() { self.localized_ids.remove(index); }
+        self.localized_ids.remove(index);
         true
     }
 
@@ -141,7 +139,7 @@ impl ColorListController {
         if index >= self.items.len() { return false; }
         self.items.remove(index);
         self.colors.remove(index);
-        if index < self.localized_ids.len() { self.localized_ids.remove(index); }
+        self.localized_ids.remove(index);
         true
     }
 
@@ -228,12 +226,17 @@ impl ColorListController {
             }
             SelectStyle::Bar => {
                 if flags.six_point_gradient {
+                    let fill_color = if self.variant == ColorListVariant::TiberianDawn {
+                        self.selected_color.map_or(-1, |value| value.draw_color)
+                    } else {
+                        selected_color.draw_color
+                    };
                     commands.push(ColorListDrawCommand::FillRect {
                         left: x,
                         top: y,
                         right: x + width - 1,
                         bottom: y + line_height - 1,
-                        color: selected_color.draw_color,
+                        color: fill_color,
                     });
                     commands.push(ColorListDrawCommand::DrawText {
                         text: text.clone(),
@@ -244,12 +247,17 @@ impl ColorListController {
                         tabs: tabs.to_vec(),
                     });
                 } else {
+                    let fill_color = if self.variant == ColorListVariant::TiberianDawn {
+                        self.selected_color.map_or(-1, |value| value.draw_color)
+                    } else {
+                        selected_color.draw_color
+                    };
                     commands.push(ColorListDrawCommand::FillRect {
                         left: x,
                         top: y,
                         right: x + width - 2,
                         bottom: y + line_height - 2,
-                        color: selected_color.draw_color,
+                        color: fill_color,
                     });
                     commands.push(ColorListDrawCommand::DrawText {
                         text: text.clone(),
