@@ -43,6 +43,7 @@ pub mod dial8;
 pub mod check_list;
 pub mod color_list;
 pub mod text_button;
+pub mod dde_bridge;
 pub mod keyboard;
 pub mod td_keyboard;
 pub mod player_manager;
