@@ -149,3 +149,5 @@
 - [x] Port all 187 ENGLISH branch TXT_WOL resources from REDALERT/WOLSTRNG.CPP.
 
 - [x] Record REDALERT/ENDING.CPP as inactive because both function bodies are guarded by #ifdef NEVER.
+
+- [x] Port TIBERIANDAWN/ENDING.CPP GDI ending, Nod selection loop, audio/input handling, cleanup, trailers and attract sequences.
