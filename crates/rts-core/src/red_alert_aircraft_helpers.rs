@@ -1162,7 +1162,8 @@ pub fn aircraft_fire_at_plan(
     base_bullet_created: bool,
     base_bullet_is_dropping: bool,
     second_shot: bool,
-    rearm_delay: i32,
+    rearm_delay_first_shot: i32,
+    rearm_delay_second_shot: i32,
 ) -> AircraftFireAtPlan {
     if has_attached_passenger {
         return AircraftFireAtPlan {
@@ -1185,7 +1186,7 @@ pub fn aircraft_fire_at_plan(
         } else {
             Vec::new()
         };
-        let _ = second_shot; // used by the upstream Rearm_Delay callback, not the result itself.
+        let rearm_delay = if second_shot { rearm_delay_second_shot } else { rearm_delay_first_shot };
         return AircraftFireAtPlan {
             path: AircraftFireAtPath::CameraSnapshot,
             sight_requests,
@@ -1976,7 +1977,7 @@ mod tests {
     fn fire_at_prioritizes_paradrop_cargo_over_camera_and_base_weapon() {
         let plan = aircraft_fire_at_plan(
             true, true, true, 1, true, &[1, 2], Some(1),
-            true, true, false, 10,
+            true, true, false, 10, 20,
         );
         assert_eq!(plan.path, AircraftFireAtPath::ParadropCargo);
         assert!(plan.sight_requests.is_empty());
@@ -2000,7 +2001,7 @@ mod tests {
 
         let multiplayer = aircraft_fire_at_plan(
             false, true, true, 7, false, &[7, 9, 12], Some(7),
-            false, false, false, 40,
+            false, false, false, 40, 50,
         );
         assert_eq!(multiplayer.sight_requests, [
             AircraftSightRequest { house_id: 7, sight_range: 9 },
@@ -2013,7 +2014,7 @@ mod tests {
     fn standard_fire_reveals_for_human_owner_and_speeds_dropping_bullets() {
         let plan = aircraft_fire_at_plan(
             false, false, false, 7, false, &[], Some(8),
-            true, true, false, 0,
+            true, true, false, 0, 0,
         );
         assert_eq!(plan.path, AircraftFireAtPath::StandardWeapon);
         assert_eq!(plan.sight_requests, [AircraftSightRequest { house_id: 8, sight_range: 1 }]);
@@ -2022,7 +2023,7 @@ mod tests {
         assert_eq!(plan.dropping_bullet_speed, Some((40, "MPH_MEDIUM_SLOW")));
         let no_bullet = aircraft_fire_at_plan(
             false, false, false, 7, false, &[], None,
-            false, true, false, 0,
+            false, true, false, 0, 0,
         );
         assert!(no_bullet.sight_requests.is_empty());
         assert!(!no_bullet.return_bullet);
