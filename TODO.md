@@ -300,3 +300,4 @@
 - [x] Port TIBERIANDAWN/LOGIC.CPP AI order and mutation-safe iteration: crate regeneration, teams, objects, unit/infantry/aircraft/building scan bits, optional RA attribute recalculation, map logic, factories, game-mode-specific house AI and recently-created flag clearing.
 - [x] Port TIBERIANDAWN/UTRACKER.CPP constructor/destructor storage, per-type increment/decrement, clear, totals/count access, guarded in-place htonl/ntohl conversion and safe invalid-index reads.
 - [x] Port REDALERT/UTRACKER.CPP unit totals and dual network-conversion configurations, including non-WIN32 htonl/ntohl macros that return zero, idempotent format-state guards and bounds-safe total access.
+- [x] Port REDALERT/CONTROL.CPP Red Alert ControlClass constructors including copy/NoInit forms, peer cloning, Action key update before peer callback, base gadget Action delegation and peer-first Draw_Me.

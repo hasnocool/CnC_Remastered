@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **263**
-- Not yet fully ported: **231**
+- Fully ported: **264**
+- Not yet fully ported: **230**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -71,7 +71,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/CONNECT.CPP` | — |
 | Not started | `REDALERT/CONQUER.CPP` | — |
 | Not started | `REDALERT/CONST.CPP` | — |
-| Not started | `REDALERT/CONTROL.CPP` | — |
+| Complete | `REDALERT/CONTROL.CPP` | rts-core/src/red_alert_control_gadget.rs — base-state/copy constructors, peer pointer cloning, ID access, recognized-event pseudo-key conversion before peer notification, GadgetClass action delegation and peer-first draw forwarding. |
 | Not started | `REDALERT/COORD.CPP` | — |
 | Complete | `REDALERT/CRATE.CPP` | rts-core/src/crate_manager.rs — tracked crate cell and expiration timer, crate removal, random legal placement retries, water/wood overlay selection, ScenarioInit save/restore and wood/steel/water pickup cleanup. |
 | Complete | `REDALERT/CRC.CPP` | rts-formats/src/legacy_crc.rs — rotate-add checksum engine. |
