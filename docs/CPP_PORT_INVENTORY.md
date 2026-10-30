@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **211**
-- Not yet fully ported: **283**
+- Fully ported: **213**
+- Not yet fully ported: **281**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 117 | 158 |
+| `REDALERT/` | 275 | 118 | 157 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 38 | 123 |
+| `TIBERIANDAWN/` | 161 | 39 | 122 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -138,7 +138,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/IOOBJ.CPP` | — |
 | Not started | `REDALERT/IPX.CPP` | — |
 | Complete | `REDALERT/IPX95.CPP` | rts-core/src/ipx95.rs — disabled THIPX32 loader, fixed legacy socket/connection return values, and all exported IPX95 stubs. |
-| Not started | `REDALERT/IPXADDR.CPP` | — |
+| Complete | `REDALERT/IPXADDR.CPP` | rts-core/src/ipx_address.rs — broadcast/default address, source/destination header copying, Winsock IPX versus UDP raw-address handling, NETX zero-network equality exception, and raw 10-byte relational comparisons. |
 | Not started | `REDALERT/IPXCONN.CPP` | — |
 | Not started | `REDALERT/IPXGCONN.CPP` | — |
 | Not started | `REDALERT/IPXMGR.CPP` | — |
@@ -410,7 +410,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/IOOBJ.CPP` | — |
 | Not started | `TIBERIANDAWN/IPX.CPP` | — |
 | Complete | `TIBERIANDAWN/IPX95.CPP` | rts-core/src/ipx95.rs — same fixed IPX95 stubs and socket API behavior as Red Alert. |
-| Not started | `TIBERIANDAWN/IPXADDR.CPP` | — |
+| Complete | `TIBERIANDAWN/IPXADDR.CPP` | rts-core/src/ipx_address.rs — broadcast/default address, source/destination header copying, VIRTUAL_SUBNET_SERVER host-mask mapping, head-to-head mask XOR, NETX equality exception and raw relational comparisons. |
 | Not started | `TIBERIANDAWN/IPXCONN.CPP` | — |
 | Not started | `TIBERIANDAWN/IPXGCONN.CPP` | — |
 | Not started | `TIBERIANDAWN/IPXMGR.CPP` | — |
