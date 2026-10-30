@@ -481,7 +481,7 @@ mod tests {
         assert!(step.operations.contains(&VisualControlsOp::ClearSurfacesRestored));
         assert!(step.operations.iter().any(|op| matches!(op, VisualControlsOp::DrawDialogBox { .. })));
         assert_eq!(step.operations.iter().filter(|op| matches!(op, VisualControlsOp::DrawTitle { .. })).count(), 4);
-        assert!(!step.operations.last().is_some_and(|op| matches!(op, VisualControlsOp::ShowMouse)));
+        assert_eq!(step.operations.last(), Some(&VisualControlsOp::ShowMouse));
     }
 
     #[test]
