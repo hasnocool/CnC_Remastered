@@ -15,6 +15,7 @@ pub mod lzo1x;
 pub mod lzo_blocks;
 pub mod pipe;
 pub mod readline;
+pub mod sha1;
 pub mod straw;
 pub mod mix;
 
