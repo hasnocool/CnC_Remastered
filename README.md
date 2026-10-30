@@ -12,13 +12,13 @@ The native projects target Win32, Windows SDK 8.1, Visual Studio toolset v141, a
 
 ## Current implementation
 
-- `rts-core`: source-derived variant map extents, cell/region addressing, 8-way facing identifiers, and the 15 Hz simulation tick type.
-- `rts-formats`: checked little-endian reader and a bounds-checked parser for the legacy MIX archive layout used by upstream `MixFileClass`.
+- `rts-core`: source-derived map extents, cell/region addressing, 8-way facing, 15 Hz clock, both variants' deterministic simulation RNG, and Red Alert Q16.16 fixed-point arithmetic.
+- `rts-formats`: checked binary readers, a bounds-checked legacy MIX parser, and the original rotate-and-add `CRCEngine` checksum.
 - `rts-sim`: deterministic event scheduling with stable same-tick ordering.
 - `map-editor-model`: an initial typed map document with cell layers and waypoints.
 - `tiberian-dawn` / `red-alert`: separate variant boundary crates; actual game rules are not yet ported.
 
-See [PORTING_STATUS.md](PORTING_STATUS.md), [TODO.md](TODO.md), and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). These files are the source of truth for parity work.
+See [PORTING_STATUS.md](PORTING_STATUS.md), [TODO.md](TODO.md), [the 494-file C++ port inventory](docs/CPP_PORT_INVENTORY.md), and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). These files are the source of truth for parity work.
 
 ## Build and test
 
