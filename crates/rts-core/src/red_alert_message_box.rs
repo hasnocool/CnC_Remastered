@@ -200,6 +200,12 @@ pub struct MessageBoxPlatform {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct MessageTextFlags {
+    pub text: bool,
+    pub centered: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MessageBoxInput {
     None,
     ButtonCode(u16),
@@ -222,8 +228,7 @@ pub enum MessageBoxDrawOp {
         text: Vec<u8>,
         x: i32,
         y: i32,
-        centered: bool,
-        format_flags: u8,
+        flags: MessageTextFlags,
     },
     DrawButtons { physical_order: Vec<i32>, current_button: usize },
     RestoreSavedVisiblePage,
@@ -324,8 +329,7 @@ impl RedAlertMessageBox {
             text: self.request.message.clone(),
             x: self.layout.message_x,
             y: self.layout.message_y,
-            centered: self.layout.message_centered,
-            format_flags: if self.layout.message_centered { 0b11 } else { 0b01 },
+            flags: MessageTextFlags { text: true, centered: self.layout.message_centered },
         });
         if self.button_count() > 0 {
             ops.push(MessageBoxDrawOp::DrawButtons {
@@ -345,6 +349,12 @@ impl RedAlertMessageBox {
             ops.push(MessageBoxDrawOp::SaveVisiblePage);
         }
         ops.extend(self.draw_operations());
+        if self.button_count() == 0 {
+            // In the C++ implementation, a dialog with no button list clears
+            // the keyboard immediately and never enters the modal input loop.
+            ops.push(MessageBoxDrawOp::ClearKeyboard);
+            self.finish(0, &mut ops);
+        }
         self.snapshot(ops)
     }
 
@@ -604,8 +614,7 @@ mod tests {
     #[test]
     fn no_button_dialog_clears_keyboard_without_entering_a_modal_loop() {
         let mut dialog = dialog([None, None, None], true);
-        dialog.start();
-        let step = dialog.step(false, MessageBoxInput::None);
+        let step = dialog.start();
         assert!(step.complete);
         assert_eq!(step.result, Some(0));
         assert!(step.operations.contains(&MessageBoxDrawOp::ClearKeyboard));
