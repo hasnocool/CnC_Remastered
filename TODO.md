@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 322 C++ translation units with source-specific tests.
+- [ ] Port the remaining 320 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -193,3 +193,5 @@
 - [x] Port both INTERPAL.CPP variants' palette table read/write, Red Alert midpoint nearest-color builder, Tiberian Dawn disabled builder, palette luminance scaling and disabled 2x interpolation entry point.
 
 - [x] Port REDALERT/RGB.CPP, HSV.CPP, and PALETTEC.CPP into rgb_palette.rs, including RGB/HSV conversions, exact device-channel arithmetic, 256-color palette operations and timed host-driven palette fades.
+
+- [x] Port REDALERT/2KEYFRAM.CPP and TIBERIANDAWN/KEYFRAME.CPP: packed animation headers, LCW decode, XOR delta streams, frame palette extraction, cached shape headers, theater reset and variant-specific buffer allocation policy.
