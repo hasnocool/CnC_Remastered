@@ -6,8 +6,6 @@
 //! narrow adapters; the scenario ranges, ordering, state changes and redraw
 //! decisions remain in this module.
 
-use std::collections::VecDeque;
-
 /// Scenario factions used by the expansion list and the original filename builder.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ExpansionFaction {
@@ -561,6 +559,8 @@ mod tests {
         width: i32,
         main_loop: bool,
         restored: bool,
+        restore_after_first_input: bool,
+        input_count: usize,
         prepared: Option<(ExpansionDialogLayout, ExpansionButtonAssets, usize)>,
         captions: Vec<ExpansionCaption>,
         inputs: VecDeque<ExpansionDialogInput>,
@@ -616,9 +616,14 @@ mod tests {
             _entries: &[ExpansionScenario],
             _selected_index: usize,
         ) -> ExpansionDialogInput {
-            self.inputs.pop_front().unwrap_or_else(|| {
+            self.input_count += 1;
+            let input = self.inputs.pop_front().unwrap_or_else(|| {
                 ExpansionDialogInput::continue_with_selection(None)
-            })
+            });
+            if self.restore_after_first_input && self.input_count == 1 {
+                self.restored = true;
+            }
+            input
         }
     }
 
@@ -732,7 +737,8 @@ mod tests {
         let mut host = MockHost {
             width: 320,
             main_loop: true,
-            restored: true,
+            restored: false,
+            restore_after_first_input: true,
             inputs: VecDeque::from([
                 ExpansionDialogInput::continue_with_selection(Some(1)),
                 ExpansionDialogInput { selected_index: None, action: ExpansionDialogAction::Confirm },
