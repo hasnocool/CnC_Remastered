@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **49**
-- Not yet fully ported: **445**
+- Fully ported: **51**
+- Not yet fully ported: **443**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 44 | 231 |
-| `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
+| `REDALERT/WIN32LIB/` | 26 | 1 | 25 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 2 | 30 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 3 | 29 |
 
 ## File-by-file coverage
 
@@ -326,7 +326,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/TIMERDWN.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/TIMERINI.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/WINDOWS.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/WINHIDE.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/WINHIDE.CPP` | rts-core/src/window_mouse.rs — mouse hide/show calls are commented out upstream; observable no-op. |
 | Not started | `REDALERT/WIN32LIB/WRITEPCX.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/_DIPTABL.CPP` | — |
 
@@ -528,7 +528,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/WIN32LIB/TIMERDWN.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/TIMERINI.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/WINDOWS.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/WINHIDE.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/WINHIDE.CPP` | rts-core/src/window_mouse.rs — shared upstream no-op implementation. |
 | Not started | `TIBERIANDAWN/WIN32LIB/WRITEPCX.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/WSA.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/_DIPTABL.CPP` | — |
