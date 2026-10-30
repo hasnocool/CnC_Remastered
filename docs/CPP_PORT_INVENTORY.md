@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 19 | 7 |
+| `REDALERT/WIN32LIB/` | 26 | 20 | 6 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 22 | 10 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 23 | 9 |
 
 ## File-by-file coverage
 
@@ -317,7 +317,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/ICONSET.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/IFF.CPP` | rts-formats/src/iff.rs — FORM validation, first-match chunk search, even-byte chunk alignment, bounded reads, chunk writes and FORM-size update. |
 | Complete | `REDALERT/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — assembly-compatible Random state and injectable CRT IRandom range sampling. |
-| Not started | `REDALERT/WIN32LIB/LOAD.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/LOAD.CPP` | rts-formats/src/load.rs — bounded Load_Data/Write_Data/Load_Alloc_Data, legacy compression-header parsing, skip-data extraction, alias-safe tail staging, and NOCOMPRESS/LCW dispatch; HORIZONTAL remains a source-configured no-op. |
 | Complete | `REDALERT/WIN32LIB/LOADFONT.CPP` | rts-core/src/load_font.rs — validates the little-endian size prefix, uncompressed marker, five-block font layout, and retains the legacy allocation layout. |
 | Complete | `REDALERT/WIN32LIB/MOUSEWW.CPP` | rts-core/src/mouse_ww.rs — live cursor visibility nesting, conditional hide regions, state queries, forced coordinates and buffer-lock coordination; disabled rendering/timer/clip paths remain no-ops. |
 | Complete | `REDALERT/WIN32LIB/PALETTE.CPP` | rts-formats/src/palette_fade.rs — byte-identical shared implementation with Tiberian Dawn; IBM palette copy/set, bump-rate calculation, bounded fade steps. |
@@ -514,7 +514,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/IFF.CPP` | rts-formats/src/iff.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — shared implementation; same source routine in both variants. |
 | Not started | `TIBERIANDAWN/WIN32LIB/KEYBOARD.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/LOAD.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/LOAD.CPP` | rts-formats/src/load.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/LOADFONT.CPP` | rts-core/src/load_font.rs — shared implementation of the same IBM loader and five-block validation used by Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/LOADPAL.CPP` | rts-formats/src/palette.rs — 768-byte IBM palette loading contract. |
 | Not started | `TIBERIANDAWN/WIN32LIB/MEM.CPP` | — |
