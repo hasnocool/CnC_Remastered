@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **252**
-- Not yet fully ported: **242**
+- Fully ported: **253**
+- Not yet fully ported: **241**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 136 | 139 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 58 | 103 |
+| `TIBERIANDAWN/` | 161 | 59 | 102 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -390,7 +390,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/FOOT.CPP` | — |
 | Complete | `TIBERIANDAWN/FUSE.CPP` | rts-core/src/fuse.rs — shared fuse timing and proximity algorithm with identical eight-byte save format; ICON_LEPTON_W is supplied by the caller as a game-definition constant. |
 | Not started | `TIBERIANDAWN/GADGET.CPP` | — |
-| Not started | `TIBERIANDAWN/GAMEDLG.CPP` | — |
+| Complete | `TIBERIANDAWN/GAMEDLG.CPP` | rts-core/src/game_controls.rs — exact resolution-scaled layout, inverted 0–6 speed/scroll sliders, keyboard focus traversal, event-queued multiplayer gamespeed update, save-time temporary GameSpeed substitution/restoration, visual/sound subdialog routing and no-sound-card message path. |
 | Not started | `TIBERIANDAWN/GAUGE.CPP` | — |
 | Not started | `TIBERIANDAWN/GLOBALS.CPP` | — |
 | Not started | `TIBERIANDAWN/GOPTIONS.CPP` | — |
