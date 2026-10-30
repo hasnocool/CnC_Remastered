@@ -135,4 +135,5 @@ pub mod red_alert_aircraft_helpers;
 pub mod red_alert_animation_types;
 pub mod public_key_streams;
 pub mod red_alert_bullet_types;
+pub mod red_alert_winsock_ipx;
 pub mod red_alert_message_box;
