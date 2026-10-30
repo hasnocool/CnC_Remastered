@@ -292,3 +292,4 @@
 - [x] Port TIBERIANDAWN/GAMEDLG.CPP game-controls dialog: resolution geometry, inverse speed/scroll sliders, keyboard focus transitions, multiplayer GameSpeed event queuing, temporary save/restore, visual and sound dialog routing.
 - [x] Port REDALERT/TEMPLATE.CPP TemplateClass pool lifecycle, constructor placement, footprint/icon-map based map marking, visibility bounds, matching-only mark-up clear, mark-down overlay/smudge clearing and no-double-unmark self deletion.
 - [x] Port REDALERT/MPGSET.CPP MPGSettings constructors, optional MCIMPEG device enumeration and digital-video probe, default/config device matching, save-to-INI behavior, three-button test/accept/cancel dialog and movie-test cleanup/theme reset.
+- [x] Port TIBERIANDAWN/RADIO.CPP RadioClass message table, base receive delegation, contact-gated HELLO negotiation, OVER_OUT teardown, transmit target fallback and limbo cleanup through a peer-network adapter.

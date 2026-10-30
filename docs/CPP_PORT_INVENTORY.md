@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **255**
-- Not yet fully ported: **239**
+- Fully ported: **256**
+- Not yet fully ported: **238**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 136 | 139 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 59 | 102 |
+| `TIBERIANDAWN/` | 161 | 60 | 101 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -451,7 +451,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/PROFILE.CPP` | rts-core/src/profile.rs — case-insensitive private-profile INI get/write string/int/hex functions and sound/language NewConfigType loading, including the zero-card/IRQ/DMA result; Red Alert-only binary helpers share the module. |
 | Not started | `TIBERIANDAWN/QUEUE.CPP` | — |
 | Not started | `TIBERIANDAWN/RADAR.CPP` | — |
-| Not started | `TIBERIANDAWN/RADIO.CPP` | — |
+| Complete | `TIBERIANDAWN/RADIO.CPP` | rts-core/src/radio.rs — 35 message IDs/text slots, last-message tracking, contact/strength-gated HELLO negotiation, OVER_OUT cleanup, delegated base-object receive/limbo semantics, explicit peer network transport and debug snapshot. |
 | Complete | `TIBERIANDAWN/RAND.CPP` | rts-core/src/random.rs — Sim_Random and Sim_IRandom. |
 | Not started | `TIBERIANDAWN/RAWFILE.CPP` | — |
 | Not started | `TIBERIANDAWN/REINF.CPP` | — |
