@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **10**
-- Not yet fully ported: **484**
-- Complete means the translation unit's behavior has been implemented in Rust. Placeholders and inventory entries do not count.
+- Fully ported: **14**
+- Not yet fully ported: **480**
+- A translation unit is complete only when all active compiled behavior has a Rust implementation. Empty units are recorded as intentionally empty; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 9 | 266 |
+| `REDALERT/` | 275 | 13 | 262 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 1 | 160 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
@@ -61,7 +61,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/CELL.CPP` | — |
 | Not started | `REDALERT/CHECKBOX.CPP` | — |
 | Not started | `REDALERT/CHEKLIST.CPP` | — |
-| Not started | `REDALERT/CLASS.CPP` | — |
+| Complete | `REDALERT/CLASS.CPP` | Intentionally empty translation unit; no executable definitions to port. |
 | Not started | `REDALERT/COLRLIST.CPP` | — |
 | Not started | `REDALERT/COMBAT.CPP` | — |
 | Not started | `REDALERT/COMBUF.CPP` | — |
@@ -198,7 +198,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/OVERLAY.CPP` | — |
 | Not started | `REDALERT/PACKET.CPP` | — |
 | Not started | `REDALERT/PALETTEC.CPP` | — |
-| Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, and unlink behavior |
+| Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, unlink |
 | Not started | `REDALERT/PK.CPP` | — |
 | Not started | `REDALERT/PKPIPE.CPP` | — |
 | Not started | `REDALERT/PKSTRAW.CPP` | — |
@@ -212,7 +212,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/RANDOM.CPP` | rts-core/src/random_class.rs — seeded LCG and rejection-sampled ranges |
 | Not started | `REDALERT/RAWFILE.CPP` | — |
 | Not started | `REDALERT/RAWOLAPI.CPP` | — |
-| Not started | `REDALERT/READLINE.CPP` | — |
+| Complete | `REDALERT/READLINE.CPP` | rts-formats/src/readline.rs — CR/LF line reader and whitespace trimming |
 | Complete | `REDALERT/RECT.CPP` | rts-core/src/rect.rs — validity, intersection, coordinate adjustment, union |
 | Not started | `REDALERT/REINF.CPP` | — |
 | Not started | `REDALERT/RGB.CPP` | — |
@@ -243,7 +243,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/STATBTN.CPP` | — |
 | Not started | `REDALERT/STATS.CPP` | — |
 | Complete | `REDALERT/STRAW.CPP` | rts-formats/src/straw.rs — demand-driven pull chain and reconnect behavior |
-| Not started | `REDALERT/STUB.CPP` | — |
+| Complete | `REDALERT/STUB.CPP` | rts-core/src/legacy_stub.rs — exact launcher message |
 | Not started | `REDALERT/SUPER.CPP` | — |
 | Not started | `REDALERT/SURFACE.CPP` | — |
 | Not started | `REDALERT/Shape.cpp` | — |
@@ -273,7 +273,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/UNIT.CPP` | — |
 | Not started | `REDALERT/UTRACKER.CPP` | — |
 | Not started | `REDALERT/VDATA.CPP` | — |
-| Not started | `REDALERT/VECTOR.CPP` | — |
+| Complete | `REDALERT/VECTOR.CPP` | rts-core/src/bool_vector.rs — packed BooleanVectorClass active implementation |
 | Not started | `REDALERT/VERSION.CPP` | — |
 | Not started | `REDALERT/VESSEL.CPP` | — |
 | Not started | `REDALERT/VISUDLG.CPP` | — |
