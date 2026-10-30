@@ -28,7 +28,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/ABSTRACT.CPP` | rts-core/src/abstract_object.rs — building-adjusted target distance, RTTI/ID target encoding, 24-byte INI name, Full_Name, ownership mask, identity coordinate fixup, and vtable-preserving Delete_This adapter. CHEAT_KEYS debug dump is not enabled by the pinned project. |
 | Complete | `REDALERT/ADATA.CPP` | rts-core/src/red_alert_animation_types.rs — all 89 source-defined animation records in exact Init_Heap order, metadata/fixed damage/chain links, safe type/name lookup, create/place prohibition, debug/release shape lookup planning, theater-specific refresh, and virtual beacon image alias. |
 | Complete | `REDALERT/ADPCM.CPP` | rts-formats/src/adpcm.rs — SOS ADPCM type-1 decoder. |
-| Not started | `REDALERT/AIRCRAFT.CPP` | — |
+| Partial | `REDALERT/AIRCRAFT.CPP` | rts-core/src/red_alert_aircraft_helpers.rs — civilian evacuation eligibility, default/Badger overlap footprints, packed Sort_Y, pose/layer selection, rounded pip count, and capped flight-speed calculation. Mission/state-machine, movement, combat, rendering, radio, INI, and save/load paths remain unported; not included in completed count. |
 | Not started | `REDALERT/ANIM.CPP` | — |
 | Not started | `REDALERT/AUDIO.CPP` | — |
 | Complete | `REDALERT/B64PIPE.CPP` | rts-formats/src/base64_streams.rs — Base64 push adapter. |
