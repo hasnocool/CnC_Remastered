@@ -279,7 +279,7 @@ mod tests {
 
     #[test]
     fn compressor_and_decoder_round_trip_all_byte_values() {
-        let input: Vec<u8> = (0..=255).collect();
+        let input: Vec<u8> = (0_u8..=u8::MAX).collect();
         let encoded = compress(&input).unwrap();
         assert_eq!(encoded.len() % 2, 0);
         assert_eq!(decompress_expected(&encoded, input.len()).unwrap(), input);
