@@ -1,0 +1,8 @@
+[package]
+name = "red-alert"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+rts-core.workspace = true
