@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **237**
-- Not yet fully ported: **257**
+- Fully ported: **239**
+- Not yet fully ported: **255**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 132 | 143 |
+| `REDALERT/` | 275 | 134 | 141 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 49 | 112 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -217,14 +217,14 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/REINF.CPP` | — |
 | Complete | `REDALERT/RGB.CPP` | rts-core/src/rgb_palette.rs — 6-bit RGB gun storage, component expansion, ratio adjustment, squared color distance, RGB-to-HSV conversion and cached palette entry update; legacy Win32 DAC methods are no-ops. |
 | Complete | `REDALERT/RNDSTRAW.CPP` | rts-formats/src/random_straw.rs — 32 independent LCGs, 1,024-bit seed collection, iterative SHA-1 scramble. |
-| Not started | `REDALERT/ROTBMP.CPP` | — |
+| Complete | `REDALERT/ROTBMP.CPP` | Inactive in the pinned build: the entire translation unit is enclosed by unconditional `#if (0)`; Rotate_Bitmap is not compiled. |
 | Not started | `REDALERT/RULES.CPP` | — |
 | Not started | `REDALERT/SAVELOAD.CPP` | — |
 | Not started | `REDALERT/SCENARIO.CPP` | — |
 | Not started | `REDALERT/SCORE.CPP` | — |
 | Complete | `REDALERT/SCROLL.CPP` | rts-core/src/scroll.rs — active constructor timer setup, autoscroll toggle, Init_IO reset and HelpClass::AI delegation; map-scroll algorithm is #if 0. |
 | Not started | `REDALERT/SDATA.CPP` | — |
-| Not started | `REDALERT/SEDITDLG.CPP` | — |
+| Complete | `REDALERT/SEDITDLG.CPP` | Inactive in the pinned build: the entire SimpleEditDlgClass implementation is guarded by `#ifdef WOLAPI_INTEGRATION`, which is absent from the Red Alert project definitions and source tree. |
 | Not started | `REDALERT/SENDFILE.CPP` | — |
 | Not started | `REDALERT/SEQCONN.CPP` | — |
 | Not started | `REDALERT/SESSION.CPP` | — |
