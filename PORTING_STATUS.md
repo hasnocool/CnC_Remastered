@@ -20,6 +20,8 @@
 | Cell and region addressing | Foundation | Source cell dimensions and 4×4 region dimensions |
 | Facing identifiers | Foundation | Eight source-defined facings in source order |
 | Binary reader | Initial | Checked little-endian reads |
+| Editor CRC-32 | Initial | Standard reflected CRC-32; checked against the 123456789 vector |
+| Editor cell metrics | Initial | Row-major indexing, 8-way adjacency, clipping, bounds checks |
 | Legacy MIX archive | Partial | Reads the legacy 6-byte header and 12-byte index entries used by upstream `MixFileClass`; no filename CRC mapping yet |
 | Event scheduler | Initial | Stable ordering by tick and insertion sequence |
 | Map editor model | Initial | Cell layer IDs and waypoint storage only |
