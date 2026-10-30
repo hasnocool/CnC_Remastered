@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 71 | 204 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 12 | 149 |
+| `TIBERIANDAWN/` | 161 | 13 | 148 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
 
 ## File-by-file coverage
@@ -455,7 +455,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/RAND.CPP` | rts-core/src/random.rs — Sim_Random and Sim_IRandom. |
 | Not started | `TIBERIANDAWN/RAWFILE.CPP` | — |
 | Not started | `TIBERIANDAWN/REINF.CPP` | — |
-| Not started | `TIBERIANDAWN/RULES.CPP` | — |
+| Complete | `TIBERIANDAWN/RULES.CPP` | rts-core/src/rules_defaults.rs — exact DifficultyClass and RulesClass constructor defaults. |
 | Not started | `TIBERIANDAWN/SAVELOAD.CPP` | — |
 | Not started | `TIBERIANDAWN/SCENARIO.CPP` | — |
 | Not started | `TIBERIANDAWN/SCORE.CPP` | — |
