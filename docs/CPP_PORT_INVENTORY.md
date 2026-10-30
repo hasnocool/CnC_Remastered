@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 72 | 203 |
+| `REDALERT/` | 275 | 73 | 202 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 14 | 147 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 28 | 4 |
@@ -263,7 +263,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/THEME.CPP` | — |
 | Not started | `REDALERT/TOGGLE.CPP` | — |
 | Not started | `REDALERT/TOOLTIP.CPP` | — |
-| Not started | `REDALERT/TRACKER.CPP` | — |
+| Complete | `REDALERT/TRACKER.CPP` | rts-core/src/tracker.rs — legal-target guard, ordered global registry/singleton detachment, dependent-trigger recursion and deletion. |
 | Not started | `REDALERT/TRIGGER.CPP` | — |
 | Not started | `REDALERT/TRIGTYPE.CPP` | — |
 | Not started | `REDALERT/TURRET.CPP` | — |
