@@ -18,6 +18,7 @@
 - [x] Port packed BooleanVectorClass operations.
 - [x] Port legacy CR/LF line reader and string trimming.
 - [x] Port the legacy command-launcher stub output.
+- [x] Port ADPCM type-1 decode, including the original lookup tables.
 - [x] Add a starter editor document model.
 - [x] Port the map-editor cell metric operations: row-major conversion, 8-way adjacency, and clipping.
 - [x] Port the map-editor standard CRC-32 helper.
@@ -26,7 +27,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 480 C++ translation units with source-specific tests.
+- [ ] Port the remaining 477 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
