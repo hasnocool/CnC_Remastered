@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 47 | 228 |
+| `REDALERT/` | 275 | 51 | 224 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 3 | 158 |
+| `TIBERIANDAWN/` | 161 | 5 | 156 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
 
 ## File-by-file coverage
@@ -78,7 +78,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/CRCPIPE.CPP` | rts-formats/src/crc_streams.rs — checksum-aware push adapter. |
 | Complete | `REDALERT/CRCSTRAW.CPP` | rts-formats/src/crc_streams.rs — checksum-aware pull adapter. |
 | Not started | `REDALERT/CREDITS.CPP` | — |
-| Not started | `REDALERT/CREW.CPP` | — |
+| Complete | `REDALERT/CREW.CPP` | Intentionally empty translation unit; contains only the function.h include and no executable definitions. |
 | Complete | `REDALERT/CSTRAW.CPP` | rts-formats/src/cache_straw.rs — buffered read-ahead adapter |
 | Not started | `REDALERT/DDE.CPP` | — |
 | Not started | `REDALERT/DEBUG.CPP` | — |
@@ -91,7 +91,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/DLLInterface.cpp` | — |
 | Not started | `REDALERT/DLLInterfaceEditor.cpp` | — |
 | Not started | `REDALERT/DOOR.CPP` | — |
-| Not started | `REDALERT/DPMI.CPP` | — |
+| Complete | `REDALERT/DPMI.CPP` | No active implementation in the pinned source; the complete translation unit is enclosed by #if (0). |
 | Not started | `REDALERT/DRIVE.CPP` | — |
 | Not started | `REDALERT/DROP.CPP` | — |
 | Complete | `REDALERT/DTABLE.CPP` | rts-formats/src/adpcm.rs — exact 1,424-entry ADPCM difference table. |
@@ -183,7 +183,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/MPLIB.CPP` | — |
 | Not started | `REDALERT/MPMGRD.CPP` | — |
 | Not started | `REDALERT/MPMGRW.CPP` | — |
-| Not started | `REDALERT/MPU.CPP` | — |
+| Complete | `REDALERT/MPU.CPP` | No active implementation for the pinned MSVC Win32 project; Get_CPU_Clock exists only under __BORLANDC__. |
 | Not started | `REDALERT/MSGBOX.CPP` | — |
 | Not started | `REDALERT/MSGLIST.CPP` | — |
 | Not started | `REDALERT/MiscAsm.cpp` | — |
@@ -297,7 +297,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WSPUDP.CPP` | — |
 | Complete | `REDALERT/XPIPE.CPP` | rts-formats/src/io_streams.rs — fixed-buffer and file-backed push endpoints |
 | Complete | `REDALERT/XSTRAW.CPP` | rts-formats/src/io_streams.rs — fixed-buffer and file-backed pull endpoints |
-| Not started | `REDALERT/_WSPROTO.CPP` | — |
+| Complete | `REDALERT/_WSPROTO.CPP` | rts-core/src/winsock_state.rs — PacketTransport global initialized to null. |
 
 ### `REDALERT/WIN32LIB/`
 
@@ -365,7 +365,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/CONTROL.CPP` | — |
 | Not started | `TIBERIANDAWN/COORD.CPP` | — |
 | Not started | `TIBERIANDAWN/CREDITS.CPP` | — |
-| Not started | `TIBERIANDAWN/CREW.CPP` | — |
+| Complete | `TIBERIANDAWN/CREW.CPP` | Intentionally empty translation unit; contains only the function.h include and no executable definitions. |
 | Not started | `TIBERIANDAWN/DDE.CPP` | — |
 | Not started | `TIBERIANDAWN/DEBUG.CPP` | — |
 | Not started | `TIBERIANDAWN/DESCDLG.CPP` | — |
@@ -375,7 +375,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/DLLInterface.cpp` | — |
 | Not started | `TIBERIANDAWN/DLLInterfaceEditor.cpp` | — |
 | Not started | `TIBERIANDAWN/DOOR.CPP` | — |
-| Not started | `TIBERIANDAWN/DPMI.CPP` | — |
+| Complete | `TIBERIANDAWN/DPMI.CPP` | No active implementation in the pinned source; the complete translation unit is enclosed by #if (0). |
 | Not started | `TIBERIANDAWN/DRIVE.CPP` | — |
 | Not started | `TIBERIANDAWN/EDIT.CPP` | — |
 | Not started | `TIBERIANDAWN/ENDING.CPP` | — |
