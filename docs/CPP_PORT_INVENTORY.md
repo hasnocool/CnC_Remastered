@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **174**
-- Not yet fully ported: **320**
+- Fully ported: **176**
+- Not yet fully ported: **318**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 99 | 176 |
+| `REDALERT/` | 275 | 100 | 175 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 22 | 139 |
+| `TIBERIANDAWN/` | 161 | 23 | 138 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -81,7 +81,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/CREW.CPP` | Intentionally empty translation unit; contains only the function.h include and no executable definitions. |
 | Complete | `REDALERT/CSTRAW.CPP` | rts-formats/src/cache_straw.rs — buffered read-ahead adapter |
 | Not started | `REDALERT/DDE.CPP` | — |
-| Not started | `REDALERT/DEBUG.CPP` | — |
+| Complete | `REDALERT/DEBUG.CPP` | No active implementation in the pinned RedAlert.vcxproj configuration; the entire translation unit is guarded by `#ifdef CHEAT_KEYS`, which is not defined by the project or its headers. |
 | Complete | `REDALERT/DESCDLG.CPP` | rts-core/src/description_dialog.rs — dialog geometry, gadget setup, redraw/callback loop, OK/cancel handling and text trimming. |
 | Not started | `REDALERT/DIAL8.CPP` | — |
 | Not started | `REDALERT/DIALOG.CPP` | — |
@@ -367,7 +367,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/CREDITS.CPP` | — |
 | Complete | `TIBERIANDAWN/CREW.CPP` | Intentionally empty translation unit; contains only the function.h include and no executable definitions. |
 | Not started | `TIBERIANDAWN/DDE.CPP` | — |
-| Not started | `TIBERIANDAWN/DEBUG.CPP` | — |
+| Complete | `TIBERIANDAWN/DEBUG.CPP` | No active implementation in the pinned TiberianDawn.vcxproj configuration; the entire translation unit is guarded by `#ifdef CHEAT_KEYS`, which is not defined by the project or its headers. |
 | Complete | `TIBERIANDAWN/DESCDLG.CPP` | rts-core/src/description_dialog.rs — shared dialog flow with GreenBorder style, SeenBuff-sized background and surface-restore redraw handling. |
 | Not started | `TIBERIANDAWN/DIAL8.CPP` | — |
 | Not started | `TIBERIANDAWN/DIALOG.CPP` | — |
