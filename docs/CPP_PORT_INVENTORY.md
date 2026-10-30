@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 71 | 204 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 11 | 150 |
+| `TIBERIANDAWN/` | 161 | 12 | 149 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
 
 ## File-by-file coverage
@@ -378,7 +378,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/DPMI.CPP` | No active implementation in the pinned source; the complete translation unit is enclosed by #if (0). |
 | Not started | `TIBERIANDAWN/DRIVE.CPP` | — |
 | Not started | `TIBERIANDAWN/EDIT.CPP` | — |
-| Not started | `TIBERIANDAWN/ENDING.CPP` | — |
+| Complete | `TIBERIANDAWN/ENDING.CPP` | rts-core/src/ending.rs — GDI demo/standard endings, Nod target-selection loop, sound/input gating, cleanup, ending movies, optional trailer and attract-screen sequence. |
 | Not started | `TIBERIANDAWN/EVENT.CPP` | — |
 | Not started | `TIBERIANDAWN/EXPAND.CPP` | — |
 | Complete | `TIBERIANDAWN/FACING.CPP` | rts-core/src/facing.rs — DirType and FacingClass current/desired headings, signed shortest-path rotation, capped rotation rate, sprite rotation zones. |
