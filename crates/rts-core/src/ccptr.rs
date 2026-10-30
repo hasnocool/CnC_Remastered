@@ -25,7 +25,7 @@ impl<T> CCPtr<T> {
     pub const fn new() -> Self { Self { id: -1, marker: PhantomData } }
     pub const fn from_raw(id: i32) -> Self { Self { id, marker: PhantomData } }
     pub fn from_object(value: Option<&impl StableNamedObject>) -> Self {
-        Self::from_raw(value.map_or(-1, StableNamedObject::stable_id))
+        Self::from_raw(value.map_or(-1, |object| object.stable_id()))
     }
     pub const fn is_valid(self) -> bool { self.id != -1 }
     pub const fn raw(self) -> i32 { self.id }
@@ -115,7 +115,7 @@ mod tests {
         let ptr = CCPtr::<Object>::from_raw(id);
         assert!(ptr.is_valid());
         assert_eq!(ptr.get(&heap).unwrap().name(), "Tank");
-        assert_eq!(CCPtr::<Object>::new().get(&heap), None);
+        assert!(CCPtr::<Object>::new().get(&heap).is_none());
     }
 
     #[test]
