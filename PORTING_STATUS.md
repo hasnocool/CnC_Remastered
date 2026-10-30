@@ -195,3 +195,5 @@ Latest addition: REDALERT/SOUNDDLG.CPP → crates/rts-core/src/red_alert_sound_c
 Latest addition: REDALERT/AADATA.CPP → crates/rts-core/src/red_alert_aircraft_types.rs (seven Red Alert aircraft definitions and source-derived type helpers).
 
 Latest addition: `REDALERT/ADATA.CPP` → `crates/rts-core/src/red_alert_animation_types.rs` (all 89 animation descriptors, source-order IDs, constructor metadata, chain/virtual links, name lookup, and non-blocking asset request plans).
+
+Partial in progress: `REDALERT/AIRCRAFT.CPP` → `crates/rts-core/src/red_alert_aircraft_helpers.rs` ports source-isolated civilian evacuation, overlap, coordinate sorting, pose/layer, pip-count and speed routines. The translation unit remains incomplete and is not included in the fully ported count.
