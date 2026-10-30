@@ -145,7 +145,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/ITABLE.CPP` | rts-formats/src/adpcm.rs — exact 1,424-entry ADPCM index table. |
 | Not started | `REDALERT/JSHELL.CPP` | — |
 | Not started | `REDALERT/KEY.CPP` | — |
-| Not started | `REDALERT/KEYBOARD.CPP` | — |
+| Complete | `REDALERT/KEYBOARD.CPP` | rts-core/src/keyboard.rs — 256-slot ring buffer, 255-entry capacity, modifier/release capture, ASCII translation, mouse coordinate triples, double-click expansion, async key state and message pumping. |
 | Not started | `REDALERT/LAYER.CPP` | — |
 | Complete | `REDALERT/LCW.CPP` | rts-formats/src/lcw.rs — LCW block decompression. |
 | Complete | `REDALERT/LCWPIPE.CPP` | rts-formats/src/lcw_blocks.rs — framed push compression/decompression and partial-block flush. |
