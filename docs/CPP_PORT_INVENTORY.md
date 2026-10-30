@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **223**
-- Not yet fully ported: **271**
+- Fully ported: **224**
+- Not yet fully ported: **270**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 123 | 152 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 44 | 117 |
+| `TIBERIANDAWN/` | 161 | 45 | 116 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -364,7 +364,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/CONST.CPP` | — |
 | Not started | `TIBERIANDAWN/CONTROL.CPP` | — |
 | Not started | `TIBERIANDAWN/COORD.CPP` | — |
-| Not started | `TIBERIANDAWN/CREDITS.CPP` | — |
+| Complete | `TIBERIANDAWN/CREDITS.CPP` | rts-core/src/credits.rs — CreditClass constructor, nullable-player handling, nonnegative balance clamp, 1..143 step approach, countdown/audio direction, forced synchronization, logic-only redraw suppression, resolution-aware tab position and dirty/forced rendering. |
 | Complete | `TIBERIANDAWN/CREW.CPP` | Intentionally empty translation unit; contains only the function.h include and no executable definitions. |
 | Complete | `TIBERIANDAWN/DDE.CPP` | rts-core/src/dde_instance.rs — same active DDE instance/client POKE wrapper methods as Red Alert; DdeInitialize, registration and event callback dispatcher are compile-time inactive in the pinned source. |
 | Complete | `TIBERIANDAWN/DEBUG.CPP` | No active implementation in the pinned TiberianDawn.vcxproj configuration; the entire translation unit is guarded by `#ifdef CHEAT_KEYS`, which is not defined by the project or its headers. |
