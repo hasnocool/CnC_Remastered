@@ -283,3 +283,4 @@
 - [x] Port active NEWMENU code from `TIBERIANDAWN/EXPAND.CPP`: expansion and bonus mission discovery/order, first-1000-byte `[Basic] Name` parsing/default, localized mission labels, display entry styling, resolution-dependent dialog geometry, input selection and surface-restoration redraw loop.
 - [x] Port `TIBERIANDAWN/HDATA.CPP` house metadata, pointer-table ordering, case-insensitive INI-name resolution, safe house reference lookup, constructor bias defaults and one-time Jurassic Park radar-color override.
 - [x] Port active Tiberian Dawn tables from `TIBERIANDAWN/CONST.CPP`, including source names, coordinate/facing tables, weapons, warheads, terrain movement costs, theaters and remap palettes.
+- [x] Port `TIBERIANDAWN/MSGBOX.CPP` overloads and modal behavior as a resumable Rust state machine, including bounded message staging, geometry, 1–3 button mapping, keyboard focus, no-button timer callback, surface restoration and preserved-region restore.

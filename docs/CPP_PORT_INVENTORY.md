@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **246**
-- Not yet fully ported: **248**
+- Fully ported: **247**
+- Not yet fully ported: **247**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 136 | 139 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 54 | 107 |
+| `TIBERIANDAWN/` | 161 | 55 | 106 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -434,7 +434,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/MONOC.CPP` | — |
 | Complete | `TIBERIANDAWN/MOUSE.CPP` | rts-core/src/mouse_control.rs — 34-entry cursor table, default/revert/override states, small cursor and animated frames, loose-file MOUSE.SHP probe, VTable binding hook, and scenario reset. |
 | Not started | `TIBERIANDAWN/MPLAYER.CPP` | — |
-| Not started | `TIBERIANDAWN/MSGBOX.CPP` | — |
+| Complete | `TIBERIANDAWN/MSGBOX.CPP` | rts-core/src/message_box.rs — three Process overload paths, bounded C-string staging, 1–3 button layout and legacy order/mapping, keyboard focus navigation, timer-driven no-button callback mode, surface-restoration redraw and preserved-region restoration. |
 | Not started | `TIBERIANDAWN/MSGLIST.CPP` | — |
 | Complete | `TIBERIANDAWN/MiscAsm.cpp` | rts-core/src/misc_asm.rs — shared algorithms plus Tiberian Dawn's 8-bit fractional cardinal conversion/saturation. |
 | Not started | `TIBERIANDAWN/NETDLG.CPP` | — |

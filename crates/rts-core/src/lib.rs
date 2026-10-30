@@ -106,3 +106,5 @@ pub use facing::{Facing, FACING_COUNT};
 pub use map::{CellCoord, GameVariant, MapDimensions, MapError, REGION_HEIGHT, REGION_WIDTH};
 pub mod house;
 pub mod game_constants;
+
+pub mod message_box;
