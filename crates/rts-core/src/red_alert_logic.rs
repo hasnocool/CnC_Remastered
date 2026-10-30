@@ -336,7 +336,7 @@ impl RedAlertLogicRuntime {
             }
         }
 
-        if state.time_quake.is_some() {
+        if world.frame_state().time_quake.is_some() {
             world.play_time_quake_sound();
             world.shake_screen(8);
         }
