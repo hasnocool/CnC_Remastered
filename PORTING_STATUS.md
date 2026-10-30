@@ -27,6 +27,7 @@
 | Simulation RNG | Ported | Exact shared 256-byte table; byte index increments before lookup; both variant Sim_IRandom scaling routines |
 | Red Alert fixed point | Ported | Q16.16 constructors, arithmetic helpers, rounding, saturation, ASCII conversion |
 | Legacy checksum | Ported | Westwood rotate-left/add word checksum with partial-word staging |
+| CRC pipe/straw adapters | Ported | Checksum observing push and pull stream adapters; base Pipe/Straw chains remain separate |
 | Map editor model | Initial | Cell layer IDs and waypoint storage only |
 | Tiberian Dawn gameplay | Not ported | Variant boundary only |
 | Red Alert gameplay | Not ported | Variant boundary only |
@@ -37,13 +38,15 @@
 ## C++ port coverage
 
 - Upstream translation units inventoried: 494.
-- Fully ported C++ translation units: 4 (`REDALERT/CRC.CPP`, `REDALERT/FIXED.CPP`, `REDALERT/RAND.CPP`, `TIBERIANDAWN/RAND.CPP`).
-- Remaining C++ translation units: 490. See [the file-by-file inventory](docs/CPP_PORT_INVENTORY.md).
+- Fully ported C++ translation units: 7 (`REDALERT/CRC.CPP`, `REDALERT/CRCPIPE.CPP`, `REDALERT/CRCSTRAW.CPP`, `REDALERT/FIXED.CPP`, `REDALERT/RAND.CPP`, `REDALERT/RANDOM.CPP`, `TIBERIANDAWN/RAND.CPP`).
+- Remaining C++ translation units: 487. See [the file-by-file inventory](docs/CPP_PORT_INVENTORY.md).
 
 ## Compatibility references
 
 - `TIBERIANDAWN/DEFINES.H`: TD map grid, regions, tick rate, facing enumeration.
 - `TIBERIANDAWN/RAND.CPP` and `REDALERT/RAND.CPP`: matching 256-byte deterministic table and variant-specific Sim_IRandom calls.
+- `REDALERT/RANDOM.H` / `REDALERT/RANDOM.CPP`: separate seeded 15-bit LCG RandomClass and rejection-based ranged selection.
+- `REDALERT/CRCPIPE.*` and `REDALERT/CRCSTRAW.*`: checksum-observing stream adapter behavior; `PIPE.CPP` and `STRAW.CPP` chain behavior is still outstanding.
 - `TIBERIANDAWN/COORDA.ASM` and `REDALERT/COORDA.ASM`: distinct 8-bit and 16-bit Fixed_To_Cardinal arithmetic.
 - `REDALERT/FIXED.H` / `REDALERT/FIXED.CPP`: Q16.16 fixed-point value layout and methods.
 - `REDALERT/CRC.H` / `REDALERT/CRC.CPP`: 32-bit rotate-and-add checksum engine.
