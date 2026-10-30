@@ -26,6 +26,7 @@ pub mod straw;
 pub mod mix;
 pub mod palette;
 pub mod palette_fade;
+pub mod palette_interpolation;
 pub mod dipthong_tables;
 pub mod dipthong;
 
