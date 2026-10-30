@@ -225,3 +225,6 @@
 - [x] Port REDALERT/DIALOG.CPP and TIBERIANDAWN/DIALOG.CPP dialog box/window drawing, box palettes, text wrapping, Simple/Fancy/Plain/Clipped text, font selection, palette/shadow flags, caption rendering and variant-specific style rules.
 
 - [x] Port REDALERT/DDE.CPP and TIBERIANDAWN/DDE.CPP active DDEML instance operations: enable callback, test/open/close poke connection, CF_TEXT POKE with 60-second timeout, destructor cleanup; preserve disabled initialize/register/dispatcher blocks as inactive.
+
+- [x] Port both CARGO.CPP variants: attach/limbo, linked-chain append, unsigned-byte quantity, attached-object query, detach and destructor reset.
+- [x] Verify REDALERT/BENCH.CPP is entirely guarded by unconditional #if (0) through end-of-file and record as inactive.
