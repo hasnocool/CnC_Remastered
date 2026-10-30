@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **204**
-- Not yet fully ported: **290**
+- Fully ported: **209**
+- Not yet fully ported: **285**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 114 | 161 |
+| `REDALERT/` | 275 | 116 | 159 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 36 | 125 |
+| `TIBERIANDAWN/` | 161 | 37 | 124 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -190,8 +190,8 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/NETDLG.CPP` | — |
 | Complete | `REDALERT/NOSEQCON.CPP` | rts-core/src/nonsequenced_connection.rs — 8-byte CommHeaderType, independent ACK/NOACK IDs, bounded packet queues, duplicate detection, cumulative receive/read sequencing, ACK generation, resend/retry/timeout, NOACK cleanup and the exact 256-sample response-delay filter; Red Alert receive queue rejects oversized packets. |
 | Complete | `REDALERT/NULLCONN.CPP` | rts-core/src/null_modem_connection.rs — base connection timing/queue settings, port initialization, actual buffer sizing, 32-bit rotate-and-add CRC and packet overhead. Active Send() returns 0; serial framing code is under #if (0). |
-| Not started | `REDALERT/NULLDLG.CPP` | — |
-| Not started | `REDALERT/NULLMGR.CPP` | — |
+| Complete | `REDALERT/NULLDLG.CPP` | rts-core/src/network_stubs.rs — active Select_Serial_Dialog fallback returns GAME_NORMAL; all remaining modem/serial dialog implementation is guarded by unconditional #if (0). |
+| Complete | `REDALERT/NULLMGR.CPP` | No active implementation in the pinned source; the entire modem manager implementation is enclosed by an unconditional #if (0) through end-of-file. |
 | Not started | `REDALERT/OBJECT.CPP` | — |
 | Not started | `REDALERT/ODATA.CPP` | — |
 | Not started | `REDALERT/OPTIONS.CPP` | — |
@@ -441,7 +441,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/NOSEQCON.CPP` | rts-core/src/nonsequenced_connection.rs — same active protocol method bodies as Red Alert, including ACK/NOACK queueing, duplicate/reorder handling, cumulative sequencing, retry/timeout and response-time accounting; Tiberian Dawn's CommBuffer receive enqueue omits Red Alert's maximum-length check. |
 | Complete | `TIBERIANDAWN/NULLCONN.CPP` | No active implementation in the pinned source; constructor, destructor, Init, Send, CRC and packet-overhead methods are all enclosed by unconditional #if (0). |
 | Not started | `TIBERIANDAWN/NULLDLG.CPP` | — |
-| Not started | `TIBERIANDAWN/NULLMGR.CPP` | — |
+| Complete | `TIBERIANDAWN/NULLMGR.CPP` | No active implementation in the pinned source; the entire modem manager implementation is enclosed by an unconditional #if (0) through end-of-file. |
 | Not started | `TIBERIANDAWN/OBJECT.CPP` | — |
 | Not started | `TIBERIANDAWN/ODATA.CPP` | — |
 | Not started | `TIBERIANDAWN/OPTIONS.CPP` | — |
