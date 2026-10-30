@@ -1508,6 +1508,7 @@ pub enum AircraftMission {
 pub enum IdleModeDestination {
     Clear,
     CurrentCell,
+    AssignedCell(u32),
     GoodLandingZone(u32),
 }
 
@@ -2734,6 +2735,232 @@ pub fn aircraft_mission_attack(context: AircraftAttackContext) -> AircraftAttack
             plan.enter_idle_mode = true;
         }
         AircraftAttackStage::Unknown(_) => {}
+    }
+    plan
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftMoveStage {
+    FixedWingTakeOff,
+    FixedWingFlyTowardTarget,
+    ValidateLandingZone,
+    TakeOff,
+    FlyToLandingZone,
+    Land,
+    Unknown(i32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftMoveContext {
+    pub fixed_wing: bool,
+    pub stage: AircraftMoveStage,
+    pub is_loaner: bool,
+    pub team_is_valid: bool,
+    pub navcom_is_legal: bool,
+    pub landing_zone_is_clear: bool,
+    pub landing_cell_is_available: bool,
+    pub replacement_landing_cell: Option<u32>,
+    pub takeoff_completed: bool,
+    pub in_radio_contact_with_building: bool,
+    pub current_cell_is_contacted_building: bool,
+    pub distance_to_navcom: i32,
+    pub navcom_direction: DirType,
+    pub target_is_legal: bool,
+    pub direction_to_target: DirType,
+    pub pose_direction: DirType,
+    pub replacement_landing_target_is_cell: bool,
+    pub landing_completes_as_crash: bool,
+    pub docking_building_is_accepted: bool,
+    pub good_landing_zone_cell: u32,
+    pub navcom_is_cell_target: bool,
+    pub is_taking_off: bool,
+    pub process_landing_completes: bool,
+    pub mission_queue_is_none: bool,
+    pub normal_delay: i32,
+    pub random_delay_0_to_2: i32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AircraftMovePlan {
+    pub next_stage: Option<AircraftMoveStage>,
+    pub destination: Option<IdleModeDestination>,
+    pub clear_destination: bool,
+    pub update_team_mission_target: bool,
+    pub mission_to_assign: Option<AircraftMission>,
+    pub enter_idle_mode: bool,
+    pub commence: bool,
+    pub process_takeoff: bool,
+    pub process_fly_to: bool,
+    pub process_landing: bool,
+    pub stop_taking_off: bool,
+    pub set_speed: Option<u8>,
+    pub primary_desired: Option<DirType>,
+    pub secondary_desired: Option<DirType>,
+    pub break_radio_contact: bool,
+    pub force_crash_and_delete: bool,
+    pub delay: HuntDelay,
+    pub return_immediately: bool,
+}
+
+impl AircraftMovePlan {
+    fn new(normal_delay: i32, random_delay_0_to_2: i32) -> Self {
+        Self {
+            next_stage: None,
+            destination: None,
+            clear_destination: false,
+            update_team_mission_target: false,
+            mission_to_assign: None,
+            enter_idle_mode: false,
+            commence: false,
+            process_takeoff: false,
+            process_fly_to: false,
+            process_landing: false,
+            stop_taking_off: false,
+            set_speed: None,
+            primary_desired: None,
+            secondary_desired: None,
+            break_radio_contact: false,
+            force_crash_and_delete: false,
+            delay: HuntDelay::NormalPlusRandom2 {
+                normal_delay,
+                random_value: random_delay_0_to_2.clamp(0, 2),
+            },
+            return_immediately: false,
+        }
+    }
+}
+
+/// Port of AircraftClass::Mission_Move for fixed-wing and rotorcraft. The
+/// simulation supplies map/target/building outcomes; this function describes
+/// state and side-effect requests in original source order.
+pub fn aircraft_mission_move(context: AircraftMoveContext) -> AircraftMovePlan {
+    let mut plan = AircraftMovePlan::new(
+        context.normal_delay,
+        context.random_delay_0_to_2,
+    );
+
+    if context.fixed_wing {
+        match context.stage {
+            AircraftMoveStage::FixedWingTakeOff => {
+                plan.process_takeoff = true;
+                if context.takeoff_completed {
+                    plan.stop_taking_off = true;
+                    plan.set_speed = Some(u8::MAX);
+                    plan.break_radio_contact = context.in_radio_contact_with_building
+                        && context.current_cell_is_contacted_building;
+                    plan.next_stage = Some(AircraftMoveStage::FixedWingFlyTowardTarget);
+                }
+                plan.delay = HuntDelay::Ticks(1);
+                plan.return_immediately = true;
+            }
+            AircraftMoveStage::FixedWingFlyTowardTarget => {
+                plan.primary_desired = Some(context.navcom_direction);
+                if context.distance_to_navcom < 0x00C0 {
+                    if !context.is_loaner {
+                        if context.docking_building_is_accepted {
+                            plan.clear_destination = true;
+                            plan.mission_to_assign = Some(AircraftMission::Enter);
+                        } else {
+                            plan.destination = Some(IdleModeDestination::GoodLandingZone(
+                                context.good_landing_zone_cell,
+                            ));
+                            if context.navcom_is_cell_target {
+                                plan.process_landing = true;
+                                if context.landing_completes_as_crash {
+                                    plan.force_crash_and_delete = true;
+                                    plan.delay = HuntDelay::Ticks(1);
+                                    plan.return_immediately = true;
+                                    return plan;
+                                }
+                                plan.delay = HuntDelay::Ticks(500);
+                                plan.return_immediately = true;
+                                return plan;
+                            }
+                            plan.mission_to_assign = Some(AircraftMission::Move);
+                        }
+                        plan.commence = true;
+                    } else if !context.team_is_valid {
+                        plan.enter_idle_mode = true;
+                    }
+                    plan.delay = HuntDelay::Ticks(1);
+                    plan.return_immediately = true;
+                } else {
+                    plan.delay = HuntDelay::Ticks(5);
+                    plan.return_immediately = true;
+                }
+            }
+            _ => {
+                plan.delay = HuntDelay::Ticks(5);
+                plan.return_immediately = true;
+            }
+        }
+        return plan;
+    }
+
+    match context.stage {
+        AircraftMoveStage::ValidateLandingZone => {
+            if !context.navcom_is_legal {
+                plan.enter_idle_mode = true;
+            } else if !context.landing_zone_is_clear || !context.landing_cell_is_available {
+                plan.destination = context.replacement_landing_cell.map(IdleModeDestination::AssignedCell);
+                plan.update_team_mission_target = context.team_is_valid;
+            } else {
+                plan.next_stage = Some(AircraftMoveStage::TakeOff);
+            }
+        }
+        AircraftMoveStage::TakeOff => {
+            if !context.navcom_is_legal {
+                plan.next_stage = Some(AircraftMoveStage::ValidateLandingZone);
+            } else {
+                plan.process_takeoff = true;
+                if context.takeoff_completed {
+                    plan.break_radio_contact = context.in_radio_contact_with_building
+                        && context.current_cell_is_contacted_building;
+                    plan.next_stage = Some(AircraftMoveStage::FlyToLandingZone);
+                }
+                plan.delay = HuntDelay::Ticks(1);
+                plan.return_immediately = true;
+            }
+        }
+        AircraftMoveStage::FlyToLandingZone => {
+            if context.landing_zone_is_clear {
+                plan.process_fly_to = true;
+                if context.distance_to_navcom < 0x0080 {
+                    plan.secondary_desired = Some(if context.target_is_legal {
+                        context.direction_to_target
+                    } else {
+                        context.pose_direction
+                    });
+                    if context.distance_to_navcom < 0x0010 {
+                        plan.next_stage = Some(AircraftMoveStage::Land);
+                    }
+                } else {
+                    plan.secondary_desired = Some(context.navcom_direction);
+                }
+            } else {
+                plan.destination = context.replacement_landing_cell.map(IdleModeDestination::AssignedCell);
+                plan.update_team_mission_target = context.team_is_valid;
+                if !context.navcom_is_legal {
+                    plan.next_stage = Some(AircraftMoveStage::Land);
+                }
+            }
+            plan.delay = HuntDelay::Ticks(1);
+            plan.return_immediately = true;
+        }
+        AircraftMoveStage::Land => {
+            if context.is_taking_off {
+                plan.destination = context.replacement_landing_cell.map(IdleModeDestination::AssignedCell);
+                plan.update_team_mission_target = context.team_is_valid;
+                plan.next_stage = Some(AircraftMoveStage::TakeOff);
+            }
+            plan.process_landing = true;
+            if context.process_landing_completes && context.mission_queue_is_none {
+                plan.enter_idle_mode = true;
+            }
+            plan.delay = HuntDelay::Ticks(1);
+            plan.return_immediately = true;
+        }
+        _ => {}
     }
     plan
 }
@@ -4606,6 +4833,190 @@ mod tests {
         });
         assert!(!computer_with_ammo.clear_target);
         assert!(computer_with_ammo.clear_destination && computer_with_ammo.enter_idle_mode);
+    }
+
+    fn move_context() -> AircraftMoveContext {
+        AircraftMoveContext {
+            fixed_wing: false,
+            stage: AircraftMoveStage::ValidateLandingZone,
+            is_loaner: false,
+            team_is_valid: false,
+            navcom_is_legal: true,
+            landing_zone_is_clear: true,
+            landing_cell_is_available: true,
+            replacement_landing_cell: Some(500),
+            takeoff_completed: false,
+            in_radio_contact_with_building: true,
+            current_cell_is_contacted_building: true,
+            distance_to_navcom: 1000,
+            navcom_direction: DirType::EAST,
+            target_is_legal: true,
+            direction_to_target: DirType::SOUTH,
+            pose_direction: DirType::NORTH,
+            replacement_landing_target_is_cell: true,
+            landing_completes_as_crash: false,
+            docking_building_is_accepted: false,
+            good_landing_zone_cell: 600,
+            navcom_is_cell_target: false,
+            is_taking_off: false,
+            process_landing_completes: false,
+            mission_queue_is_none: true,
+            normal_delay: 5,
+            random_delay_0_to_2: 1,
+        }
+    }
+
+    #[test]
+    fn rotor_move_validates_and_retargets_landing_zone_before_takeoff() {
+        let invalid = aircraft_mission_move(AircraftMoveContext {
+            navcom_is_legal: false, ..move_context()
+        });
+        assert!(invalid.enter_idle_mode);
+        let blocked = aircraft_mission_move(AircraftMoveContext {
+            landing_zone_is_clear: false, team_is_valid: true, ..move_context()
+        });
+        assert_eq!(blocked.destination, Some(IdleModeDestination::AssignedCell(500)));
+        assert!(blocked.update_team_mission_target);
+        let ready = aircraft_mission_move(move_context());
+        assert_eq!(ready.next_stage, Some(AircraftMoveStage::TakeOff));
+    }
+
+    #[test]
+    fn rotor_move_takeoff_waits_and_breaks_contact_only_with_origin_helipad() {
+        let pending = aircraft_mission_move(AircraftMoveContext {
+            stage: AircraftMoveStage::TakeOff, takeoff_completed: false, ..move_context()
+        });
+        assert!(pending.process_takeoff);
+        assert_eq!(pending.delay, HuntDelay::Ticks(1));
+        let complete = aircraft_mission_move(AircraftMoveContext {
+            stage: AircraftMoveStage::TakeOff, takeoff_completed: true, ..move_context()
+        });
+        assert_eq!(complete.next_stage, Some(AircraftMoveStage::FlyToLandingZone));
+        assert!(complete.break_radio_contact);
+        let no_contact_match = aircraft_mission_move(AircraftMoveContext {
+            stage: AircraftMoveStage::TakeOff, takeoff_completed: true,
+            current_cell_is_contacted_building: false, ..move_context()
+        });
+        assert!(!no_contact_match.break_radio_contact);
+    }
+
+    #[test]
+    fn rotor_move_flies_faces_target_or_pose_and_transitions_to_land() {
+        let far = aircraft_mission_move(AircraftMoveContext {
+            stage: AircraftMoveStage::FlyToLandingZone, distance_to_navcom: 0x0100,
+            ..move_context()
+        });
+        assert!(far.process_fly_to);
+        assert_eq!(far.secondary_desired, Some(DirType::EAST));
+        let near_target = aircraft_mission_move(AircraftMoveContext {
+            stage: AircraftMoveStage::FlyToLandingZone, distance_to_navcom: 0x0070,
+            ..move_context()
+        });
+        assert_eq!(near_target.secondary_desired, Some(DirType::SOUTH));
+        let near_pose = aircraft_mission_move(AircraftMoveContext {
+            stage: AircraftMoveStage::FlyToLandingZone, distance_to_navcom: 0x0070,
+            target_is_legal: false, ..move_context()
+        });
+        assert_eq!(near_pose.secondary_desired, Some(DirType::NORTH));
+        let arrived = aircraft_mission_move(AircraftMoveContext {
+            stage: AircraftMoveStage::FlyToLandingZone, distance_to_navcom: 0x000F,
+            ..move_context()
+        });
+        assert_eq!(arrived.next_stage, Some(AircraftMoveStage::Land));
+    }
+
+    #[test]
+    fn rotor_move_recovers_lost_lz_and_relaunches_if_landing_requires_takeoff() {
+        let blocked = aircraft_mission_move(AircraftMoveContext {
+            stage: AircraftMoveStage::FlyToLandingZone,
+            landing_zone_is_clear: false, navcom_is_legal: false,
+            team_is_valid: true, ..move_context()
+        });
+        assert_eq!(blocked.destination, Some(IdleModeDestination::AssignedCell(500)));
+        assert!(blocked.update_team_mission_target);
+        assert_eq!(blocked.next_stage, Some(AircraftMoveStage::Land));
+
+        let relaunch = aircraft_mission_move(AircraftMoveContext {
+            stage: AircraftMoveStage::Land, is_taking_off: true,
+            process_landing_completes: true, team_is_valid: true, ..move_context()
+        });
+        assert_eq!(relaunch.next_stage, Some(AircraftMoveStage::TakeOff));
+        assert!(relaunch.update_team_mission_target);
+        assert!(relaunch.process_landing);
+        assert!(!relaunch.enter_idle_mode); // source enters idle only after Process_Landing and queue check.
+    }
+
+    #[test]
+    fn rotor_move_enters_idle_after_unqueued_landing_completes() {
+        let landed = aircraft_mission_move(AircraftMoveContext {
+            stage: AircraftMoveStage::Land,
+            process_landing_completes: true,
+            mission_queue_is_none: true,
+            ..move_context()
+        });
+        assert!(landed.enter_idle_mode);
+        assert_eq!(landed.delay, HuntDelay::Ticks(1));
+    }
+
+    #[test]
+    fn fixed_wing_move_takeoff_and_docking_or_forced_landing_branches_match() {
+        let pending = aircraft_mission_move(AircraftMoveContext {
+            fixed_wing: true, stage: AircraftMoveStage::FixedWingTakeOff,
+            takeoff_completed: false, ..move_context()
+        });
+        assert!(pending.process_takeoff);
+        assert_eq!(pending.delay, HuntDelay::Ticks(1));
+
+        let complete = aircraft_mission_move(AircraftMoveContext {
+            fixed_wing: true, stage: AircraftMoveStage::FixedWingTakeOff,
+            takeoff_completed: true, ..move_context()
+        });
+        assert!(complete.stop_taking_off);
+        assert_eq!(complete.set_speed, Some(255));
+        assert!(complete.break_radio_contact);
+        assert_eq!(complete.next_stage, Some(AircraftMoveStage::FixedWingFlyTowardTarget));
+
+        let dock = aircraft_mission_move(AircraftMoveContext {
+            fixed_wing: true, stage: AircraftMoveStage::FixedWingFlyTowardTarget,
+            distance_to_navcom: 0x00BF, docking_building_is_accepted: true,
+            ..move_context()
+        });
+        assert!(dock.clear_destination);
+        assert_eq!(dock.mission_to_assign, Some(AircraftMission::Enter));
+        assert!(dock.commence);
+
+        let no_dock = aircraft_mission_move(AircraftMoveContext {
+            fixed_wing: true, stage: AircraftMoveStage::FixedWingFlyTowardTarget,
+            distance_to_navcom: 0x00BF, docking_building_is_accepted: false,
+            navcom_is_cell_target: false, ..move_context()
+        });
+        assert_eq!(no_dock.destination, Some(IdleModeDestination::GoodLandingZone(600)));
+        assert_eq!(no_dock.mission_to_assign, Some(AircraftMission::Move));
+    }
+
+    #[test]
+    fn fixed_wing_move_crashes_on_unserviced_cell_target_and_respects_loaner_team() {
+        let crash = aircraft_mission_move(AircraftMoveContext {
+            fixed_wing: true, stage: AircraftMoveStage::FixedWingFlyTowardTarget,
+            distance_to_navcom: 0x00BF, navcom_is_cell_target: true,
+            landing_completes_as_crash: true, ..move_context()
+        });
+        assert!(crash.process_landing);
+        assert!(crash.force_crash_and_delete);
+
+        let delay = aircraft_mission_move(AircraftMoveContext {
+            fixed_wing: true, stage: AircraftMoveStage::FixedWingFlyTowardTarget,
+            distance_to_navcom: 0x00BF, navcom_is_cell_target: true,
+            landing_completes_as_crash: false, ..move_context()
+        });
+        assert_eq!(delay.delay, HuntDelay::Ticks(500));
+
+        let loaner_team = aircraft_mission_move(AircraftMoveContext {
+            fixed_wing: true, stage: AircraftMoveStage::FixedWingFlyTowardTarget,
+            is_loaner: true, team_is_valid: true,
+            distance_to_navcom: 0x00BF, ..move_context()
+        });
+        assert!(!loaner_team.enter_idle_mode);
     }
 
     #[test]
