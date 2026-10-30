@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **271**
-- Not yet fully ported: **223**
+- Fully ported: **273**
+- Not yet fully ported: **221**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 138 | 137 |
+| `REDALERT/` | 275 | 140 | 135 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 63 | 98 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -200,8 +200,8 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/PALETTEC.CPP` | rts-core/src/rgb_palette.rs — 256-entry palette construction/copy/equality, full and LUT-gated adjustment, closest-color search, 6-bit palette serialization and timed callback-driven palette fading. |
 | Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, unlink. |
 | Not started | `REDALERT/PK.CPP` | — |
-| Not started | `REDALERT/PKPIPE.CPP` | — |
-| Not started | `REDALERT/PKSTRAW.CPP` | — |
+| Complete | `REDALERT/PKPIPE.CPP` | rts-core/src/public_key_streams.rs — PKPipe constructor/state, PKey key enable/disable and flush, 56-byte Blowfish key generation, public-key block padding, key-first output, incremental decrypt-key accumulation, encrypted/plain key sizing, BlowPipe handoff, and intrusive Put_To rewiring. |
+| Complete | `REDALERT/PKSTRAW.CPP` | rts-core/src/public_key_streams.rs — PKStraw constructor/state, key changes and staging reset, RSA key-block fetch/decrypt, random session-key generation, split-read encrypted-key output, base Straw handoff, encrypted/plain key sizing, and intrusive Get_From rewiring. |
 | Not started | `REDALERT/POWER.CPP` | — |
 | Complete | `REDALERT/PROFILE.CPP` | rts-core/src/profile.rs — INI string/key/hex/int get and write routines, sound/language config loading, section/entry replacement/removal, plus all Read_Bin_* and Write_Bin_* buffer initialization, cursor, length, numeric and length-prefixed string operations with original asymmetric bounds checks. |
 | Not started | `REDALERT/QUEUE.CPP` | — |
