@@ -217,6 +217,178 @@ pub const fn destination_assignment_plan(
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct TakeOffPlan {
+    pub is_landing: bool,
+    pub is_taking_off: bool,
+    pub complete: bool,
+    pub speed: Option<u8>,
+    pub close_door_with_frames: Option<(u8, u8)>,
+    pub copy_secondary_to_primary: bool,
+    pub primary_desired: Option<DirType>,
+    pub secondary_desired: Option<DirType>,
+}
+
+/// Pure state-transition plan for AircraftClass::Process_Take_Off.
+/// FLIGHT_LEVEL is supplied by the variant's flight constants. Facing and speed
+/// updates are returned as actions for the simulation thread to apply.
+pub const fn process_take_off(
+    fixed_wing: bool,
+    height: i32,
+    flight_level: i32,
+    navcom_direction: DirType,
+    primary_desired: DirType,
+) -> TakeOffPlan {
+    if fixed_wing {
+        return TakeOffPlan {
+            is_landing: false,
+            is_taking_off: true,
+            complete: height == flight_level,
+            speed: Some(u8::MAX),
+            close_door_with_frames: None,
+            copy_secondary_to_primary: false,
+            primary_desired: None,
+            secondary_desired: None,
+        };
+    }
+
+    if height == 0 {
+        TakeOffPlan {
+            is_landing: false,
+            is_taking_off: true,
+            complete: false,
+            speed: None,
+            close_door_with_frames: Some((5, 4)),
+            copy_secondary_to_primary: true,
+            primary_desired: None,
+            secondary_desired: None,
+        }
+    } else if height == flight_level / 2 {
+        TakeOffPlan {
+            is_landing: false,
+            is_taking_off: true,
+            complete: false,
+            speed: None,
+            close_door_with_frames: None,
+            copy_secondary_to_primary: false,
+            primary_desired: Some(navcom_direction),
+            secondary_desired: None,
+        }
+    } else if height == flight_level - flight_level / 3 {
+        TakeOffPlan {
+            is_landing: false,
+            is_taking_off: true,
+            complete: false,
+            speed: Some(0x20),
+            close_door_with_frames: None,
+            copy_secondary_to_primary: false,
+            primary_desired: None,
+            secondary_desired: Some(primary_desired),
+        }
+    } else if height == flight_level - flight_level / 5 {
+        TakeOffPlan {
+            is_landing: false,
+            is_taking_off: true,
+            complete: false,
+            speed: Some(0x40),
+            close_door_with_frames: None,
+            copy_secondary_to_primary: false,
+            primary_desired: None,
+            secondary_desired: None,
+        }
+    } else if height == flight_level {
+        TakeOffPlan {
+            is_landing: false,
+            is_taking_off: false,
+            complete: true,
+            speed: Some(u8::MAX),
+            close_door_with_frames: None,
+            copy_secondary_to_primary: false,
+            primary_desired: None,
+            secondary_desired: None,
+        }
+    } else {
+        TakeOffPlan {
+            is_landing: false,
+            is_taking_off: true,
+            complete: false,
+            speed: None,
+            close_door_with_frames: None,
+            copy_secondary_to_primary: false,
+            primary_desired: None,
+            secondary_desired: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LandingPlan {
+    pub is_landing: bool,
+    pub is_taking_off: bool,
+    pub complete: bool,
+    pub speed: Option<u32>,
+    pub secondary_desired: Option<DirType>,
+}
+
+/// Pure state-transition plan for AircraftClass::Process_Landing. The caller
+/// supplies distance and the already-computed direction toward NavCom.
+pub fn process_landing(
+    fixed_wing: bool,
+    height: i32,
+    flight_level: i32,
+    distance_to_navcom: i32,
+    direction_to_navcom: DirType,
+    landing_speed: u32,
+    house_airspeed_bias: Fixed16,
+) -> LandingPlan {
+    if fixed_wing {
+        let secondary_desired = (distance_to_navcom > 0x0100).then_some(direction_to_navcom);
+        if height == 0 {
+            return LandingPlan {
+                is_landing: false,
+                is_taking_off: false,
+                complete: true,
+                speed: Some(0),
+                secondary_desired,
+            };
+        }
+        let speed = Fixed16::from_unsigned(landing_speed)
+            .div_fixed(house_airspeed_bias)
+            .to_unsigned();
+        LandingPlan {
+            is_landing: true,
+            is_taking_off: false,
+            complete: false,
+            speed: Some(speed),
+            secondary_desired,
+        }
+    } else if height == 0 {
+        LandingPlan {
+            is_landing: false,
+            is_taking_off: false,
+            complete: true,
+            speed: None,
+            secondary_desired: None,
+        }
+    } else if height == flight_level / 2 {
+        LandingPlan {
+            is_landing: true,
+            is_taking_off: false,
+            complete: false,
+            speed: Some(0),
+            secondary_desired: None,
+        }
+    } else {
+        LandingPlan {
+            is_landing: true,
+            is_taking_off: false,
+            complete: false,
+            speed: None,
+            secondary_desired: None,
+        }
+    }
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -343,6 +515,68 @@ mod tests {
 
         let invalid = destination_assignment_plan(false, false, true, true, true);
         assert!(!invalid.process_takeoff);
+    }
+
+    #[test]
+    fn fixed_wing_takeoff_sets_full_speed_and_completes_at_flight_level() {
+        let before = process_take_off(true, 100, 256, DirType::EAST, DirType::NORTH);
+        assert_eq!(before.speed, Some(255));
+        assert!(!before.complete);
+        assert!(before.is_taking_off);
+        let at_level = process_take_off(true, 256, 256, DirType::EAST, DirType::NORTH);
+        assert!(at_level.complete);
+        assert!(at_level.is_taking_off); // matches the source's fixed-wing branch.
+    }
+
+    #[test]
+    fn helicopter_takeoff_emits_exact_height_stage_actions() {
+        let ground = process_take_off(false, 0, 256, DirType::EAST, DirType::NORTH_WEST);
+        assert_eq!(ground.close_door_with_frames, Some((5, 4)));
+        assert!(ground.copy_secondary_to_primary);
+        let half = process_take_off(false, 128, 256, DirType::EAST, DirType::NORTH_WEST);
+        assert_eq!(half.primary_desired, Some(DirType::EAST));
+        let two_thirds = process_take_off(false, 171, 256, DirType::EAST, DirType::NORTH_WEST);
+        assert_eq!(two_thirds.speed, Some(0x20));
+        assert_eq!(two_thirds.secondary_desired, Some(DirType::NORTH_WEST));
+        let four_fifths = process_take_off(false, 205, 256, DirType::EAST, DirType::NORTH_WEST);
+        assert_eq!(four_fifths.speed, Some(0x40));
+        let top = process_take_off(false, 256, 256, DirType::EAST, DirType::NORTH_WEST);
+        assert_eq!(top.speed, Some(255));
+        assert!(top.complete);
+        assert!(!top.is_taking_off);
+    }
+
+    #[test]
+    fn fixed_wing_landing_turns_only_when_far_and_applies_bias_speed() {
+        let far = process_landing(
+            true, 100, 256, 0x0200, DirType::SOUTH_EAST, 80, Fixed16::from_ratio(2, 1),
+        );
+        assert_eq!(far.secondary_desired, Some(DirType::SOUTH_EAST));
+        assert_eq!(far.speed, Some(40));
+        assert!(far.is_landing);
+        let near = process_landing(
+            true, 100, 256, 0x0100, DirType::EAST, 80, Fixed16::ONE,
+        );
+        assert_eq!(near.secondary_desired, None);
+    }
+
+    #[test]
+    fn landing_completion_and_helicopter_midpoint_speed_match_source() {
+        let fixed_landed = process_landing(
+            true, 0, 256, 0, DirType::NORTH, 80, Fixed16::ONE,
+        );
+        assert!(fixed_landed.complete);
+        assert_eq!(fixed_landed.speed, Some(0));
+        let rotor_half = process_landing(
+            false, 128, 256, 0, DirType::NORTH, 80, Fixed16::ONE,
+        );
+        assert!(!rotor_half.complete);
+        assert_eq!(rotor_half.speed, Some(0));
+        let rotor_ground = process_landing(
+            false, 0, 256, 0, DirType::NORTH, 80, Fixed16::ONE,
+        );
+        assert!(rotor_ground.complete);
+        assert_eq!(rotor_ground.speed, None);
     }
 
     #[test]
