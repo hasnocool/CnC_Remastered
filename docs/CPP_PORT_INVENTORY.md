@@ -284,7 +284,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WINSTUB.CPP` | — |
 | Complete | `REDALERT/WOLAPIOB.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Complete | `REDALERT/WOLEDIT.CPP` | No active implementation in the pinned project; the entire translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
-| Not started | `REDALERT/WOLSTRNG.CPP` | — |
+| Complete | `REDALERT/WOLSTRNG.CPP` | rts-core/src/wol_strings.rs — all 187 English TXT_WOL string constants selected by the pinned ENGLISH project configuration. |
 | Complete | `REDALERT/WOL_CGAM.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Complete | `REDALERT/WOL_CHAT.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Complete | `REDALERT/WOL_DNLD.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
