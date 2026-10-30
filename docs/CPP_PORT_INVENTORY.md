@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 78 | 197 |
+| `REDALERT/` | 275 | 79 | 196 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 14 | 147 |
+| `TIBERIANDAWN/` | 161 | 15 | 146 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -48,7 +48,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/BUFF.CPP` | — |
 | Not started | `REDALERT/BUILDING.CPP` | — |
 | Not started | `REDALERT/BULLET.CPP` | — |
-| Not started | `REDALERT/CARGO.CPP` | — |
+| Complete | `REDALERT/CARGO.CPP` | rts-core/src/cargo.rs — LIFO linked-object attach, Limbo, chain concatenation, unsigned-byte quantity, detach and debug payload. |
 | Complete | `REDALERT/CARRY.CPP` | rts-core/src/carryover.rs — supported techno RTTI/type/house/strength/cell snapshot and object recreation; infantry temporarily clears and restores ScenarioInit; source's unconditional false return preserved. |
 | Not started | `REDALERT/CCDDE.CPP` | — |
 | Not started | `REDALERT/CCFILE.CPP` | — |
@@ -346,7 +346,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/BDATA.CPP` | — |
 | Not started | `TIBERIANDAWN/BUILDING.CPP` | — |
 | Not started | `TIBERIANDAWN/BULLET.CPP` | — |
-| Not started | `TIBERIANDAWN/CARGO.CPP` | — |
+| Complete | `TIBERIANDAWN/CARGO.CPP` | rts-core/src/cargo.rs — shared cargo chain behavior; variant-specific pointer return is represented by stable object IDs. |
 | Not started | `TIBERIANDAWN/CCDDE.CPP` | — |
 | Not started | `TIBERIANDAWN/CCFILE.CPP` | — |
 | Not started | `TIBERIANDAWN/CDATA.CPP` | — |
