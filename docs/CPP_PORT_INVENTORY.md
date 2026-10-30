@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **75**
-- Not yet fully ported: **419**
+- Fully ported: **77**
+- Not yet fully ported: **417**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 12 | 14 |
+| `REDALERT/WIN32LIB/` | 26 | 13 | 13 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 13 | 19 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 14 | 18 |
 
 ## File-by-file coverage
 
@@ -303,7 +303,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Status | Upstream C++ file | Rust port / notes |
 |---|---|---|
-| Not started | `REDALERT/WIN32LIB/ALLOC.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/ALLOC.CPP` | rts-core/src/legacy_alloc.rs — Windows malloc/free/realloc behavior, allocation flags, counters, DPMI stubs and fixed RAM estimates. |
 | Complete | `REDALERT/WIN32LIB/BUFFER.CPP` | rts-core/src/buffer.rs — owned/borrowed storage, size-only allocation, default and destructor semantics. |
 | Complete | `REDALERT/WIN32LIB/BUFFGLBL.CPP` | rts-core/src/buffer_globals.rs — callback/viewport null defaults and icon-cache enabled state. |
 | Not started | `REDALERT/WIN32LIB/DDRAW.CPP` | — |
@@ -500,7 +500,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Status | Upstream C++ file | Rust port / notes |
 |---|---|---|
-| Not started | `TIBERIANDAWN/WIN32LIB/ALLOC.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/ALLOC.CPP` | rts-core/src/legacy_alloc.rs — shared Windows allocator compatibility implementation. |
 | Complete | `TIBERIANDAWN/WIN32LIB/BUFFER.CPP` | rts-core/src/buffer.rs — shared BufferClass storage and ownership implementation. |
 | Complete | `TIBERIANDAWN/WIN32LIB/BUFFGLBL.CPP` | rts-core/src/buffer_globals.rs — identical shared global initializers. |
 | Not started | `TIBERIANDAWN/WIN32LIB/DDRAW.CPP` | — |
