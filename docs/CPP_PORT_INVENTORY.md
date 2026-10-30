@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 60 | 215 |
+| `REDALERT/` | 275 | 61 | 214 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 9 | 152 |
+| `TIBERIANDAWN/` | 161 | 10 | 151 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
 
 ## File-by-file coverage
@@ -267,7 +267,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/TRIGGER.CPP` | — |
 | Not started | `REDALERT/TRIGTYPE.CPP` | — |
 | Not started | `REDALERT/TURRET.CPP` | — |
-| Not started | `REDALERT/TXTLABEL.CPP` | — |
+| Complete | `REDALERT/TXTLABEL.CPP` | rts-core/src/text_label.rs — constructor state, Set_Text, Gadget draw gate, Simple_Text_Print and clipped text dispatch. |
 | Not started | `REDALERT/UDATA.CPP` | — |
 | Not started | `REDALERT/UDPADDR.CPP` | — |
 | Not started | `REDALERT/UNIT.CPP` | — |
@@ -488,7 +488,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/TOGGLE.CPP` | — |
 | Not started | `TIBERIANDAWN/TRIGGER.CPP` | — |
 | Not started | `TIBERIANDAWN/TURRET.CPP` | — |
-| Not started | `TIBERIANDAWN/TXTLABEL.CPP` | — |
+| Complete | `TIBERIANDAWN/TXTLABEL.CPP` | rts-core/src/text_label.rs — variant-specific color state, Fancy_Text_Print format and shared clipped text dispatch. |
 | Not started | `TIBERIANDAWN/UDATA.CPP` | — |
 | Not started | `TIBERIANDAWN/UNIT.CPP` | — |
 | Not started | `TIBERIANDAWN/UTRACKER.CPP` | — |
