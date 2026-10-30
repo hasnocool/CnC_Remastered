@@ -15,6 +15,9 @@ pub const PACKET_ACK: u8 = 2;
 pub const NO_PACKET_ID: u32 = u32::MAX;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum NonSequencedVariant { RedAlert, TiberianDawn }
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u8)]
 pub enum PacketCode {
     DataAck = PACKET_DATA_ACK,
@@ -109,6 +112,7 @@ pub struct ResponseDelayStats {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct NonSequencedConnection {
+    variant: NonSequencedVariant,
     magic_number: u16,
     max_packet_len: usize,
     max_send: usize,
@@ -143,7 +147,30 @@ impl NonSequencedConnection {
         max_retries: Option<u32>,
         timeout: Option<u32>,
     ) -> Self {
+        Self::new_for_variant(
+            NonSequencedVariant::RedAlert,
+            send_slots,
+            receive_slots,
+            max_payload_len,
+            magic_number,
+            retry_delta,
+            max_retries,
+            timeout,
+        )
+    }
+
+    pub fn new_for_variant(
+        variant: NonSequencedVariant,
+        send_slots: usize,
+        receive_slots: usize,
+        max_payload_len: usize,
+        magic_number: u16,
+        retry_delta: u32,
+        max_retries: Option<u32>,
+        timeout: Option<u32>,
+    ) -> Self {
         Self {
+            variant,
             magic_number,
             max_packet_len: max_payload_len.saturating_add(COMM_HEADER_SIZE),
             max_send: send_slots,
@@ -181,6 +208,7 @@ impl NonSequencedConnection {
         self.receive_total = 0;
     }
 
+    pub fn variant(&self) -> NonSequencedVariant { self.variant }
     pub fn magic_number(&self) -> u16 { self.magic_number }
     pub fn max_packet_len(&self) -> usize { self.max_packet_len }
     pub fn max_send(&self) -> usize { self.max_send }
@@ -254,6 +282,9 @@ impl NonSequencedConnection {
         bytes: &[u8],
         mut send_ack: impl FnMut(&[u8]),
     ) -> bool {
+        if self.variant == NonSequencedVariant::RedAlert && bytes.len() > self.max_packet_len {
+            return false;
+        }
         let packet = match CommPacket::decode(bytes) {
             Ok(packet) => packet,
             Err(_) => return false,
@@ -611,6 +642,17 @@ mod tests {
         assert_eq!(connection.response_delay_stats().sample_count, 256);
         assert_eq!(connection.response_delay_stats().average_ticks, 0);
         assert_eq!(connection.response_delay_stats().maximum_ticks, 0);
+    }
+
+    #[test]
+    fn variant_queue_receive_length_check_matches_comm_buffer_implementation() {
+        let mut red_alert = NonSequencedConnection::new(4, 4, 1, 0x7171, 60, None, None);
+        let mut tiberian_dawn = NonSequencedConnection::new_for_variant(
+            NonSequencedVariant::TiberianDawn, 4, 4, 1, 0x7171, 60, None, None,
+        );
+        let oversized = remote_packet(0x7171, PacketCode::DataNoAck, 0, b"more than one byte");
+        assert!(!red_alert.receive_packet(&oversized, |_| {}));
+        assert!(tiberian_dawn.receive_packet(&oversized, |_| {}));
     }
 
     #[test]
