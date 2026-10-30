@@ -215,3 +215,5 @@ Latest addition: `REDALERT/PK.CPP` → `crates/rts-core/src/public_key_class.rs`
 Latest addition: `REDALERT/OVERLAY.CPP` → `crates/red-alert/src/overlay.rs` (OverlayClass pool/mark behavior, packed and legacy INI parsing, map placement filtering, wall ownership, and signed-byte OverlayPack serialization using framed LCW).
 
 Latest addition: `TIBERIANDAWN/GOPTIONS.CPP` → `crates/rts-core/src/tiberian_dawn_game_options.rs` (resolution/layout, complete seven-button TD options flow, multiplayer resign/quit, restate movie/palette handling, caption filigree, and source-ordered cleanup callbacks).
+
+Partial in progress: `REDALERT/LOGIC.CPP` → `crates/rts-core/src/red_alert_logic.rs` ports the active AI scheduling, mission timer triggers and reminders, shadow growth, time-quake damage planning, Chronal Vortex ordering, mutation-safe object iteration, house/auto-sonar branches, trigger detach and recently-created cleanup. The optional `CHEAT_KEYS` monochrome `Debug_Dump` screen is still outstanding; this translation unit is not in the completed count.
