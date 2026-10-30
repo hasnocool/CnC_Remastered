@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **79**
-- Not yet fully ported: **415**
+- Fully ported: **80**
+- Not yet fully ported: **414**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -15,7 +15,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | `REDALERT/` | 275 | 47 | 228 |
 | `REDALERT/WIN32LIB/` | 26 | 14 | 12 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 15 | 17 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 16 | 16 |
 
 ## File-by-file coverage
 
@@ -520,7 +520,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/WIN32LIB/MEM.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/MORPHPAL.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/MOUSEWW.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` | rts-core/src/legacy_new_delete.rs — scalar/array new and delete delegation to Alloc(size, MEM_NEW) and Free(pointer). |
 | Not started | `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/REGIONSZ.CPP` | rts-core/src/region_size.rs — signed 32-bit width × height helper with explicit wrapping semantics. |
 | Complete | `TIBERIANDAWN/WIN32LIB/SET_FONT.CPP` | rts-core/src/font.rs — identical shared implementation. |
