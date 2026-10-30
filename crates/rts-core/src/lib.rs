@@ -30,6 +30,7 @@ pub mod legacy_timer;
 pub mod legacy_alloc;
 pub mod legacy_timer_system;
 pub mod legacy_irandom;
+pub mod legacy_new_delete;
 
 pub use clock::{SimTick, TICKS_PER_MINUTE, TICKS_PER_SECOND};
 pub use facing::{Facing, FACING_COUNT};
