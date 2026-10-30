@@ -1,23 +1,48 @@
-# Command & Conquer Remastered Collection — source mirror
+# Unofficial Rust reimplementation — work in progress
 
-This repository preserves the original Electronic Arts source release as an upstream snapshot.
+This repository is the start of a **native Rust reimplementation** of the game-engine and map-editor source released by Electronic Arts in [CnC_Remastered_Collection](https://github.com/electronicarts/CnC_Remastered_Collection).
 
-## Upstream source
+It is not a C++ source mirror, a wrapper around the original DLLs, or a completed 1:1 port. The current commit establishes Rust workspace boundaries and a small set of compatibility foundations. Gameplay and editor parity remain incomplete.
+
+## Scope
+
+The upstream release contains two Win32 C++ game DLL projects: `TIBERIANDAWN/TiberianDawn.vcxproj` and `REDALERT/RedAlert.vcxproj`. It also contains a Windows Forms map editor targeting .NET Framework 4.6.2 at `CnCTDRAMapEditor/CnCTDRAMapEditor.csproj`.
+
+The native projects target Win32, Windows SDK 8.1, Visual Studio toolset v141, and MASM. This Rust project is intended to replace those platform-bound implementations with portable Rust code while preserving observable game rules, data formats, simulation timing, and editor behavior.
+
+## Current implementation
+
+- `rts-core`: source-derived variant map extents, cell/region addressing, 8-way facing identifiers, and the 15 Hz simulation tick type.
+- `rts-formats`: checked little-endian reader and a bounds-checked parser for the legacy MIX archive layout used by upstream `MixFileClass`.
+- `rts-sim`: deterministic event scheduling with stable same-tick ordering.
+- `map-editor-model`: an initial typed map document with cell layers and waypoints.
+- `tiberian-dawn` / `red-alert`: separate variant boundary crates; actual game rules are not yet ported.
+
+See [PORTING_STATUS.md](PORTING_STATUS.md), [TODO.md](TODO.md), and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). These files are the source of truth for parity work.
+
+## Build and test
+
+Requires a Rust toolchain with Cargo (Rust 1.85 or newer):
+
+```bash
+cargo fmt --all -- --check
+cargo test --workspace
+cargo clippy --workspace --all-targets -- -D warnings
+```
+
+No proprietary game data, Steam files, compiled game binaries, or Electronic Arts artwork are included. A future complete game build will require legally obtained game data in a format supported by the port.
+
+## Upstream provenance and licensing
+
+The upstream source snapshot used for compatibility research is pinned at:
 
 - Repository: https://github.com/electronicarts/CnC_Remastered_Collection
-- Pinned upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
-- Upstream branch: `master`
+- Commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
-The intended layout keeps the upstream source unmodified and adds any future porting work separately. This repository is an independent, unofficial preservation effort and is not affiliated with or endorsed by Electronic Arts.
+The upstream `LICENSE.md` is retained in this repository. It contains GPL v3 **and additional Section 7 terms**. Read it before copying, modifying, or redistributing any derived code. In particular, the additional terms do not grant EA trademark rights, prohibit claiming EA affiliation, and require modified versions to be clearly marked as modified. The repository name was specified by the maintainer; it does not imply EA endorsement or affiliation. Choose a non-trademarked name for distributed modified builds and promotion.
 
-## License and trademarks
+This is an independent, unofficial community project. It is not affiliated with, sponsored by, or endorsed by Electronic Arts.
 
-The upstream source is distributed under GNU GPL v3 with additional terms in its `LICENSE.md`. Preserve those notices with every copy and modification. The additional terms grant no Electronic Arts trademark or publicity rights and prohibit suggesting EA affiliation. See the upstream `LICENSE.md` for the complete terms.
+## Parity policy
 
-## Build scope
-
-The upstream README describes a Win32-only build using the Windows 8.1 SDK, MFC, and Visual Studio. A faithful source import is not, by itself, a Linux or cross-platform port. Compiled game binaries require ownership of the game.
-
-## Import status
-
-This repository is being initialized from the exact upstream source commit. Any platform port, modernization, or other modifications must be identified separately from the untouched upstream source.
+A subsystem is not considered ported merely because a Rust module with a similar name exists. Parity requires source traceability, behavior-focused tests, compatible fixtures where legally available, and explicit notes for any intentional differences. No 1:1 compatibility claim should be made until the corresponding subsystem has passed that process.
