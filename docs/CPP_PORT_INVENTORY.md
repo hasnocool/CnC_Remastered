@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 63 | 212 |
+| `REDALERT/` | 275 | 71 | 204 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 10 | 151 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
@@ -211,7 +211,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/RAND.CPP` | rts-core/src/random.rs — Sim_Random and Sim_IRandom. |
 | Complete | `REDALERT/RANDOM.CPP` | rts-core/src/random_class.rs — seeded LCG and rejection-sampled ranges. |
 | Not started | `REDALERT/RAWFILE.CPP` | — |
-| Not started | `REDALERT/RAWOLAPI.CPP` | — |
+| Complete | `REDALERT/RAWOLAPI.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Complete | `REDALERT/READLINE.CPP` | rts-formats/src/readline.rs — CR/LF line reader and whitespace trimming. |
 | Complete | `REDALERT/RECT.CPP` | rts-core/src/rect.rs — validity, intersection, anchor adjustment, union. |
 | Not started | `REDALERT/REINF.CPP` | — |
@@ -282,15 +282,15 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WARHEAD.CPP` | — |
 | Not started | `REDALERT/WEAPON.CPP` | — |
 | Not started | `REDALERT/WINSTUB.CPP` | — |
-| Not started | `REDALERT/WOLAPIOB.CPP` | — |
+| Complete | `REDALERT/WOLAPIOB.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Complete | `REDALERT/WOLEDIT.CPP` | No active implementation in the pinned project; the entire translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Not started | `REDALERT/WOLSTRNG.CPP` | — |
-| Not started | `REDALERT/WOL_CGAM.CPP` | — |
-| Not started | `REDALERT/WOL_CHAT.CPP` | — |
-| Not started | `REDALERT/WOL_DNLD.CPP` | — |
-| Not started | `REDALERT/WOL_GSUP.CPP` | — |
-| Not started | `REDALERT/WOL_LOGN.CPP` | — |
-| Not started | `REDALERT/WOL_MAIN.CPP` | — |
+| Complete | `REDALERT/WOL_CGAM.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
+| Complete | `REDALERT/WOL_CHAT.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
+| Complete | `REDALERT/WOL_DNLD.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
+| Complete | `REDALERT/WOL_GSUP.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
+| Complete | `REDALERT/WOL_LOGN.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
+| Complete | `REDALERT/WOL_MAIN.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Complete | `REDALERT/WOL_OPT.CPP` | No active implementation in the pinned project; the entire translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Not started | `REDALERT/WSPIPX.CPP` | — |
 | Not started | `REDALERT/WSPROTO.CPP` | — |
