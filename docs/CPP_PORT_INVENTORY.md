@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **177**
-- Not yet fully ported: **317**
+- Fully ported: **179**
+- Not yet fully ported: **315**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 100 | 175 |
+| `REDALERT/` | 275 | 101 | 174 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 24 | 137 |
+| `TIBERIANDAWN/` | 161 | 25 | 136 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -189,7 +189,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/MiscAsm.cpp` | rts-core/src/misc_asm.rs — shared facing/distance algorithms, bit-array helpers, Q16.16 conversion, fading-table search, endian helpers, text trimming, viewport fat-pixel drawing, palette update and no-op screen shake. |
 | Not started | `REDALERT/NETDLG.CPP` | — |
 | Not started | `REDALERT/NOSEQCON.CPP` | — |
-| Not started | `REDALERT/NULLCONN.CPP` | — |
+| Complete | `REDALERT/NULLCONN.CPP` | rts-core/src/null_modem_connection.rs — base connection timing/queue settings, port initialization, actual buffer sizing, 32-bit rotate-and-add CRC and packet overhead. Active Send() returns 0; serial framing code is under #if (0). |
 | Not started | `REDALERT/NULLDLG.CPP` | — |
 | Not started | `REDALERT/NULLMGR.CPP` | — |
 | Not started | `REDALERT/OBJECT.CPP` | — |
@@ -439,7 +439,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/MiscAsm.cpp` | rts-core/src/misc_asm.rs — shared algorithms plus Tiberian Dawn's 8-bit fractional cardinal conversion/saturation. |
 | Not started | `TIBERIANDAWN/NETDLG.CPP` | — |
 | Not started | `TIBERIANDAWN/NOSEQCON.CPP` | — |
-| Not started | `TIBERIANDAWN/NULLCONN.CPP` | — |
+| Complete | `TIBERIANDAWN/NULLCONN.CPP` | No active implementation in the pinned source; constructor, destructor, Init, Send, CRC and packet-overhead methods are all enclosed by unconditional #if (0). |
 | Not started | `TIBERIANDAWN/NULLDLG.CPP` | — |
 | Not started | `TIBERIANDAWN/NULLMGR.CPP` | — |
 | Not started | `TIBERIANDAWN/OBJECT.CPP` | — |
