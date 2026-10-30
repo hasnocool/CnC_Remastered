@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 52 | 223 |
+| `REDALERT/` | 275 | 53 | 222 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 5 | 156 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
@@ -114,7 +114,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/GADGET.CPP` | — |
 | Not started | `REDALERT/GAMEDLG.CPP` | — |
 | Not started | `REDALERT/GAUGE.CPP` | — |
-| Not started | `REDALERT/GETCPU.CPP` | — |
+| Complete | `REDALERT/GETCPU.CPP` | rts-core/src/cpu_info.rs — MMX/CPU-type/vendor-ID wrapper with assembly probe injected through CpuProbe and source-compatible strncpy output behavior. |
 | Not started | `REDALERT/GLOBALS.CPP` | — |
 | Not started | `REDALERT/GOPTIONS.CPP` | — |
 | Not started | `REDALERT/GSCREEN.CPP` | — |
