@@ -38,8 +38,7 @@ pub trait CrateMapHost {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum CrateCreateError {
     InvalidTimerRange,
-    TimerOverflow,
-}
+    }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CrateClass {
@@ -112,7 +111,7 @@ impl CrateClass {
 
         self.cell = actual_cell;
         let duration = host.pick_random_timer(minimum, maximum);
-        self.timer_expiration = Some(now_tick.checked_add(duration).ok_or(CrateCreateError::TimerOverflow)?);
+        self.timer_expiration = Some(now_tick.wrapping_add(duration));
         Ok(true)
     }
 
