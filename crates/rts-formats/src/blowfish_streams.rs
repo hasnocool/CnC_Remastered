@@ -42,10 +42,9 @@ impl BlowPipe {
     /// key leaves an engine object present but unkeyed, matching the original
     /// difference between BF==NULL and BF->IsKeyed==false.
     pub fn key(&mut self, key: &[u8]) -> Result<(), BlowfishError> {
-        if self.engine.is_none() {
-            self.engine = Some(BlowfishEngine::new());
-        }
-        self.engine.as_mut().expect("engine created").submit_key(key)
+        self.engine
+            .get_or_insert_with(BlowfishEngine::new)
+            .submit_key(key)
     }
 
     pub fn clear_engine(&mut self) {
@@ -75,8 +74,9 @@ impl BlowPipe {
         }
 
         while source.len() >= BLOCK_SIZE {
-            let block: &[u8; BLOCK_SIZE] = source[..BLOCK_SIZE].try_into().expect("block slice is eight bytes");
-            output.extend_from_slice(&self.transform(block));
+            let mut block = [0_u8; BLOCK_SIZE];
+            block.copy_from_slice(&source[..BLOCK_SIZE]);
+            output.extend_from_slice(&self.transform(&block));
             source = &source[BLOCK_SIZE..];
         }
 
