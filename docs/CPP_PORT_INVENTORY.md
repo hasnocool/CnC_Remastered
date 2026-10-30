@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 59 | 216 |
+| `REDALERT/` | 275 | 60 | 215 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 9 | 152 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
@@ -245,7 +245,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/STRAW.CPP` | rts-formats/src/straw.rs — demand-driven pull chain and reconnect behavior. |
 | Complete | `REDALERT/STUB.CPP` | rts-core/src/legacy_stub.rs — exact launcher message. |
 | Not started | `REDALERT/SUPER.CPP` | — |
-| Not started | `REDALERT/SURFACE.CPP` | — |
+| Complete | `REDALERT/SURFACE.CPP` | No active implementation in the pinned source; the complete constructor, sub-surface and copy implementation is enclosed by #if (0)//PG. |
 | Complete | `REDALERT/Shape.cpp` | rts-core/src/shape_buffer.rs — shape buffer capacity/configuration; caller retains memory ownership. |
 | Not started | `REDALERT/TAB.CPP` | — |
 | Not started | `REDALERT/TACTION.CPP` | — |
