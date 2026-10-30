@@ -6,6 +6,7 @@ pub mod coordinate;
 pub mod facing;
 pub mod fixed16;
 pub mod random;
+pub mod queue;
 pub mod random_class;
 pub mod vector;
 pub mod rect;
