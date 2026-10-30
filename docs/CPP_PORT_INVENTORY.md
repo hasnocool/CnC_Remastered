@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 104 | 171 |
+| `REDALERT/` | 275 | 105 | 170 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 29 | 132 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
@@ -62,7 +62,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/CHECKBOX.CPP` | rts-core/src/checkbox.rs — ToggleClass draw gate, depressed frame/fill, green checked fill, and LEFTRELEASE toggle before base action. |
 | Complete | `REDALERT/CHEKLIST.CPP` | rts-core/src/check_list.rs — CheckObject text/checked storage, add/get/current/remove/search/select operations, read-only parent-action gate, LEFTPRESS toggle after ListClass::Action, checkmark row construction, selected shadow fill and clipped text styling. |
 | Complete | `REDALERT/CLASS.CPP` | Intentionally empty translation unit; no executable definitions. |
-| Not started | `REDALERT/COLRLIST.CPP` | — |
+| Complete | `REDALERT/COLRLIST.CPP` | rts-core/src/color_list.rs — parallel remap-color vector, string/resource-ID additions, indexed color removal, selected-style/color overrides and all five row render modes (normal, highlight, box, bar, invert), including gradient flags and palette colors. |
 | Not started | `REDALERT/COMBAT.CPP` | — |
 | Not started | `REDALERT/COMBUF.CPP` | — |
 | Complete | `REDALERT/COMINIT.CPP` | rts-core/src/com_init.rs — RAII OLE lifecycle adapter; host supplies platform calls. |
@@ -354,7 +354,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/CELL.CPP` | — |
 | Complete | `TIBERIANDAWN/CHECKBOX.CPP` | rts-core/src/checkbox.rs — ToggleClass draw gate, green depressed frame, dark fill, and two diagonal checked-state lines. |
 | Complete | `TIBERIANDAWN/CHEKLIST.CPP` | rts-core/src/check_list.rs — in-place first-character check marker, Is_Checked lookup, read-only gate and parent-first LEFTPRESS toggle; row rendering remains delegated to ListClass. |
-| Not started | `TIBERIANDAWN/COLRLIST.CPP` | — |
+| Complete | `TIBERIANDAWN/COLRLIST.CPP` | rts-core/src/color_list.rs — parallel byte-color vector, localized/string additions, indexed color removal, selected-style sentinel (-1) and five row modes, including variant-specific invert text colors and raw SelectColor BAR fill behavior. |
 | Not started | `TIBERIANDAWN/COMBAT.CPP` | — |
 | Not started | `TIBERIANDAWN/COMBUF.CPP` | — |
 | Not started | `TIBERIANDAWN/COMQUEUE.CPP` | — |
