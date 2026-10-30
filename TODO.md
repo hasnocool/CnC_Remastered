@@ -33,6 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
+- [x] Port `REDALERT/OVERLAY.CPP`: overlay pool lifecycle, Mark wall/non-wall behavior, OverlayPack and legacy INI loading, multiplayer crate rules, wall ownership selection, and LCW OverlayPack writing.
 - [x] Port `REDALERT/PK.CPP`: DER key import/export, block sizing, full-block RSA modular exponentiation, disabled Generate behavior, and the PKPipe/PKStraw cipher adapter.
 - [x] Port `REDALERT/GOPTIONS.CPP`: resolution geometry, feature-gated menu definitions, multiplayer button filtering, navigation, redraw loop, all action/result branches, and host-driven non-blocking dialog integration.
 - [x] Port `REDALERT/WSPUDP.CPP`: dotted broadcast configuration, UDP socket setup/local address discovery, broadcast fan-out, self-packet filtering, and asynchronous packet event handling.
@@ -43,7 +44,7 @@
 - [x] Port `REDALERT/ADATA.CPP`: all 89 animation descriptors, exact heap order, lookup helpers, and asset initialization planning.
 - [x] Port independent `REDALERT/AIRCRAFT.CPP` routines: civilian evacuation, overlap lists, Sort_Y, pose/layer, pip count, flight speed, fire direction, sight range, helipad spy flags, landing-approach sweep, destination assignment decisions, takeoff/landing stage plans, shape-frame selection, cell passability, aircraft occupancy/reservation exclusion, landing-zone occupancy/contact validation, friendly support-building selection, concentric-ring fallback landing-zone search, target firing-position scanning with moving-target bias, passenger exit placement/radio handoff, edge-of-map retreat evacuation, aircraft primary/secondary rotation, fire eligibility/facing, paradrop cargo handling, voice-response selection, object/cell action selection overrides, camera reconnaissance, projectile/paradrop firing paths, landing/takeoff frame transition logic, rotor overlay frame/placement planning, aircraft-specific damage/death aftermath, fixed-wing/rotorcraft idle mission and scatter decisions, Process_Fly_To, Mission_Hunt, rotorcraft Mission_Attack, Mission_Retreat, Movement_AI, Mission_Guard and Mission_Guard_Area decision logic, plus Mission_Move navigation, landing-zone retargeting and takeoff/landing transitions.
 - [ ] Finish `REDALERT/AIRCRAFT.CPP` mission, flight state-machine, movement, combat, rendering, radio, INI, and save/load behavior.
-- [ ] Port the remaining 215 C++ translation units with source-specific tests.
+- [ ] Port the remaining 214 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
