@@ -34,6 +34,7 @@ pub mod rules_defaults;
 pub mod keyboard;
 pub mod td_keyboard;
 pub mod player_manager;
+pub mod field;
 pub mod window_mouse;
 pub mod mouse_ww;
 pub mod com_init;
