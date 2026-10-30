@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **83**
-- Not yet fully ported: **411**
+- Fully ported: **91**
+- Not yet fully ported: **403**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 18 | 8 |
+| `REDALERT/WIN32LIB/` | 26 | 19 | 7 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 21 | 11 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 22 | 10 |
 
 ## File-by-file coverage
 
@@ -319,7 +319,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — assembly-compatible Random state and injectable CRT IRandom range sampling. |
 | Not started | `REDALERT/WIN32LIB/LOAD.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/LOADFONT.CPP` | rts-core/src/load_font.rs — validates the little-endian size prefix, uncompressed marker, five-block font layout, and retains the legacy allocation layout. |
-| Not started | `REDALERT/WIN32LIB/MOUSEWW.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/MOUSEWW.CPP` | rts-core/src/mouse_ww.rs — live cursor visibility nesting, conditional hide regions, state queries, forced coordinates and buffer-lock coordination; disabled rendering/timer/clip paths remain no-ops. |
 | Complete | `REDALERT/WIN32LIB/PALETTE.CPP` | rts-formats/src/palette_fade.rs — byte-identical shared implementation with Tiberian Dawn; IBM palette copy/set, bump-rate calculation, bounded fade steps. |
 | Complete | `REDALERT/WIN32LIB/SET_FONT.CPP` | rts-core/src/font.rs — previous font return, little-endian block offsets, width/height metrics. |
 | Complete | `REDALERT/WIN32LIB/TIMER.CPP` | rts-core/src/legacy_timer.rs — tick-source selection, accumulated elapsed time, start/stop/set/reset. |
@@ -519,7 +519,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/LOADPAL.CPP` | rts-formats/src/palette.rs — 768-byte IBM palette loading contract. |
 | Not started | `TIBERIANDAWN/WIN32LIB/MEM.CPP` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/MORPHPAL.CPP` | rts-formats/src/palette_fade.rs — 768-channel 6-bit palette interpolation and time-progress update. |
-| Not started | `TIBERIANDAWN/WIN32LIB/MOUSEWW.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/MOUSEWW.CPP` | rts-core/src/mouse_ww.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` | rts-core/src/legacy_new_delete.rs — scalar/array new and delete delegation to Alloc(size, MEM_NEW) and Free(pointer). |
 | Complete | `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` | rts-formats/src/palette_fade.rs — palette copy/set, single-colour update, fade-rate calculation and bounded channel stepping. |
 | Complete | `TIBERIANDAWN/WIN32LIB/REGIONSZ.CPP` | rts-core/src/region_size.rs — signed 32-bit width × height helper with explicit wrapping semantics. |
