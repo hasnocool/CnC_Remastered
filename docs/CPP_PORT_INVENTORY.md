@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **151**
-- Not yet fully ported: **343**
+- Fully ported: **172**
+- Not yet fully ported: **322**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 95 | 180 |
+| `REDALERT/` | 275 | 98 | 177 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 21 | 140 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
@@ -122,7 +122,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/HEAP.CPP` | — |
 | Not started | `REDALERT/HELP.CPP` | — |
 | Not started | `REDALERT/HOUSE.CPP` | — |
-| Not started | `REDALERT/HSV.CPP` | — |
+| Complete | `REDALERT/HSV.CPP` | rts-core/src/rgb_palette.rs — HSV adjustment, squared component distance, HSV-to-RGB six-sector conversion and palette-index write through RGBClass. |
 | Not started | `REDALERT/ICONLIST.CPP` | — |
 | Not started | `REDALERT/IDATA.CPP` | — |
 | Not started | `REDALERT/INFANTRY.CPP` | — |
@@ -197,7 +197,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/OPTIONS.CPP` | — |
 | Not started | `REDALERT/OVERLAY.CPP` | — |
 | Not started | `REDALERT/PACKET.CPP` | — |
-| Not started | `REDALERT/PALETTEC.CPP` | — |
+| Complete | `REDALERT/PALETTEC.CPP` | rts-core/src/rgb_palette.rs — 256-entry palette construction/copy/equality, full and LUT-gated adjustment, closest-color search, 6-bit palette serialization and timed callback-driven palette fading. |
 | Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, unlink. |
 | Not started | `REDALERT/PK.CPP` | — |
 | Not started | `REDALERT/PKPIPE.CPP` | — |
@@ -215,7 +215,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/READLINE.CPP` | rts-formats/src/readline.rs — CR/LF line reader and whitespace trimming. |
 | Complete | `REDALERT/RECT.CPP` | rts-core/src/rect.rs — validity, intersection, anchor adjustment, union. |
 | Not started | `REDALERT/REINF.CPP` | — |
-| Not started | `REDALERT/RGB.CPP` | — |
+| Complete | `REDALERT/RGB.CPP` | rts-core/src/rgb_palette.rs — 6-bit RGB gun storage, component expansion, ratio adjustment, squared color distance, RGB-to-HSV conversion and cached palette entry update; legacy Win32 DAC methods are no-ops. |
 | Complete | `REDALERT/RNDSTRAW.CPP` | rts-formats/src/random_straw.rs — 32 independent LCGs, 1,024-bit seed collection, iterative SHA-1 scramble. |
 | Not started | `REDALERT/ROTBMP.CPP` | — |
 | Not started | `REDALERT/RULES.CPP` | — |
