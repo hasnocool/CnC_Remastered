@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 376 C++ translation units with source-specific tests.
+- [ ] Port the remaining 375 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -129,3 +129,5 @@
 - [x] Port both IPX95.CPP disabled THIPX32 providers and fixed stub return values to `rts-core::ipx95`.
 
 - [x] Port REDALERT/BMP8.CPP 8-bit bitmap header, palette, pixel data, ownership and draw-plan behavior to `rts-formats::bmp8`.
+
+- [x] Port REDALERT/CCPTR.CPP stable heap-ID pointer construction, lookup, name ordering and all source relational operator expressions.
