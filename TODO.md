@@ -151,3 +151,5 @@
 - [x] Record REDALERT/ENDING.CPP as inactive because both function bodies are guarded by #ifdef NEVER.
 
 - [x] Port TIBERIANDAWN/ENDING.CPP GDI ending, Nod selection loop, audio/input handling, cleanup, trailers and attract sequences.
+
+- [x] Port TIBERIANDAWN/RULES.CPP DifficultyClass and RulesClass constructor defaults.
