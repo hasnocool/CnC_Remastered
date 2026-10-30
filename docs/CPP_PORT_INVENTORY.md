@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **172**
-- Not yet fully ported: **322**
+- Fully ported: **174**
+- Not yet fully ported: **320**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 98 | 177 |
+| `REDALERT/` | 275 | 99 | 176 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 21 | 140 |
+| `TIBERIANDAWN/` | 161 | 22 | 139 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -23,7 +23,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Status | Upstream C++ file | Rust port / notes |
 |---|---|---|
-| Not started | `REDALERT/2KEYFRAM.CPP` | — |
+| Complete | `REDALERT/2KEYFRAM.CPP` | rts-formats/src/keyframe.rs — packed keyframe header/table parsing, LCW keyframe decode, XOR key-delta/subframe reconstruction, optional 768-byte palette extraction, cached-shape metadata, frame getters and Red Alert uncompressed-buffer policy/sizing. |
 | Not started | `REDALERT/AADATA.CPP` | — |
 | Not started | `REDALERT/ABSTRACT.CPP` | — |
 | Not started | `REDALERT/ADATA.CPP` | — |
@@ -415,7 +415,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/IPXGCONN.CPP` | — |
 | Not started | `TIBERIANDAWN/IPXMGR.CPP` | — |
 | Not started | `TIBERIANDAWN/JSHELL.CPP` | — |
-| Not started | `TIBERIANDAWN/KEYFRAME.CPP` | — |
+| Complete | `TIBERIANDAWN/KEYFRAME.CPP` | rts-formats/src/keyframe.rs — shared keyframe and XOR-delta decoder plus Tiberian Dawn's 12,000 KiB/1,000 KiB shape buffers, memory-threshold cache decision, 200 KiB growth increment, and theater slot handling. |
 | Not started | `TIBERIANDAWN/LAYER.CPP` | — |
 | Not started | `TIBERIANDAWN/LINK.CPP` | — |
 | Not started | `TIBERIANDAWN/LIST.CPP` | — |
