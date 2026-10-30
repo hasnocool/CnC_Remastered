@@ -6,6 +6,7 @@ pub mod facing;
 pub mod fixed16;
 pub mod random;
 pub mod random_class;
+pub mod vector;
 pub mod rect;
 pub mod legacy_stub;
 pub mod map;
