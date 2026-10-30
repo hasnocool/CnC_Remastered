@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **24**
-- Not yet fully ported: **470**
-- A translation unit is complete only when its active behavior is implemented. Intentionally empty source files are identified explicitly; placeholders do not count.
+- Fully ported: **28**
+- Not yet fully ported: **466**
+- A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 23 | 252 |
+| `REDALERT/` | 275 | 27 | 248 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 1 | 160 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
@@ -106,7 +106,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/FACTORY.CPP` | — |
 | Not started | `REDALERT/FIELD.CPP` | — |
 | Not started | `REDALERT/FINDPATH.CPP` | — |
-| Complete | `REDALERT/FIXED.CPP` | rts-core/src/fixed16.rs — Q16.16 constructors, arithmetic helpers, ASCII conversion. |
+| Complete | `REDALERT/FIXED.CPP` | rts-core/src/fixed16.rs — Q16.16 constructors, arithmetic helpers, and ASCII conversion. |
 | Not started | `REDALERT/FLASHER.CPP` | — |
 | Not started | `REDALERT/FLY.CPP` | — |
 | Not started | `REDALERT/FOOT.CPP` | — |
@@ -155,14 +155,14 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/LIST.CPP` | — |
 | Not started | `REDALERT/LOADDLG.CPP` | — |
 | Not started | `REDALERT/LOGIC.CPP` | — |
-| Not started | `REDALERT/LZO1X_C.CPP` | — |
-| Not started | `REDALERT/LZO1X_D.CPP` | — |
-| Not started | `REDALERT/LZOPIPE.CPP` | — |
-| Not started | `REDALERT/LZOSTRAW.CPP` | — |
+| Complete | `REDALERT/LZO1X_C.CPP` | rts-formats/src/lzo1x.rs — deterministic LZO1X-1 compressor. |
+| Complete | `REDALERT/LZO1X_D.CPP` | rts-formats/src/lzo1x.rs — bounds-checked LZO1X decoder. |
+| Complete | `REDALERT/LZOPIPE.CPP` | rts-formats/src/lzo_blocks.rs — framed push block stream. |
+| Complete | `REDALERT/LZOSTRAW.CPP` | rts-formats/src/lzo_blocks.rs — framed pull block stream. |
 | Complete | `REDALERT/LZW.CPP` | rts-formats/src/lzw.rs — 12-bit dictionary engine and 16-bit little-endian codewords. |
 | Not started | `REDALERT/LZWOTRAW.CPP` | — |
-| Complete | `REDALERT/LZWPIPE.CPP` | rts-formats/src/lzw_blocks.rs — framed push compression/decompression and truncation handling. |
-| Complete | `REDALERT/LZWSTRAW.CPP` | rts-formats/src/lzw_blocks.rs — framed pull compression/decompression and buffered reads. |
+| Complete | `REDALERT/LZWPIPE.CPP` | rts-formats/src/lzw_blocks.rs — framed push compression/decompression. |
+| Complete | `REDALERT/LZWSTRAW.CPP` | rts-formats/src/lzw_blocks.rs — framed pull compression/decompression. |
 | Not started | `REDALERT/MAP.CPP` | — |
 | Not started | `REDALERT/MAPEDDLG.CPP` | — |
 | Not started | `REDALERT/MAPEDIT.CPP` | — |
@@ -198,7 +198,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/OVERLAY.CPP` | — |
 | Not started | `REDALERT/PACKET.CPP` | — |
 | Not started | `REDALERT/PALETTEC.CPP` | — |
-| Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, unlink. |
+| Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, and unlink. |
 | Not started | `REDALERT/PK.CPP` | — |
 | Not started | `REDALERT/PKPIPE.CPP` | — |
 | Not started | `REDALERT/PKSTRAW.CPP` | — |
@@ -213,7 +213,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/RAWFILE.CPP` | — |
 | Not started | `REDALERT/RAWOLAPI.CPP` | — |
 | Complete | `REDALERT/READLINE.CPP` | rts-formats/src/readline.rs — CR/LF line reader and whitespace trimming. |
-| Complete | `REDALERT/RECT.CPP` | rts-core/src/rect.rs — validity, intersection, anchor adjustment, union. |
+| Complete | `REDALERT/RECT.CPP` | rts-core/src/rect.rs — validity, intersection, anchor adjustment, and union. |
 | Not started | `REDALERT/REINF.CPP` | — |
 | Not started | `REDALERT/RGB.CPP` | — |
 | Not started | `REDALERT/RNDSTRAW.CPP` | — |
