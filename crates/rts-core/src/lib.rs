@@ -32,6 +32,7 @@ pub mod wol_strings;
 pub mod ending;
 pub mod rules_defaults;
 pub mod memory_pool;
+pub mod misc_asm;
 pub mod keyboard;
 pub mod td_keyboard;
 pub mod player_manager;
