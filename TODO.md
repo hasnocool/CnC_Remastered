@@ -34,6 +34,8 @@
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
 - [x] Port `REDALERT/ADATA.CPP`: all 89 animation descriptors, exact heap order, lookup helpers, and asset initialization planning.
+- [x] Port independent `REDALERT/AIRCRAFT.CPP` helper routines: civilian evacuation rules, overlap lists, Sort_Y, pose/layer selection, pip count, and flight-speed calculation.
+- [ ] Finish `REDALERT/AIRCRAFT.CPP` mission, flight state-machine, movement, combat, rendering, radio, INI, and save/load behavior.
 - [ ] Port the remaining 223 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
