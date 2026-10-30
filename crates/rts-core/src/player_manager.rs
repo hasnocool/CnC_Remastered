@@ -217,6 +217,7 @@ mod tests {
         yields: usize,
         flushes: Vec<(u16, u16)>,
         node_size: u32,
+        expected_size: u32,
         players: i32,
     }
     impl FakeTransport {
@@ -234,7 +235,7 @@ mod tests {
     impl MPlayerTransport for FakeTransport {
         type NodeHandle = u32;
         fn master_node_size(&mut self) -> u32 { self.node_size }
-        fn expected_node_size(&self) -> u32 { self.node_size }
+        fn expected_node_size(&self) -> u32 { if self.expected_size == 0 { self.node_size } else { self.expected_size } }
         fn local_address(&mut self) -> i32 { 77 }
         fn move_node(&mut self, from: u16, to: u16) -> Option<u32> {
             let handle = self.queues.get_mut(&from)?.pop_front()?;
@@ -260,7 +261,8 @@ mod tests {
         let manager = MPlayerManager::new(&mut transport).unwrap();
         assert_eq!(manager.my_address, 77);
         transport.node_size = 32;
-        assert_eq!(MPlayerManager::new(&mut transport), Err(PlayerManagerError::NodeSizeMismatch { actual: 32, expected: 32 }));
+        transport.expected_size = 64;
+        assert_eq!(MPlayerManager::new(&mut transport), Err(PlayerManagerError::NodeSizeMismatch { actual: 32, expected: 64 }));
     }
 
     #[test]
