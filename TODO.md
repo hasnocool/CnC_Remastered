@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 290 C++ translation units with source-specific tests.
+- [ ] Port the remaining 288 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -230,3 +230,5 @@
 - [x] Verify REDALERT/BENCH.CPP is entirely guarded by unconditional #if (0) through end-of-file and record as inactive.
 
 - [x] Port REDALERT/HEAP.CPP and TIBERIANDAWN/HEAP.CPP FixedHeapClass/FixedIHeapClass allocation, free, clear, active pointer ordering, serialization and pointer translation routines.
+
+- [x] Port REDALERT/PROFILE.CPP and TIBERIANDAWN/PROFILE.CPP private INI get/write APIs, case-insensitive key lookup, double-NUL key enumeration, section/entry edits, sound/language config parsing, and Red Alert read/write binary cursors.
