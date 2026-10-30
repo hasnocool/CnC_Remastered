@@ -13,6 +13,7 @@ pub enum DescriptionBoxStyle { Border, GreenBorder }
 pub enum DescriptionDrawOp {
     SetWindow { window_id: i32, x: i32, y: i32, width: i32, height: i32 },
     SetLogicPageSeenBuffer,
+    InitializeControls { options_x: i32, cancel_x: i32, edit_x: i32, edit_max_length: usize, background_width: i32, background_height: i32 },
     HideWindowMouse { window_id: i32 },
     DrawWindowBox { window_id: i32, style: DescriptionBoxStyle },
     DrawCaption { x: i32, y: i32, width: i32 },
@@ -35,6 +36,7 @@ pub struct DescriptionDialog {
     pub text: Vec<u8>,
     pub display: bool,
     pub process: bool,
+    initialized: bool,
     pub window_id: i32,
     pub option_x: i32,
     pub option_y: i32,
@@ -75,6 +77,7 @@ impl DescriptionDialog {
             text: nul_terminated(text).to_vec(),
             display: true,
             process: true,
+            initialized: false,
             window_id,
             option_x: Self::OPTION_X,
             option_y: Self::OPTION_Y,
@@ -97,6 +100,19 @@ impl DescriptionDialog {
             return DescriptionStep { operations: Vec::new(), complete: true, output: Some(self.text.clone()) };
         }
         let mut operations = Vec::new();
+        if !self.initialized {
+            operations.push(DescriptionDrawOp::SetWindow {
+                window_id: self.window_id, x: self.option_x, y: self.option_y,
+                width: self.option_width, height: self.option_height,
+            });
+            operations.push(DescriptionDrawOp::SetLogicPageSeenBuffer);
+            operations.push(DescriptionDrawOp::InitializeControls {
+                options_x: self.options_button_x, cancel_x: self.cancel_button_x,
+                edit_x: self.edit_x, edit_max_length: Self::EDIT_MAX_LENGTH,
+                background_width: self.background_width, background_height: self.background_height,
+            });
+            self.initialized = true;
+        }
         if self.variant == DescriptionVariant::TiberianDawn && surfaces_restored {
             self.display = true;
             operations.push(DescriptionDrawOp::ClearSurfacesRestored);
