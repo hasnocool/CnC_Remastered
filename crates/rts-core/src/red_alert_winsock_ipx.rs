@@ -252,7 +252,7 @@ impl<S: Copy + Eq> RedAlertIpxInterface<S> {
 
     /// Port of IPXInterfaceClass::Open_Socket. Socket options whose failures
     /// were assert-only in the legacy debug build remain best-effort.
-    pub fn open_socket<A: IpxSocketApi>(
+    pub fn open_socket<A: IpxSocketApi<Socket = S>>(
         &mut self,
         socket_number: u16,
         api: &mut A,
@@ -301,7 +301,7 @@ impl<S: Copy + Eq> RedAlertIpxInterface<S> {
 
     /// Port of IPXInterfaceClass::Message_Handler.
     /// Returns 1 for messages owned by another handler, otherwise 0.
-    pub fn message_handler<A: IpxSocketApi>(
+    pub fn message_handler<A: IpxSocketApi<Socket = S>>(
         &mut self,
         message: u32,
         event: IpxSocketEvent,
