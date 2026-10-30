@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **275**
-- Not yet fully ported: **219**
+- Fully ported: **276**
+- Not yet fully ported: **218**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 142 | 133 |
+| `REDALERT/` | 275 | 143 | 132 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 63 | 98 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -292,7 +292,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/WOL_LOGN.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Complete | `REDALERT/WOL_MAIN.CPP` | No active implementation in the pinned project; the translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
 | Complete | `REDALERT/WOL_OPT.CPP` | No active implementation in the pinned project; the entire translation unit is guarded by WOLAPI_INTEGRATION, which is not defined by RedAlert.vcxproj. |
-| Not started | `REDALERT/WSPIPX.CPP` | — |
+| Complete | `REDALERT/WSPIPX.CPP` | rts-core/src/red_alert_winsock_ipx.rs — adapter address discovery, temporary socket/bind/query cleanup, IPX socket initialization/bind/options, asynchronous FD_READ/FD_WRITE handling, self-packet filtering, incoming/outgoing queues, broadcast/unicast routing, and source-compatible WSAEWOULDBLOCK dequeue behavior behind a non-blocking Winsock adapter trait. |
 | Not started | `REDALERT/WSPROTO.CPP` | — |
 | Not started | `REDALERT/WSPUDP.CPP` | — |
 | Complete | `REDALERT/XPIPE.CPP` | rts-formats/src/io_streams.rs — fixed-buffer and file-backed push endpoints |
