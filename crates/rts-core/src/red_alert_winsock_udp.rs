@@ -35,11 +35,11 @@ pub struct UdpSocketAddress {
 }
 
 impl UdpSocketAddress {
-    pub const fn new(ipv4: [u8; 4], host_port: u16) -> Self {
+    pub fn new(ipv4: [u8; 4], host_port: u16) -> Self {
         Self { ipv4, port: host_port.to_be() }
     }
 
-    pub const fn any(host_port: u16) -> Self {
+    pub fn any(host_port: u16) -> Self {
         Self::new([0; 4], host_port)
     }
 }
@@ -161,7 +161,7 @@ impl<S: Copy + Eq> RedAlertUdpInterface<S> {
     /// Port of UDPInterfaceClass::Open_Socket. The caller supplies the
     /// configured PlanetWestwoodPortNumber. Local addresses are refreshed
     /// from the platform's host address discovery adapter.
-    pub fn open_socket<A: UdpSocketApi>(
+    pub fn open_socket<A: UdpSocketApi<Socket = S>>(
         &mut self,
         port: u16,
         api: &mut A,
@@ -240,7 +240,7 @@ impl<S: Copy + Eq> RedAlertUdpInterface<S> {
 
     /// Port of UDPInterfaceClass::Message_Handler. Returns 1 for messages
     /// owned by another protocol; recognized UDP messages return 0.
-    pub fn message_handler<A: UdpSocketApi>(
+    pub fn message_handler<A: UdpSocketApi<Socket = S>>(
         &mut self,
         message: u32,
         event: UdpSocketEvent,
