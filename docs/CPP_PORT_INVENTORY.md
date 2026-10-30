@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **257**
-- Not yet fully ported: **237**
+- Fully ported: **258**
+- Not yet fully ported: **236**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -45,7 +45,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/BLOWPIPE.CPP` | rts-formats/src/blowfish_streams.rs — Blowfish push adapter. |
 | Complete | `REDALERT/BLWSTRAW.CPP` | rts-formats/src/blowfish_streams.rs — Blowfish demand-driven adapter. |
 | Complete | `REDALERT/BMP8.CPP` | rts-formats/src/bmp8.rs — 8-bit BMP headers, 256-entry palette conversion, pixel payload, RAII resource ownership and COLORONCOLOR stretch-draw plan; stale GDI member names are normalized. |
-| Not started | `REDALERT/BUFF.CPP` | — |
+| Complete | `REDALERT/BUFF.CPP` | rts-core/src/legacy_buffer.rs — pointer/size wrapper constructors, owned allocation, borrowed mutable/const slices, explicit shared-external storage, shallow copy/assignment ownership flags, reset/destructor semantics and nonblocking access. |
 | Not started | `REDALERT/BUILDING.CPP` | — |
 | Not started | `REDALERT/BULLET.CPP` | — |
 | Complete | `REDALERT/CARGO.CPP` | rts-core/src/cargo.rs — LIFO linked-object attach, Limbo, chain concatenation, unsigned-byte quantity, detach and debug payload. |
