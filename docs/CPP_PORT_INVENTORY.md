@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **17**
-- Not yet fully ported: **477**
-- Complete means every active compiled behavior has a Rust implementation. Intentionally empty translation units are identified; placeholders do not count.
+- Fully ported: **20**
+- Not yet fully ported: **474**
+- A translation unit is complete only when its active behavior is implemented. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 16 | 259 |
+| `REDALERT/` | 275 | 19 | 256 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 1 | 160 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
@@ -27,7 +27,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/AADATA.CPP` | — |
 | Not started | `REDALERT/ABSTRACT.CPP` | — |
 | Not started | `REDALERT/ADATA.CPP` | — |
-| Complete | `REDALERT/ADPCM.CPP` | rts-formats/src/adpcm.rs — streaming type-1 nibble decoder |
+| Not started | `REDALERT/ADPCM.CPP` | — |
 | Not started | `REDALERT/AIRCRAFT.CPP` | — |
 | Not started | `REDALERT/ANIM.CPP` | — |
 | Not started | `REDALERT/AUDIO.CPP` | — |
@@ -61,7 +61,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/CELL.CPP` | — |
 | Not started | `REDALERT/CHECKBOX.CPP` | — |
 | Not started | `REDALERT/CHEKLIST.CPP` | — |
-| Complete | `REDALERT/CLASS.CPP` | Intentionally empty translation unit; no executable definitions |
+| Complete | `REDALERT/CLASS.CPP` | Intentionally empty translation unit; no executable definitions. |
 | Not started | `REDALERT/COLRLIST.CPP` | — |
 | Not started | `REDALERT/COMBAT.CPP` | — |
 | Not started | `REDALERT/COMBUF.CPP` | — |
@@ -74,9 +74,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/CONTROL.CPP` | — |
 | Not started | `REDALERT/COORD.CPP` | — |
 | Not started | `REDALERT/CRATE.CPP` | — |
-| Complete | `REDALERT/CRC.CPP` | rts-formats/src/legacy_crc.rs — rotate-add checksum engine |
-| Complete | `REDALERT/CRCPIPE.CPP` | rts-formats/src/crc_streams.rs — checksum-aware push adapter |
-| Complete | `REDALERT/CRCSTRAW.CPP` | rts-formats/src/crc_streams.rs — checksum-aware pull adapter |
+| Complete | `REDALERT/CRC.CPP` | rts-formats/src/legacy_crc.rs — rotate-add checksum engine. |
+| Complete | `REDALERT/CRCPIPE.CPP` | rts-formats/src/crc_streams.rs — checksum-aware push adapter. |
+| Complete | `REDALERT/CRCSTRAW.CPP` | rts-formats/src/crc_streams.rs — checksum-aware pull adapter. |
 | Not started | `REDALERT/CREDITS.CPP` | — |
 | Not started | `REDALERT/CREW.CPP` | — |
 | Not started | `REDALERT/CSTRAW.CPP` | — |
@@ -94,7 +94,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/DPMI.CPP` | — |
 | Not started | `REDALERT/DRIVE.CPP` | — |
 | Not started | `REDALERT/DROP.CPP` | — |
-| Complete | `REDALERT/DTABLE.CPP` | rts-formats/src/adpcm.rs — exact 1,424-entry ADPCM difference table |
+| Complete | `REDALERT/DTABLE.CPP` | rts-formats/src/adpcm.rs — exact 1,424-entry ADPCM difference table. |
 | Not started | `REDALERT/DYNAVEC.CPP` | — |
 | Not started | `REDALERT/EDIT.CPP` | — |
 | Not started | `REDALERT/EGOS.CPP` | — |
@@ -106,7 +106,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/FACTORY.CPP` | — |
 | Not started | `REDALERT/FIELD.CPP` | — |
 | Not started | `REDALERT/FINDPATH.CPP` | — |
-| Complete | `REDALERT/FIXED.CPP` | rts-core/src/fixed16.rs — Q16.16 constructors, arithmetic helpers, ASCII conversion |
+| Complete | `REDALERT/FIXED.CPP` | rts-core/src/fixed16.rs — Q16.16 constructors, arithmetic helpers, and ASCII conversion. |
 | Not started | `REDALERT/FLASHER.CPP` | — |
 | Not started | `REDALERT/FLY.CPP` | — |
 | Not started | `REDALERT/FOOT.CPP` | — |
@@ -142,15 +142,15 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/IPXCONN.CPP` | — |
 | Not started | `REDALERT/IPXGCONN.CPP` | — |
 | Not started | `REDALERT/IPXMGR.CPP` | — |
-| Complete | `REDALERT/ITABLE.CPP` | rts-formats/src/adpcm.rs — exact 1,424-entry ADPCM index table |
+| Complete | `REDALERT/ITABLE.CPP` | rts-formats/src/adpcm.rs — exact 1,424-entry ADPCM index table. |
 | Not started | `REDALERT/JSHELL.CPP` | — |
 | Not started | `REDALERT/KEY.CPP` | — |
 | Not started | `REDALERT/KEYBOARD.CPP` | — |
 | Not started | `REDALERT/LAYER.CPP` | — |
-| Not started | `REDALERT/LCW.CPP` | — |
-| Not started | `REDALERT/LCWPIPE.CPP` | — |
-| Not started | `REDALERT/LCWSTRAW.CPP` | — |
-| Not started | `REDALERT/LCWUNCMP.CPP` | — |
+| Complete | `REDALERT/LCW.CPP` | rts-formats/src/lcw.rs — LCW block decompression. |
+| Complete | `REDALERT/LCWPIPE.CPP` | rts-formats/src/lcw_blocks.rs — framed push compression/decompression, partial blocks, flush behavior. |
+| Complete | `REDALERT/LCWSTRAW.CPP` | rts-formats/src/lcw_blocks.rs — framed pull compression/decompression and buffered reads. |
+| Complete | `REDALERT/LCWUNCMP.CPP` | rts-formats/src/lcw.rs — second LCW decompression entry point. |
 | Not started | `REDALERT/LINK.CPP` | — |
 | Not started | `REDALERT/LIST.CPP` | — |
 | Not started | `REDALERT/LOADDLG.CPP` | — |
@@ -198,7 +198,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/OVERLAY.CPP` | — |
 | Not started | `REDALERT/PACKET.CPP` | — |
 | Not started | `REDALERT/PALETTEC.CPP` | — |
-| Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, unlink |
+| Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, and unlink. |
 | Not started | `REDALERT/PK.CPP` | — |
 | Not started | `REDALERT/PKPIPE.CPP` | — |
 | Not started | `REDALERT/PKSTRAW.CPP` | — |
@@ -208,12 +208,12 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/RADAR.CPP` | — |
 | Not started | `REDALERT/RADIO.CPP` | — |
 | Not started | `REDALERT/RAMFILE.CPP` | — |
-| Complete | `REDALERT/RAND.CPP` | rts-core/src/random.rs — Sim_Random and Sim_IRandom |
-| Complete | `REDALERT/RANDOM.CPP` | rts-core/src/random_class.rs — seeded LCG and rejection-sampled ranges |
+| Complete | `REDALERT/RAND.CPP` | rts-core/src/random.rs — Sim_Random and Sim_IRandom. |
+| Complete | `REDALERT/RANDOM.CPP` | rts-core/src/random_class.rs — seeded LCG and rejection-sampled ranges. |
 | Not started | `REDALERT/RAWFILE.CPP` | — |
 | Not started | `REDALERT/RAWOLAPI.CPP` | — |
-| Complete | `REDALERT/READLINE.CPP` | rts-formats/src/readline.rs — CR/LF line reader and whitespace trimming |
-| Complete | `REDALERT/RECT.CPP` | rts-core/src/rect.rs — validity, intersection, coordinate adjustment, union |
+| Complete | `REDALERT/READLINE.CPP` | rts-formats/src/readline.rs — CR/LF line reader and whitespace trimming. |
+| Complete | `REDALERT/RECT.CPP` | rts-core/src/rect.rs — validity, intersection, coordinate adjustment, and union. |
 | Not started | `REDALERT/REINF.CPP` | — |
 | Not started | `REDALERT/RGB.CPP` | — |
 | Not started | `REDALERT/RNDSTRAW.CPP` | — |
@@ -242,8 +242,8 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/STARTUP.CPP` | — |
 | Not started | `REDALERT/STATBTN.CPP` | — |
 | Not started | `REDALERT/STATS.CPP` | — |
-| Complete | `REDALERT/STRAW.CPP` | rts-formats/src/straw.rs — demand-driven pull chain and reconnect behavior |
-| Complete | `REDALERT/STUB.CPP` | rts-core/src/legacy_stub.rs — exact launcher message |
+| Complete | `REDALERT/STRAW.CPP` | rts-formats/src/straw.rs — demand-driven pull chain and reconnect behavior. |
+| Complete | `REDALERT/STUB.CPP` | rts-core/src/legacy_stub.rs — exact launcher message. |
 | Not started | `REDALERT/SUPER.CPP` | — |
 | Not started | `REDALERT/SURFACE.CPP` | — |
 | Not started | `REDALERT/Shape.cpp` | — |
@@ -273,7 +273,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/UNIT.CPP` | — |
 | Not started | `REDALERT/UTRACKER.CPP` | — |
 | Not started | `REDALERT/VDATA.CPP` | — |
-| Complete | `REDALERT/VECTOR.CPP` | rts-core/src/bool_vector.rs — packed BooleanVectorClass active implementation |
+| Complete | `REDALERT/VECTOR.CPP` | rts-core/src/bool_vector.rs — packed BooleanVectorClass active implementation. |
 | Not started | `REDALERT/VERSION.CPP` | — |
 | Not started | `REDALERT/VESSEL.CPP` | — |
 | Not started | `REDALERT/VISUDLG.CPP` | — |
@@ -452,7 +452,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/QUEUE.CPP` | — |
 | Not started | `TIBERIANDAWN/RADAR.CPP` | — |
 | Not started | `TIBERIANDAWN/RADIO.CPP` | — |
-| Complete | `TIBERIANDAWN/RAND.CPP` | rts-core/src/random.rs — Sim_Random and Sim_IRandom |
+| Complete | `TIBERIANDAWN/RAND.CPP` | rts-core/src/random.rs — Sim_Random and Sim_IRandom. |
 | Not started | `TIBERIANDAWN/RAWFILE.CPP` | — |
 | Not started | `TIBERIANDAWN/REINF.CPP` | — |
 | Not started | `TIBERIANDAWN/RULES.CPP` | — |
