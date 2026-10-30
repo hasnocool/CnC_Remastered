@@ -705,6 +705,132 @@ pub fn good_landing_zone(current_cell: u32, buildings: &[LandingBuildingCandidat
     best_cell
 }
 
+/// The adjacent-cell directions used by AircraftClass::Exit_Object, indexed
+/// by its clockwise FacingType scan order N through NW.
+pub const PASSENGER_EXIT_FACING_ORDER: [u8; 8] = [4, 5, 3, 7, 1, 0, 6, 2];
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ExitObjectPlan {
+    pub candidate_cell: u32,
+    pub spawn_coordinate: u32,
+    pub facing: DirType,
+    pub assign_move_mission: bool,
+    pub assign_candidate_destination: bool,
+    pub send_unload_after_radio_roger: bool,
+    pub look_incremental: bool,
+}
+
+/// Port of AircraftClass::Exit_Object as an action plan. The search order,
+/// spawn coordinate, direction, and radio handshake are preserved. No valid
+/// cell or failed Unlimbo returns None instead of indexing past the source's
+/// eight-entry direction array.
+pub fn plan_passenger_exit<C, U>(
+    aircraft_cell: u32,
+    aircraft_coordinate: u32,
+    adjacent_cell: C,
+    mut can_enter_cell: impl FnMut(u32) -> bool,
+    unlimbo: U,
+    radio_hello_was_roger: bool,
+) -> Option<ExitObjectPlan>
+where
+    C: Fn(u32, u8) -> u32,
+    U: FnOnce(u32, DirType) -> bool,
+{
+    let mut selected = None;
+    for facing in PASSENGER_EXIT_FACING_ORDER {
+        let cell = adjacent_cell(aircraft_cell, facing);
+        if can_enter_cell(cell) {
+            selected = Some((cell, facing));
+            break;
+        }
+    }
+    let (candidate_cell, facing) = selected?;
+    let direction = DirType((u16::from(facing) << 5) as u8);
+    if !unlimbo(aircraft_coordinate, direction) {
+        return None;
+    }
+    Some(ExitObjectPlan {
+        candidate_cell,
+        spawn_coordinate: aircraft_coordinate,
+        facing: direction,
+        assign_move_mission: true,
+        assign_candidate_destination: true,
+        send_unload_after_radio_roger: radio_hello_was_roger,
+        look_incremental: false,
+    })
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct EvacuatingPassenger {
+    pub house_id: u32,
+    pub counts_as_civ_evacuee: bool,
+    pub team_id: Option<u32>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EdgeOfWorldPlan {
+    pub lock_aircraft: bool,
+    pub mark_civ_evacuation_for_houses: Vec<u32>,
+    pub mark_teams_to_leave: Vec<u32>,
+    pub delete_passengers: Vec<u32>,
+    pub mark_aircraft_team_to_leave: bool,
+    pub stun_aircraft: bool,
+    pub delete_aircraft: bool,
+}
+
+/// Port of AircraftClass::Edge_Of_World_AI. Retreating aircraft that leave the
+/// radar map release all attached passengers, trigger eligible civilian
+/// evacuation flags, mark passenger/aircraft teams as leaving, then stun and
+/// delete themselves. Aircraft still on-map are locked in place.
+pub fn edge_of_world_plan(
+    aircraft_is_in_radar: bool,
+    mission_is_retreat: bool,
+    aircraft_has_team: bool,
+    passengers: &[EvacuatingPassenger],
+) -> EdgeOfWorldPlan {
+    if aircraft_is_in_radar {
+        return EdgeOfWorldPlan {
+            lock_aircraft: true,
+            mark_civ_evacuation_for_houses: Vec::new(),
+            mark_teams_to_leave: Vec::new(),
+            delete_passengers: Vec::new(),
+            mark_aircraft_team_to_leave: false,
+            stun_aircraft: false,
+            delete_aircraft: false,
+        };
+    }
+    if !mission_is_retreat {
+        return EdgeOfWorldPlan {
+            lock_aircraft: false,
+            mark_civ_evacuation_for_houses: Vec::new(),
+            mark_teams_to_leave: Vec::new(),
+            delete_passengers: Vec::new(),
+            mark_aircraft_team_to_leave: false,
+            stun_aircraft: false,
+            delete_aircraft: false,
+        };
+    }
+    let mut plan = EdgeOfWorldPlan {
+        lock_aircraft: false,
+        mark_civ_evacuation_for_houses: Vec::new(),
+        mark_teams_to_leave: Vec::new(),
+        delete_passengers: Vec::with_capacity(passengers.len()),
+        mark_aircraft_team_to_leave: aircraft_has_team,
+        stun_aircraft: true,
+        delete_aircraft: true,
+    };
+    for passenger in passengers {
+        if passenger.counts_as_civ_evacuee {
+            plan.mark_civ_evacuation_for_houses.push(passenger.house_id);
+        }
+        if let Some(team_id) = passenger.team_id {
+            plan.mark_teams_to_leave.push(team_id);
+        }
+        plan.delete_passengers.push(passenger.house_id);
+    }
+    plan
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -1199,6 +1325,78 @@ mod tests {
         );
         assert_eq!(too_short, None);
         assert_eq!(moves, 0);
+    }
+
+    #[test]
+    fn passenger_exit_uses_source_direction_order_and_radio_handshake() {
+        assert_eq!(PASSENGER_EXIT_FACING_ORDER, [4, 5, 3, 7, 1, 0, 6, 2]);
+        let mut tested = Vec::new();
+        let mut spawn = None;
+        let result = plan_passenger_exit(
+            100,
+            0x1234_5678,
+            |cell, facing| { tested.push(facing); cell + u32::from(facing) },
+            |cell| cell == 105,
+            |coordinate, direction| { spawn = Some((coordinate, direction)); true },
+            true,
+        ).unwrap();
+        assert_eq!(tested, [4, 5]);
+        assert_eq!(result.candidate_cell, 105);
+        assert_eq!(result.spawn_coordinate, 0x1234_5678);
+        assert_eq!(result.facing, DirType(160));
+        assert_eq!(spawn, Some((0x1234_5678, DirType(160))));
+        assert!(result.assign_move_mission);
+        assert!(result.assign_candidate_destination);
+        assert!(result.send_unload_after_radio_roger);
+        assert!(!result.look_incremental);
+    }
+
+    #[test]
+    fn passenger_exit_fails_safely_without_cell_or_unlimbo() {
+        let none_found = plan_passenger_exit(0, 1, |_, _| 0, |_| false, |_, _| true, false);
+        assert_eq!(none_found, None);
+        let unlimbo_failed = plan_passenger_exit(0, 1, |_, _| 5, |_| true, |_, _| false, false);
+        assert_eq!(unlimbo_failed, None);
+    }
+
+    #[test]
+    fn edge_of_world_locks_aircraft_while_it_remains_inside_radar() {
+        let plan = edge_of_world_plan(
+            true, true, true,
+            &[EvacuatingPassenger { house_id: 7, counts_as_civ_evacuee: true, team_id: Some(3) }],
+        );
+        assert!(plan.lock_aircraft);
+        assert!(plan.mark_civ_evacuation_for_houses.is_empty());
+        assert!(plan.delete_passengers.is_empty());
+        assert!(!plan.delete_aircraft);
+    }
+
+    #[test]
+    fn retreating_aircraft_leaving_map_fulfills_evacuation_and_deletes_cargo() {
+        let plan = edge_of_world_plan(
+            false,
+            true,
+            true,
+            &[
+                EvacuatingPassenger { house_id: 10, counts_as_civ_evacuee: true, team_id: Some(2) },
+                EvacuatingPassenger { house_id: 11, counts_as_civ_evacuee: false, team_id: None },
+            ],
+        );
+        assert_eq!(plan.mark_civ_evacuation_for_houses, [10]);
+        assert_eq!(plan.mark_teams_to_leave, [2]);
+        assert_eq!(plan.delete_passengers, [10, 11]);
+        assert!(plan.mark_aircraft_team_to_leave);
+        assert!(plan.stun_aircraft);
+        assert!(plan.delete_aircraft);
+    }
+
+    #[test]
+    fn non_retreating_aircraft_outside_radar_is_not_deleted_by_this_handler() {
+        let plan = edge_of_world_plan(false, false, true, &[]);
+        assert!(!plan.lock_aircraft);
+        assert!(!plan.stun_aircraft);
+        assert!(!plan.delete_aircraft);
+        assert!(!plan.mark_aircraft_team_to_leave);
     }
 
     #[test]
