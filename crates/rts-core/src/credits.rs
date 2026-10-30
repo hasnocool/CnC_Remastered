@@ -180,9 +180,9 @@ mod tests {
         assert_eq!(host.redraw_flags, vec![false]);
 
         credits.ai(false, Some(10_000), false, &mut host);
-        assert_eq!(credits.current, 143); // countdown delays one AI tick
+        assert_eq!(credits.current, 286); // Countdown is reduced from 1 to 0 at call entry
         credits.ai(false, Some(10_000), false, &mut host);
-        assert_eq!(credits.current, 286);
+        assert_eq!(credits.current, 429);
     }
 
     #[test]
