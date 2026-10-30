@@ -76,7 +76,7 @@
 No Rust build/test result is claimed in this commit. The execution environment used to prepare this change did not have `rustc` or `cargo` installed. The workspace includes unit tests for the foundations; run the commands in the README on a Rust 1.85+ host before treating this milestone as verified.
 
 
-Latest additions: `TIBERIANDAWN/RULES.CPP` → `crates/rts-core/src/rules_defaults.rs`; `TIBERIANDAWN/WIN32LIB/MEM.CPP` → `crates/rts-core/src/memory_pool.rs` (paragraph cache allocator, LRU, and compaction).
+Latest additions: both `MiscAsm.cpp` variants → `crates/rts-core/src/misc_asm.rs` (facing, coordinate distance, variant fixed conversion, bit arrays, palette remapping, endian and pixel helpers).
 
 Latest additions: `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` and `MORPHPAL.CPP` → `crates/rts-formats/src/palette_fade.rs`.
 Latest additions: both SHAPEBTN.CPP variants → rts-core/src/shape_button.rs with shape bounds, disabled/pressed/reflect-state frames and mouse visibility behavior.
