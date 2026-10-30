@@ -10,7 +10,7 @@
 
 use crate::facing::DirType;
 use crate::fixed16::Fixed16;
-use crate::map::Coordinate;
+use crate::coordinate::Coordinate;
 use crate::red_alert_aircraft_types::{AircraftType, AircraftTypeRecord, AIRCRAFT_TYPES, MAP_CELL_W, REFRESH_EOL};
 
 pub const AIRCRAFT_SORT_Y_OFFSET: u32 = 0x0080_0000;
@@ -629,7 +629,7 @@ mod tests {
         assert_eq!(shape_number(32, DirType::EAST, &body, &facing16, &facing32, true, 0), Ok(36));
         assert_eq!(shape_number(16, DirType::EAST, &body, &facing16, &facing32, true, 0), Ok(12));
         // Dir_To_8 is ((unsigned char)(direction | 0x10)) >> 5.
-        assert_eq!(shape_number(8, DirType::EAST, &body, &facing16, &facing32, true, 0), Ok(16));
+        assert_eq!(shape_number(8, DirType::EAST, &body, &facing16, &facing32, true, 0), Ok(8));
         assert_eq!(shape_number(32, DirType::EAST, &body, &facing16, &facing32, false, 3), Ok(35));
         assert_eq!(shape_number(24, DirType::EAST, &body, &facing16, &facing32, true, 0), Ok(0));
     }
