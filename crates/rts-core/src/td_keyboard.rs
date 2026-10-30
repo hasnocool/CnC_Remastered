@@ -110,6 +110,12 @@ impl TiberianDawnKeyboard {
         }
     }
 
+    /// Blocking source-compatible Get loop; the callback pumps/dispatches host messages.
+    pub fn get_blocking(&mut self, mut message_loop: impl FnMut(&mut Self)) -> u16 {
+        while self.check() == 0 { message_loop(self); }
+        self.get()
+    }
+
     pub fn buff_get(&mut self) -> u16 {
         if self.head == self.tail { return 0; }
         let temp = self.buffer[self.head];
@@ -237,7 +243,7 @@ mod tests {
         fn vk_key_scan(&self, value: u8) -> i16 {
             match value {
                 b'a'..=b'z' => (value - 32) as i16,
-                b'A'..=b'Z' => (((value - 32) as i16) | 0x0100),
+                b'A'..=b'Z' => ((value as i16) | 0x0100),
                 b'0'..=b'9' => value as i16,
                 b'!' => 0x0131,
                 _ => -1,
