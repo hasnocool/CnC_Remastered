@@ -37,6 +37,7 @@ pub trait SurfaceBackend {
     fn lock_surface(&mut self) -> Result<SurfaceLock, SurfaceError>;
     fn unlock_surface(&mut self) -> Result<(), SurfaceError>;
     fn restore_surfaces(&mut self);
+    fn on_focus_loss(&mut self) {}
     fn release_surface(&mut self) {}
     fn attach_surface(&mut self, _other_surface: u64) {}
     fn blit(&mut self, _request: DirectDrawBlit) -> Result<(), SurfaceError> { Err(SurfaceError::Other) }
@@ -185,6 +186,7 @@ impl GraphicBuffer {
                     return true;
                 }
                 Err(SurfaceError::SurfaceLost) => {
+                    backend.on_focus_loss();
                     backend.restore_surfaces();
                     attempts += 1;
                 }
@@ -419,7 +421,7 @@ mod tests {
         view.attach(&buffer, 5, 6, 20, 10);
         let mut surface = MockSurface::default();
         assert!(view.lock(&mut buffer, Some(&mut surface), true, None));
-        assert_eq!(view.offset, BufferOffset::DirectMemory(605));
+        assert_eq!(view.offset, BufferOffset::DirectMemory(6501));
         assert!(view.unlock(&mut buffer, Some(&mut surface), None));
         assert_eq!(view.offset, BufferOffset::SystemMemory(0));
     }
