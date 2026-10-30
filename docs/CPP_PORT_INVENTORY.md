@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 71 | 204 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 10 | 151 |
+| `TIBERIANDAWN/` | 161 | 11 | 150 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
 
 ## File-by-file coverage
@@ -82,7 +82,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/CSTRAW.CPP` | rts-formats/src/cache_straw.rs — buffered read-ahead adapter |
 | Not started | `REDALERT/DDE.CPP` | — |
 | Not started | `REDALERT/DEBUG.CPP` | — |
-| Not started | `REDALERT/DESCDLG.CPP` | — |
+| Complete | `REDALERT/DESCDLG.CPP` | rts-core/src/description_dialog.rs — dialog geometry, gadget setup, redraw/callback loop, OK/cancel handling and text trimming. |
 | Not started | `REDALERT/DIAL8.CPP` | — |
 | Not started | `REDALERT/DIALOG.CPP` | — |
 | Not started | `REDALERT/DIBFILE.CPP` | — |
@@ -368,7 +368,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/CREW.CPP` | Intentionally empty translation unit; contains only the function.h include and no executable definitions. |
 | Not started | `TIBERIANDAWN/DDE.CPP` | — |
 | Not started | `TIBERIANDAWN/DEBUG.CPP` | — |
-| Not started | `TIBERIANDAWN/DESCDLG.CPP` | — |
+| Complete | `TIBERIANDAWN/DESCDLG.CPP` | rts-core/src/description_dialog.rs — shared dialog flow with GreenBorder style, SeenBuff-sized background and surface-restore redraw handling. |
 | Not started | `TIBERIANDAWN/DIAL8.CPP` | — |
 | Not started | `TIBERIANDAWN/DIALOG.CPP` | — |
 | Not started | `TIBERIANDAWN/DISPLAY.CPP` | — |
