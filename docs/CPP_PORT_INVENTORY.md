@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **244**
-- Not yet fully ported: **250**
+- Fully ported: **245**
+- Not yet fully ported: **249**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 136 | 139 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 52 | 109 |
+| `TIBERIANDAWN/` | 161 | 53 | 108 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -395,7 +395,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/GLOBALS.CPP` | — |
 | Not started | `TIBERIANDAWN/GOPTIONS.CPP` | — |
 | Not started | `TIBERIANDAWN/GSCREEN.CPP` | — |
-| Not started | `TIBERIANDAWN/HDATA.CPP` | — |
+| Complete | `TIBERIANDAWN/HDATA.CPP` | rts-core/src/house.rs — ten-house catalogue, names/IDs, INI names, three-character suffixes, display-name resources, radar colors, remap table/color mapping, default gameplay biases, case-insensitive name lookup and One_Time Jurassic Park color adjustment. |
 | Complete | `TIBERIANDAWN/HEAP.CPP` | rts-core/src/heap.rs — fixed and indexed heaps with first-false allocation, free-map and active-pointer management, byte-slot clearing, FileClass Save / raw block Load representation, and pointer code/decode callbacks. |
 | Not started | `TIBERIANDAWN/HELP.CPP` | — |
 | Not started | `TIBERIANDAWN/HOUSE.CPP` | — |

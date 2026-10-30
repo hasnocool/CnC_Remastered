@@ -104,3 +104,4 @@ pub mod legacy_new_delete;
 pub use clock::{SimTick, TICKS_PER_MINUTE, TICKS_PER_SECOND};
 pub use facing::{Facing, FACING_COUNT};
 pub use map::{CellCoord, GameVariant, MapDimensions, MapError, REGION_HEIGHT, REGION_WIDTH};
+pub mod house;
