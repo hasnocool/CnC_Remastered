@@ -1346,6 +1346,99 @@ where
     plan
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RotorPart {
+    Right,
+    Left,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct RotorDrawRequest {
+    pub part: RotorPart,
+    pub shape_number: i32,
+    pub x: i16,
+    pub y: i16,
+    pub centered: bool,
+    pub window_relative: bool,
+    pub ghost: bool,
+    pub fading: bool,
+    pub predator: bool,
+    pub unit_shadow: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RotorDrawPlan {
+    pub shape_number: i32,
+    pub ghost: bool,
+    pub fading: bool,
+    pub predator: bool,
+    pub draw_requests: Vec<RotorDrawRequest>,
+}
+
+/// Port of AircraftClass::Draw_Rotors. The caller supplies the exact
+/// Lepton_To_Pixel and Move_Point implementations; this function preserves the
+/// original fetch-stage modulo, flags, transport stretch table, and draw order.
+pub fn draw_rotors_plan<P, M>(
+    is_transport: bool,
+    height: i32,
+    fetch_stage: i32,
+    x: i32,
+    y: i32,
+    secondary_facing: DirType,
+    lepton_to_pixel: P,
+    mut move_point: M,
+) -> RotorDrawPlan
+where
+    P: FnOnce(i32) -> i32,
+    M: FnMut((i16, i16), DirType, i32) -> (i16, i16),
+{
+    let (shape_number, ghost, fading, predator) = if height == 0 {
+        (fetch_stage.rem_euclid(8) + 4, true, false, false)
+    } else {
+        (fetch_stage.rem_euclid(4), false, true, true)
+    };
+    let base_y = y - lepton_to_pixel(height);
+    let common = |part, position: (i16, i16)| RotorDrawRequest {
+        part,
+        shape_number,
+        x: position.0,
+        y: position.1 - 2,
+        centered: true,
+        window_relative: true,
+        ghost,
+        fading,
+        predator,
+        unit_shadow: true,
+    };
+    let mut draw_requests = Vec::with_capacity(if is_transport { 2 } else { 1 });
+
+    if is_transport {
+        const STRETCH: [i32; 8] = [8, 9, 10, 9, 8, 9, 10, 9];
+        let facing_index = usize::from(secondary_facing.as_facing() as u8);
+        let stretch = STRETCH[facing_index];
+        let first_start = (x as i16, base_y as i16);
+        let right_position = move_point(first_start, secondary_facing, stretch);
+        draw_requests.push(common(RotorPart::Right, right_position));
+
+        let left_position = move_point(
+            right_position,
+            secondary_facing.wrapping_add(128),
+            stretch * 2,
+        );
+        draw_requests.push(common(RotorPart::Left, left_position));
+    } else {
+        draw_requests.push(common(RotorPart::Right, (x as i16, base_y as i16)));
+    }
+
+    RotorDrawPlan {
+        shape_number,
+        ghost,
+        fading,
+        predator,
+        draw_requests,
+    }
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -2259,6 +2352,63 @@ mod tests {
         assert!(plan.takeoff_started_due_to_blocked_landing_zone);
         assert!(!plan.remove_from_old_layer);
         assert_eq!(plan.redraw_mark_count, 4);
+    }
+
+    #[test]
+    fn rotor_draw_uses_idle_ground_frames_and_ghost_flag() {
+        let plan = draw_rotors_plan(
+            false, 0, 10, 100, 200, DirType::EAST,
+            |height| height / 2,
+            |position, _, _| position,
+        );
+        assert_eq!(plan.shape_number, 6);
+        assert!(plan.ghost);
+        assert!(!plan.fading);
+        assert!(!plan.predator);
+        assert_eq!(plan.draw_requests.len(), 1);
+        let draw = plan.draw_requests[0];
+        assert_eq!(draw.part, RotorPart::Right);
+        assert_eq!((draw.x, draw.y), (100, 198));
+        assert!(draw.centered && draw.window_relative && draw.unit_shadow);
+    }
+
+    #[test]
+    fn rotor_draw_uses_four_frame_airborne_cycle_and_fade_predator_flags() {
+        let plan = draw_rotors_plan(
+            false, 40, 7, 100, 200, DirType::EAST,
+            |height| height / 2,
+            |position, _, _| position,
+        );
+        assert_eq!(plan.shape_number, 3);
+        assert!(!plan.ghost);
+        assert!(plan.fading);
+        assert!(plan.predator);
+        assert_eq!((plan.draw_requests[0].x, plan.draw_requests[0].y), (100, 178));
+    }
+
+    #[test]
+    fn transport_rotors_use_facing_stretch_and_draw_right_then_left() {
+        let mut calls = Vec::new();
+        let plan = draw_rotors_plan(
+            true, 0, 3, 20, 30, DirType::EAST,
+            |_| 0,
+            |position, direction, distance| {
+                calls.push((position, direction, distance));
+                if calls.len() == 1 {
+                    (position.0 + distance as i16, position.1)
+                } else {
+                    (position.0 - distance as i16, position.1)
+                }
+            },
+        );
+        assert_eq!(plan.shape_number, 7);
+        assert_eq!(plan.draw_requests.len(), 2);
+        assert_eq!(plan.draw_requests[0].part, RotorPart::Right);
+        assert_eq!(plan.draw_requests[1].part, RotorPart::Left);
+        assert_eq!((plan.draw_requests[0].x, plan.draw_requests[0].y), (30, 28));
+        assert_eq!((plan.draw_requests[1].x, plan.draw_requests[1].y), (10, 28));
+        assert_eq!(calls[0], ((20, 30), DirType::EAST, 10));
+        assert_eq!(calls[1], ((30, 30), DirType::WEST, 20));
     }
 
     #[test]
