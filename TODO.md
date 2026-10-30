@@ -22,6 +22,7 @@
 - [x] Port LCW compression/decompression and framed Pipe/Straw block streams.
 - [x] Port Westwood 12-bit LZW and framed Pipe/Straw streams.
 - [x] Port deterministic LZO1X and framed Pipe/Straw streams.
+- [x] Port Base64 encoding/decoding and Pipe/Straw adapters.
 - [x] Add a starter editor document model.
 - [x] Port the map-editor cell metric operations: row-major conversion, 8-way adjacency, and clipping.
 - [x] Port the map-editor standard CRC-32 helper.
@@ -30,7 +31,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 466 C++ translation units with source-specific tests.
+- [ ] Port the remaining 463 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
