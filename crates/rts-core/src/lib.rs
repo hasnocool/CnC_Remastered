@@ -140,3 +140,4 @@ pub mod red_alert_winsock_ipx;
 pub mod red_alert_winsock_udp;
 pub mod red_alert_message_box;
 pub mod red_alert_game_options;
+pub mod tiberian_dawn_game_options;
