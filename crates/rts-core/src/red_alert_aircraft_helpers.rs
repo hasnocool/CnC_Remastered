@@ -515,6 +515,59 @@ pub fn cell_seems_ok(
     })
 }
 
+/// Callback-driven port of AircraftClass::New_LZ's concentric-ring scan.
+/// Returns a replacement cell only when the previous target was legal but no
+/// longer usable and a valid new landing cell is found. None means preserve the
+/// original target exactly as the C++ routine does.
+pub fn find_new_landing_zone<M, C, R, L, A>(
+    old_target_is_legal: bool,
+    old_location_is_usable: bool,
+    center_coordinate: u32,
+    scan_radius_leptons: i32,
+    cell_leptons: i32,
+    icon_leptons: i32,
+    mut random_modifier: R,
+    mut coordinate_move: M,
+    mut coordinate_to_cell: C,
+    mut in_radar: L,
+    mut landing_zone_is_clear: A,
+    mut cell_seems_ok: impl FnMut(u32) -> bool,
+) -> Option<u32>
+where
+    M: FnMut(u32, DirType, i32) -> u32,
+    C: FnMut(u32) -> u32,
+    R: FnMut() -> u8,
+    L: FnMut(u32) -> bool,
+    A: FnMut(u32) -> bool,
+{
+    if !old_target_is_legal || old_location_is_usable || cell_leptons <= 0 {
+        return None;
+    }
+    let radius_count = scan_radius_leptons / cell_leptons;
+    for radius in 0..radius_count {
+        let modifier = random_modifier();
+        let distance = radius * icon_leptons;
+        let mut last_cell = None;
+        for facing in 0_u8..8 {
+            // Facing_Dir(FacingType(face + modifier)) casts the shifted
+            // integer back to the byte-sized DirType, preserving wraparound.
+            let direction = DirType((u16::from(facing + modifier) << 5) as u8);
+            let moved = coordinate_move(center_coordinate, direction, distance);
+            let new_cell = coordinate_to_cell(moved);
+            if in_radar(new_cell) {
+                if last_cell != Some(new_cell)
+                    && landing_zone_is_clear(new_cell)
+                    && cell_seems_ok(new_cell)
+                {
+                    return Some(new_cell);
+                }
+                last_cell = Some(new_cell);
+            }
+        }
+    }
+    None
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LandingCellOccupier {
     Empty,
@@ -906,6 +959,79 @@ mod tests {
         ];
         assert_eq!(good_landing_zone(99, &tied), 30);
         assert_eq!(good_landing_zone(99, &[]), 99);
+    }
+
+    #[test]
+    fn new_lz_preserves_original_when_invalid_or_still_usable() {
+        let mut scans = 0;
+        let mut move_cell = |_: u32, _: DirType, _: i32| { scans += 1; 0 };
+        let none = find_new_landing_zone(
+            false, false, 100, 1024, 256, 256, || 0,
+            &mut move_cell, |coord| coord, |_| true, |_| true, |_| true,
+        );
+        assert_eq!(none, None);
+        let none = find_new_landing_zone(
+            true, true, 100, 1024, 256, 256, || 0,
+            &mut move_cell, |coord| coord, |_| true, |_| true, |_| true,
+        );
+        assert_eq!(none, None);
+        assert_eq!(scans, 0);
+    }
+
+    #[test]
+    fn new_lz_scans_eight_facings_in_each_concentric_radius() {
+        let mut observed = Vec::new();
+        let result = find_new_landing_zone(
+            true, false, 1_000, 768, 256, 256,
+            || 0,
+            |center, direction, distance| {
+                observed.push((direction.0, distance));
+                center + u32::from(direction.0) + distance as u32
+            },
+            |coord| coord,
+            |_| true,
+            |cell| cell == 1_032,
+            |_| true,
+        );
+        assert_eq!(result, Some(1_032));
+        assert_eq!(observed.len(), 2);
+        assert_eq!(observed[0], (0, 0));
+        assert_eq!(observed[1], (32, 0));
+    }
+
+    #[test]
+    fn new_lz_wraps_facing_modifier_and_skips_duplicate_cells_per_ring() {
+        let mut seen = Vec::new();
+        let result = find_new_landing_zone(
+            true, false, 0, 256, 256, 128,
+            || 7,
+            |_, direction, _| {
+                seen.push(direction.0);
+                12 // Every direction resolves to the same cell.
+            },
+            |coord| coord,
+            |_| true,
+            |_| false,
+            |_| true,
+        );
+        assert_eq!(result, None);
+        assert_eq!(seen, [224, 0, 32, 64, 96, 128, 160, 192]);
+    }
+
+    #[test]
+    fn new_lz_checks_radar_before_landing_and_traffic_predicates() {
+        let mut clear_checks = 0;
+        let result = find_new_landing_zone(
+            true, false, 0, 256, 256, 256,
+            || 0,
+            |_, _, _| 4,
+            |coord| coord,
+            |_| false,
+            |_| { clear_checks += 1; true },
+            |_| true,
+        );
+        assert_eq!(result, None);
+        assert_eq!(clear_checks, 0);
     }
 
     #[test]
