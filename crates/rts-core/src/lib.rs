@@ -2,6 +2,7 @@
 
 pub mod abstract_object;
 pub mod confirmation_dialog;
+pub mod credits;
 pub mod bool_vector;
 pub mod clock;
 pub mod coordinate;
