@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **261**
-- Not yet fully ported: **233**
+- Fully ported: **262**
+- Not yet fully ported: **232**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 136 | 139 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 62 | 99 |
+| `TIBERIANDAWN/` | 161 | 63 | 98 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -491,7 +491,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/TXTLABEL.CPP` | rts-core/src/text_label.rs — variant-specific color state, Fancy_Text_Print format and shared clipped text dispatch. |
 | Not started | `TIBERIANDAWN/UDATA.CPP` | — |
 | Not started | `TIBERIANDAWN/UNIT.CPP` | — |
-| Not started | `TIBERIANDAWN/UTRACKER.CPP` | — |
+| Complete | `TIBERIANDAWN/UTRACKER.CPP` | rts-core/src/unit_tracker.rs — 32-bit Windows long counters, safe allocation/count bounds, increment/decrement/clear, in-place htonl/ntohl byte order conversion, repeated-conversion guard and invalid-index Get_Unit_Total behavior. |
 | Complete | `TIBERIANDAWN/VECTOR.CPP` | rts-core/src/vector.rs and bool_vector.rs — shared VectorClass/DynamicVectorClass and packed BooleanVectorClass behavior; also ports Tiberian Dawn's Raw_Count() and mutable Raw()/Raw(context) accessors. |
 | Complete | `TIBERIANDAWN/VISUDLG.CPP` | rts-core/src/visual_controls.rs — resolution-scaled dialog geometry, four slider/value bindings, source 20-unit slider bump and 235 effective maximum, six-position keyboard navigation, reset-to-128 behavior, callback/surface-restoration redraw and exit handling. |
 | Complete | `TIBERIANDAWN/WINSTUB.CPP` | rts-core/src/win_stub.rs — sound-aware theme capture/stop on focus loss, focus restore, lock count, no-op main-window/dialog/focus pump and debug string, VQA palette pipeline, non-terminating GlyphX memory-error flow, and PCX title-screen blit/free. |

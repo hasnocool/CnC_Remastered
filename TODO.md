@@ -298,3 +298,4 @@
 - [x] Port TIBERIANDAWN/CONTROL.CPP ControlClass constructor, peer setup, ID access, Action event-to-key mapping, peer notification order and Draw_Me peer/base forwarding.
 - [x] Port REDALERT/STATBTN.CPP StaticButtonClass constructor/default, Set_Text copy/resize order, Draw_Me conditional mouse handling, page background capture/restore and Draw_Text center/right alignment.
 - [x] Port TIBERIANDAWN/LOGIC.CPP AI order and mutation-safe iteration: crate regeneration, teams, objects, unit/infantry/aircraft/building scan bits, optional RA attribute recalculation, map logic, factories, game-mode-specific house AI and recently-created flag clearing.
+- [x] Port TIBERIANDAWN/UTRACKER.CPP constructor/destructor storage, per-type increment/decrement, clear, totals/count access, guarded in-place htonl/ntohl conversion and safe invalid-index reads.
