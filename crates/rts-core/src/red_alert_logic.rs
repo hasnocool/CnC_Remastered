@@ -266,7 +266,6 @@ pub struct RedAlertLogicRuntime {
 
 impl RedAlertLogicRuntime {
     pub fn ai(&mut self, world: &mut impl RedAlertLogicWorld) -> LogicFrameReport {
-        let state = world.frame_state();
         self.frames_per_second = self.frames_per_second.wrapping_add(1);
         let mut report = LogicFrameReport {
             frames_per_second: self.frames_per_second,
@@ -274,6 +273,9 @@ impl RedAlertLogicRuntime {
         };
 
         world.do_fade_ai();
+        // Do_Fade_AI may advance timers or update scenario flags; C++ reads
+        // those globals only after this call.
+        let state = world.frame_state();
 
         // Trigger order and the continue statements match LogicClass::AI.
         for index in 0..world.logic_trigger_count() {
@@ -294,29 +296,34 @@ impl RedAlertLogicRuntime {
             }
         }
 
-        if state.mission_timer_active {
-            if let Some(voice) = mission_timer_voice(state.mission_timer_ticks) {
+        // Trigger callbacks can mutate the mission timer, so sample it again
+        // after the full trigger scan as the C++ code does.
+        let timer_state = world.frame_state();
+        if timer_state.mission_timer_active {
+            if let Some(voice) = mission_timer_voice(timer_state.mission_timer_ticks) {
                 world.speak_mission_timer(voice);
                 world.set_map_flasher_timer(7);
                 report.mission_timer_voice = Some(voice);
             }
-            if state.mission_timer_ticks == 0 {
+            if timer_state.mission_timer_ticks == 0 {
                 world.stop_mission_timer();
                 world.flag_map_to_redraw(true);
             }
         }
         world.clear_global_and_bridge_changed();
 
-        if state.shadow_grow && state.shroud_rate != 0 && state.shroud_timer == 0 {
-            world.set_shroud_timer(TICKS_PER_MINUTE.wrapping_mul(state.shroud_rate));
-            if state.session == RaSessionType::GlyphxMultiplayer {
-                for player in &state.session_players {
+        // Read the shadow/session globals after clearing the trigger flags.
+        let shadow_state = world.frame_state();
+        if shadow_state.shadow_grow && shadow_state.shroud_rate != 0 && shadow_state.shroud_timer == 0 {
+            world.set_shroud_timer(TICKS_PER_MINUTE.wrapping_mul(shadow_state.shroud_rate));
+            if shadow_state.session == RaSessionType::GlyphxMultiplayer {
+                for player in &shadow_state.session_players {
                     if player.house_exists && player.is_human {
                         world.encroach_shadow(player.house);
                         report.shadow_updates += 1;
                     }
                 }
-            } else if let Some(house) = state.local_player_house {
+            } else if let Some(house) = shadow_state.local_player_house {
                 world.encroach_shadow(house);
                 report.shadow_updates += 1;
             }
@@ -334,6 +341,9 @@ impl RedAlertLogicRuntime {
             world.shake_screen(8);
         }
         world.chronal_vortex_ai();
+        // Vortex and team updates may change the quake globals consumed by
+        // subsequent object AI; read the current values for that pass.
+        let quake_state = world.frame_state();
 
         // The engine's LayerClass count may shrink while object AI or quake
         // damage deletes objects. Adjust the index by the signed count delta
@@ -348,7 +358,7 @@ impl RedAlertLogicRuntime {
             world.object_ai(object);
             report.objects_processed += 1;
 
-            if let Some(quake) = state.time_quake {
+            if let Some(quake) = quake_state.time_quake {
                 if let Some(object_state) = world.object_state(object) {
                     if let Some(plan) = plan_time_quake_damage(object_state, quake, state.fixit_csii) {
                         world.apply_time_quake_damage(object, plan);
@@ -376,7 +386,8 @@ impl RedAlertLogicRuntime {
             }
         }
 
-        if state.fixit_version_3 && !state.session.is_normal() {
+        let house_state = world.frame_state();
+        if house_state.fixit_version_3 && !house_state.session.is_normal() {
             for house in HOUSE_MULTI1..HOUSE_COUNT {
                 if world.house_is_active(house) {
                     world.house_ai(house);
@@ -392,8 +403,9 @@ impl RedAlertLogicRuntime {
             }
         }
 
-        if state.fixit_version_3 && !state.session.is_normal() && state.auto_sonar_timer == 0 {
-            if state.auto_sonar_pulse {
+        let sonar_state = world.frame_state();
+        if sonar_state.fixit_version_3 && !sonar_state.session.is_normal() && sonar_state.auto_sonar_timer == 0 {
+            if sonar_state.auto_sonar_pulse {
                 world.activate_sonar_pulse();
                 world.play_sonar_sound();
                 world.set_auto_sonar_pulse(false);
