@@ -312,7 +312,12 @@ impl StreamChainGraph {
         self.add_wrapper(WrapperKind::Pipe)
     }
     pub fn add_straw_wrapper(&mut self) -> (StreamNodeId, StreamNodeId) {
-        self.add_wrapper(WrapperKind::Straw)
+        // PKStraw's constructor calls the base Straw::Get_From(BF) before
+        // any caller-provided source is connected.
+        let (wrapper, embedded) = self.add_wrapper(WrapperKind::Straw);
+        self.links[wrapper.0].next = Some(embedded);
+        self.links[embedded.0].previous = Some(wrapper);
+        (wrapper, embedded)
     }
 
     fn add_wrapper(&mut self, kind: WrapperKind) -> (StreamNodeId, StreamNodeId) {
