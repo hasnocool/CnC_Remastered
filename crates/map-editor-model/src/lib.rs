@@ -1,3 +1,6 @@
+pub mod cell_metrics;
+pub use cell_metrics::CellMetrics;
+
 //! Initial portable map-editor document model.
 
 use std::collections::BTreeMap;
