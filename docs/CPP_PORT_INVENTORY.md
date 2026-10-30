@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **20**
-- Not yet fully ported: **474**
+- Fully ported: **21**
+- Not yet fully ported: **473**
 - A translation unit is complete only when its active behavior is implemented. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 19 | 256 |
+| `REDALERT/` | 275 | 20 | 255 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 1 | 160 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
@@ -27,7 +27,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/AADATA.CPP` | — |
 | Not started | `REDALERT/ABSTRACT.CPP` | — |
 | Not started | `REDALERT/ADATA.CPP` | — |
-| Not started | `REDALERT/ADPCM.CPP` | — |
+| Complete | `REDALERT/ADPCM.CPP` | rts-formats/src/adpcm.rs — SOS ADPCM type-1 decoder. |
 | Not started | `REDALERT/AIRCRAFT.CPP` | — |
 | Not started | `REDALERT/ANIM.CPP` | — |
 | Not started | `REDALERT/AUDIO.CPP` | — |
@@ -106,7 +106,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/FACTORY.CPP` | — |
 | Not started | `REDALERT/FIELD.CPP` | — |
 | Not started | `REDALERT/FINDPATH.CPP` | — |
-| Complete | `REDALERT/FIXED.CPP` | rts-core/src/fixed16.rs — Q16.16 constructors, arithmetic helpers, and ASCII conversion. |
+| Complete | `REDALERT/FIXED.CPP` | rts-core/src/fixed16.rs — Q16.16 constructors, arithmetic helpers, ASCII conversion. |
 | Not started | `REDALERT/FLASHER.CPP` | — |
 | Not started | `REDALERT/FLY.CPP` | — |
 | Not started | `REDALERT/FOOT.CPP` | — |
@@ -148,7 +148,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/KEYBOARD.CPP` | — |
 | Not started | `REDALERT/LAYER.CPP` | — |
 | Complete | `REDALERT/LCW.CPP` | rts-formats/src/lcw.rs — LCW block decompression. |
-| Complete | `REDALERT/LCWPIPE.CPP` | rts-formats/src/lcw_blocks.rs — framed push compression/decompression, partial blocks, flush behavior. |
+| Complete | `REDALERT/LCWPIPE.CPP` | rts-formats/src/lcw_blocks.rs — framed push compression/decompression and partial-block flush. |
 | Complete | `REDALERT/LCWSTRAW.CPP` | rts-formats/src/lcw_blocks.rs — framed pull compression/decompression and buffered reads. |
 | Complete | `REDALERT/LCWUNCMP.CPP` | rts-formats/src/lcw.rs — second LCW decompression entry point. |
 | Not started | `REDALERT/LINK.CPP` | — |
@@ -198,7 +198,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/OVERLAY.CPP` | — |
 | Not started | `REDALERT/PACKET.CPP` | — |
 | Not started | `REDALERT/PALETTEC.CPP` | — |
-| Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, and unlink. |
+| Complete | `REDALERT/PIPE.CPP` | rts-formats/src/pipe.rs — push chain forwarding, relink, flush, unlink. |
 | Not started | `REDALERT/PK.CPP` | — |
 | Not started | `REDALERT/PKPIPE.CPP` | — |
 | Not started | `REDALERT/PKSTRAW.CPP` | — |
@@ -213,7 +213,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/RAWFILE.CPP` | — |
 | Not started | `REDALERT/RAWOLAPI.CPP` | — |
 | Complete | `REDALERT/READLINE.CPP` | rts-formats/src/readline.rs — CR/LF line reader and whitespace trimming. |
-| Complete | `REDALERT/RECT.CPP` | rts-core/src/rect.rs — validity, intersection, coordinate adjustment, and union. |
+| Complete | `REDALERT/RECT.CPP` | rts-core/src/rect.rs — validity, intersection, anchor adjustment, union. |
 | Not started | `REDALERT/REINF.CPP` | — |
 | Not started | `REDALERT/RGB.CPP` | — |
 | Not started | `REDALERT/RNDSTRAW.CPP` | — |
