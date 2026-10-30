@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **251**
-- Not yet fully ported: **243**
+- Fully ported: **252**
+- Not yet fully ported: **242**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 136 | 139 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 57 | 104 |
+| `TIBERIANDAWN/` | 161 | 58 | 103 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -467,7 +467,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/SIDEBARGlyphx.CPP` | — |
 | Not started | `TIBERIANDAWN/SLIDER.CPP` | — |
 | Not started | `TIBERIANDAWN/SMUDGE.CPP` | — |
-| Not started | `TIBERIANDAWN/SOUNDDLG.CPP` | — |
+| Complete | `TIBERIANDAWN/SOUNDDLG.CPP` | rts-core/src/sound_controls.rs — resolution and locale layout, allowed-theme enumeration and formatted entries, initial music/sound slider state, shuffle/repeat toggles, play/stop actions, modal callback/restoration redraw, save/stop-on-zero-volume finalization, and music-list entry text rendering. |
 | Complete | `TIBERIANDAWN/SPECIAL.CPP` | rts-core/src/special_options.rs — SpecialClass default initialization, exact ten-option checkbox table, local snapshot editing, checkbox toggles, OK/Escape event commit, Cancel discard, non-normal Main_Loop exit and surface-restore redraw/cleanup. |
 | Not started | `TIBERIANDAWN/STARTUP.CPP` | — |
 | Not started | `TIBERIANDAWN/STATS.CPP` | — |
