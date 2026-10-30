@@ -12,6 +12,10 @@ pub enum LcwError {
     InvalidBackReference { offset: usize, output_len: usize },
     OutputLimitExceeded { requested: usize, limit: usize },
     MissingTerminator,
+    LengthOutOfRange { size: usize },
+    InvalidBlockSize(usize),
+    InvalidBlockHeader,
+    OutputSizeMismatch { actual: usize, expected: usize },
 }
 
 fn read_u8(input: &[u8], cursor: &mut usize) -> Result<u8, LcwError> {
@@ -142,9 +146,9 @@ pub fn decompress(input: &[u8], output_limit: usize) -> Result<Vec<u8>, LcwError
 pub fn decompress_expected(input: &[u8], expected_size: usize) -> Result<Vec<u8>, LcwError> {
     let output = decompress(input, expected_size)?;
     if output.len() != expected_size {
-        return Err(LcwError::OutputLimitExceeded {
-            requested: output.len(),
-            limit: expected_size,
+        return Err(LcwError::OutputSizeMismatch {
+            actual: output.len(),
+            expected: expected_size,
         });
     }
     Ok(output)
@@ -218,7 +222,7 @@ mod tests {
         assert_eq!(decompress_expected(&compressed, 3).unwrap(), b"abc");
         assert_eq!(
             decompress_expected(&compressed, 4),
-            Err(LcwError::OutputLimitExceeded { requested: 3, limit: 4 })
+            Err(LcwError::OutputSizeMismatch { actual: 3, expected: 4 })
         );
     }
 }
