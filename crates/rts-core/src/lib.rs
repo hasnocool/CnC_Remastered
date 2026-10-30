@@ -20,6 +20,8 @@ pub mod window_mouse;
 pub mod com_init;
 pub mod delay;
 pub mod bignum_globals;
+pub mod buffer_globals;
+pub mod w95_trace;
 
 pub use clock::{SimTick, TICKS_PER_MINUTE, TICKS_PER_SECOND};
 pub use facing::{Facing, FACING_COUNT};
