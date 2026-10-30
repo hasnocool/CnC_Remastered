@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **256**
-- Not yet fully ported: **238**
+- Fully ported: **257**
+- Not yet fully ported: **237**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -276,7 +276,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/VECTOR.CPP` | rts-core/src/vector.rs and bool_vector.rs — VectorClass, DynamicVectorClass, DynamicVectorArrayClass, and packed BooleanVectorClass. |
 | Not started | `REDALERT/VERSION.CPP` | — |
 | Not started | `REDALERT/VESSEL.CPP` | — |
-| Not started | `REDALERT/VISUDLG.CPP` | — |
+| Complete | `REDALERT/VISUDLG.CPP` | rts-core/src/red_alert_visual_controls.rs — resolution-scaled dialog/control geometry, four normalized visual options, SliderClass max/thumb clamp and scaled bump, direct slider persistence, reset-to-0.5, reset/options focus navigation, outside/right-click exit and callback/surface restoration redraw. |
 | Not started | `REDALERT/VORTEX.CPP` | — |
 | Complete | `REDALERT/W95TRACE.CPP` | rts-core/src/w95_trace.rs — active implementation is disabled under #if 0. |
 | Complete | `REDALERT/WARHEAD.CPP` | rts-core/src/warhead.rs — WarheadTypeClass defaults, five armor modifiers, fixed-index heap allocation/free and ID lookup, INI property reads, Verses fixed-point parsing and organic-warhead detection. |
