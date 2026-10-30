@@ -7,6 +7,8 @@ use rts_core::{GameVariant, MapDimensions};
 pub const VARIANT: GameVariant = GameVariant::RedAlert;
 pub const UPSTREAM_SOURCE_DIRECTORY: &str = "REDALERT";
 
+pub mod overlay;
+
 pub const fn global_map_dimensions() -> MapDimensions {
     VARIANT.global_dimensions()
 }
