@@ -762,6 +762,7 @@ where
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EvacuatingPassenger {
+    pub passenger_id: u32,
     pub house_id: u32,
     pub counts_as_civ_evacuee: bool,
     pub team_id: Option<u32>,
@@ -826,7 +827,7 @@ pub fn edge_of_world_plan(
         if let Some(team_id) = passenger.team_id {
             plan.mark_teams_to_leave.push(team_id);
         }
-        plan.delete_passengers.push(passenger.house_id);
+        plan.delete_passengers.push(passenger.passenger_id);
     }
     plan
 }
@@ -1363,7 +1364,7 @@ mod tests {
     fn edge_of_world_locks_aircraft_while_it_remains_inside_radar() {
         let plan = edge_of_world_plan(
             true, true, true,
-            &[EvacuatingPassenger { house_id: 7, counts_as_civ_evacuee: true, team_id: Some(3) }],
+            &[EvacuatingPassenger { passenger_id: 70, house_id: 7, counts_as_civ_evacuee: true, team_id: Some(3) }],
         );
         assert!(plan.lock_aircraft);
         assert!(plan.mark_civ_evacuation_for_houses.is_empty());
@@ -1378,13 +1379,13 @@ mod tests {
             true,
             true,
             &[
-                EvacuatingPassenger { house_id: 10, counts_as_civ_evacuee: true, team_id: Some(2) },
-                EvacuatingPassenger { house_id: 11, counts_as_civ_evacuee: false, team_id: None },
+                EvacuatingPassenger { passenger_id: 100, house_id: 10, counts_as_civ_evacuee: true, team_id: Some(2) },
+                EvacuatingPassenger { passenger_id: 110, house_id: 11, counts_as_civ_evacuee: false, team_id: None },
             ],
         );
         assert_eq!(plan.mark_civ_evacuation_for_houses, [10]);
         assert_eq!(plan.mark_teams_to_leave, [2]);
-        assert_eq!(plan.delete_passengers, [10, 11]);
+        assert_eq!(plan.delete_passengers, [100, 110]);
         assert!(plan.mark_aircraft_team_to_leave);
         assert!(plan.stun_aircraft);
         assert!(plan.delete_aircraft);
