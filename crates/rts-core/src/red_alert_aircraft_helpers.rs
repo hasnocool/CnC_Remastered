@@ -2207,6 +2207,294 @@ pub fn aircraft_movement_ai(
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftGuardBuildingPurpose {
+    Repair,
+    Rearm,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftGuardContext {
+    pub height: i32,
+    pub flight_level: i32,
+    pub team_is_valid: bool,
+    pub navcom_is_legal: bool,
+    pub has_primary_weapon: bool,
+    pub house_is_human: bool,
+    pub house_available_money: i32,
+    pub health_ratio: Fixed16,
+    pub condition_yellow: Fixed16,
+    pub in_radio_contact: bool,
+    pub height_is_grounded: bool,
+    pub contact_is_repair_building: bool,
+    pub repair_building_available: bool,
+    pub ammo: i32,
+    pub weapon_is_equipped: bool,
+    pub helipad_available: bool,
+    pub target_is_legal: bool,
+    pub scatter_is_allowed: bool,
+    pub house_is_attacked: bool,
+    pub juicy_target_is_legal: bool,
+    pub ticks_per_second: i32,
+    pub normal_delay: i32,
+    pub base_guard_delay: i32,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftGuardPlan {
+    pub destination: Option<IdleModeDestination>,
+    pub clear_target: bool,
+    pub target_juicy_threat: bool,
+    pub mission_to_assign: Option<AircraftMission>,
+    pub enter_idle_mode: bool,
+    pub scatter: bool,
+    pub delegate_to_base_guard: bool,
+    pub delay: HuntDelay,
+    pub return_immediately: bool,
+}
+
+/// Port of AircraftClass::Mission_Guard. Building search/radio acceptance is
+/// resolved before calling; branch precedence and return delays are explicit.
+pub fn aircraft_mission_guard(context: AircraftGuardContext) -> AircraftGuardPlan {
+    let normal = HuntDelay::Ticks(context.normal_delay);
+    if context.height == context.flight_level {
+        if context.team_is_valid {
+            return AircraftGuardPlan {
+                destination: None,
+                clear_target: false,
+                target_juicy_threat: false,
+                mission_to_assign: if context.navcom_is_legal { Some(AircraftMission::Move) } else { None },
+                enter_idle_mode: false,
+                scatter: false,
+                delegate_to_base_guard: false,
+                delay: normal,
+                return_immediately: true,
+            };
+        }
+        if !context.has_primary_weapon {
+            return AircraftGuardPlan {
+                destination: Some(IdleModeDestination::GoodLandingZone(0)),
+                clear_target: false,
+                target_juicy_threat: false,
+                mission_to_assign: Some(AircraftMission::Move),
+                enter_idle_mode: false,
+                scatter: false,
+                delegate_to_base_guard: false,
+                delay: HuntDelay::Ticks(1),
+                return_immediately: true,
+            };
+        }
+        return AircraftGuardPlan {
+            destination: None,
+            clear_target: false,
+            target_juicy_threat: false,
+            mission_to_assign: None,
+            enter_idle_mode: !context.team_is_valid,
+            scatter: false,
+            delegate_to_base_guard: false,
+            delay: HuntDelay::Ticks(1),
+            return_immediately: true,
+        };
+    }
+
+    if context.house_is_human {
+        return AircraftGuardPlan {
+            destination: None,
+            clear_target: false,
+            target_juicy_threat: false,
+            mission_to_assign: None,
+            enter_idle_mode: false,
+            scatter: false,
+            delegate_to_base_guard: false,
+            delay: normal,
+            return_immediately: true,
+        };
+    }
+
+    let damaged = context.house_available_money >= 100
+        && context.health_ratio <= context.condition_yellow;
+    let should_search_repair = damaged
+        && (!context.in_radio_contact
+            || (context.height_is_grounded && !context.contact_is_repair_building));
+    if should_search_repair && context.repair_building_available {
+        return AircraftGuardPlan {
+            destination: Some(IdleModeDestination::Clear),
+            clear_target: true,
+            target_juicy_threat: false,
+            mission_to_assign: Some(AircraftMission::Enter),
+            enter_idle_mode: false,
+            scatter: false,
+            delegate_to_base_guard: false,
+            delay: HuntDelay::Ticks(1),
+            return_immediately: true,
+        };
+    }
+
+    if context.ammo == 0 && context.weapon_is_equipped && !context.in_radio_contact
+        && context.helipad_available
+    {
+        return AircraftGuardPlan {
+            destination: Some(IdleModeDestination::Clear),
+            clear_target: true,
+            target_juicy_threat: false,
+            mission_to_assign: Some(AircraftMission::Enter),
+            enter_idle_mode: false,
+            scatter: false,
+            delegate_to_base_guard: false,
+            delay: HuntDelay::Ticks(1),
+            return_immediately: true,
+        };
+    }
+
+    if context.target_is_legal {
+        return AircraftGuardPlan {
+            destination: None,
+            clear_target: false,
+            target_juicy_threat: false,
+            mission_to_assign: Some(AircraftMission::Attack),
+            enter_idle_mode: false,
+            scatter: false,
+            delegate_to_base_guard: false,
+            delay: HuntDelay::Ticks(1),
+            return_immediately: true,
+        };
+    }
+
+    if !context.weapon_is_equipped {
+        return AircraftGuardPlan {
+            destination: None,
+            clear_target: false,
+            target_juicy_threat: false,
+            mission_to_assign: None,
+            enter_idle_mode: false,
+            scatter: false,
+            delegate_to_base_guard: false,
+            delay: HuntDelay::Ticks(context.ticks_per_second.saturating_mul(3)),
+            return_immediately: true,
+        };
+    }
+
+    if context.height_is_grounded && !context.in_radio_contact {
+        return AircraftGuardPlan {
+            destination: None,
+            clear_target: false,
+            target_juicy_threat: false,
+            mission_to_assign: None,
+            enter_idle_mode: false,
+            scatter: context.scatter_is_allowed,
+            delegate_to_base_guard: false,
+            delay: HuntDelay::Ticks(context.ticks_per_second.saturating_mul(3)),
+            return_immediately: true,
+        };
+    }
+
+    if !context.house_is_attacked && context.juicy_target_is_legal {
+        return AircraftGuardPlan {
+            destination: None,
+            clear_target: false,
+            target_juicy_threat: true,
+            mission_to_assign: Some(AircraftMission::Attack),
+            enter_idle_mode: false,
+            scatter: false,
+            delegate_to_base_guard: false,
+            delay: normal,
+            return_immediately: false,
+        };
+    }
+
+    AircraftGuardPlan {
+        destination: None,
+        clear_target: false,
+        target_juicy_threat: false,
+        mission_to_assign: None,
+        enter_idle_mode: false,
+        scatter: false,
+        delegate_to_base_guard: true,
+        delay: HuntDelay::Ticks(context.base_guard_delay),
+        return_immediately: true,
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftGuardAreaContext {
+    pub height: i32,
+    pub flight_level: i32,
+    pub team_is_valid: bool,
+    pub house_is_human: bool,
+    pub height_is_grounded: bool,
+    pub in_radio_contact: bool,
+    pub scatter_is_allowed: bool,
+    pub target_is_legal: bool,
+    pub ticks_per_second: i32,
+    pub base_guard_area_delay: i32,
+}
+
+pub fn aircraft_mission_guard_area(context: AircraftGuardAreaContext) -> AircraftGuardPlan {
+    if context.height == context.flight_level {
+        return AircraftGuardPlan {
+            destination: None,
+            clear_target: false,
+            target_juicy_threat: false,
+            mission_to_assign: None,
+            enter_idle_mode: !context.team_is_valid,
+            scatter: false,
+            delegate_to_base_guard: false,
+            delay: HuntDelay::Ticks(1),
+            return_immediately: true,
+        };
+    }
+    if context.house_is_human {
+        return AircraftGuardPlan {
+            destination: None,
+            clear_target: false,
+            target_juicy_threat: false,
+            mission_to_assign: None,
+            enter_idle_mode: false,
+            scatter: false,
+            delegate_to_base_guard: false,
+            delay: HuntDelay::Ticks(context.ticks_per_second),
+            return_immediately: true,
+        };
+    }
+    if context.height_is_grounded && !context.in_radio_contact {
+        return AircraftGuardPlan {
+            destination: None,
+            clear_target: false,
+            target_juicy_threat: false,
+            mission_to_assign: None,
+            enter_idle_mode: false,
+            scatter: context.scatter_is_allowed,
+            delegate_to_base_guard: false,
+            delay: HuntDelay::Ticks(context.ticks_per_second.saturating_mul(3)),
+            return_immediately: true,
+        };
+    }
+    if context.target_is_legal {
+        return AircraftGuardPlan {
+            destination: None,
+            clear_target: false,
+            target_juicy_threat: false,
+            mission_to_assign: Some(AircraftMission::Attack),
+            enter_idle_mode: false,
+            scatter: false,
+            delegate_to_base_guard: false,
+            delay: HuntDelay::Ticks(1),
+            return_immediately: true,
+        };
+    }
+    AircraftGuardPlan {
+        destination: None,
+        clear_target: false,
+        target_juicy_threat: false,
+        mission_to_assign: None,
+        enter_idle_mode: false,
+        scatter: false,
+        delegate_to_base_guard: true,
+        delay: HuntDelay::Ticks(context.base_guard_area_delay),
+        return_immediately: true,
+    }
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -3764,6 +4052,146 @@ mod tests {
         assert!(!idle.mark_up_before_physics);
         let queued = aircraft_movement_ai(true, true, false, 10, true);
         assert!(!queued.assign_move_mission);
+    }
+
+    fn guard_context() -> AircraftGuardContext {
+        AircraftGuardContext {
+            height: 10, flight_level: 100, team_is_valid: false,
+            navcom_is_legal: false, has_primary_weapon: true,
+            house_is_human: false, house_available_money: 0,
+            health_ratio: Fixed16::ONE, condition_yellow: Fixed16::from_ratio(1, 2),
+            in_radio_contact: false, height_is_grounded: false,
+            contact_is_repair_building: false, repair_building_available: false,
+            ammo: 5, weapon_is_equipped: true, helipad_available: false,
+            target_is_legal: false, scatter_is_allowed: true,
+            house_is_attacked: true, juicy_target_is_legal: false,
+            ticks_per_second: 15, normal_delay: 5, base_guard_delay: 7,
+        }
+    }
+
+    #[test]
+    fn guard_flight_level_team_and_weaponless_branches_return_early() {
+        let team_nav = aircraft_mission_guard(AircraftGuardContext {
+            height: 100, team_is_valid: true, navcom_is_legal: true,
+            ..guard_context()
+        });
+        assert_eq!(team_nav.mission_to_assign, Some(AircraftMission::Move));
+        assert_eq!(team_nav.delay, HuntDelay::Ticks(5));
+
+        let weaponless = aircraft_mission_guard(AircraftGuardContext {
+            height: 100, has_primary_weapon: false, ..guard_context()
+        });
+        assert_eq!(weaponless.mission_to_assign, Some(AircraftMission::Move));
+        assert!(matches!(weaponless.destination, Some(IdleModeDestination::GoodLandingZone(_))));
+
+        let armed_idle = aircraft_mission_guard(AircraftGuardContext {
+            height: 100, has_primary_weapon: true, ..guard_context()
+        });
+        assert!(armed_idle.enter_idle_mode);
+        assert_eq!(armed_idle.delay, HuntDelay::Ticks(1));
+    }
+
+    #[test]
+    fn guard_player_house_waits_without_running_ai_guard_search() {
+        let player = aircraft_mission_guard(AircraftGuardContext {
+            house_is_human: true, ticks_per_second: 15, ..guard_context()
+        });
+        assert_eq!(player.delay, HuntDelay::Ticks(5));
+        assert!(!player.delegate_to_base_guard);
+        assert!(!player.enter_idle_mode);
+    }
+
+    #[test]
+    fn guard_prioritizes_repair_then_rearm_then_current_target() {
+        let repair = aircraft_mission_guard(AircraftGuardContext {
+            house_available_money: 100,
+            health_ratio: Fixed16::from_ratio(1, 4),
+            condition_yellow: Fixed16::from_ratio(1, 2),
+            repair_building_available: true,
+            target_is_legal: true,
+            ..guard_context()
+        });
+        assert_eq!(repair.mission_to_assign, Some(AircraftMission::Enter));
+        assert!(repair.clear_target);
+
+        let rearm = aircraft_mission_guard(AircraftGuardContext {
+            ammo: 0, weapon_is_equipped: true, helipad_available: true,
+            target_is_legal: true, ..guard_context()
+        });
+        assert_eq!(rearm.mission_to_assign, Some(AircraftMission::Enter));
+
+        let attack = aircraft_mission_guard(AircraftGuardContext {
+            target_is_legal: true, ..guard_context()
+        });
+        assert_eq!(attack.mission_to_assign, Some(AircraftMission::Attack));
+    }
+
+    #[test]
+    fn guard_transport_no_weapon_and_grounded_helicopter_scatter_delays_match() {
+        let transport = aircraft_mission_guard(AircraftGuardContext {
+            weapon_is_equipped: false, ticks_per_second: 15, ..guard_context()
+        });
+        assert_eq!(transport.delay, HuntDelay::Ticks(45));
+        assert!(!transport.scatter);
+
+        let grounded = aircraft_mission_guard(AircraftGuardContext {
+            height: 0, height_is_grounded: true, in_radio_contact: false,
+            ticks_per_second: 15, ..guard_context()
+        });
+        assert!(grounded.scatter);
+        assert_eq!(grounded.delay, HuntDelay::Ticks(45));
+    }
+
+    #[test]
+    fn guard_hunts_juicy_targets_only_when_house_is_not_attacked() {
+        let juicy = aircraft_mission_guard(AircraftGuardContext {
+            house_is_attacked: false, juicy_target_is_legal: true, ..guard_context()
+        });
+        assert!(juicy.target_juicy_threat);
+        assert_eq!(juicy.mission_to_assign, Some(AircraftMission::Attack));
+        assert!(!juicy.return_immediately);
+        let attacked = aircraft_mission_guard(AircraftGuardContext {
+            house_is_attacked: true, juicy_target_is_legal: true, ..guard_context()
+        });
+        assert!(attacked.delegate_to_base_guard);
+    }
+
+    #[test]
+    fn guard_area_respects_height_team_human_scatter_and_attack_order() {
+        let high_team = aircraft_mission_guard_area(AircraftGuardAreaContext {
+            height: 100, flight_level: 100, team_is_valid: true,
+            house_is_human: false, height_is_grounded: false, in_radio_contact: false,
+            scatter_is_allowed: true, target_is_legal: true, ticks_per_second: 15,
+            base_guard_area_delay: 7,
+        });
+        assert!(!high_team.enter_idle_mode);
+        assert_eq!(high_team.delay, HuntDelay::Ticks(1));
+
+        let human = aircraft_mission_guard_area(AircraftGuardAreaContext {
+            height: 10, flight_level: 100, team_is_valid: false,
+            house_is_human: true, height_is_grounded: false, in_radio_contact: false,
+            scatter_is_allowed: true, target_is_legal: true, ticks_per_second: 15,
+            base_guard_area_delay: 7,
+        });
+        assert_eq!(human.delay, HuntDelay::Ticks(15));
+        assert_eq!(human.mission_to_assign, None);
+
+        let grounded = aircraft_mission_guard_area(AircraftGuardAreaContext {
+            height: 0, flight_level: 100, team_is_valid: false,
+            house_is_human: false, height_is_grounded: true, in_radio_contact: false,
+            scatter_is_allowed: true, target_is_legal: true, ticks_per_second: 15,
+            base_guard_area_delay: 7,
+        });
+        assert!(grounded.scatter);
+        assert_eq!(grounded.delay, HuntDelay::Ticks(45));
+
+        let attack = aircraft_mission_guard_area(AircraftGuardAreaContext {
+            height: 50, flight_level: 100, team_is_valid: false,
+            house_is_human: false, height_is_grounded: false, in_radio_contact: true,
+            scatter_is_allowed: false, target_is_legal: true, ticks_per_second: 15,
+            base_guard_area_delay: 7,
+        });
+        assert_eq!(attack.mission_to_assign, Some(AircraftMission::Attack));
     }
 
     #[test]
