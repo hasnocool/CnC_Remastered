@@ -1,6 +1,8 @@
 //! Checked readers and compatibility codecs for legacy game data.
 
 pub mod adpcm;
+pub mod base64;
+pub mod base64_streams;
 pub mod binary;
 pub mod crc32;
 pub mod crc_streams;
