@@ -1219,6 +1219,133 @@ pub fn aircraft_fire_at_plan(
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct LandingTakeoffAiPlan {
+    pub height: i32,
+    pub is_landing: bool,
+    pub is_taking_off: bool,
+    pub speed_override: Option<i32>,
+    pub clear_navcom: bool,
+    pub scatter: bool,
+    pub destroyed: bool,
+    pub remove_before_destruction: bool,
+    pub redraw_mark_count: u8,
+    pub remove_from_old_layer: bool,
+    pub submit_to_new_layer: bool,
+    pub establish_tether: bool,
+    pub remove_tether: bool,
+    pub perform_look: bool,
+    pub radio_over_out: bool,
+    pub takeoff_started_due_to_blocked_landing_zone: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LandingTakeoffAiInput {
+    pub door_is_closed: bool,
+    pub is_landing: bool,
+    pub is_taking_off: bool,
+    pub height: i32,
+    pub pixel_to_lepton_step: i32,
+    pub flight_level: i32,
+    pub fixed_wing: bool,
+    pub mission_is_enter: bool,
+    pub old_layer_is_ground: bool,
+    pub current_cell_matches_navcom: bool,
+    pub navcom_is_legal: bool,
+    pub navcom_targets_contact_object: bool,
+    pub in_radio_contact: bool,
+    pub im_in_reply_was_roger: bool,
+    pub landing_zone_is_clear: bool,
+    pub navcom_differs_from_contact: bool,
+}
+
+/// Port of AircraftClass::Landing_Takeoff_AI. The layer resolver is evaluated
+/// after the height/flag changes, mirroring In_Which_Layer(); the caller applies
+/// returned map, radio, damage and rendering operations on its simulation thread.
+pub fn landing_takeoff_ai<F>(
+    input: LandingTakeoffAiInput,
+    mut new_layer_is_ground: F,
+) -> LandingTakeoffAiPlan
+where
+    F: FnMut(i32, bool, bool) -> bool,
+{
+    let mut plan = LandingTakeoffAiPlan {
+        height: input.height,
+        is_landing: input.is_landing,
+        is_taking_off: input.is_taking_off,
+        ..LandingTakeoffAiPlan::default()
+    };
+    if !input.door_is_closed || (!input.is_landing && !input.is_taking_off) {
+        return plan;
+    }
+
+    if plan.is_landing {
+        plan.redraw_mark_count += 1; // MARK_UP
+        plan.height -= input.pixel_to_lepton_step;
+        if plan.height <= 0 {
+            plan.height = 0;
+            plan.is_landing = false;
+            plan.speed_override = Some(0);
+            if input.current_cell_matches_navcom {
+                plan.clear_navcom = true;
+            }
+            if input.fixed_wing && !input.mission_is_enter {
+                plan.destroyed = true;
+                plan.remove_before_destruction = true;
+                return plan; // The C++ method returns before MARK_DOWN.
+            }
+            if input.navcom_is_legal
+                && input.navcom_targets_contact_object
+                && input.in_radio_contact
+                && !input.im_in_reply_was_roger
+            {
+                plan.scatter = true;
+            }
+        }
+        plan.redraw_mark_count += 1; // MARK_DOWN
+    }
+
+    if plan.is_taking_off {
+        plan.redraw_mark_count += 1; // MARK_UP
+        plan.height += input.pixel_to_lepton_step;
+        if plan.height >= input.flight_level {
+            plan.height = input.flight_level;
+            plan.is_taking_off = false;
+        }
+        plan.redraw_mark_count += 1; // MARK_DOWN
+    }
+
+    let now_ground = new_layer_is_ground(plan.height, plan.is_landing, plan.is_taking_off);
+    if now_ground != input.old_layer_is_ground {
+        if now_ground && !plan.is_taking_off && !input.fixed_wing {
+            if !input.landing_zone_is_clear {
+                plan.is_taking_off = true;
+                plan.redraw_mark_count += 2; // MARK_UP and MARK_DOWN around the corrective lift.
+                plan.height += input.pixel_to_lepton_step;
+                plan.takeoff_started_due_to_blocked_landing_zone = true;
+                return plan;
+            }
+        }
+
+        plan.remove_from_old_layer = true;
+        plan.submit_to_new_layer = true;
+        if now_ground {
+            plan.clear_navcom = true;
+            plan.establish_tether = true;
+            plan.perform_look = true;
+        } else {
+            plan.remove_tether = true;
+            if input.in_radio_contact
+                && input.navcom_is_legal
+                && input.navcom_differs_from_contact
+            {
+                plan.radio_over_out = true;
+            }
+        }
+    }
+    plan
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -2028,6 +2155,110 @@ mod tests {
         assert!(no_bullet.sight_requests.is_empty());
         assert!(!no_bullet.return_bullet);
         assert_eq!(no_bullet.dropping_bullet_speed, None);
+    }
+
+    #[test]
+    fn landing_takeoff_ai_is_gated_by_closed_door_and_transition_flags() {
+        let input = LandingTakeoffAiInput {
+            door_is_closed: false, is_landing: true, is_taking_off: false,
+            height: 20, pixel_to_lepton_step: 10, flight_level: 100,
+            fixed_wing: false, mission_is_enter: false, old_layer_is_ground: false,
+            current_cell_matches_navcom: false, navcom_is_legal: false,
+            navcom_targets_contact_object: false, in_radio_contact: false,
+            im_in_reply_was_roger: false, landing_zone_is_clear: true,
+            navcom_differs_from_contact: false,
+        };
+        let plan = landing_takeoff_ai(input, |_, _, _| true);
+        assert_eq!(plan.height, 20);
+        assert!(plan.is_landing);
+        assert_eq!(plan.redraw_mark_count, 0);
+        assert!(!plan.submit_to_new_layer);
+        let idle = landing_takeoff_ai(
+            LandingTakeoffAiInput { door_is_closed: true, is_landing: false, is_taking_off: false, ..input },
+            |_, _, _| true,
+        );
+        assert_eq!(idle.redraw_mark_count, 0);
+    }
+
+    #[test]
+    fn fixed_wing_landing_crashes_outside_enter_mission_before_mark_down() {
+        let input = LandingTakeoffAiInput {
+            door_is_closed: true, is_landing: true, is_taking_off: false,
+            height: 5, pixel_to_lepton_step: 10, flight_level: 100,
+            fixed_wing: true, mission_is_enter: false, old_layer_is_ground: false,
+            current_cell_matches_navcom: true, navcom_is_legal: true,
+            navcom_targets_contact_object: true, in_radio_contact: true,
+            im_in_reply_was_roger: false, landing_zone_is_clear: true,
+            navcom_differs_from_contact: false,
+        };
+        let plan = landing_takeoff_ai(input, |_, _, _| true);
+        assert_eq!(plan.height, 0);
+        assert!(!plan.is_landing);
+        assert_eq!(plan.speed_override, Some(0));
+        assert!(plan.clear_navcom);
+        assert!(plan.destroyed);
+        assert!(plan.remove_before_destruction);
+        assert!(!plan.scatter);
+        assert_eq!(plan.redraw_mark_count, 1);
+    }
+
+    #[test]
+    fn helicopter_landing_scatter_occurs_only_when_contact_rejects_im_in() {
+        let input = LandingTakeoffAiInput {
+            door_is_closed: true, is_landing: true, is_taking_off: false,
+            height: 4, pixel_to_lepton_step: 8, flight_level: 100,
+            fixed_wing: false, mission_is_enter: false, old_layer_is_ground: false,
+            current_cell_matches_navcom: false, navcom_is_legal: true,
+            navcom_targets_contact_object: true, in_radio_contact: true,
+            im_in_reply_was_roger: false, landing_zone_is_clear: true,
+            navcom_differs_from_contact: false,
+        };
+        let plan = landing_takeoff_ai(input, |_, _, _| true);
+        assert!(plan.scatter);
+        assert!(!plan.destroyed);
+        assert_eq!(plan.redraw_mark_count, 2);
+    }
+
+    #[test]
+    fn takeoff_height_clamps_to_flight_level_and_unanchors_on_layer_change() {
+        let input = LandingTakeoffAiInput {
+            door_is_closed: true, is_landing: false, is_taking_off: true,
+            height: 95, pixel_to_lepton_step: 10, flight_level: 100,
+            fixed_wing: true, mission_is_enter: false, old_layer_is_ground: true,
+            current_cell_matches_navcom: false, navcom_is_legal: true,
+            navcom_targets_contact_object: false, in_radio_contact: true,
+            im_in_reply_was_roger: false, landing_zone_is_clear: true,
+            navcom_differs_from_contact: true,
+        };
+        let plan = landing_takeoff_ai(input, |height, _, _| height > 0);
+        assert_eq!(plan.height, 100);
+        assert!(!plan.is_taking_off);
+        assert_eq!(plan.redraw_mark_count, 2);
+        assert!(plan.remove_from_old_layer);
+        assert!(plan.submit_to_new_layer);
+        assert!(plan.remove_tether);
+        assert!(plan.radio_over_out);
+        assert!(!plan.establish_tether);
+    }
+
+    #[test]
+    fn unsafe_helicopter_ground_transition_starts_corrective_takeoff_instead() {
+        let input = LandingTakeoffAiInput {
+            door_is_closed: true, is_landing: true, is_taking_off: false,
+            height: 10, pixel_to_lepton_step: 5, flight_level: 100,
+            fixed_wing: false, mission_is_enter: false, old_layer_is_ground: false,
+            current_cell_matches_navcom: false, navcom_is_legal: false,
+            navcom_targets_contact_object: false, in_radio_contact: false,
+            im_in_reply_was_roger: false, landing_zone_is_clear: false,
+            navcom_differs_from_contact: false,
+        };
+        let plan = landing_takeoff_ai(input, |height, _, _| height == 0);
+        assert!(plan.is_landing);
+        assert!(plan.is_taking_off);
+        assert_eq!(plan.height, 10); // landing -5, corrective lift +5
+        assert!(plan.takeoff_started_due_to_blocked_landing_zone);
+        assert!(!plan.remove_from_old_layer);
+        assert_eq!(plan.redraw_mark_count, 4);
     }
 
     #[test]
