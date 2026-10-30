@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **216**
-- Not yet fully ported: **278**
+- Fully ported: **218**
+- Not yet fully ported: **276**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 120 | 155 |
+| `REDALERT/` | 275 | 121 | 154 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 40 | 121 |
+| `TIBERIANDAWN/` | 161 | 41 | 120 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -25,7 +25,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---|---|
 | Complete | `REDALERT/2KEYFRAM.CPP` | rts-formats/src/keyframe.rs — packed keyframe header/table parsing, LCW keyframe decode, XOR key-delta/subframe reconstruction, optional 768-byte palette extraction, cached-shape metadata, frame getters and Red Alert uncompressed-buffer policy/sizing. |
 | Not started | `REDALERT/AADATA.CPP` | — |
-| Not started | `REDALERT/ABSTRACT.CPP` | — |
+| Complete | `REDALERT/ABSTRACT.CPP` | rts-core/src/abstract_object.rs — building-adjusted target distance, RTTI/ID target encoding, 24-byte INI name, Full_Name, ownership mask, identity coordinate fixup, and vtable-preserving Delete_This adapter. CHEAT_KEYS debug dump is not enabled by the pinned project. |
 | Not started | `REDALERT/ADATA.CPP` | — |
 | Complete | `REDALERT/ADPCM.CPP` | rts-formats/src/adpcm.rs — SOS ADPCM type-1 decoder. |
 | Not started | `REDALERT/AIRCRAFT.CPP` | — |
@@ -335,7 +335,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Status | Upstream C++ file | Rust port / notes |
 |---|---|---|
 | Not started | `TIBERIANDAWN/AADATA.CPP` | — |
-| Not started | `TIBERIANDAWN/ABSTRACT.CPP` | — |
+| Complete | `TIBERIANDAWN/ABSTRACT.CPP` | rts-core/src/abstract_object.rs — building-adjusted target distance, 9-byte INI name, Name/Full_Name, RTTI_ABSTRACTTYPE, 0xffff ownership, identity coordinate fixup, and vtable-preserving Delete_This adapter. |
 | Not started | `TIBERIANDAWN/ADATA.CPP` | — |
 | Not started | `TIBERIANDAWN/AIRCRAFT.CPP` | — |
 | Complete | `TIBERIANDAWN/ALLOC.CPP` | No active implementation in the pinned source; all memory allocation, DPMI locking, heap statistics and realloc routines are enclosed by unconditional `#if (0)`. |
