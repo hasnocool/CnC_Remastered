@@ -133,6 +133,90 @@ pub fn counts_as_civ_evac(candidate: Option<CivEvacCandidate>, scenario_tanya_ev
     candidate.is_civilian && !candidate.is_technician
 }
 
+/// Candidate sweep order from AircraftClass::Desired_Load_Dir. FacingType is
+/// N=0, NE=1, E=2, SE=3, S=4, SW=5, W=6, NW=7.
+pub const LOAD_APPROACH_FACING_ORDER: [u8; 8] = [4, 4, 5, 3, 6, 2, 7, 1];
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LoadApproachResult {
+    /// Last candidate assigned to the C++ moveto reference, whether or not a
+    /// usable destination was found.
+    pub move_to_cell: u32,
+    /// The source always returns DIR_N, including when no candidate is usable.
+    pub direction: DirType,
+    pub found: bool,
+}
+
+/// Port of AircraftClass::Desired_Load_Dir with map access injected by the
+/// engine. The callbacks retain the source's map-check short-circuit order.
+pub fn desired_load_approach<A, R, C>(
+    center_cell: u32,
+    passenger_cell: u32,
+    mut adjacent_cell: A,
+    mut in_radar: R,
+    mut is_clear_to_move: C,
+) -> LoadApproachResult
+where
+    A: FnMut(u32, u8) -> u32,
+    R: FnMut(u32) -> bool,
+    C: FnMut(u32) -> bool,
+{
+    let mut move_to_cell = center_cell;
+    for facing in LOAD_APPROACH_FACING_ORDER {
+        move_to_cell = adjacent_cell(center_cell, facing);
+        if in_radar(move_to_cell)
+            && (passenger_cell == move_to_cell || is_clear_to_move(move_to_cell))
+        {
+            return LoadApproachResult {
+                move_to_cell,
+                direction: DirType::NORTH,
+                found: true,
+            };
+        }
+    }
+    LoadApproachResult {
+        move_to_cell,
+        direction: DirType::NORTH,
+        found: false,
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DestinationAssignmentPlan {
+    /// The early dest == NavCom return suppresses even the base-class call.
+    pub delegate_to_foot_class: bool,
+    /// Whether the source calls Process_Take_Off before delegating.
+    pub process_takeoff: bool,
+    /// Whether the source clears Status to zero after requesting takeoff.
+    pub clear_status: bool,
+}
+
+/// Pure decision portion of AircraftClass::Assign_Destination. Actual takeoff
+/// and FootClass destination updates remain engine services.
+pub const fn destination_assignment_plan(
+    destination_is_legal: bool,
+    destination_matches_navcom: bool,
+    navcom_is_legal: bool,
+    fixed_wing: bool,
+    is_landing: bool,
+) -> DestinationAssignmentPlan {
+    if destination_matches_navcom {
+        return DestinationAssignmentPlan {
+            delegate_to_foot_class: false,
+            process_takeoff: false,
+            clear_status: false,
+        };
+    }
+    let process_takeoff = destination_is_legal
+        && fixed_wing
+        && (is_landing || navcom_is_legal);
+    DestinationAssignmentPlan {
+        delegate_to_foot_class: true,
+        process_takeoff,
+        clear_status: process_takeoff,
+    }
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -189,6 +273,76 @@ mod tests {
         assert_eq!(spied_by_flags(0x03, 1, true, true, 0x08), 0x03);
         assert_eq!(spied_by_flags(0x03, 0, false, true, 0x08), 0x03);
         assert_eq!(spied_by_flags(0x03, 0, true, false, 0x08), 0x03);
+    }
+
+    #[test]
+    fn desired_load_approach_preserves_exact_sweep_order_and_short_circuiting() {
+        assert_eq!(LOAD_APPROACH_FACING_ORDER, [4, 4, 5, 3, 6, 2, 7, 1]);
+        let mut observed = Vec::new();
+        let result = desired_load_approach(
+            100,
+            77,
+            |center, facing| {
+                observed.push(facing);
+                center + u32::from(facing)
+            },
+            |cell| cell < 200,
+            |_| true,
+        );
+        assert!(result.found);
+        assert_eq!(result.move_to_cell, 104);
+        assert_eq!(result.direction, DirType::NORTH);
+        assert_eq!(observed, [4]);
+    }
+
+    #[test]
+    fn desired_load_approach_tests_passenger_cell_only_after_radar_check() {
+        let mut clear_checks = 0;
+        let result = desired_load_approach(
+            100,
+            104,
+            |center, facing| center + u32::from(facing),
+            |cell| cell == 104,
+            |_| { clear_checks += 1; true },
+        );
+        assert!(result.found);
+        assert_eq!(result.move_to_cell, 104);
+        assert_eq!(clear_checks, 0);
+    }
+
+    #[test]
+    fn failed_load_approach_leaves_last_candidate_and_returns_north() {
+        let mut observed = Vec::new();
+        let result = desired_load_approach(
+            100,
+            999,
+            |center, facing| { observed.push(facing); center + u32::from(facing) },
+            |_| false,
+            |_| panic!("clear-to-move must short-circuit when outside radar"),
+        );
+        assert!(!result.found);
+        assert_eq!(observed, LOAD_APPROACH_FACING_ORDER);
+        assert_eq!(result.move_to_cell, 101);
+        assert_eq!(result.direction, DirType::NORTH);
+    }
+
+    #[test]
+    fn destination_assignment_obeys_early_return_and_takeoff_rules() {
+        let unchanged = destination_assignment_plan(true, true, true, true, true);
+        assert!(!unchanged.delegate_to_foot_class);
+        assert!(!unchanged.process_takeoff);
+
+        let fixed_wing = destination_assignment_plan(true, false, true, true, false);
+        assert!(fixed_wing.delegate_to_foot_class);
+        assert!(fixed_wing.process_takeoff);
+        assert!(fixed_wing.clear_status);
+
+        let landing_rotor = destination_assignment_plan(true, false, false, false, true);
+        assert!(landing_rotor.delegate_to_foot_class);
+        assert!(!landing_rotor.process_takeoff);
+
+        let invalid = destination_assignment_plan(false, false, true, true, true);
+        assert!(!invalid.process_takeoff);
     }
 
     #[test]
