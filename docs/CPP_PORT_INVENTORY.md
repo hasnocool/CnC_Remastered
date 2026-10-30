@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **150**
-- Not yet fully ported: **344**
+- Fully ported: **151**
+- Not yet fully ported: **343**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -144,7 +144,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/IPXMGR.CPP` | — |
 | Complete | `REDALERT/ITABLE.CPP` | rts-formats/src/adpcm.rs — exact 1,424-entry ADPCM index table. |
 | Not started | `REDALERT/JSHELL.CPP` | — |
-| Not started | `REDALERT/KEY.CPP` | — |
+| Complete | `REDALERT/KEY.CPP` | rts-core/src/keyboard_runtime.rs — 256-element ring buffer, key/mouse event packing, modifier capture, ASCII translation adapter, async key-state queries, double-clear/system pump and disabled window message handler. |
 | Complete | `REDALERT/KEYBOARD.CPP` | rts-core/src/keyboard.rs — 256-slot ring buffer, 255-entry capacity, modifier/release capture, ASCII translation, mouse coordinate triples, double-click expansion, async key state and message pumping. |
 | Not started | `REDALERT/LAYER.CPP` | — |
 | Complete | `REDALERT/LCW.CPP` | rts-formats/src/lcw.rs — LCW block decompression. |
