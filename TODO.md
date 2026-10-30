@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 259 C++ translation units with source-specific tests.
+- [ ] Port the remaining 257 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -270,3 +270,5 @@
 - [x] Port REDALERT/FACE.CPP Desired_Facing8/256, DirType values and wrapping direction arithmetic using its exact ratio/diagonal logic.
 
 - [x] Port REDALERT/DOOR.CPP and TIBERIANDAWN/DOOR.CPP door constructor, open/close state changes, StageClass control adapter, completion transition and reverse closing frame calculation.
+
+- [x] Port REDALERT/INTRO.CPP and TIBERIANDAWN/INTRO.CPP active Choose_Side branch assignments, confirming OBSOLETE/#if(0)/DEMO guards against pinned project definitions.
