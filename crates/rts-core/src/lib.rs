@@ -1,5 +1,6 @@
 //! Platform-independent compatibility primitives for the two RTS variants.
 
+pub mod abstract_object;
 pub mod bool_vector;
 pub mod clock;
 pub mod coordinate;
