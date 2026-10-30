@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 82 | 193 |
+| `REDALERT/` | 275 | 83 | 192 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 17 | 144 |
+| `TIBERIANDAWN/` | 161 | 18 | 143 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -229,7 +229,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/SEQCONN.CPP` | — |
 | Not started | `REDALERT/SESSION.CPP` | — |
 | Complete | `REDALERT/SHA.CPP` | rts-formats/src/sha1.rs — streaming SHA-1 engine and non-destructive result snapshots. |
-| Not started | `REDALERT/SHAPEBTN.CPP` | — |
+| Complete | `REDALERT/SHAPEBTN.CPP` | rts-core/src/shape_button.rs — shape assignment, first-frame bounds, disabled/pressed/reflect-state frame selection and conditional mouse hide/show. |
 | Complete | `REDALERT/SHAPIPE.CPP` | rts-formats/src/sha_streams.rs — non-transforming SHA push adapter |
 | Complete | `REDALERT/SHASTRAW.CPP` | rts-formats/src/sha_streams.rs — SHA pull adapter hashing returned bytes |
 | Not started | `REDALERT/SIDEBAR.CPP` | — |
@@ -462,7 +462,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/SCROLL.CPP` | rts-core/src/scroll.rs — active constructor/countdown start, autoscroll toggle and HelpClass::AI delegation; map-scroll algorithm is #if 0. |
 | Not started | `TIBERIANDAWN/SDATA.CPP` | — |
 | Not started | `TIBERIANDAWN/SEQCONN.CPP` | — |
-| Not started | `TIBERIANDAWN/SHAPEBTN.CPP` | — |
+| Complete | `TIBERIANDAWN/SHAPEBTN.CPP` | rts-core/src/shape_button.rs — shared shape-button drawing and state selection. |
 | Not started | `TIBERIANDAWN/SIDEBAR.CPP` | — |
 | Not started | `TIBERIANDAWN/SIDEBARGlyphx.CPP` | — |
 | Not started | `TIBERIANDAWN/SLIDER.CPP` | — |
