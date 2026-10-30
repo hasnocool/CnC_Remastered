@@ -196,12 +196,12 @@ mod tests {
     }
 
     #[test]
-    fn growing_after_shrink_clears_bits_that_become_logically_new() {
+    fn growing_after_shrink_clears_newly_exposed_bits() {
         let mut vector = BooleanVector::new(8);
         vector.set_bit(7, true);
         vector.resize(7);
         vector.resize(8);
-        assert_eq!(vector.get(7), Some(true));
+        assert_eq!(vector.get(7), Some(false));
     }
 
     #[test]
