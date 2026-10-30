@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 356 C++ translation units with source-specific tests.
+- [ ] Port the remaining 355 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -162,3 +162,5 @@
 - [x] Record REDALERT/MPMGRW.CPP as inactive because its complete implementation is #if (0)-disabled.
 
 - [x] Port both FIELD.CPP variants' scalar/string/chunk constructors and Host_To_Net/Net_To_Host conversion behavior.
+
+- [x] Port REDALERT/TRACKER.CPP ordered target detachment, singleton cleanup and dependent trigger recursion.
