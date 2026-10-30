@@ -29,9 +29,9 @@ impl RedAlertGameControlsFeatures {
     pub const fn standard() -> Self { Self { wolapi_compiled: false, wolapi_connected: false } }
     pub const fn wolapi(connected: bool) -> Self { Self { wolapi_compiled: true, wolapi_connected: connected } }
     pub const fn show_wolapi(self) -> bool { self.wolapi_compiled && self.wolapi_connected }
-    pub const fn button_count(self) -> usize { if self.show_wolapi() { 6 } else { 5 } }
+    pub const fn button_count(self) -> usize { if self.wolapi_compiled { 6 } else { 5 } }
     pub const fn last_focus_index(self) -> usize { self.button_count() - 1 }
-    pub const fn ok_button_id(self) -> i32 { if self.show_wolapi() { BUTTON_OK } else { BUTTON_WOLAPI } }
+    pub const fn ok_button_id(self) -> i32 { if self.wolapi_compiled { BUTTON_OK } else { BUTTON_WOLAPI } }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -253,7 +253,7 @@ impl RedAlertGameControlsDialog {
         match index {
             2 => Some(BUTTON_VISUAL),
             3 => Some(BUTTON_SOUND),
-            4 if self.features.show_wolapi() => Some(BUTTON_WOLAPI),
+            4 if self.features.wolapi_compiled && self.features.show_wolapi() => Some(BUTTON_WOLAPI),
             value if value == self.features.last_focus_index() => Some(self.features.ok_button_id()),
             _ => None,
         }
@@ -270,12 +270,12 @@ impl RedAlertGameControlsDialog {
             } else {
                 self.current_button - 1
             };
-            if !self.features.show_wolapi() && self.current_button == 4 {
+            if self.features.wolapi_compiled && !self.features.show_wolapi() && self.current_button == 4 {
                 self.current_button = 3;
             }
         } else {
             self.current_button += 1;
-            if !self.features.show_wolapi() && self.current_button == 4 {
+            if self.features.wolapi_compiled && !self.features.show_wolapi() && self.current_button == 4 {
                 self.current_button = 5;
             }
             if self.current_button > self.features.last_focus_index() {
@@ -503,9 +503,9 @@ mod tests {
         let normal = RedAlertGameControlsLayout::new(320, 200, RedAlertLocale::Default, RedAlertGameControlsFeatures::standard(), 40);
         let german = RedAlertGameControlsLayout::new(320, 200, RedAlertLocale::German, RedAlertGameControlsFeatures::standard(), 40);
         assert_eq!(german.speed_y, normal.speed_y - 4);
-        assert_eq!(german.scroll_y, normal.scroll_y - 4);
-        assert_eq!(german.visual_y, normal.visual_y - 4);
-        assert_eq!(german.sound_y, normal.sound_y - 4);
+        assert_eq!(german.scroll_y, normal.scroll_y - 8);
+        assert_eq!(german.visual_y, normal.visual_y - 8);
+        assert_eq!(german.sound_y, normal.sound_y - 8);
     }
 
     #[test]
@@ -519,8 +519,9 @@ mod tests {
         assert_eq!(layout.wol_y, Some(154));
         assert_eq!(features.ok_button_id(), BUTTON_OK);
         let disconnected = RedAlertGameControlsFeatures::wolapi(false);
-        assert_eq!(disconnected.button_count(), 5);
-        assert_eq!(disconnected.ok_button_id(), BUTTON_WOLAPI);
+        assert_eq!(disconnected.button_count(), 6);
+        assert_eq!(disconnected.last_focus_index(), 5);
+        assert_eq!(disconnected.ok_button_id(), BUTTON_OK);
         assert_eq!(RedAlertGameControlsLayout::new(320, 200, RedAlertLocale::Default, disconnected, 40).wol_y, None);
     }
 
@@ -608,7 +609,12 @@ mod tests {
         assert_eq!(standard.step(RedAlertGameSession::Normal, false, false, RedAlertGameInput::Down, false).current_button, 4);
         assert_eq!(standard.step(RedAlertGameSession::Normal, false, false, RedAlertGameInput::Down, false).current_button, 0);
         standard.current_button = 0;
-        assert_eq!(standard.step(RedAlertGameSession::Normal, false, false, RedAlertGameInput::Up, false).current_button, 3);
+        assert_eq!(standard.step(RedAlertGameSession::Normal, false, false, RedAlertGameInput::Up, false).current_button, 4);
+        let disconnected = RedAlertGameControlsFeatures::wolapi(false);
+        let mut hidden_wol = dialog(RedAlertLocale::Default, disconnected);
+        hidden_wol.current_button = 3;
+        assert_eq!(hidden_wol.step(RedAlertGameSession::Normal, false, false, RedAlertGameInput::Down, false).current_button, 5);
+        assert_eq!(hidden_wol.step(RedAlertGameSession::Normal, false, false, RedAlertGameInput::Up, false).current_button, 3);
         let mut with_wol = dialog(RedAlertLocale::Default, RedAlertGameControlsFeatures::wolapi(true));
         with_wol.current_button = 3;
         assert_eq!(with_wol.step(RedAlertGameSession::Normal, false, false, RedAlertGameInput::Down, false).current_button, 4);
