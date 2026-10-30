@@ -133,11 +133,62 @@ pub fn counts_as_civ_evac(candidate: Option<CivEvacCandidate>, scenario_tanya_ev
     candidate.is_civilian && !candidate.is_technician
 }
 
+/// Port of AircraftClass::Fire_Direction: fire from the current body facing.
+pub const fn fire_direction(secondary_facing: DirType) -> DirType {
+    secondary_facing
+}
+
+/// Port of AircraftClass::Look's sight-range selection. Grounded aircraft
+/// always request a one-cell reveal, regardless of their configured sight.
+pub fn look_sight_range(configured_sight: i32, height: i32) -> Option<i32> {
+    let range = if height == 0 { 1 } else { configured_sight };
+    (range != 0).then_some(range)
+}
+
+/// Port of AircraftClass::Spied_By. A landed aircraft inherits its contacted
+/// helipad's spy flags only while physically in radio contact with that exact
+/// building; airborne and non-contacting aircraft keep FootClass flags.
+pub const fn spied_by_flags(
+    foot_flags: u32,
+    height: i32,
+    in_radio_contact: bool,
+    current_building_is_contact: bool,
+    building_flags: u32,
+) -> u32 {
+    if height == 0 && in_radio_contact && current_building_is_contact {
+        foot_flags | building_flags
+    } else {
+        foot_flags
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     fn candidate(kind: EvacueeKind, civilian: bool, technician: bool) -> CivEvacCandidate {
         CivEvacCandidate { is_infantry: true, kind, is_civilian: civilian, is_technician: technician }
+    }
+
+    #[test]
+    fn fire_direction_is_the_secondary_body_facing() {
+        let facing = DirType(173);
+        assert_eq!(fire_direction(facing), facing);
+    }
+
+    #[test]
+    fn grounded_aircraft_always_request_one_cell_of_sight() {
+        assert_eq!(look_sight_range(7, 0), Some(1));
+        assert_eq!(look_sight_range(0, 0), Some(1));
+        assert_eq!(look_sight_range(7, 1), Some(7));
+        assert_eq!(look_sight_range(0, 1), None);
+    }
+
+    #[test]
+    fn spy_flags_are_inherited_only_from_the_contacted_landed_helipad() {
+        assert_eq!(spied_by_flags(0x03, 0, true, true, 0x08), 0x0B);
+        assert_eq!(spied_by_flags(0x03, 1, true, true, 0x08), 0x03);
+        assert_eq!(spied_by_flags(0x03, 0, false, true, 0x08), 0x03);
+        assert_eq!(spied_by_flags(0x03, 0, true, false, 0x08), 0x03);
     }
 
     #[test]
