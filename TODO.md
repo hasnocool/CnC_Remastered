@@ -164,3 +164,6 @@
 - [x] Port both FIELD.CPP variants' scalar/string/chunk constructors and Host_To_Net/Net_To_Host conversion behavior.
 
 - [x] Port REDALERT/TRACKER.CPP ordered target detachment, singleton cleanup and dependent trigger recursion.
+
+- [x] Port TIBERIANDAWN/RULES.CPP DifficultyClass and RulesClass default constructor values.
+- [x] Port TIBERIANDAWN/WIN32LIB/MEM.CPP paragraph pool initialization, allocation/free, ID lookup, LRU/lock/in-use markers, free-block merging, capacity queries and cleanup compaction.
