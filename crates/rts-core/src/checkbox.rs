@@ -12,10 +12,10 @@ pub enum CheckboxDrawOp {
     ShowMouse,
 }
 
-pub const COLOR_DKGREY: u8 = 14;
+pub const COLOR_DKGREY: u8 = 13;
 pub const COLOR_LTGREEN: u8 = 4;
-pub const COLOR_BLACK: u8 = 0;
-pub const LEFT_RELEASE: u32 = 0x0008;
+pub const COLOR_BLACK: u8 = 12;
+pub const LEFT_RELEASE: u32 = 0x0004;
 
 /// Shared ToggleClass-derived geometry and state used by both checkbox types.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
