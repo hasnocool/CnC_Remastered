@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **42**
-- Not yet fully ported: **452**
+- Fully ported: **44**
+- Not yet fully ported: **450**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 40 | 235 |
+| `REDALERT/` | 275 | 42 | 233 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 2 | 159 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
@@ -295,8 +295,8 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WSPIPX.CPP` | — |
 | Not started | `REDALERT/WSPROTO.CPP` | — |
 | Not started | `REDALERT/WSPUDP.CPP` | — |
-| Not started | `REDALERT/XPIPE.CPP` | — |
-| Not started | `REDALERT/XSTRAW.CPP` | — |
+| Complete | `REDALERT/XPIPE.CPP` | rts-formats/src/io_streams.rs — fixed-buffer and file-backed push endpoints |
+| Complete | `REDALERT/XSTRAW.CPP` | rts-formats/src/io_streams.rs — fixed-buffer and file-backed pull endpoints |
 | Not started | `REDALERT/_WSPROTO.CPP` | — |
 
 ### `REDALERT/WIN32LIB/`
