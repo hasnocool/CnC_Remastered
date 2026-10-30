@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 79 | 196 |
+| `REDALERT/` | 275 | 80 | 195 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 15 | 146 |
+| `TIBERIANDAWN/` | 161 | 16 | 145 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -261,7 +261,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/TEVENT.CPP` | — |
 | Not started | `REDALERT/TEXTBTN.CPP` | — |
 | Not started | `REDALERT/THEME.CPP` | — |
-| Not started | `REDALERT/TOGGLE.CPP` | — |
+| Complete | `REDALERT/TOGGLE.CPP` | rts-core/src/toggle.rs — constructor state, forced redraw hit-testing, sticky processing, press capture, toggle-on-release and Red Alert release-inside check. |
 | Not started | `REDALERT/TOOLTIP.CPP` | — |
 | Complete | `REDALERT/TRACKER.CPP` | rts-core/src/tracker.rs — legal-target guard, ordered global registry/singleton detachment, dependent-trigger recursion and deletion. |
 | Not started | `REDALERT/TRIGGER.CPP` | — |
@@ -485,7 +485,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/TERRAIN.CPP` | — |
 | Not started | `TIBERIANDAWN/TEXTBTN.CPP` | — |
 | Not started | `TIBERIANDAWN/THEME.CPP` | — |
-| Not started | `TIBERIANDAWN/TOGGLE.CPP` | — |
+| Complete | `TIBERIANDAWN/TOGGLE.CPP` | rts-core/src/toggle.rs — shared toggle behavior with unsigned hit-testing and Tiberian Dawn release-outside toggle semantics. |
 | Not started | `TIBERIANDAWN/TRIGGER.CPP` | — |
 | Not started | `TIBERIANDAWN/TURRET.CPP` | — |
 | Complete | `TIBERIANDAWN/TXTLABEL.CPP` | rts-core/src/text_label.rs — variant-specific color state, Fancy_Text_Print format and shared clipped text dispatch. |
