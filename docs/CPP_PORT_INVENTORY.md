@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **21**
-- Not yet fully ported: **473**
+- Fully ported: **24**
+- Not yet fully ported: **470**
 - A translation unit is complete only when its active behavior is implemented. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 20 | 255 |
+| `REDALERT/` | 275 | 23 | 252 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 1 | 160 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
@@ -159,10 +159,10 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/LZO1X_D.CPP` | — |
 | Not started | `REDALERT/LZOPIPE.CPP` | — |
 | Not started | `REDALERT/LZOSTRAW.CPP` | — |
-| Not started | `REDALERT/LZW.CPP` | — |
+| Complete | `REDALERT/LZW.CPP` | rts-formats/src/lzw.rs — 12-bit dictionary engine and 16-bit little-endian codewords. |
 | Not started | `REDALERT/LZWOTRAW.CPP` | — |
-| Not started | `REDALERT/LZWPIPE.CPP` | — |
-| Not started | `REDALERT/LZWSTRAW.CPP` | — |
+| Complete | `REDALERT/LZWPIPE.CPP` | rts-formats/src/lzw_blocks.rs — framed push compression/decompression and truncation handling. |
+| Complete | `REDALERT/LZWSTRAW.CPP` | rts-formats/src/lzw_blocks.rs — framed pull compression/decompression and buffered reads. |
 | Not started | `REDALERT/MAP.CPP` | — |
 | Not started | `REDALERT/MAPEDDLG.CPP` | — |
 | Not started | `REDALERT/MAPEDIT.CPP` | — |
