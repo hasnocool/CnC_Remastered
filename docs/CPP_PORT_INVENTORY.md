@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **225**
-- Not yet fully ported: **269**
+- Fully ported: **227**
+- Not yet fully ported: **267**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 124 | 151 |
+| `REDALERT/` | 275 | 125 | 150 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 45 | 116 |
+| `TIBERIANDAWN/` | 161 | 46 | 115 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -110,7 +110,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/FLASHER.CPP` | rts-core/src/flasher.rs — global countdown, IsBlushing parity, per-player countdowns, flashing bitmask and optional debug text. |
 | Complete | `REDALERT/FLY.CPP` | rts-core/src/fly.rs — speed scaling via fixed(speed,256), pixel-quantized movement accumulation, Coord_Move, and edge rollback. |
 | Not started | `REDALERT/FOOT.CPP` | — |
-| Not started | `REDALERT/FUSE.CPP` | — |
+| Complete | `REDALERT/FUSE.CPP` | rts-core/src/fuse.rs — fuse timer/arming countdown, proximity detonation, HeadTo and raw eight-byte timer/arming/coordinate/proximity save/load format. |
 | Not started | `REDALERT/GADGET.CPP` | — |
 | Not started | `REDALERT/GAMEDLG.CPP` | — |
 | Not started | `REDALERT/GAUGE.CPP` | — |
@@ -388,7 +388,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/FLASHER.CPP` | rts-core/src/flasher.rs — shared per-player flashing state implementation. |
 | Complete | `TIBERIANDAWN/FLY.CPP` | rts-core/src/fly.rs — Fixed_To_Cardinal speed conversion and shared flying-object physics. |
 | Not started | `TIBERIANDAWN/FOOT.CPP` | — |
-| Not started | `TIBERIANDAWN/FUSE.CPP` | — |
+| Complete | `TIBERIANDAWN/FUSE.CPP` | rts-core/src/fuse.rs — shared fuse timing and proximity algorithm with identical eight-byte save format; ICON_LEPTON_W is supplied by the caller as a game-definition constant. |
 | Not started | `TIBERIANDAWN/GADGET.CPP` | — |
 | Not started | `TIBERIANDAWN/GAMEDLG.CPP` | — |
 | Not started | `TIBERIANDAWN/GAUGE.CPP` | — |
