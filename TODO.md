@@ -8,12 +8,18 @@
 - [x] Add cell/region addressing foundations and 8-way facing IDs.
 - [x] Add a bounds-checked legacy MIX parser based on upstream `MixFileClass`.
 - [x] Add a deterministic ordered event queue.
+- [x] Port both variants' Sim_Random lookup table and Sim_IRandom routines.
+- [x] Port Red Alert Q16.16 fixed-point C++ implementation.
+- [x] Port Red Alert's legacy CRCEngine rotate-and-add checksum.
 - [x] Add a starter editor document model.
 - [x] Port the map-editor cell metric operations: row-major conversion, 8-way adjacency, and clipping.
 - [x] Port the map-editor standard CRC-32 helper.
 - [ ] Run formatting, tests, and Clippy with an installed Rust toolchain.
 
 ## Milestone 1 — behavior inventory and fixtures
+
+- [x] Inventory all 494 upstream C++ translation units by exact path.
+- [ ] Port the remaining 490 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
