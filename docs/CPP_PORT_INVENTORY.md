@@ -4,18 +4,18 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **46**
-- Not yet fully ported: **448**
+- Fully ported: **49**
+- Not yet fully ported: **445**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 43 | 232 |
+| `REDALERT/` | 275 | 44 | 231 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
-| `TIBERIANDAWN/` | 161 | 2 | 159 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 1 | 31 |
+| `TIBERIANDAWN/` | 161 | 3 | 158 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 2 | 30 |
 
 ## File-by-file coverage
 
@@ -246,7 +246,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/STUB.CPP` | rts-core/src/legacy_stub.rs — exact launcher message. |
 | Not started | `REDALERT/SUPER.CPP` | — |
 | Not started | `REDALERT/SURFACE.CPP` | — |
-| Not started | `REDALERT/Shape.cpp` | — |
+| Complete | `REDALERT/Shape.cpp` | rts-core/src/shape_buffer.rs — shape buffer capacity/configuration; caller retains memory ownership. |
 | Not started | `REDALERT/TAB.CPP` | — |
 | Not started | `REDALERT/TACTION.CPP` | — |
 | Not started | `REDALERT/TARGET.CPP` | — |
@@ -472,7 +472,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/STARTUP.CPP` | — |
 | Not started | `TIBERIANDAWN/STATS.CPP` | — |
 | Not started | `TIBERIANDAWN/SUPER.CPP` | — |
-| Not started | `TIBERIANDAWN/Shape.cpp` | — |
+| Complete | `TIBERIANDAWN/Shape.cpp` | rts-core/src/shape_buffer.rs — shared upstream implementation. |
 | Not started | `TIBERIANDAWN/TAB.CPP` | — |
 | Not started | `TIBERIANDAWN/TARCOM.CPP` | — |
 | Not started | `TIBERIANDAWN/TARGET.CPP` | — |
@@ -516,7 +516,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/WIN32LIB/KEYBOARD.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/LOAD.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/LOADFONT.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/LOADPAL.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/LOADPAL.CPP` | rts-formats/src/palette.rs — 768-byte IBM palette loading contract. |
 | Not started | `TIBERIANDAWN/WIN32LIB/MEM.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/MORPHPAL.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/MOUSEWW.CPP` | — |
