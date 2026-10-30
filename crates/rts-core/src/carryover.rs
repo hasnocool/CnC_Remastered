@@ -69,7 +69,7 @@ impl CarryoverRecord {
 }
 
 pub trait CarryoverWorld {
-    type Object;
+    type Object: Copy;
     fn create_unit(&mut self, type_id: u16, house: i32) -> Option<Self::Object>;
     fn create_infantry(&mut self, type_id: u16, house: i32) -> Option<Self::Object>;
     fn create_building(&mut self, type_id: u16, house: i32) -> Option<Self::Object>;
