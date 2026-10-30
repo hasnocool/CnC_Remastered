@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **231**
-- Not yet fully ported: **263**
+- Fully ported: **232**
+- Not yet fully ported: **262**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 129 | 146 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 46 | 115 |
+| `TIBERIANDAWN/` | 161 | 47 | 114 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -474,7 +474,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/SUPER.CPP` | — |
 | Complete | `TIBERIANDAWN/Shape.cpp` | rts-core/src/shape_buffer.rs — shared upstream implementation. |
 | Not started | `TIBERIANDAWN/TAB.CPP` | — |
-| Not started | `TIBERIANDAWN/TARCOM.CPP` | — |
+| Complete | `TIBERIANDAWN/TARCOM.CPP` | rts-core/src/tarcom.rs — parent turret AI delegation, primary/secondary weapon selection, fire/sound handling, facing and locked-turret rules, Flame Tank direction snapping, cloak/uncloak handling, and legal-target hull/turret alignment. CHEAT_KEYS Debug_Dump is disabled by the pinned project. |
 | Not started | `TIBERIANDAWN/TARGET.CPP` | — |
 | Not started | `TIBERIANDAWN/TCPIP.CPP` | — |
 | Not started | `TIBERIANDAWN/TDATA.CPP` | — |
