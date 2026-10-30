@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **235**
-- Not yet fully ported: **259**
+- Fully ported: **237**
+- Not yet fully ported: **257**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 131 | 144 |
+| `REDALERT/` | 275 | 132 | 143 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 48 | 113 |
+| `TIBERIANDAWN/` | 161 | 49 | 112 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -133,7 +133,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/INT.CPP` | rts-core/src/bignum_globals.rs — zero-initialized Error, Carry, Borrow, and precision-specific remainder state. |
 | Not started | `REDALERT/INTERNET.CPP` | — |
 | Complete | `REDALERT/INTERPAL.CPP` | rts-formats/src/palette_interpolation.rs — active 256×256 midpoint nearest-color remap-table generation, 65,536-byte palette table read/write, RGB luminance increase and disabled 2× scaling entry point. |
-| Not started | `REDALERT/INTRO.CPP` | — |
+| Complete | `REDALERT/INTRO.CPP` | rts-core/src/intro_selection.rs — active Choose_Side branch sets Whom=HOUSE_GOOD; cinematic/side-selection implementations are #if (0) or OBSOLETE-guarded in the pinned project. |
 | Not started | `REDALERT/IOMAP.CPP` | — |
 | Not started | `REDALERT/IOOBJ.CPP` | — |
 | Not started | `REDALERT/IPX.CPP` | — |
@@ -405,7 +405,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/INIT.CPP` | — |
 | Not started | `TIBERIANDAWN/INTERNET.CPP` | — |
 | Complete | `TIBERIANDAWN/INTERPAL.CPP` | rts-formats/src/palette_interpolation.rs — 65,536-byte table read/write, RGB luminance increase; the table generation body and 2× scaling body are compiled out in this variant. |
-| Not started | `TIBERIANDAWN/INTRO.CPP` | — |
+| Complete | `TIBERIANDAWN/INTRO.CPP` | rts-core/src/intro_selection.rs — active non-DEMO Choose_Side branch sets Whom=HOUSE_GOOD and ScenPlayer=SCEN_PLAYER_GDI then returns; extended cinematic implementation is #if (0). |
 | Not started | `TIBERIANDAWN/IOMAP.CPP` | — |
 | Not started | `TIBERIANDAWN/IOOBJ.CPP` | — |
 | Not started | `TIBERIANDAWN/IPX.CPP` | — |
