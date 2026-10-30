@@ -76,7 +76,7 @@
 No Rust build/test result is claimed in this commit. The execution environment used to prepare this change did not have `rustc` or `cargo` installed. The workspace includes unit tests for the foundations; run the commands in the README on a Rust 1.85+ host before treating this milestone as verified.
 
 
-Latest addition: `REDALERT/KEY.CPP` → `crates/rts-core/src/keyboard_runtime.rs` (legacy keyboard ring buffer, event triplets and host keyboard adapter).
+Latest additions: both `MOUSE.CPP` variants → `crates/rts-core/src/mouse_control.rs` with variant-specific 42/34 cursor tables, animation and input-scroll delegation.
 
 Latest additions: `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` and `MORPHPAL.CPP` → `crates/rts-formats/src/palette_fade.rs`.
 Latest additions: both SHAPEBTN.CPP variants → rts-core/src/shape_button.rs with shape bounds, disabled/pressed/reflect-state frames and mouse visibility behavior.
