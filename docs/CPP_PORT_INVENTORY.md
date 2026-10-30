@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 105 | 170 |
+| `REDALERT/` | 275 | 106 | 169 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 29 | 132 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
@@ -259,7 +259,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/TENMGR.CPP` | — |
 | Not started | `REDALERT/TERRAIN.CPP` | — |
 | Not started | `REDALERT/TEVENT.CPP` | — |
-| Not started | `REDALERT/TEXTBTN.CPP` | — |
+| Complete | `REDALERT/TEXTBTN.CPP` | rts-core/src/text_button.rs — default/string/resource-ID constructors, text assignment/resizing, parent redraw gate, pointer hide/restore, black border, standard/disabled box states, optional WOLAPI disabled box and remap-scheme text with gradient-bright/medium flags. |
 | Not started | `REDALERT/THEME.CPP` | — |
 | Complete | `REDALERT/TOGGLE.CPP` | rts-core/src/toggle.rs — constructor state, forced redraw hit-testing, sticky processing, press capture, toggle-on-release and Red Alert release-inside check. |
 | Complete | `REDALERT/TOOLTIP.CPP` | No active implementation in the pinned source; the entire tooltip, icon-list hover and surface save/restore implementation is enclosed by #if (0)//PG. |
@@ -483,7 +483,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/TECHNO.CPP` | — |
 | Not started | `TIBERIANDAWN/TEMPLATE.CPP` | — |
 | Not started | `TIBERIANDAWN/TERRAIN.CPP` | — |
-| Not started | `TIBERIANDAWN/TEXTBTN.CPP` | — |
+| Complete | `TIBERIANDAWN/TEXTBTN.CPP` | rts-core/src/text_button.rs — default/string/resource-ID constructors and metric preparation, text assignment/resizing, pointer bounds behavior, gradient green and ordinary box states, gradient text flags and normal/pressed/on/disabled palette colors. |
 | Not started | `TIBERIANDAWN/THEME.CPP` | — |
 | Complete | `TIBERIANDAWN/TOGGLE.CPP` | rts-core/src/toggle.rs — shared toggle behavior with unsigned hit-testing and Tiberian Dawn release-outside toggle semantics. |
 | Not started | `TIBERIANDAWN/TRIGGER.CPP` | — |
