@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **14**
-- Not yet fully ported: **480**
-- A translation unit is complete only when all active compiled behavior has a Rust implementation. Empty units are recorded as intentionally empty; placeholders do not count.
+- Fully ported: **17**
+- Not yet fully ported: **477**
+- Complete means every active compiled behavior has a Rust implementation. Intentionally empty translation units are identified; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 13 | 262 |
+| `REDALERT/` | 275 | 16 | 259 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 1 | 160 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
@@ -27,7 +27,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/AADATA.CPP` | — |
 | Not started | `REDALERT/ABSTRACT.CPP` | — |
 | Not started | `REDALERT/ADATA.CPP` | — |
-| Not started | `REDALERT/ADPCM.CPP` | — |
+| Complete | `REDALERT/ADPCM.CPP` | rts-formats/src/adpcm.rs — streaming type-1 nibble decoder |
 | Not started | `REDALERT/AIRCRAFT.CPP` | — |
 | Not started | `REDALERT/ANIM.CPP` | — |
 | Not started | `REDALERT/AUDIO.CPP` | — |
@@ -61,7 +61,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/CELL.CPP` | — |
 | Not started | `REDALERT/CHECKBOX.CPP` | — |
 | Not started | `REDALERT/CHEKLIST.CPP` | — |
-| Complete | `REDALERT/CLASS.CPP` | Intentionally empty translation unit; no executable definitions to port. |
+| Complete | `REDALERT/CLASS.CPP` | Intentionally empty translation unit; no executable definitions |
 | Not started | `REDALERT/COLRLIST.CPP` | — |
 | Not started | `REDALERT/COMBAT.CPP` | — |
 | Not started | `REDALERT/COMBUF.CPP` | — |
@@ -94,7 +94,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/DPMI.CPP` | — |
 | Not started | `REDALERT/DRIVE.CPP` | — |
 | Not started | `REDALERT/DROP.CPP` | — |
-| Not started | `REDALERT/DTABLE.CPP` | — |
+| Complete | `REDALERT/DTABLE.CPP` | rts-formats/src/adpcm.rs — exact 1,424-entry ADPCM difference table |
 | Not started | `REDALERT/DYNAVEC.CPP` | — |
 | Not started | `REDALERT/EDIT.CPP` | — |
 | Not started | `REDALERT/EGOS.CPP` | — |
@@ -142,7 +142,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/IPXCONN.CPP` | — |
 | Not started | `REDALERT/IPXGCONN.CPP` | — |
 | Not started | `REDALERT/IPXMGR.CPP` | — |
-| Not started | `REDALERT/ITABLE.CPP` | — |
+| Complete | `REDALERT/ITABLE.CPP` | rts-formats/src/adpcm.rs — exact 1,424-entry ADPCM index table |
 | Not started | `REDALERT/JSHELL.CPP` | — |
 | Not started | `REDALERT/KEY.CPP` | — |
 | Not started | `REDALERT/KEYBOARD.CPP` | — |
