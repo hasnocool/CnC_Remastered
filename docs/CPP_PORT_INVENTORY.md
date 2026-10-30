@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **273**
-- Not yet fully ported: **221**
+- Fully ported: **274**
+- Not yet fully ported: **220**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 140 | 135 |
+| `REDALERT/` | 275 | 141 | 134 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 63 | 98 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -36,7 +36,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/BAR.CPP` | rts-core/src/progress_bar.rs — Q16.16 update threshold, unsigned wraparound redraw behavior, orientation, optional outline, exact horizontal/vertical fill and background rectangles, mouse hide/show and last-rendered tracking. |
 | Not started | `REDALERT/BASE.CPP` | — |
 | Complete | `REDALERT/BASE64.CPP` | rts-formats/src/base64.rs — Base64 packet encoder/decoder. |
-| Not started | `REDALERT/BBDATA.CPP` | — |
+| Complete | `REDALERT/BBDATA.CPP` | rts-core/src/red_alert_bullet_types.rs — all 18 bullet records in enum/heap order, ObjectTypeClass/BulletTypeClass defaults, every Read_INI field (including Inaccuate and Rotates legacy behavior), safe As_Reference, non-creatable type behavior, empty theater init, and debug/release SHP load request planning. |
 | Not started | `REDALERT/BDATA.CPP` | — |
 | Complete | `REDALERT/BENCH.CPP` | No active implementation in the pinned translation unit; the complete file, including all Benchmark constructor/reset/begin/end/value routines, is enclosed by an unconditional `#if (0)` through end-of-file. |
 | Not started | `REDALERT/BFIOFILE.CPP` | — |
