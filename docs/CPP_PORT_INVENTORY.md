@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **214**
-- Not yet fully ported: **280**
+- Fully ported: **216**
+- Not yet fully ported: **278**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 119 | 156 |
+| `REDALERT/` | 275 | 120 | 155 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 39 | 122 |
+| `TIBERIANDAWN/` | 161 | 40 | 121 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -152,7 +152,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/LCWSTRAW.CPP` | rts-formats/src/lcw_blocks.rs — framed pull compression/decompression and buffered reads. |
 | Complete | `REDALERT/LCWUNCMP.CPP` | rts-formats/src/lcw.rs — second LCW decompression entry point. |
 | Complete | `REDALERT/LINK.CPP` | rts-core/src/link.rs — arena-backed LinkClass insertion, traversal, head/tail, unlink, and list-position assignment. |
-| Not started | `REDALERT/LIST.CPP` | — |
+| Complete | `REDALERT/LIST.CPP` | rts-core/src/list_box.rs — ListClass item management, pointer-equivalent item lookup/removal, selection correction, keyboard/mouse actions, viewport clamping, auto-scrollbar lifecycle, peer notifications, gadget-chain insertion/removal ordering, row painting, gradient/selection colors and mouse hide/restore callbacks. |
 | Not started | `REDALERT/LOADDLG.CPP` | — |
 | Not started | `REDALERT/LOGIC.CPP` | — |
 | Complete | `REDALERT/LZO1X_C.CPP` | rts-formats/src/lzo1x.rs — deterministic LZO1X-1 compressor. |
@@ -418,7 +418,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/KEYFRAME.CPP` | rts-formats/src/keyframe.rs — shared keyframe and XOR-delta decoder plus Tiberian Dawn's 12,000 KiB/1,000 KiB shape buffers, memory-threshold cache decision, 200 KiB growth increment, and theater slot handling. |
 | Not started | `TIBERIANDAWN/LAYER.CPP` | — |
 | Not started | `TIBERIANDAWN/LINK.CPP` | — |
-| Not started | `TIBERIANDAWN/LIST.CPP` | — |
+| Complete | `TIBERIANDAWN/LIST.CPP` | rts-core/src/list_box.rs — shared ListClass state machine plus Tiberian Dawn's green-box style, empty-list selection reset, current-item behavior, gradient row highlight and gadget-chain operations. |
 | Not started | `TIBERIANDAWN/LOADDLG.CPP` | — |
 | Not started | `TIBERIANDAWN/LOGIC.CPP` | — |
 | Not started | `TIBERIANDAWN/MAP.CPP` | — |
