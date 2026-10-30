@@ -2,6 +2,7 @@
 
 pub mod bool_vector;
 pub mod clock;
+pub mod coordinate;
 pub mod facing;
 pub mod fixed16;
 pub mod random;
