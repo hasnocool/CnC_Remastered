@@ -181,8 +181,8 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/MPGSET.CPP` | — |
 | Not started | `REDALERT/MPLAYER.CPP` | — |
 | Complete | `REDALERT/MPLIB.CPP` | rts-core/src/mgen.rs — DOS yield interrupt, chunnel interrupt register packing, MGen queue/node/master operations and EAX/ECX result handling; external ordinal/device constants are injected. |
-| Not started | `REDALERT/MPMGRD.CPP` | — |
-| Not started | `REDALERT/MPMGRW.CPP` | — |
+| Complete | `REDALERT/MPMGRD.CPP` | rts-core/src/player_manager.rs — MGen queue IDs, private/global packet routing, connection table, receive counts, response timing, game-player count and queue flush. |
+| Complete | `REDALERT/MPMGRW.CPP` | No active implementation in the pinned source; the entire Windows DLL-backed multiplayer manager is enclosed by #if (0)//PG. |
 | Complete | `REDALERT/MPU.CPP` | No active implementation for the pinned MSVC Win32 project; Get_CPU_Clock exists only under __BORLANDC__. |
 | Not started | `REDALERT/MSGBOX.CPP` | — |
 | Not started | `REDALERT/MSGLIST.CPP` | — |
