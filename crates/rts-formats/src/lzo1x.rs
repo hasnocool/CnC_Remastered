@@ -20,6 +20,7 @@ pub enum LzoError {
     OutputLimitExceeded { requested: usize, limit: usize },
     LengthOverflow,
     TrailingInput(usize),
+    OutputSizeMismatch { actual: usize, expected: usize },
 }
 
 fn reserve_output(output: &[u8], count: usize, limit: usize) -> Result<(), LzoError> {
@@ -299,9 +300,9 @@ pub fn decompress(input: &[u8], output_limit: usize) -> Result<Vec<u8>, LzoError
 pub fn decompress_expected(input: &[u8], expected_size: usize) -> Result<Vec<u8>, LzoError> {
     let output = decompress(input, expected_size)?;
     if output.len() != expected_size {
-        return Err(LzoError::OutputLimitExceeded {
-            requested: output.len(),
-            limit: expected_size,
+        return Err(LzoError::OutputSizeMismatch {
+            actual: output.len(),
+            expected: expected_size,
         });
     }
     Ok(output)
