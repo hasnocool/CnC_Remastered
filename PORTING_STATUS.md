@@ -24,6 +24,9 @@
 | Editor cell metrics | Initial | Row-major indexing, 8-way adjacency, clipping, bounds checks |
 | Legacy MIX archive | Partial | Reads the legacy 6-byte header and 12-byte index entries used by upstream `MixFileClass`; no filename CRC mapping yet |
 | Event scheduler | Initial | Stable ordering by tick and insertion sequence |
+| Simulation RNG | Ported | Exact shared 256-byte table; byte index increments before lookup; both variant Sim_IRandom scaling routines |
+| Red Alert fixed point | Ported | Q16.16 constructors, arithmetic helpers, rounding, saturation, ASCII conversion |
+| Legacy checksum | Ported | Westwood rotate-left/add word checksum with partial-word staging |
 | Map editor model | Initial | Cell layer IDs and waypoint storage only |
 | Tiberian Dawn gameplay | Not ported | Variant boundary only |
 | Red Alert gameplay | Not ported | Variant boundary only |
@@ -31,9 +34,19 @@
 | Networking | Not ported | No wire protocol or lockstep implementation |
 | Map editor UI and full codecs | Not ported | No GUI, triggers, team types, or full scenario serialization |
 
+## C++ port coverage
+
+- Upstream translation units inventoried: 494.
+- Fully ported C++ translation units: 4 (`REDALERT/CRC.CPP`, `REDALERT/FIXED.CPP`, `REDALERT/RAND.CPP`, `TIBERIANDAWN/RAND.CPP`).
+- Remaining C++ translation units: 490. See [the file-by-file inventory](docs/CPP_PORT_INVENTORY.md).
+
 ## Compatibility references
 
 - `TIBERIANDAWN/DEFINES.H`: TD map grid, regions, tick rate, facing enumeration.
+- `TIBERIANDAWN/RAND.CPP` and `REDALERT/RAND.CPP`: matching 256-byte deterministic table and variant-specific Sim_IRandom calls.
+- `TIBERIANDAWN/COORDA.ASM` and `REDALERT/COORDA.ASM`: distinct 8-bit and 16-bit Fixed_To_Cardinal arithmetic.
+- `REDALERT/FIXED.H` / `REDALERT/FIXED.CPP`: Q16.16 fixed-point value layout and methods.
+- `REDALERT/CRC.H` / `REDALERT/CRC.CPP`: 32-bit rotate-and-add checksum engine.
 - `REDALERT/DEFINES.H`: RA map grid and shared timing/facing definitions.
 - `TIBERIANDAWN/MIXFILE.H` and `TIBERIANDAWN/MIXFILE.CPP`: legacy MIX header, index records, relative data offsets, and CRC-sorted lookup.
 - `TIBERIANDAWN/TiberianDawn.vcxproj` and `REDALERT/RedAlert.vcxproj`: Win32 DLL, Windows SDK 8.1, v141, one-byte structure packing, MASM, and native Windows libraries.
