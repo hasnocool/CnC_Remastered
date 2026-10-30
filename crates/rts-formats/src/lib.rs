@@ -5,6 +5,7 @@ pub mod base64;
 pub mod base64_streams;
 pub mod binary;
 pub mod blowfish;
+pub mod blowfish_streams;
 pub mod crc32;
 pub mod crc_streams;
 pub mod lcw;
