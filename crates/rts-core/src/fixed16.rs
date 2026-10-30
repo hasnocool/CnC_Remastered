@@ -42,7 +42,7 @@ impl Fixed16 {
         }
         let numerator = numerator as i64 as u64;
         let denominator = denominator as i64 as u64;
-        let raw = numerator.wrapping_mul(u64::from(PRECISION)) / denominator;
+        let raw = numerator.wrapping_mul((PRECISION as u64)) / denominator;
         Self { raw: raw as u32 }
     }
 
@@ -70,7 +70,7 @@ impl Fixed16 {
 
         if digits_end > 0 && bytes.get(digits_end) == Some(&b'%') {
             let percent = atoi_prefix(trimmed.as_bytes()) as u64;
-            let raw = percent.wrapping_mul(u64::from(PRECISION)) / 100;
+            let raw = percent.wrapping_mul((PRECISION as u64)) / 100;
             return Self { raw: raw as u32 };
         }
 
@@ -98,7 +98,7 @@ impl Fixed16 {
             if digit_count == 0 || base == 0 {
                 0
             } else {
-                ((digits.wrapping_mul(u64::from(PRECISION)) / u64::from(base)) as u16)
+                ((digits.wrapping_mul((PRECISION as u64)) / u64::from(base)) as u16)
             }
         } else {
             0
@@ -121,7 +121,7 @@ impl Fixed16 {
 
     /// Port of the implicit conversion to unsigned, rounded to nearest.
     pub const fn to_unsigned(self) -> u32 {
-        ((self.raw as u64 + u64::from(PRECISION / 2)) / u64::from(PRECISION)) as u32
+        ((self.raw as u64 + ((PRECISION / 2) as u64)) / (PRECISION as u64)) as u32
     }
 
     pub fn to_f32(self) -> f32 {
@@ -131,7 +131,7 @@ impl Fixed16 {
     /// Q16.16 multiplication with the same 64-bit intermediate and truncation.
     pub const fn mul_fixed(self, rhs: Self) -> Self {
         Self {
-            raw: ((self.raw as u64 * rhs.raw as u64) / u64::from(PRECISION)) as u32,
+            raw: ((self.raw as u64 * rhs.raw as u64) / (PRECISION as u64)) as u32,
         }
     }
 
@@ -146,8 +146,8 @@ impl Fixed16 {
             return self;
         }
         let numerator = (self.raw as u64)
-            .wrapping_mul(u64::from(PRECISION))
-            .wrapping_add(u64::from(PRECISION / 2));
+            .wrapping_mul((PRECISION as u64))
+            .wrapping_add(((PRECISION / 2) as u64));
         Self { raw: (numerator / rhs.raw as u64) as u32 }
     }
 
@@ -256,11 +256,11 @@ fn atoi_prefix(bytes: &[u8]) -> i64 {
     }
 
     let sign = match bytes.get(index) {
-        Some(b'-') => {
+        Some(&b'-') => {
             index += 1;
             -1_i64
         }
-        Some(b'+') => {
+        Some(&b'+') => {
             index += 1;
             1_i64
         }
