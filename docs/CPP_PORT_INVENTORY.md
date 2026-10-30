@@ -15,7 +15,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | `REDALERT/` | 275 | 47 | 228 |
 | `REDALERT/WIN32LIB/` | 26 | 17 | 9 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 19 | 13 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 20 | 12 |
 
 ## File-by-file coverage
 
@@ -515,7 +515,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — shared implementation; same source routine in both variants. |
 | Not started | `TIBERIANDAWN/WIN32LIB/KEYBOARD.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/LOAD.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/LOADFONT.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/LOADFONT.CPP` | rts-core/src/load_font.rs — shared implementation of the same IBM loader and five-block validation used by Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/LOADPAL.CPP` | rts-formats/src/palette.rs — 768-byte IBM palette loading contract. |
 | Not started | `TIBERIANDAWN/WIN32LIB/MEM.CPP` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/MORPHPAL.CPP` | rts-formats/src/palette_fade.rs — 768-channel 6-bit palette interpolation and time-progress update. |
