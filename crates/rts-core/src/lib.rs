@@ -35,6 +35,7 @@ pub mod memory_pool;
 pub mod misc_asm;
 pub mod keyboard_runtime;
 pub mod mouse_control;
+pub mod rgb_palette;
 pub mod keyboard;
 pub mod td_keyboard;
 pub mod player_manager;
