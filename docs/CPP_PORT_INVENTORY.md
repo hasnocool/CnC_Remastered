@@ -98,7 +98,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/DYNAVEC.CPP` | — |
 | Not started | `REDALERT/EDIT.CPP` | — |
 | Not started | `REDALERT/EGOS.CPP` | — |
-| Not started | `REDALERT/ENDING.CPP` | — |
+| Complete | `REDALERT/ENDING.CPP` | No active implementation in the pinned source; both GDI_Ending and Nod_Ending bodies are enclosed by #ifdef NEVER. |
 | Not started | `REDALERT/EVENT.CPP` | — |
 | Not started | `REDALERT/EXPAND.CPP` | — |
 | Not started | `REDALERT/FACE.CPP` | — |
