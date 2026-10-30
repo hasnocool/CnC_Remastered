@@ -245,7 +245,7 @@ impl MemoryPool {
             cursor = cursor.saturating_add(size);
         }
 
-        self.rebuild_free_chain(cursor);
+        self.rebuild_free_chain();
     }
 
     /// Read/write owned payload bytes while ensuring the handle still names a
@@ -277,7 +277,8 @@ impl MemoryPool {
         self.used_chain.iter().copied().find(|block| block.offset == header_offset)
     }
 
-    fn rebuild_free_chain(&mut self, mut cursor: usize) {
+    fn rebuild_free_chain(&mut self) {
+        let mut cursor = MEM_POOL_HEADER_SIZE;
         let mut gaps = Vec::new();
         for block in &self.used_chain {
             if block.offset > cursor {
@@ -285,7 +286,7 @@ impl MemoryPool {
                 let paragraphs = (gap / MEM_PARAGRAPH_SIZE) as u32;
                 if paragraphs != 0 { gaps.push(FreeBlock { offset: cursor, paragraphs }); }
             }
-            cursor = block.offset + block.byte_len();
+            cursor = cursor.max(block.offset + block.byte_len());
         }
         if cursor < self.arena.len() {
             let paragraphs = ((self.arena.len() - cursor) / MEM_PARAGRAPH_SIZE) as u32;
