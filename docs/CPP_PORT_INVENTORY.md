@@ -128,7 +128,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/INFANTRY.CPP` | — |
 | Not started | `REDALERT/INI.CPP` | — |
 | Complete | `REDALERT/INIBIN.CPP` | rts-core/src/inibin.rs — intentionally empty upstream translation unit. |
-| Not started | `REDALERT/INICODE.CPP` | — |
+| Complete | `REDALERT/INICODE.CPP` | No active implementation in the pinned source; the entire scenario digest and INI-to-INB implementation is enclosed by #ifdef TOFIX. |
 | Not started | `REDALERT/INIT.CPP` | — |
 | Complete | `REDALERT/INT.CPP` | rts-core/src/bignum_globals.rs — zero-initialized Error, Carry, Borrow, and precision-specific remainder state. |
 | Not started | `REDALERT/INTERNET.CPP` | — |
