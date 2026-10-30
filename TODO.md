@@ -185,3 +185,5 @@
 - [x] Port both SHAPEBTN.CPP variants' shape assignment, draw gate, frame selection and conditional mouse visibility.
 
 - [x] Port both MiscAsm.cpp variants' coordinate/facing algorithms, fixed conversion, bit arrays, palette fading, endian helpers, string trim, fat-pixel output, palette range and screen-shake fallback.
+
+- [x] Port REDALERT/KEY.CPP ring-buffer operations, mouse triplets, keyboard modifiers, ASCII conversion adapter, async key state and system-message pump.
