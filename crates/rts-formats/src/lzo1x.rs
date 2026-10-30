@@ -154,6 +154,36 @@ fn decode_match(
 /// The C++ implementation is an unsafe speed-oriented decoder; this port
 /// rejects missing operands, invalid look-behind distances, output overruns,
 /// and trailing bytes after the EOF marker.
+fn decode_initial_m1(
+    input: &[u8],
+    cursor: &mut usize,
+    output: &mut Vec<u8>,
+    token: u8,
+    output_limit: usize,
+) -> Result<(), LzoError> {
+    let low = usize::from(read_byte(input, cursor)?);
+    let distance = 0x801 + usize::from(token >> 2) + (low << 2);
+    copy_match(output, distance, 3, output_limit)
+}
+
+fn trailing_literals(
+    input: &[u8],
+    cursor: &mut usize,
+    output: &mut Vec<u8>,
+    output_limit: usize,
+) -> Result<(), LzoError> {
+    if *cursor < 2 {
+        return Err(LzoError::UnexpectedEndOfInput);
+    }
+    let count = usize::from(input[*cursor - 2] & 3);
+    copy_literals(input, cursor, output, count, output_limit)
+}
+
+/// Decompress one source-compatible LZO1X block with strict bounds checks.
+///
+/// The C++ implementation is an unsafe speed-oriented decoder; this port
+/// rejects missing operands, invalid look-behind distances, output overruns,
+/// and trailing bytes after the EOF marker.
 pub fn decompress(input: &[u8], output_limit: usize) -> Result<Vec<u8>, LzoError> {
     let Some(&first) = input.first() else {
         return Err(LzoError::MissingEndMarker);
@@ -174,23 +204,31 @@ pub fn decompress(input: &[u8], output_limit: usize) -> Result<Vec<u8>, LzoError
         )?;
 
         let token = read_byte(input, &mut cursor)?;
-        if decode_match(input, &mut cursor, &mut output, token, output_limit)? {
+        if token < 16 {
+            decode_initial_m1(input, &mut cursor, &mut output, token, output_limit)?;
+        } else if decode_match(input, &mut cursor, &mut output, token, output_limit)? {
             return Ok(output);
         }
 
-        // The first match after this run is the special three-byte M1 form.
-        let trailing = usize::from(input[cursor - 2] & 3);
-        if trailing > 0 {
-            copy_literals(input, &mut cursor, &mut output, trailing, output_limit)?;
+        trailing_literals(input, &mut cursor, &mut output, output_limit)?;
+
+        // After the first literal run the decoder is in its match loop;
+        // tokens below 16 are regular two-byte M1 matches, not new literal runs.
+        loop {
+            let token = read_byte(input, &mut cursor)?;
+            if decode_match(input, &mut cursor, &mut output, token, output_limit)? {
+                return Ok(output);
+            }
+            trailing_literals(input, &mut cursor, &mut output, output_limit)?;
         }
     }
 
+    // General LZO stream. A token below 16 at the top-level is a literal run;
+    // its following token may use the special initial three-byte M1 form.
     loop {
         let token = read_byte(input, &mut cursor)?;
 
         if token < 16 {
-            // Literal run. The first three bytes are encoded as a fixed prefix,
-            // followed by an optional extension count in the token.
             let extra = if token == 0 {
                 read_extended(input, &mut cursor, 15)?
             } else {
@@ -202,11 +240,13 @@ pub fn decompress(input: &[u8], output_limit: usize) -> Result<Vec<u8>, LzoError
 
             let first_match = read_byte(input, &mut cursor)?;
             if first_match < 16 {
-                // Special first-literal-run M1 has a 0x800 base distance and
-                // always copies three bytes.
-                let low = usize::from(read_byte(input, &mut cursor)?);
-                let distance = 0x801 + usize::from(first_match >> 2) + (low << 2);
-                copy_match(&mut output, distance, 3, output_limit)?;
+                decode_initial_m1(
+                    input,
+                    &mut cursor,
+                    &mut output,
+                    first_match,
+                    output_limit,
+                )?;
             } else if decode_match(
                 input,
                 &mut cursor,
@@ -216,170 +256,44 @@ pub fn decompress(input: &[u8], output_limit: usize) -> Result<Vec<u8>, LzoError
             )? {
                 return Ok(output);
             }
-        } else if decode_match(input, &mut cursor, &mut output, token, output_limit)? {
-            return Ok(output);
-        }
 
-        // The low two bits in the preceding match token/offset encode up to
-        // three trailing literal bytes.
-        let trailing = usize::from(input[cursor - 2] & 3);
-        if trailing > 0 {
-            copy_literals(input, &mut cursor, &mut output, trailing, output_limit)?;
-        }
-    }
-}
+            trailing_literals(input, &mut cursor, &mut output, output_limit)?;
 
-fn hash_at(input: &[u8], index: usize) -> usize {
-    let value = ((u32::from(input[index + 2]) << 10)
-        ^ (u32::from(input[index + 1]) << 5))
-        ^ u32::from(input[index]);
-    ((40_799_u32.wrapping_mul(value) >> 5) as usize) & (LZO_DICTIONARY_SIZE - 1)
-}
-
-fn emit_literal_run(
-    output: &mut Vec<u8>,
-    literal_start: usize,
-    literal_end: usize,
-    input: &[u8],
-) {
-    let count = literal_end - literal_start;
-    if count == 0 {
-        return;
-    }
-
-    if count <= 3 {
-        // A preceding M2/M3/M4 command's final offset byte stores the count.
-        let previous_match_header = output.len() - 2;
-        output[previous_match_header] |= count as u8;
-        output.extend_from_slice(&input[literal_start..literal_end]);
-        return;
-    }
-
-    if output.is_empty() && count <= 238 {
-        output.push((17 + count) as u8);
-    } else if count <= 18 {
-        output.push((count - 3) as u8);
-    } else {
-        let mut extension = count - 18;
-        output.push(0);
-        while extension > 255 {
-            extension -= 255;
-            output.push(0);
-        }
-        output.push(extension as u8);
-    }
-
-    output.extend_from_slice(&input[literal_start..literal_end]);
-}
-
-fn emit_match(output: &mut Vec<u8>, distance: usize, count: usize) {
-    if count <= 8 && distance <= LZO_M2_MAX_OFFSET {
-        let adjusted = distance - 1;
-        output.push((((count - 1) << 5) | ((adjusted & 7) << 2)) as u8);
-        output.push((adjusted >> 3) as u8);
-        return;
-    }
-
-    if distance <= LZO_M3_MAX_OFFSET {
-        let adjusted = distance - 1;
-        if count <= 33 {
-            output.push((32 | (count - 2)) as u8);
+            // Subsequent tokens are all matches (M1/M2/M3/M4).
+            loop {
+                let next_match = read_byte(input, &mut cursor)?;
+                if decode_match(
+                    input,
+                    &mut cursor,
+                    &mut output,
+                    next_match,
+                    output_limit,
+                )? {
+                    return Ok(output);
+                }
+                trailing_literals(input, &mut cursor, &mut output, output_limit)?;
+            }
         } else {
-            output.push(32);
-            emit_length_extension(output, count - 33);
+            if decode_match(input, &mut cursor, &mut output, token, output_limit)? {
+                return Ok(output);
+            }
+            trailing_literals(input, &mut cursor, &mut output, output_limit)?;
+
+            loop {
+                let next_match = read_byte(input, &mut cursor)?;
+                if decode_match(
+                    input,
+                    &mut cursor,
+                    &mut output,
+                    next_match,
+                    output_limit,
+                )? {
+                    return Ok(output);
+                }
+                trailing_literals(input, &mut cursor, &mut output, output_limit)?;
+            }
         }
-        output.push(((adjusted & 63) << 2) as u8);
-        output.push((adjusted >> 6) as u8);
-        return;
     }
-
-    let adjusted = distance - 0x4000;
-    if count <= 9 {
-        output.push((16 | ((adjusted & 0x4000) >> 11) | (count - 2)) as u8);
-    } else {
-        output.push((16 | ((adjusted & 0x4000) >> 11)) as u8);
-        emit_length_extension(output, count - 9);
-    }
-    output.push(((adjusted & 63) << 2) as u8);
-    output.push((adjusted >> 6) as u8);
-}
-
-fn emit_length_extension(output: &mut Vec<u8>, mut count: usize) {
-    while count > 255 {
-        output.push(0);
-        count -= 255;
-    }
-    output.push(count as u8);
-}
-
-/// Compress one LZO1X block.
-///
-/// This follows the source's 14-bit three-byte hash, 0xBFFF look-behind
-/// ceiling, M2/M3/M4 command families, literal-run extensions, and EOF marker.
-/// Candidate selection is deterministic (the latest candidate in each hash
-/// bucket replaces the earlier one).
-pub fn compress(input: &[u8]) -> Result<Vec<u8>, LzoError> {
-    if input.is_empty() {
-        return Ok(LZO_EOF_MARKER.to_vec());
-    }
-
-    if input.len() <= 13 {
-        let mut output = Vec::with_capacity(input.len() + 4);
-        output.push((17 + input.len()) as u8);
-        output.extend_from_slice(input);
-        output.extend_from_slice(&LZO_EOF_MARKER);
-        return Ok(output);
-    }
-
-    let mut dictionary = vec![None::<usize>; LZO_DICTIONARY_SIZE];
-    let mut output = Vec::with_capacity(input.len() + 32);
-    let mut input_position = 4_usize;
-    let mut literal_start = 0_usize;
-    let input_end = input.len();
-    let scan_end = input_end - 13;
-
-    // Source preloads the first four hash positions.
-    for index in 0..4 {
-        dictionary[hash_at(input, index)] = Some(index);
-    }
-
-    while input_position < scan_end {
-        let slot = hash_at(input, input_position);
-        let candidate = dictionary[slot];
-        dictionary[slot] = Some(input_position);
-
-        let Some(candidate) = candidate else {
-            input_position += 1;
-            continue;
-        };
-
-        let distance = input_position - candidate;
-        if distance == 0 || distance > LZO_M4_MAX_OFFSET {
-            input_position += 1;
-            continue;
-        }
-
-        if input[candidate..candidate + 3] != input[input_position..input_position + 3] {
-            input_position += 1;
-            continue;
-        }
-
-        let mut match_length = 3_usize;
-        while input_position + match_length < input_end
-            && input[candidate + match_length] == input[input_position + match_length]
-        {
-            match_length += 1;
-        }
-
-        emit_literal_run(&mut output, literal_start, input_position, input);
-        emit_match(&mut output, distance, match_length);
-        input_position += match_length;
-        literal_start = input_position;
-    }
-
-    emit_literal_run(&mut output, literal_start, input_end, input);
-    output.extend_from_slice(&LZO_EOF_MARKER);
-    Ok(output)
 }
 
 pub fn decompress_expected(input: &[u8], expected_size: usize) -> Result<Vec<u8>, LzoError> {
