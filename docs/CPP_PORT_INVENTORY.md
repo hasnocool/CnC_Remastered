@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **227**
-- Not yet fully ported: **267**
+- Fully ported: **228**
+- Not yet fully ported: **266**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 125 | 150 |
+| `REDALERT/` | 275 | 126 | 149 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 46 | 115 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -73,7 +73,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/CONST.CPP` | — |
 | Not started | `REDALERT/CONTROL.CPP` | — |
 | Not started | `REDALERT/COORD.CPP` | — |
-| Not started | `REDALERT/CRATE.CPP` | — |
+| Complete | `REDALERT/CRATE.CPP` | rts-core/src/crate_manager.rs — tracked crate cell and expiration timer, crate removal, random legal placement retries, water/wood overlay selection, ScenarioInit save/restore and wood/steel/water pickup cleanup. |
 | Complete | `REDALERT/CRC.CPP` | rts-formats/src/legacy_crc.rs — rotate-add checksum engine. |
 | Complete | `REDALERT/CRCPIPE.CPP` | rts-formats/src/crc_streams.rs — checksum-aware push adapter. |
 | Complete | `REDALERT/CRCSTRAW.CPP` | rts-formats/src/crc_streams.rs — checksum-aware pull adapter. |
