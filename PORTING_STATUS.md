@@ -76,7 +76,7 @@
 No Rust build/test result is claimed in this commit. The execution environment used to prepare this change did not have `rustc` or `cargo` installed. The workspace includes unit tests for the foundations; run the commands in the README on a Rust 1.85+ host before treating this milestone as verified.
 
 
-Latest addition: `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` → `crates/rts-core/src/legacy_new_delete.rs` (scalar/array allocation operator delegation).
+Latest additions: `TIBERIANDAWN/RULES.CPP` → `crates/rts-core/src/rules_defaults.rs`; `TIBERIANDAWN/WIN32LIB/MEM.CPP` → `crates/rts-core/src/memory_pool.rs` (paragraph cache allocator, LRU, and compaction).
 
 Latest additions: `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` and `MORPHPAL.CPP` → `crates/rts-formats/src/palette_fade.rs`.
 Latest addition: REDALERT/TRACKER.CPP → rts-core/src/tracker.rs with ordered registry detach and recursive dependent-trigger removal.
