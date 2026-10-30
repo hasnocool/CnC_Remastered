@@ -2081,6 +2081,132 @@ pub fn aircraft_mission_hunt(context: AircraftHuntContext) -> AircraftHuntPlan {
     plan
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftRetreatStage {
+    TakeOff,
+    FaceMapEdge,
+    KeepFlying,
+    Unknown(i32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftRetreatContext {
+    pub fixed_wing: bool,
+    pub height: i32,
+    pub flight_level: i32,
+    pub status: AircraftRetreatStage,
+    pub takeoff_completed: bool,
+    /// Source House::Control.Edge enum. Low two bits encode friendly edge.
+    pub friendly_map_edge: u8,
+    pub normal_delay: i32,
+    pub random_delay_0_to_2: i32,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftRetreatPlan {
+    pub height_after_tick: i32,
+    pub next_stage: Option<AircraftRetreatStage>,
+    pub process_takeoff: bool,
+    pub set_speed: Option<u8>,
+    pub primary_desired: Option<DirType>,
+    pub secondary_desired: Option<DirType>,
+    pub delay: HuntDelay,
+    pub return_immediately: bool,
+}
+
+/// Port of AircraftClass::Mission_Retreat. Fixed-wing aircraft climb one
+/// source height unit per call then wait; rotorcraft take off and steer toward
+/// the owning house's friendly map edge before preserving the flight path.
+pub fn aircraft_mission_retreat(context: AircraftRetreatContext) -> AircraftRetreatPlan {
+    if context.fixed_wing {
+        if context.height < context.flight_level {
+            return AircraftRetreatPlan {
+                height_after_tick: context.height + 1,
+                next_stage: None,
+                process_takeoff: false,
+                set_speed: None,
+                primary_desired: None,
+                secondary_desired: None,
+                delay: HuntDelay::Ticks(3),
+                return_immediately: true,
+            };
+        }
+        return AircraftRetreatPlan {
+            height_after_tick: context.height,
+            next_stage: None,
+            process_takeoff: false,
+            set_speed: None,
+            primary_desired: None,
+            secondary_desired: None,
+            delay: HuntDelay::Ticks(context.normal_delay.saturating_mul(10)),
+            return_immediately: true,
+        };
+    }
+
+    let mut plan = AircraftRetreatPlan {
+        height_after_tick: context.height,
+        next_stage: None,
+        process_takeoff: false,
+        set_speed: None,
+        primary_desired: None,
+        secondary_desired: None,
+        delay: HuntDelay::NormalPlusRandom2 {
+            normal_delay: context.normal_delay,
+            random_value: context.random_delay_0_to_2.clamp(0, 2),
+        },
+        return_immediately: false,
+    };
+    match context.status {
+        AircraftRetreatStage::TakeOff => {
+            plan.process_takeoff = true;
+            if context.takeoff_completed {
+                plan.next_stage = Some(AircraftRetreatStage::FaceMapEdge);
+            }
+            plan.delay = HuntDelay::Ticks(1);
+            plan.return_immediately = true;
+        }
+        AircraftRetreatStage::FaceMapEdge => {
+            plan.set_speed = Some(u8::MAX);
+            let direction = DirType((u16::from(context.friendly_map_edge & 0x03) << 6) as u8);
+            plan.primary_desired = Some(direction);
+            plan.secondary_desired = Some(direction);
+            plan.next_stage = Some(AircraftRetreatStage::KeepFlying);
+        }
+        AircraftRetreatStage::KeepFlying | AircraftRetreatStage::Unknown(_) => {}
+    }
+    plan
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftMovementAiPlan {
+    pub assign_move_mission: bool,
+    pub mark_up_before_physics: bool,
+    pub mark_down_after_physics: bool,
+    pub mark_change_redraw_before_physics: bool,
+    pub mark_change_redraw_after_physics_if_moved: bool,
+    pub perform_physics: bool,
+}
+
+/// Port of AircraftClass::Movement_AI. Physics itself remains a simulation
+/// service; the plan retains the source's ground/air redraw marking order.
+pub fn aircraft_movement_ai(
+    navcom_is_legal: bool,
+    mission_is_guard: bool,
+    mission_queue_is_none: bool,
+    speed: u32,
+    current_layer_is_ground: bool,
+) -> AircraftMovementAiPlan {
+    let perform_physics = speed != 0;
+    AircraftMovementAiPlan {
+        assign_move_mission: navcom_is_legal && mission_is_guard && mission_queue_is_none,
+        mark_up_before_physics: perform_physics && current_layer_is_ground,
+        mark_down_after_physics: perform_physics && current_layer_is_ground,
+        mark_change_redraw_before_physics: perform_physics && !current_layer_is_ground,
+        mark_change_redraw_after_physics_if_moved: perform_physics && !current_layer_is_ground,
+        perform_physics,
+    }
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -3554,6 +3680,90 @@ mod tests {
         });
         assert_eq!(attack.mission_to_assign, Some(AircraftMission::Attack));
         assert_eq!(attack.delay, HuntDelay::Ticks(1));
+    }
+
+    #[test]
+    fn fixed_wing_retreat_climbs_one_height_unit_until_flight_level() {
+        let climb = aircraft_mission_retreat(AircraftRetreatContext {
+            fixed_wing: true, height: 50, flight_level: 100,
+            status: AircraftRetreatStage::KeepFlying, takeoff_completed: false,
+            friendly_map_edge: 3, normal_delay: 7, random_delay_0_to_2: 2,
+        });
+        assert_eq!(climb.height_after_tick, 51);
+        assert_eq!(climb.delay, HuntDelay::Ticks(3));
+        assert!(climb.return_immediately);
+        let cruise = aircraft_mission_retreat(AircraftRetreatContext {
+            height: 100, ..AircraftRetreatContext {
+                fixed_wing: true, height: 50, flight_level: 100,
+                status: AircraftRetreatStage::KeepFlying, takeoff_completed: false,
+                friendly_map_edge: 3, normal_delay: 7, random_delay_0_to_2: 2,
+            }
+        });
+        assert_eq!(cruise.height_after_tick, 100);
+        assert_eq!(cruise.delay, HuntDelay::Ticks(70));
+    }
+
+    #[test]
+    fn rotorcraft_retreat_processes_takeoff_then_sets_friendly_edge_heading() {
+        let pending = aircraft_mission_retreat(AircraftRetreatContext {
+            fixed_wing: false, height: 0, flight_level: 100,
+            status: AircraftRetreatStage::TakeOff, takeoff_completed: false,
+            friendly_map_edge: 2, normal_delay: 5, random_delay_0_to_2: 1,
+        });
+        assert!(pending.process_takeoff);
+        assert_eq!(pending.next_stage, None);
+        assert_eq!(pending.delay, HuntDelay::Ticks(1));
+        let complete = aircraft_mission_retreat(AircraftRetreatContext {
+            takeoff_completed: true, ..AircraftRetreatContext {
+                fixed_wing: false, height: 0, flight_level: 100,
+                status: AircraftRetreatStage::TakeOff, takeoff_completed: false,
+                friendly_map_edge: 2, normal_delay: 5, random_delay_0_to_2: 1,
+            }
+        });
+        assert_eq!(complete.next_stage, Some(AircraftRetreatStage::FaceMapEdge));
+
+        let face = aircraft_mission_retreat(AircraftRetreatContext {
+            fixed_wing: false, height: 100, flight_level: 100,
+            status: AircraftRetreatStage::FaceMapEdge, takeoff_completed: true,
+            friendly_map_edge: 2, normal_delay: 5, random_delay_0_to_2: 1,
+        });
+        assert_eq!(face.set_speed, Some(255));
+        assert_eq!(face.primary_desired, Some(DirType::SOUTH));
+        assert_eq!(face.secondary_desired, Some(DirType::SOUTH));
+        assert_eq!(face.next_stage, Some(AircraftRetreatStage::KeepFlying));
+    }
+
+    #[test]
+    fn retreat_keep_flying_leaves_course_unchanged_and_uses_normal_delay() {
+        let plan = aircraft_mission_retreat(AircraftRetreatContext {
+            fixed_wing: false, height: 100, flight_level: 100,
+            status: AircraftRetreatStage::KeepFlying, takeoff_completed: false,
+            friendly_map_edge: 1, normal_delay: 6, random_delay_0_to_2: 8,
+        });
+        assert_eq!(plan.primary_desired, None);
+        assert_eq!(plan.secondary_desired, None);
+        assert_eq!(plan.delay, HuntDelay::NormalPlusRandom2 { normal_delay: 6, random_value: 2 });
+        assert!(!plan.return_immediately);
+    }
+
+    #[test]
+    fn movement_ai_marks_ground_and_airborne_physics_differently() {
+        let ground = aircraft_movement_ai(true, true, true, 10, true);
+        assert!(ground.assign_move_mission);
+        assert!(ground.perform_physics);
+        assert!(ground.mark_up_before_physics);
+        assert!(ground.mark_down_after_physics);
+        assert!(!ground.mark_change_redraw_before_physics);
+
+        let airborne = aircraft_movement_ai(true, true, true, 10, false);
+        assert!(airborne.mark_change_redraw_before_physics);
+        assert!(airborne.mark_change_redraw_after_physics_if_moved);
+        assert!(!airborne.mark_up_before_physics);
+        let idle = aircraft_movement_ai(true, true, true, 0, true);
+        assert!(!idle.perform_physics);
+        assert!(!idle.mark_up_before_physics);
+        let queued = aircraft_movement_ai(true, true, false, 10, true);
+        assert!(!queued.assign_move_mission);
     }
 
     #[test]
