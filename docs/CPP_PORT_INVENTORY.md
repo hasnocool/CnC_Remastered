@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 110 | 165 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 32 | 129 |
+| `TIBERIANDAWN/` | 161 | 33 | 128 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -84,7 +84,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/DEBUG.CPP` | No active implementation in the pinned RedAlert.vcxproj configuration; the entire translation unit is guarded by `#ifdef CHEAT_KEYS`, which is not defined by the project or its headers. |
 | Complete | `REDALERT/DESCDLG.CPP` | rts-core/src/description_dialog.rs — dialog geometry, gadget setup, redraw/callback loop, OK/cancel handling and text trimming. |
 | Complete | `REDALERT/DIAL8.CPP` | rts-core/src/dial8.rs — exact 8-position geometry, shared static drag-selection state, Desired_Facing8 pointer tracking, facing-change event suppression, parent gadget delegation, mouse hiding/restoring, standard box styles and remap-scheme shadow/highlight lines. |
-| Not started | `REDALERT/DIALOG.CPP` | — |
+| Complete | `REDALERT/DIALOG.CPP` | rts-core/src/dialog_render.rs — Dialog_Box shape background, six source box styles, bevel/box/border rendering, in-place @ line wrapping, Window_Box and mouse guard, complete Simple_Text_Print font/palette/shadow/spacing selection, Fancy/Plain/Clipped print helpers, and caption layout. |
 | Complete | `REDALERT/DIBFILE.CPP` | No active implementation in the pinned source; SaveDIB, ReadDIBFile, LoadDIB_FromMemory and chunked I/O helpers are all enclosed by unconditional `#if (0)`. |
 | Complete | `REDALERT/DIBUTIL.CPP` | No active implementation in the pinned source; the entire Microsoft DIB helper API (CreateDIB, DIB geometry/palette helpers, palette creation, DIB/bitmap conversion and format conversion) is enclosed by unconditional `#if (0)`. |
 | Not started | `REDALERT/DISPLAY.CPP` | — |
@@ -370,7 +370,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/DEBUG.CPP` | No active implementation in the pinned TiberianDawn.vcxproj configuration; the entire translation unit is guarded by `#ifdef CHEAT_KEYS`, which is not defined by the project or its headers. |
 | Complete | `TIBERIANDAWN/DESCDLG.CPP` | rts-core/src/description_dialog.rs — shared dialog flow with GreenBorder style, SeenBuff-sized background and surface-restore redraw handling. |
 | Complete | `TIBERIANDAWN/DIAL8.CPP` | rts-core/src/dial8.rs — shared geometry and event state with Tiberian Dawn green depressed/raised box styles and fixed green pointer shadow/highlight colors supplied by the host palette adapter. |
-| Not started | `TIBERIANDAWN/DIALOG.CPP` | — |
+| Complete | `TIBERIANDAWN/DIALOG.CPP` | rts-core/src/dialog_render.rs — green-texture dialog boxes, source 12-style palette/geometry, secondary window borders, text wrapping, embedded 16×16 font palette plus medium/bright tables, green-gradient font selection, FF stripping, shadow/spacing and clipped tabbed output. |
 | Not started | `TIBERIANDAWN/DISPLAY.CPP` | — |
 | Not started | `TIBERIANDAWN/DLLInterface.cpp` | — |
 | Not started | `TIBERIANDAWN/DLLInterfaceEditor.cpp` | — |
