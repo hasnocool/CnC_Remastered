@@ -34,7 +34,7 @@
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
 - [x] Port `REDALERT/ADATA.CPP`: all 89 animation descriptors, exact heap order, lookup helpers, and asset initialization planning.
-- [x] Port independent `REDALERT/AIRCRAFT.CPP` routines: civilian evacuation, overlap lists, Sort_Y, pose/layer, pip count, flight speed, fire direction, sight range, helipad spy flags, landing-approach sweep, destination assignment decisions, takeoff/landing stage plans, shape-frame selection, cell passability, aircraft occupancy/reservation exclusion, landing-zone occupancy/contact validation, and friendly support-building selection.
+- [x] Port independent `REDALERT/AIRCRAFT.CPP` routines: civilian evacuation, overlap lists, Sort_Y, pose/layer, pip count, flight speed, fire direction, sight range, helipad spy flags, landing-approach sweep, destination assignment decisions, takeoff/landing stage plans, shape-frame selection, cell passability, aircraft occupancy/reservation exclusion, landing-zone occupancy/contact validation, friendly support-building selection, and concentric-ring fallback landing-zone search.
 - [ ] Finish `REDALERT/AIRCRAFT.CPP` mission, flight state-machine, movement, combat, rendering, radio, INI, and save/load behavior.
 - [ ] Port the remaining 223 C++ translation units with source-specific tests.
 
