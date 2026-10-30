@@ -60,6 +60,7 @@ pub mod heap;
 pub mod network_stubs;
 pub mod null_connection;
 pub mod win_stub;
+pub mod ipx_address;
 pub mod toggle;
 pub mod scroll;
 pub mod shape_button;
