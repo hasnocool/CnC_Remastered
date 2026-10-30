@@ -76,7 +76,7 @@ impl RedAlertGameControlsLayout {
         let scroll_width = dialog_width - 34 * factor;
         let scroll_height = 6 * factor;
         let scroll_x = dialog_x + 17 * factor;
-        let scroll_y = speed_y + speed_height + text_height + (margin_large * 2) + text_height;
+        let scroll_y = speed_y + speed_height + text_height + (margin_large * 2) + text_height - german_adjust;
         let visual_width = dialog_width - 40 * factor;
         let visual_height = 9 * factor;
         let visual_x = dialog_x + 20 * factor;
