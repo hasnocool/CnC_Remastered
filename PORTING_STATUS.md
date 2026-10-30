@@ -30,6 +30,10 @@
 | CRC pipe/straw adapters | Ported | Checksum observing push and pull stream adapters |
 | Pipe/Straw chains | Ported | Push forwarding/relink/flush and pull-demand/relink chains; cycle detection added |
 | Rect geometry | Ported | Source-compatible validity, intersection, anchor adjustment, and union |
+| Packed Boolean vector | Ported | Packed bit operations, resizing, set/reset, search, and equality |
+| Line reader | Ported | CR/LF handling, truncation, EOF semantics, ASCII whitespace trimming |
+| Launcher stub | Ported | Exact legacy console message |
+| Empty translation unit | No behavior | `REDALERT/CLASS.CPP` contains no executable definitions |
 | Map editor model | Initial | Cell layer IDs and waypoint storage only |
 | Tiberian Dawn gameplay | Not ported | Variant boundary only |
 | Red Alert gameplay | Not ported | Variant boundary only |
@@ -40,8 +44,8 @@
 ## C++ port coverage
 
 - Upstream translation units inventoried: 494.
-- Fully ported C++ translation units: 10 (`REDALERT/CRC.CPP`, `REDALERT/CRCPIPE.CPP`, `REDALERT/CRCSTRAW.CPP`, `REDALERT/FIXED.CPP`, `REDALERT/PIPE.CPP`, `REDALERT/RAND.CPP`, `REDALERT/RANDOM.CPP`, `REDALERT/RECT.CPP`, `REDALERT/STRAW.CPP`, `TIBERIANDAWN/RAND.CPP`).
-- Remaining C++ translation units: 484. See [the file-by-file inventory](docs/CPP_PORT_INVENTORY.md).
+- Fully ported C++ translation units: 14 (`REDALERT/CLASS.CPP` [empty], `REDALERT/CRC.CPP`, `REDALERT/CRCPIPE.CPP`, `REDALERT/CRCSTRAW.CPP`, `REDALERT/FIXED.CPP`, `REDALERT/PIPE.CPP`, `REDALERT/RAND.CPP`, `REDALERT/RANDOM.CPP`, `REDALERT/READLINE.CPP`, `REDALERT/RECT.CPP`, `REDALERT/STRAW.CPP`, `REDALERT/STUB.CPP`, `REDALERT/VECTOR.CPP`, `TIBERIANDAWN/RAND.CPP`).
+- Remaining C++ translation units: 480. See [the file-by-file inventory](docs/CPP_PORT_INVENTORY.md).
 
 ## Compatibility references
 
