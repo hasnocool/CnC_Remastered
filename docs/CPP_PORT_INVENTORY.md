@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **254**
-- Not yet fully ported: **240**
+- Fully ported: **255**
+- Not yet fully ported: **239**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -178,7 +178,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/MONOC.CPP` | — |
 | Complete | `REDALERT/MOUSE.CPP` | rts-core/src/mouse_control.rs — 42-entry cursor table, default/revert/override states, small-cursor fallback, animated frame updates, debug-only loose MOUSE.SHP probe, and scenario reset. |
 | Not started | `REDALERT/MP.CPP` | — |
-| Not started | `REDALERT/MPGSET.CPP` | — |
+| Complete | `REDALERT/MPGSET.CPP` | rts-core/src/movie_settings.rs — DVD-gated MPGSettings constructors/config lookup, optional MCIMPEG digital-video enumeration/probe, case-insensitive selected-device resolution, INI save semantics, three-button Default/Test/Cancel dialog, test cleanup and Cancel restore. |
 | Not started | `REDALERT/MPLAYER.CPP` | — |
 | Complete | `REDALERT/MPLIB.CPP` | rts-core/src/mgen.rs — DOS yield interrupt, chunnel interrupt register packing, MGen queue/node/master operations and EAX/ECX result handling; external ordinal/device constants are injected. |
 | Complete | `REDALERT/MPMGRD.CPP` | rts-core/src/player_manager.rs — MGen queue IDs, private/global packet routing, connection table, receive counts, response timing, game-player count and queue flush. |
