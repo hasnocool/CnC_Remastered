@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **232**
-- Not yet fully ported: **262**
+- Fully ported: **233**
+- Not yet fully ported: **261**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 129 | 146 |
+| `REDALERT/` | 275 | 130 | 145 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 47 | 114 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -101,7 +101,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/ENDING.CPP` | No active implementation in the pinned source; both GDI_Ending and Nod_Ending bodies are enclosed by #ifdef NEVER. |
 | Not started | `REDALERT/EVENT.CPP` | — |
 | Not started | `REDALERT/EXPAND.CPP` | — |
-| Not started | `REDALERT/FACE.CPP` | — |
+| Complete | `REDALERT/FACE.CPP` | rts-core/src/face.rs — exact Desired_Facing8/256 ratio arithmetic, DirType octant constants and wrapping add/sub operators, including identical-point behavior. |
 | Complete | `REDALERT/FACING.CPP` | rts-core/src/facing.rs — DirType and FacingClass current/desired headings, signed shortest-path rotation, capped rotation rate, sprite rotation zones. |
 | Not started | `REDALERT/FACTORY.CPP` | — |
 | Complete | `REDALERT/FIELD.CPP` | rts-core/src/field.rs — all scalar/string/chunk constructors, four-byte IDs, eight-byte header, and Host_To_Net/Net_To_Host payload conversion. |
