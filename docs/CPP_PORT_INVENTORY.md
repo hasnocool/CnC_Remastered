@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **59**
-- Not yet fully ported: **435**
+- Fully ported: **63**
+- Not yet fully ported: **431**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 4 | 22 |
+| `REDALERT/WIN32LIB/` | 26 | 6 | 20 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 5 | 27 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 7 | 25 |
 
 ## File-by-file coverage
 
@@ -309,7 +309,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/DDRAW.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/DELAY.CPP` | rts-core/src/delay.rs — timer threshold and duration loop. |
 | Not started | `REDALERT/WIN32LIB/DIPTHONG.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/DRAWRECT.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/DRAWRECT.CPP` | rts-core/src/draw_rect.rs — locked four-edge Draw_Line sequence. |
 | Not started | `REDALERT/WIN32LIB/DrawMisc.cpp` | — |
 | Not started | `REDALERT/WIN32LIB/FONT.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/GBUFFER.CPP` | — |
@@ -321,7 +321,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/LOADFONT.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/MOUSEWW.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/PALETTE.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/SET_FONT.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/SET_FONT.CPP` | rts-core/src/font.rs — previous font return, little-endian block offsets, width/height metrics. |
 | Not started | `REDALERT/WIN32LIB/TIMER.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/TIMERDWN.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/TIMERINI.CPP` | — |
@@ -505,7 +505,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/BUFFGLBL.CPP` | rts-core/src/buffer_globals.rs — identical shared global initializers. |
 | Not started | `TIBERIANDAWN/WIN32LIB/DDRAW.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/DIPTHONG.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/DRAWRECT.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/DRAWRECT.CPP` | rts-core/src/draw_rect.rs — identical shared implementation. |
 | Not started | `TIBERIANDAWN/WIN32LIB/DrawMisc.cpp` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/FONT.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/GBUFFER.CPP` | — |
@@ -523,7 +523,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/REGIONSZ.CPP` | rts-core/src/region_size.rs — signed 32-bit width × height helper with explicit wrapping semantics. |
-| Not started | `TIBERIANDAWN/WIN32LIB/SET_FONT.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/SET_FONT.CPP` | rts-core/src/font.rs — identical shared implementation. |
 | Not started | `TIBERIANDAWN/WIN32LIB/TIMER.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/TIMERDWN.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/TIMERINI.CPP` | — |
