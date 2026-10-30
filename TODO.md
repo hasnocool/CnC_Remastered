@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 350 C++ translation units with source-specific tests.
+- [ ] Port the remaining 348 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -173,3 +173,5 @@
 - [x] Port REDALERT/UDPADDR.CPP active false-return stub and record MCI/MCIMOVIE as inactive under the pinned MCIMPEG-disabled project.
 
 - [x] Port REDALERT/CARRY.CPP techno snapshot and recreation logic, including infantry ScenarioInit handling and unconditional false return.
+
+- [x] Port both CARGO.CPP variants' LIFO linked cargo chain, Limbo, attach, detach and quantity behavior.
