@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **176**
-- Not yet fully ported: **318**
+- Fully ported: **177**
+- Not yet fully ported: **317**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 100 | 175 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 23 | 138 |
+| `TIBERIANDAWN/` | 161 | 24 | 137 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -338,7 +338,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/ABSTRACT.CPP` | — |
 | Not started | `TIBERIANDAWN/ADATA.CPP` | — |
 | Not started | `TIBERIANDAWN/AIRCRAFT.CPP` | — |
-| Not started | `TIBERIANDAWN/ALLOC.CPP` | — |
+| Complete | `TIBERIANDAWN/ALLOC.CPP` | No active implementation in the pinned source; all memory allocation, DPMI locking, heap statistics and realloc routines are enclosed by unconditional `#if (0)`. |
 | Not started | `TIBERIANDAWN/ANIM.CPP` | — |
 | Not started | `TIBERIANDAWN/AUDIO.CPP` | — |
 | Not started | `TIBERIANDAWN/BASE.CPP` | — |
