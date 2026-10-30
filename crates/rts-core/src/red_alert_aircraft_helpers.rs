@@ -515,6 +515,69 @@ pub fn cell_seems_ok(
     })
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LandingCellOccupier {
+    Empty,
+    ThisAircraft,
+    ContactedObject,
+    OtherObject,
+}
+
+/// Port of AircraftClass::Is_LZ_Clear. The movement-clearance callback is used
+/// only for empty cells; occupied cells are accepted only for self or the
+/// exact object currently in radio contact.
+pub fn landing_zone_is_clear<F>(
+    target_is_legal: bool,
+    cell_in_radar: bool,
+    occupier: LandingCellOccupier,
+    is_clear_to_move: F,
+) -> bool
+where
+    F: FnOnce() -> bool,
+{
+    if !target_is_legal || !cell_in_radar {
+        return false;
+    }
+    match occupier {
+        LandingCellOccupier::ThisAircraft | LandingCellOccupier::ContactedObject => true,
+        LandingCellOccupier::OtherObject => false,
+        LandingCellOccupier::Empty => is_clear_to_move(),
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LandingBuildingCandidate {
+    pub present: bool,
+    pub in_limbo: bool,
+    pub owned_by_aircraft_house: bool,
+    pub cell: u32,
+    pub distance: i32,
+    pub is_preferred_support_building: bool,
+}
+
+/// Port of AircraftClass::Good_LZ. The engine supplies the ordered building
+/// scan and source-computed distance; preferred support buildings have their
+/// distance divided by four, with first-in-list tie behavior preserved.
+pub fn good_landing_zone(current_cell: u32, buildings: &[LandingBuildingCandidate]) -> u32 {
+    let mut best_cell = current_cell;
+    let mut best_distance: Option<i32> = None;
+    for building in buildings {
+        if !building.present || building.in_limbo || !building.owned_by_aircraft_house {
+            continue;
+        }
+        let distance = if building.is_preferred_support_building {
+            building.distance / 4
+        } else {
+            building.distance
+        };
+        if best_distance.is_none_or(|best| distance < best) {
+            best_distance = Some(distance);
+            best_cell = building.cell;
+        }
+    }
+    best_cell
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -791,6 +854,58 @@ mod tests {
         assert!(!cell_seems_ok(30, 1, false, &entries));
         assert!(cell_seems_ok(40, 1, false, &entries));
         assert!(cell_seems_ok(60, 1, false, &entries));
+    }
+
+    #[test]
+    fn landing_zone_requires_legal_radar_cell_and_only_accepts_known_occupants() {
+        use LandingCellOccupier::*;
+        assert!(!landing_zone_is_clear(false, true, ThisAircraft, || panic!("invalid target")));
+        assert!(!landing_zone_is_clear(true, false, Empty, || panic!("off-radar cell")));
+        assert!(landing_zone_is_clear(true, true, ThisAircraft, || panic!("self is accepted")));
+        assert!(landing_zone_is_clear(true, true, ContactedObject, || panic!("contact is accepted")));
+        assert!(!landing_zone_is_clear(true, true, OtherObject, || panic!("other occupant blocks")));
+        assert!(landing_zone_is_clear(true, true, Empty, || true));
+        assert!(!landing_zone_is_clear(true, true, Empty, || false));
+    }
+
+    #[test]
+    fn good_landing_zone_prefers_nearest_friendly_building_with_support_bias() {
+        let buildings = [
+            LandingBuildingCandidate {
+                present: true, in_limbo: false, owned_by_aircraft_house: false,
+                cell: 10, distance: 1, is_preferred_support_building: true,
+            },
+            LandingBuildingCandidate {
+                present: true, in_limbo: true, owned_by_aircraft_house: true,
+                cell: 20, distance: 1, is_preferred_support_building: true,
+            },
+            LandingBuildingCandidate {
+                present: true, in_limbo: false, owned_by_aircraft_house: true,
+                cell: 30, distance: 80, is_preferred_support_building: false,
+            },
+            LandingBuildingCandidate {
+                present: true, in_limbo: false, owned_by_aircraft_house: true,
+                cell: 40, distance: 200, is_preferred_support_building: true,
+            },
+        ];
+        // Preferred support distance is 200 / 4 = 50, so the closer building wins.
+        assert_eq!(good_landing_zone(99, &buildings), 40);
+    }
+
+    #[test]
+    fn good_landing_zone_preserves_first_tie_and_falls_back_to_current_cell() {
+        let tied = [
+            LandingBuildingCandidate {
+                present: true, in_limbo: false, owned_by_aircraft_house: true,
+                cell: 30, distance: 20, is_preferred_support_building: false,
+            },
+            LandingBuildingCandidate {
+                present: true, in_limbo: false, owned_by_aircraft_house: true,
+                cell: 40, distance: 80, is_preferred_support_building: true,
+            },
+        ];
+        assert_eq!(good_landing_zone(99, &tied), 30);
+        assert_eq!(good_landing_zone(99, &[]), 99);
     }
 
     #[test]
