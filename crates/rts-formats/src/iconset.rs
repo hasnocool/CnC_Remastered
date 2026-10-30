@@ -103,7 +103,7 @@ impl IconSet {
     /// legacy loader allocating its own block; Some(n) models caller storage.
     pub fn load(file: &[u8], supplied_capacity: Option<usize>) -> Result<Self, IconSetError> {
         let mut iff = IffFile::open(file.to_vec())?;
-        if file.get(8..12) != Some(&FORM_ICON) { return Err(IconSetError::InvalidForm); }
+        if file.get(8..12) != Some(FORM_ICON.as_slice()) { return Err(IconSetError::InvalidForm); }
 
         let sinf = iff.read_chunk(FORM_SINF, 4)?.ok_or(IconSetError::MissingInfoChunk)?;
         if sinf.len() < 4 { return Err(IconSetError::MissingInfoChunk); }
@@ -175,7 +175,7 @@ impl IconSet {
     pub fn count(&self) -> i16 { self.control.count }
     pub fn allocated_by_loader(&self) -> bool { self.allocated_by_loader }
     pub fn storage(&self) -> &[u8] { &self.storage }
-    pub fn icon_data(&self) -> &[u8] { self.slice_at(self.control.icons_offset, self.control.transparency_offset.saturating_sub(self.control.map_offset).saturating_add(self.control.map_offset).saturating_sub(self.control.icons_offset)) }
+    pub fn icon_data(&self) -> &[u8] { self.slice_at(self.control.icons_offset, self.control.map_offset.saturating_sub(self.control.icons_offset)) }
     pub fn transparency_data(&self) -> &[u8] { self.slice_at(self.control.transparency_offset, self.storage.len().saturating_sub(self.control.transparency_offset)) }
     pub fn map_data(&self) -> &[u8] { self.slice_at(self.control.map_offset, self.control.transparency_offset.saturating_sub(self.control.map_offset)) }
 
@@ -205,7 +205,7 @@ mod tests {
     }
 
     fn sample_iff() -> Vec<u8> {
-        let mut body = b"ILBM".to_vec();
+        let mut body = b"ICON".to_vec();
         chunk(FORM_SINF, &[1, 1, 0, 1], &mut body);
         chunk(FORM_SSET, &[1, 2, 3, 4, 5, 6, 7, 8], &mut body);
         chunk(FORM_TRNS, &[9, 10], &mut body);
