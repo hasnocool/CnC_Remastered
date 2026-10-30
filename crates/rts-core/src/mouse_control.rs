@@ -140,13 +140,13 @@ pub const REDALERT_MOUSE_CONTROL: [MouseControl; REDALERT_MOUSE_COUNT] = [
     MouseControl { start_frame: 147, frame_count: 1, frame_rate: 0, small_frame: 146, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_AREA_GUARD
     MouseControl { start_frame: 160, frame_count: 4, frame_rate: 4, small_frame: 194, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_HEAL
     MouseControl { start_frame: 164, frame_count: 3, frame_rate: 4, small_frame: 167, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_DAMAGE
-    MouseControl { start_frame: 170, frame_count: 24, frame_rate: 2, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_NO_DEPLOY
-    MouseControl { start_frame: 195, frame_count: 8, frame_rate: 4, small_frame: 203, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_NO_ENTER
-    MouseControl { start_frame: 211, frame_count: 1, frame_rate: 0, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_NO_GREPAIR
-    MouseControl { start_frame: 212, frame_count: 1, frame_rate: 0, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_CHRONO_SELECT
-    MouseControl { start_frame: 213, frame_count: 1, frame_rate: 0, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_CHRONO_DEST
-    MouseControl { start_frame: 97, frame_count: 8, frame_rate: 3, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // undefined
-    MouseControl { start_frame: 105, frame_count: 8, frame_rate: 2, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // undefined
+    MouseControl { start_frame: 170, frame_count: 24, frame_rate: 2, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_GREPAIR
+    MouseControl { start_frame: 195, frame_count: 8, frame_rate: 4, small_frame: 203, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_STAY_ATTACK
+    MouseControl { start_frame: 211, frame_count: 1, frame_rate: 0, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_NO_DEPLOY
+    MouseControl { start_frame: 212, frame_count: 1, frame_rate: 0, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_NO_ENTER
+    MouseControl { start_frame: 213, frame_count: 1, frame_rate: 0, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_NO_GREPAIR
+    MouseControl { start_frame: 97, frame_count: 8, frame_rate: 3, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_CHRONO_SELECT
+    MouseControl { start_frame: 105, frame_count: 8, frame_rate: 2, small_frame: -1, hotspot_x: 14, hotspot_y: 11 }, // MOUSE_CHRONO_DEST
 ];
 
 pub const TIBERIAN_DAWN_MOUSE_CONTROL: [MouseControl; TIBERIAN_DAWN_MOUSE_COUNT] = [
