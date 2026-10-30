@@ -4,17 +4,17 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **192**
-- Not yet fully ported: **302**
+- Fully ported: **194**
+- Not yet fully ported: **300**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 106 | 169 |
+| `REDALERT/` | 275 | 107 | 168 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 31 | 130 |
+| `TIBERIANDAWN/` | 161 | 32 | 129 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 30 | 2 |
 
 ## File-by-file coverage
@@ -50,7 +50,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/BULLET.CPP` | — |
 | Complete | `REDALERT/CARGO.CPP` | rts-core/src/cargo.rs — LIFO linked-object attach, Limbo, chain concatenation, unsigned-byte quantity, detach and debug payload. |
 | Complete | `REDALERT/CARRY.CPP` | rts-core/src/carryover.rs — supported techno RTTI/type/house/strength/cell snapshot and object recreation; infantry temporarily clears and restores ScenarioInit; source's unconditional false return preserved. |
-| Not started | `REDALERT/CCDDE.CPP` | — |
+| Complete | `REDALERT/CCDDE.CPP` | rts-core/src/dde_bridge.rs — DDEServerClass lifecycle, REDALERT/WCHAT service identity, duplicate-instance detection, callback advisory handling, start-game INI payload, tickle and heartbeat updates, heartbeat elapsed time, and network-order WChat poke framing. |
 | Not started | `REDALERT/CCFILE.CPP` | — |
 | Not started | `REDALERT/CCINI.CPP` | — |
 | Not started | `REDALERT/CCMPATH.CPP` | — |
@@ -347,7 +347,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/BUILDING.CPP` | — |
 | Not started | `TIBERIANDAWN/BULLET.CPP` | — |
 | Complete | `TIBERIANDAWN/CARGO.CPP` | rts-core/src/cargo.rs — shared cargo chain behavior; variant-specific pointer return is represented by stable object IDs. |
-| Not started | `TIBERIANDAWN/CCDDE.CPP` | — |
+| Complete | `TIBERIANDAWN/CCDDE.CPP` | rts-core/src/dde_bridge.rs — shared DDE callback/server implementation with CONQUER/WCHAT service identity, duplicate-instance detection, game-info payload ownership, tickle/heartbeat handling and network-order poke send. |
 | Not started | `TIBERIANDAWN/CCFILE.CPP` | — |
 | Not started | `TIBERIANDAWN/CDATA.CPP` | — |
 | Not started | `TIBERIANDAWN/CDFILE.CPP` | — |
