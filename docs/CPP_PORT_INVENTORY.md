@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **243**
-- Not yet fully ported: **251**
+- Fully ported: **244**
+- Not yet fully ported: **250**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 136 | 139 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 51 | 110 |
+| `TIBERIANDAWN/` | 161 | 52 | 109 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -380,7 +380,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/EDIT.CPP` | — |
 | Complete | `TIBERIANDAWN/ENDING.CPP` | rts-core/src/ending.rs — GDI demo/standard endings, Nod target-selection loop, sound/input gating, cleanup, ending movies, optional trailer and attract-screen sequence. |
 | Not started | `TIBERIANDAWN/EVENT.CPP` | — |
-| Not started | `TIBERIANDAWN/EXPAND.CPP` | — |
+| Complete | `TIBERIANDAWN/EXPAND.CPP` | rts-core/src/expansion.rs — NEWMENU expansion/bonus scenario catalogues, bounded Basic/Name INI extraction, localized bonus labels, 320/640 layout, faction selection, keyboard/button accept/cancel, callback/surface-restore redraw loop and list-entry color/gradient rendering adapter. |
 | Complete | `TIBERIANDAWN/FACING.CPP` | rts-core/src/facing.rs — DirType and FacingClass current/desired headings, signed shortest-path rotation, capped rotation rate, sprite rotation zones. |
 | Not started | `TIBERIANDAWN/FACTORY.CPP` | — |
 | Complete | `TIBERIANDAWN/FIELD.CPP` | rts-core/src/field.rs — shared field serialization and endian conversion behavior. |

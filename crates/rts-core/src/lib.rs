@@ -35,6 +35,7 @@ pub mod description_dialog;
 pub mod mgen;
 pub mod wol_strings;
 pub mod ending;
+pub mod expansion;
 pub mod rules_defaults;
 pub mod memory_pool;
 pub mod misc_asm;
