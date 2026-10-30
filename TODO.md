@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 308 C++ translation units with source-specific tests.
+- [ ] Port the remaining 307 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -209,3 +209,5 @@
 - [x] Port REDALERT/CHEKLIST.CPP and TIBERIANDAWN/CHEKLIST.CPP: check-item storage variants, text lookup/removal, read-only behavior, parent-first mouse action, checked-state toggling and variant-specific row rendering.
 
 - [x] Port TIBERIANDAWN/VECTOR.CPP and its header's Raw_Count() and mutable raw-context interfaces using the shared vector and packed BooleanVector Rust implementations.
+
+- [x] Port REDALERT/COLRLIST.CPP and TIBERIANDAWN/COLRLIST.CPP per-row color storage, text/localized additions, removal, selection style, highlight/box/bar/invert rendering, gradient text flags and variant-specific selected-color semantics.
