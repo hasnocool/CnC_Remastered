@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 71 | 204 |
+| `REDALERT/` | 275 | 72 | 203 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 13 | 148 |
+| `TIBERIANDAWN/` | 161 | 14 | 147 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 28 | 4 |
 
 ## File-by-file coverage
@@ -104,7 +104,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/FACE.CPP` | — |
 | Complete | `REDALERT/FACING.CPP` | rts-core/src/facing.rs — DirType and FacingClass current/desired headings, signed shortest-path rotation, capped rotation rate, sprite rotation zones. |
 | Not started | `REDALERT/FACTORY.CPP` | — |
-| Not started | `REDALERT/FIELD.CPP` | — |
+| Complete | `REDALERT/FIELD.CPP` | rts-core/src/field.rs — all scalar/string/chunk constructors, four-byte IDs, eight-byte header, and Host_To_Net/Net_To_Host payload conversion. |
 | Not started | `REDALERT/FINDPATH.CPP` | — |
 | Complete | `REDALERT/FIXED.CPP` | rts-core/src/fixed16.rs — Q16.16 constructors, arithmetic helpers, ASCII conversion. |
 | Complete | `REDALERT/FLASHER.CPP` | rts-core/src/flasher.rs — global countdown, IsBlushing parity, per-player countdowns, flashing bitmask and optional debug text. |
@@ -383,7 +383,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/EXPAND.CPP` | — |
 | Complete | `TIBERIANDAWN/FACING.CPP` | rts-core/src/facing.rs — DirType and FacingClass current/desired headings, signed shortest-path rotation, capped rotation rate, sprite rotation zones. |
 | Not started | `TIBERIANDAWN/FACTORY.CPP` | — |
-| Not started | `TIBERIANDAWN/FIELD.CPP` | — |
+| Complete | `TIBERIANDAWN/FIELD.CPP` | rts-core/src/field.rs — shared field serialization and endian conversion behavior. |
 | Not started | `TIBERIANDAWN/FINDPATH.CPP` | — |
 | Complete | `TIBERIANDAWN/FLASHER.CPP` | rts-core/src/flasher.rs — shared per-player flashing state implementation. |
 | Complete | `TIBERIANDAWN/FLY.CPP` | rts-core/src/fly.rs — Fixed_To_Cardinal speed conversion and shared flying-object physics. |
