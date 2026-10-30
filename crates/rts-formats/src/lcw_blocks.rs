@@ -446,12 +446,12 @@ impl<S: StrawSource> LcwStraw<S> {
     }
 }
 
-impl<P: PipeSink> LcwPipe {
+impl LcwPipe {
     /// Forward a completed transformed payload to a downstream sink.
     pub fn put_to_sink(
         &mut self,
         source: &[u8],
-        sink: &mut P,
+        sink: &mut impl PipeSink,
     ) -> Result<usize, LcwError> {
         let output = self.put(source)?;
         Ok(sink.put(&output))
@@ -485,7 +485,7 @@ mod tests {
     fn compressor_uses_long_repeat_run() {
         let input = vec![b'Q'; 300];
         let encoded = compress(&input).unwrap();
-        assert!(encoded.windows(1).any(|byte| byte == [0xFE]));
+        assert!(encoded.contains(&0xFE));
         assert_eq!(decompress_expected(&encoded, input.len()).unwrap(), input);
     }
 
@@ -525,7 +525,7 @@ mod tests {
     fn pipe_flush_passes_through_incomplete_decompression_tail() {
         let mut decoder = LcwPipe::new(LcwMode::Decompress, 32).unwrap();
         let incomplete_header = [0x02, 0x00];
-        assert_eq!(decoder.put(&incomplete_header).unwrap(), []);
+        assert!(decoder.put(&incomplete_header).unwrap().is_empty());
         assert_eq!(decoder.flush().unwrap(), incomplete_header);
     }
 
