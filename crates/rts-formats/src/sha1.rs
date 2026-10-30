@@ -67,8 +67,9 @@ impl Sha1 {
         }
 
         while input.len() >= Self::BLOCK_SIZE {
-            let block: &[u8; 64] = input[..64].try_into().expect("slice length is 64");
-            self.process_block(block);
+            let mut block = [0_u8; 64];
+            block.copy_from_slice(&input[..64]);
+            self.process_block(&block);
             input = &input[64..];
         }
 
