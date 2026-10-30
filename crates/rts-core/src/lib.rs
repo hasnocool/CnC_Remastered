@@ -41,6 +41,7 @@ pub mod nonsequenced_connection;
 pub mod dial8;
 pub mod check_list;
 pub mod color_list;
+pub mod text_button;
 pub mod keyboard;
 pub mod td_keyboard;
 pub mod player_manager;
