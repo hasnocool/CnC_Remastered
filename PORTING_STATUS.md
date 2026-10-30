@@ -74,3 +74,6 @@
 ## Verification status
 
 No Rust build/test result is claimed in this commit. The execution environment used to prepare this change did not have `rustc` or `cargo` installed. The workspace includes unit tests for the foundations; run the commands in the README on a Rust 1.85+ host before treating this milestone as verified.
+
+
+Latest addition: `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` → `crates/rts-core/src/legacy_new_delete.rs` (scalar/array allocation operator delegation).
