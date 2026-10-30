@@ -252,3 +252,15 @@ mod tests {
         assert_eq!(&destination[..6], b"stream");
     }
 }
+
+
+/// Compatibility source interface used by streaming codecs and checksum adapters.
+pub trait StrawSource {
+    fn get(&mut self, destination: &mut [u8]) -> usize;
+}
+
+impl StrawSource for StrawHandle {
+    fn get(&mut self, destination: &mut [u8]) -> usize {
+        StrawHandle::get(self, destination)
+    }
+}
