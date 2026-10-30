@@ -13,9 +13,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 20 | 6 |
+| `REDALERT/WIN32LIB/` | 26 | 21 | 5 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 23 | 9 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 24 | 8 |
 
 ## File-by-file coverage
 
@@ -313,7 +313,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/DrawMisc.cpp` | — |
 | Complete | `REDALERT/WIN32LIB/FONT.CPP` | rts-core/src/font_metrics.rs — character/string pixel widths and Text_Print cursor coordinate conversion. |
 | Not started | `REDALERT/WIN32LIB/GBUFFER.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/GETSHAPE.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/GETSHAPE.CPP` | rts-core/src/shape_access.rs — packed Shape_Type metadata, special prefix words, shape-block indexing, extraction, height mutation and restoration. |
 | Not started | `REDALERT/WIN32LIB/ICONSET.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/IFF.CPP` | rts-formats/src/iff.rs — FORM validation, first-match chunk search, even-byte chunk alignment, bounded reads, chunk writes and FORM-size update. |
 | Complete | `REDALERT/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — assembly-compatible Random state and injectable CRT IRandom range sampling. |
@@ -509,7 +509,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/WIN32LIB/DrawMisc.cpp` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/FONT.CPP` | rts-core/src/font_metrics.rs — shared font metrics and print cursor implementation. |
 | Not started | `TIBERIANDAWN/WIN32LIB/GBUFFER.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/GETSHAPE.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/GETSHAPE.CPP` | rts-core/src/shape_access.rs — shared accessor implementation; variant source differs only in non-behavioral formatting. |
 | Not started | `TIBERIANDAWN/WIN32LIB/ICONSET.CPP` | — |
 | Complete | `TIBERIANDAWN/WIN32LIB/IFF.CPP` | rts-formats/src/iff.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — shared implementation; same source routine in both variants. |
