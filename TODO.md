@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 265 C++ translation units with source-specific tests.
+- [ ] Port the remaining 264 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -260,3 +260,5 @@
 - [x] Port REDALERT/CRATE.CPP crate placement/retry logic, ScenarioInit preservation, overlay selection and cleanup, tracked-cell state and expiration timer.
 
 - [x] Port REDALERT/TURRET.CPP default/parameterized constructors and empty destructor; preserve the base DriveClass forwarding boundary.
+
+- [x] Port REDALERT/SPRITE.CPP GraphicBufferClass::Scale_Rotate, exact sine/cosine lookup tables, rotated corner setup and both Bresenham source/destination stepping cases.
