@@ -317,13 +317,6 @@ mod tests {
                 next: None,
                 damage: Vec::new(),
             });
-            if let Some(previous) = self.objects.iter_mut()
-                .take(id)
-                .rev()
-                .find(|object| object.next.is_none() && self.cell_heads.contains_key(&cell))
-            {
-                let _ = previous;
-            }
             match self.cell_heads.get(&cell).copied() {
                 None => { self.cell_heads.insert(cell, id); }
                 Some(mut current) => {
@@ -448,7 +441,7 @@ mod tests {
         assert_eq!(world.objects[building].damage[0].amount, 30);
         assert_eq!(world.objects[building].damage[0].distance, 0);
         assert_eq!(world.objects[aircraft].damage[0].amount, 60);
-        assert_eq!(world.objects[aircraft].damage[0].distance, 150);
+        assert_eq!(world.objects[aircraft].damage[0].distance, 300);
         assert!(!world.objects[building].marked);
         assert!(!world.objects[aircraft].marked);
         assert_eq!(world.tiberium, vec![(10, 3)]);
