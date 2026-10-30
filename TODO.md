@@ -35,6 +35,8 @@
 - [x] Inventory all 494 upstream C++ translation units by exact path.
 - [x] Port `REDALERT/OVERLAY.CPP`: overlay pool lifecycle, Mark wall/non-wall behavior, OverlayPack and legacy INI loading, multiplayer crate rules, wall ownership selection, and LCW OverlayPack writing.
 - [x] Port `TIBERIANDAWN/GOPTIONS.CPP`: source-ordered options menu, multiplayer filtering/navigation, language and locale variants, action outcomes, movie/palette sequence, caption rendering geometry, and final callbacks.
+- [x] Port source-isolated `REDALERT/LOGIC.CPP` scheduler behavior: mission triggers/timers, shadow growth, time quake, object-list mutation safety, factories/houses, auto-sonar, detach and recently-created cleanup.
+- [ ] Port the optional `REDALERT/LOGIC.CPP` `CHEAT_KEYS` monochrome Debug_Dump visualization and complete final verification.
 - [x] Port `REDALERT/PK.CPP`: DER key import/export, block sizing, full-block RSA modular exponentiation, disabled Generate behavior, and the PKPipe/PKStraw cipher adapter.
 - [x] Port `REDALERT/GOPTIONS.CPP`: resolution geometry, feature-gated menu definitions, multiplayer button filtering, navigation, redraw loop, all action/result branches, and host-driven non-blocking dialog integration.
 - [x] Port `REDALERT/WSPUDP.CPP`: dotted broadcast configuration, UDP socket setup/local address discovery, broadcast fan-out, self-packet filtering, and asynchronous packet event handling.
