@@ -60,7 +60,7 @@ impl IpxSocketAddress {
         }
     }
 
-    pub const fn new(
+    pub fn new(
         family: IpxSocketFamily,
         network: [u8; 4],
         node: [u8; 6],
