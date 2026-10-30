@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **267**
-- Not yet fully ported: **227**
+- Fully ported: **268**
+- Not yet fully ported: **226**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -53,7 +53,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/CCDDE.CPP` | rts-core/src/dde_bridge.rs — DDEServerClass lifecycle, REDALERT/WCHAT service identity, duplicate-instance detection, callback advisory handling, start-game INI payload, tickle and heartbeat updates, heartbeat elapsed time, and network-order WChat poke framing. |
 | Not started | `REDALERT/CCFILE.CPP` | — |
 | Not started | `REDALERT/CCINI.CPP` | — |
-| Not started | `REDALERT/CCMPATH.CPP` | — |
+| Complete | `REDALERT/CCMPATH.CPP` | rts-core/src/red_alert_mpath.rs — default MPATH-disabled success/no-op build, optional initialization, settings failure exit, nonblocking ping discovery/retry loop, duplicate-address suppression, response unicast, connection-loss/left-game messages, player removal and AI takeover cleanup. |
 | Complete | `REDALERT/CCPTR.CPP` | rts-core/src/ccptr.rs — stable heap-ID pointer resolution, case-insensitive Name comparison, 31 explicit template instantiations and exact relational-operator expressions. |
 | Not started | `REDALERT/CCTEN.CPP` | — |
 | Not started | `REDALERT/CDATA.CPP` | — |
