@@ -46,6 +46,10 @@ pub enum RadioMessageType {
     OnDepot = 34,
 }
 
+impl Default for RadioMessageType {
+    fn default() -> Self { Self::Static }
+}
+
 impl RadioMessageType {
     pub const fn from_id(id: u8) -> Option<Self> {
         Some(match id {
