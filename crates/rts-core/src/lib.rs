@@ -126,3 +126,4 @@ pub mod unit_tracker;
 pub mod red_alert_unit_tracker;
 pub mod red_alert_control_gadget;
 pub mod red_alert_game_controls;
+pub mod red_alert_radio;

@@ -302,3 +302,4 @@
 - [x] Port REDALERT/UTRACKER.CPP unit totals and dual network-conversion configurations, including non-WIN32 htonl/ntohl macros that return zero, idempotent format-state guards and bounds-safe total access.
 - [x] Port REDALERT/CONTROL.CPP Red Alert ControlClass constructors including copy/NoInit forms, peer cloning, Action key update before peer callback, base gadget Action delegation and peer-first Draw_Me.
 - [x] Port REDALERT/GAMEDLG.CPP option dialog: German and standard coordinates, WOLAPI feature/connection-dependent button list, inverse speed/scroll sliders, callback/map redraw, navigation, speed event, temporary GameSpeed save/restore, sound-card warning and subdialog returns.
+- [x] Port REDALERT/RADIO.CPP Red Alert message catalogue, distinct-message receive history, HELLO/OVER_OUT contact rules, explicit/default-LParam transmit overloads, debug snapshot and limbo cleanup.

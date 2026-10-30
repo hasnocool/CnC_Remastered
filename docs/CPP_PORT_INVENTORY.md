@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **265**
-- Not yet fully ported: **229**
+- Fully ported: **266**
+- Not yet fully ported: **228**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -206,7 +206,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/PROFILE.CPP` | rts-core/src/profile.rs — INI string/key/hex/int get and write routines, sound/language config loading, section/entry replacement/removal, plus all Read_Bin_* and Write_Bin_* buffer initialization, cursor, length, numeric and length-prefixed string operations with original asymmetric bounds checks. |
 | Not started | `REDALERT/QUEUE.CPP` | — |
 | Not started | `REDALERT/RADAR.CPP` | — |
-| Not started | `REDALERT/RADIO.CPP` | — |
+| Complete | `REDALERT/RADIO.CPP` | rts-core/src/red_alert_radio.rs — Red Alert's 34-message catalogue/texts, three-entry distinct-message history, strength/contact HELLO negotiation, matched-peer OVER_OUT teardown, target fallback, LParam overload and limbo cleanup. |
 | Not started | `REDALERT/RAMFILE.CPP` | — |
 | Complete | `REDALERT/RAND.CPP` | rts-core/src/random.rs — Sim_Random and Sim_IRandom. |
 | Complete | `REDALERT/RANDOM.CPP` | rts-core/src/random_class.rs — seeded LCG and rejection-sampled ranges. |
