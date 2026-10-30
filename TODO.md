@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 399 C++ translation units with source-specific tests.
+- [ ] Port the remaining 397 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -106,3 +106,5 @@
 - [x] Port byte-identical Red Alert/Tiberian Dawn `LOAD.CPP` routines to `rts-formats::load`, including bounded file I/O, compression dispatch, reserved skip data, and scratch-tail staging.
 
 - [x] Port both variants' packed `GETSHAPE.CPP` metadata, shape-table extraction, prefix data and height mutation routines to `rts-core::shape_access`.
+
+- [x] Port both variants' IFF-based `ICONSET.CPP` loader and packed control structure to `rts-formats::iconset`.
