@@ -139,12 +139,12 @@ impl ProfileBuffer {
         parse_atoi(&String::from_utf8_lossy(&result.output[..end]))
     }
 
-    pub fn write_int(&mut self, section: &str, entry: Option<&str>, value: i32) {
-        self.write_string(section, entry, Some(&value.to_string()));
+    pub fn write_int(&mut self, section: &str, entry: Option<&str>, value: i32) -> bool {
+        self.write_string(section, entry, Some(&value.to_string()))
     }
 
-    pub fn write_string(&mut self, section: &str, entry: Option<&str>, value: Option<&str>) {
-        if section.is_empty() { return; }
+    pub fn write_string(&mut self, section: &str, entry: Option<&str>, value: Option<&str>) -> bool {
+        if section.is_empty() { return true; }
 
         if self.section_bounds(section).is_none() {
             if entry.is_none() || value.is_none() { return; }
@@ -157,12 +157,12 @@ impl ProfileBuffer {
             self.insert_at(end, &suffix);
         }
 
-        let Some((header_start, body_start, body_end)) = self.section_bounds(section) else { return };
+        let Some((header_start, body_start, body_end)) = self.section_bounds(section) else { return true };
         let section_end = body_end;
 
         if entry.is_none() {
             self.remove_range(header_start, section_end);
-            return;
+            return true;
         }
         let entry = entry.unwrap();
 
