@@ -2,6 +2,7 @@
 
 pub mod binary;
 pub mod crc32;
+pub mod legacy_crc;
 pub mod mix;
 
 pub use binary::{BinaryReadError, BinaryReader};
