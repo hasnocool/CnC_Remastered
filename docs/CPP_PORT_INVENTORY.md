@@ -13,7 +13,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 47 | 228 |
-| `REDALERT/WIN32LIB/` | 26 | 16 | 10 |
+| `REDALERT/WIN32LIB/` | 26 | 17 | 9 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 19 | 13 |
 
@@ -318,7 +318,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/IFF.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — assembly-compatible Random state and injectable CRT IRandom range sampling. |
 | Not started | `REDALERT/WIN32LIB/LOAD.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/LOADFONT.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/LOADFONT.CPP` | rts-core/src/load_font.rs — validates the little-endian size prefix, uncompressed marker, five-block font layout, and retains the legacy allocation layout. |
 | Not started | `REDALERT/WIN32LIB/MOUSEWW.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/PALETTE.CPP` | rts-formats/src/palette_fade.rs — byte-identical shared implementation with Tiberian Dawn; IBM palette copy/set, bump-rate calculation, bounded fade steps. |
 | Complete | `REDALERT/WIN32LIB/SET_FONT.CPP` | rts-core/src/font.rs — previous font return, little-endian block offsets, width/height metrics. |
