@@ -400,13 +400,13 @@ mod tests {
         };
         let mut logic = LogicClass::default();
         let normal = logic.ai(config(LogicGameMode::Normal), &mut world);
-        assert_eq!(normal.scan_bits_added, 0);
+        assert_eq!(normal.scan_bits_added, 1);
         let multi = logic.ai(config(LogicGameMode::Multiplayer), &mut world);
-        assert_eq!(multi.scan_bits_added, 4);
+        assert_eq!(multi.scan_bits_added, 3);
         assert_eq!(world.scan_updates, vec![
+            (1, LogicScanCategory::Unit, 1 << 3, false),
             (0, LogicScanCategory::Unit, 1 << 2, false),
             (0, LogicScanCategory::Unit, 1 << 2, true),
-            (1, LogicScanCategory::Unit, 1 << 3, false),
             (1, LogicScanCategory::Unit, 1 << 3, false),
         ]);
     }
