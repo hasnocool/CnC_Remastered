@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 51 | 224 |
+| `REDALERT/` | 275 | 52 | 223 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 5 | 156 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
@@ -40,7 +40,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/BDATA.CPP` | — |
 | Not started | `REDALERT/BENCH.CPP` | — |
 | Not started | `REDALERT/BFIOFILE.CPP` | — |
-| Not started | `REDALERT/BIGCHECK.CPP` | — |
+| Complete | `REDALERT/BIGCHECK.CPP` | No active implementation in the pinned RedAlert.vcxproj configuration; the file is entirely guarded by WOLAPI_INTEGRATION, which is not defined by the project. |
 | Complete | `REDALERT/BLOWFISH.CPP` | rts-formats/src/blowfish.rs — Blowfish key schedule, P/S tables, encrypt/decrypt. |
 | Complete | `REDALERT/BLOWPIPE.CPP` | rts-formats/src/blowfish_streams.rs — Blowfish push adapter. |
 | Complete | `REDALERT/BLWSTRAW.CPP` | rts-formats/src/blowfish_streams.rs — Blowfish demand-driven adapter. |
