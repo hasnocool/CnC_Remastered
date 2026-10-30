@@ -14,6 +14,45 @@ use crate::map::Coordinate;
 use crate::red_alert_aircraft_types::{AircraftType, AircraftTypeRecord, AIRCRAFT_TYPES, MAP_CELL_W, REFRESH_EOL};
 
 pub const AIRCRAFT_SORT_Y_OFFSET: u32 = 0x0080_0000;
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ShapeNumberError {
+    BodyShapeIndexOutOfRange { index: usize },
+}
+
+/// Port of AircraftClass::Shape_Number. Facing16 and Facing32 are the exact
+/// upstream lookup tables; they are injected rather than regenerated, because
+/// the 3D-rendered unit silhouettes have a source-defined angular bias.
+pub fn shape_number(
+    rotation: u8,
+    facing: DirType,
+    body_shape: &[i32],
+    facing16: &[u8; 256],
+    facing32: &[u8; 256],
+    door_closed: bool,
+    door_stage: i32,
+) -> Result<i32, ShapeNumberError> {
+    let direction = usize::from(facing.0);
+    let shape = match rotation {
+        32 => body_shape.get(usize::from(facing32[direction]) )
+            .copied()
+            .ok_or(ShapeNumberError::BodyShapeIndexOutOfRange {
+                index: usize::from(facing32[direction]),
+            })?,
+        16 => {
+            let index = usize::from(facing16[direction]) * 2;
+            body_shape.get(index).copied()
+                .ok_or(ShapeNumberError::BodyShapeIndexOutOfRange { index })? / 2
+        }
+        8 => {
+            let index = usize::from((facing.0 | 0x10) >> 5) * 4;
+            body_shape.get(index).copied()
+                .ok_or(ShapeNumberError::BodyShapeIndexOutOfRange { index })? / 4
+        }
+        _ => 0,
+    };
+    Ok(if door_closed { shape } else { i32::from(rotation) + door_stage })
+}
+
 
 pub const AIRCRAFT_OVERLAP_STANDARD: [i16; 16] = [
     -(MAP_CELL_W - 1), -MAP_CELL_W, -(MAP_CELL_W + 1), -1, 0, 1,
@@ -577,6 +616,34 @@ mod tests {
         );
         assert!(rotor_ground.complete);
         assert_eq!(rotor_ground.speed, None);
+    }
+
+    #[test]
+    fn shape_number_uses_upstream_rotation_tables_and_door_override() {
+        let mut body = [0_i32; 256];
+        for (index, slot) in body.iter_mut().enumerate() { *slot = index as i32 * 4; }
+        let mut facing16 = [0_u8; 256];
+        let mut facing32 = [0_u8; 256];
+        facing16[64] = 3;
+        facing32[64] = 9;
+        assert_eq!(shape_number(32, DirType::EAST, &body, &facing16, &facing32, true, 0), Ok(36));
+        assert_eq!(shape_number(16, DirType::EAST, &body, &facing16, &facing32, true, 0), Ok(12));
+        // Dir_To_8 is ((unsigned char)(direction | 0x10)) >> 5.
+        assert_eq!(shape_number(8, DirType::EAST, &body, &facing16, &facing32, true, 0), Ok(16));
+        assert_eq!(shape_number(32, DirType::EAST, &body, &facing16, &facing32, false, 3), Ok(35));
+        assert_eq!(shape_number(24, DirType::EAST, &body, &facing16, &facing32, true, 0), Ok(0));
+    }
+
+    #[test]
+    fn shape_number_reports_short_source_lookup_tables_instead_of_panicking() {
+        let body = [0_i32; 8];
+        let facing16 = [0_u8; 256];
+        let mut facing32 = [0_u8; 256];
+        facing32[0] = 9;
+        assert_eq!(
+            shape_number(32, DirType::NORTH, &body, &facing16, &facing32, true, 0),
+            Err(ShapeNumberError::BodyShapeIndexOutOfRange { index: 9 })
+        );
     }
 
     #[test]
