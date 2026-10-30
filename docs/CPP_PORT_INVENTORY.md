@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 54 | 221 |
+| `REDALERT/` | 275 | 55 | 220 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 6 | 155 |
+| `TIBERIANDAWN/` | 161 | 7 | 154 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
 
 ## File-by-file coverage
@@ -107,7 +107,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/FIELD.CPP` | — |
 | Not started | `REDALERT/FINDPATH.CPP` | — |
 | Complete | `REDALERT/FIXED.CPP` | rts-core/src/fixed16.rs — Q16.16 constructors, arithmetic helpers, ASCII conversion. |
-| Not started | `REDALERT/FLASHER.CPP` | — |
+| Complete | `REDALERT/FLASHER.CPP` | rts-core/src/flasher.rs — global countdown, IsBlushing parity, per-player countdowns, flashing bitmask and optional debug text. |
 | Not started | `REDALERT/FLY.CPP` | — |
 | Not started | `REDALERT/FOOT.CPP` | — |
 | Not started | `REDALERT/FUSE.CPP` | — |
@@ -385,7 +385,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/FACTORY.CPP` | — |
 | Not started | `TIBERIANDAWN/FIELD.CPP` | — |
 | Not started | `TIBERIANDAWN/FINDPATH.CPP` | — |
-| Not started | `TIBERIANDAWN/FLASHER.CPP` | — |
+| Complete | `TIBERIANDAWN/FLASHER.CPP` | rts-core/src/flasher.rs — shared per-player flashing state implementation. |
 | Not started | `TIBERIANDAWN/FLY.CPP` | — |
 | Not started | `TIBERIANDAWN/FOOT.CPP` | — |
 | Not started | `TIBERIANDAWN/FUSE.CPP` | — |
