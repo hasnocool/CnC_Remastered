@@ -66,6 +66,7 @@ pub mod crate_manager;
 pub mod scale_rotate;
 pub mod face;
 pub mod door;
+pub mod intro_selection;
 pub mod turret;
 pub mod tarcom;
 pub mod heap;
