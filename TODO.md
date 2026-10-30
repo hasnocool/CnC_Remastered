@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 387 C++ translation units with source-specific tests.
+- [ ] Port the remaining 386 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -115,3 +115,5 @@
 
 - [x] Record both include-only CREW.CPP translation units and both #if (0)-disabled DPMI.CPP translation units as having no active implementation.
 - [x] Record REDALERT/MPU.CPP as inactive under the pinned MSVC target and port REDALERT/_WSPROTO.CPP's null PacketTransport initializer.
+
+- [x] Record REDALERT/BIGCHECK.CPP as inactive in the pinned project because WOLAPI_INTEGRATION is not defined.
