@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **274**
-- Not yet fully ported: **220**
+- Fully ported: **275**
+- Not yet fully ported: **219**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 141 | 134 |
+| `REDALERT/` | 275 | 142 | 133 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 63 | 98 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -184,7 +184,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/MPMGRD.CPP` | rts-core/src/player_manager.rs — MGen queue IDs, private/global packet routing, connection table, receive counts, response timing, game-player count and queue flush. |
 | Complete | `REDALERT/MPMGRW.CPP` | No active implementation in the pinned source; the entire Windows DLL-backed multiplayer manager is enclosed by #if (0)//PG. |
 | Complete | `REDALERT/MPU.CPP` | No active implementation for the pinned MSVC Win32 project; Get_CPU_Clock exists only under __BORLANDC__. |
-| Not started | `REDALERT/MSGBOX.CPP` | — |
+| Complete | `REDALERT/MSGBOX.CPP` | rts-core/src/red_alert_message_box.rs — all three Process overload paths, 511-byte C-string staging, Red Alert dialog layout and preservation geometry, one/two/three-button setup, 1-3-2 visual order, Escape/Return/button-code mapping, keyboard focus cycling, redraw after surface restoration, no-button immediate keyboard clear, selected-button feedback, and preserved-region restore. The modal loop is a non-blocking host-driven state machine. |
 | Not started | `REDALERT/MSGLIST.CPP` | — |
 | Complete | `REDALERT/MiscAsm.cpp` | rts-core/src/misc_asm.rs — shared facing/distance algorithms, bit-array helpers, Q16.16 conversion, fading-table search, endian helpers, text trimming, viewport fat-pixel drawing, palette update and no-op screen shake. |
 | Not started | `REDALERT/NETDLG.CPP` | — |
