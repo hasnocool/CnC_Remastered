@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 346 C++ translation units with source-specific tests.
+- [ ] Port the remaining 345 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -177,3 +177,5 @@
 - [x] Port both CARGO.CPP variants' LIFO linked cargo chain, Limbo, attach, detach and quantity behavior.
 
 - [x] Port both TOGGLE.CPP variants' forced redraw, sticky processing, press capture and variant-specific release toggling.
+
+- [x] Record REDALERT/TOOLTIP.CPP as inactive because its complete implementation is guarded by #if (0).
