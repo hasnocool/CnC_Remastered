@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 83 | 192 |
+| `REDALERT/` | 275 | 95 | 180 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 18 | 143 |
+| `TIBERIANDAWN/` | 161 | 21 | 140 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -132,7 +132,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/INIT.CPP` | — |
 | Complete | `REDALERT/INT.CPP` | rts-core/src/bignum_globals.rs — zero-initialized Error, Carry, Borrow, and precision-specific remainder state. |
 | Not started | `REDALERT/INTERNET.CPP` | — |
-| Not started | `REDALERT/INTERPAL.CPP` | — |
+| Complete | `REDALERT/INTERPAL.CPP` | rts-formats/src/palette_interpolation.rs — active 256×256 midpoint nearest-color remap-table generation, 65,536-byte palette table read/write, RGB luminance increase and disabled 2× scaling entry point. |
 | Not started | `REDALERT/INTRO.CPP` | — |
 | Not started | `REDALERT/IOMAP.CPP` | — |
 | Not started | `REDALERT/IOOBJ.CPP` | — |
@@ -404,7 +404,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/INI.CPP` | — |
 | Not started | `TIBERIANDAWN/INIT.CPP` | — |
 | Not started | `TIBERIANDAWN/INTERNET.CPP` | — |
-| Not started | `TIBERIANDAWN/INTERPAL.CPP` | — |
+| Complete | `TIBERIANDAWN/INTERPAL.CPP` | rts-formats/src/palette_interpolation.rs — 65,536-byte table read/write, RGB luminance increase; the table generation body and 2× scaling body are compiled out in this variant. |
 | Not started | `TIBERIANDAWN/INTRO.CPP` | — |
 | Not started | `TIBERIANDAWN/IOMAP.CPP` | — |
 | Not started | `TIBERIANDAWN/IOOBJ.CPP` | — |
