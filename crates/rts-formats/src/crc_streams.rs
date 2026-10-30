@@ -49,7 +49,7 @@ impl<P> CrcPipe<P> {
         }
     }
 
-    pub const fn result(&self) -> u32 {
+    pub fn result(&self) -> u32 {
         self.crc.value()
     }
 
@@ -117,7 +117,7 @@ impl<S> CrcStraw<S> {
         }
     }
 
-    pub const fn result(&self) -> u32 {
+    pub fn result(&self) -> u32 {
         self.crc.value()
     }
 
