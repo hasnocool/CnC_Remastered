@@ -4,25 +4,26 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **4**
-- Not yet fully ported: **490**
-- A file is marked complete only when its defined C++ behavior has a Rust implementation; a placeholder does not count.
+- Fully ported: **7**
+- Not yet fully ported: **487**
+- Complete means the actual translation-unit behavior has a Rust implementation. Empty placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 3 | 272 |
+| `REDALERT/` | 275 | 6 | 269 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 1 | 160 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
 
-## Translation-unit status
+## File-by-file coverage
 
 ### `REDALERT/`
 
-| Status | Upstream C++ file | Rust implementation / notes |
+| Status | Upstream C++ file | Rust port / notes |
 |---|---|---|
+| Not started | `REDALERT/_WSPROTO.CPP` | — |
 | Not started | `REDALERT/2KEYFRAM.CPP` | — |
 | Not started | `REDALERT/AADATA.CPP` | — |
 | Not started | `REDALERT/ABSTRACT.CPP` | — |
@@ -74,9 +75,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/CONTROL.CPP` | — |
 | Not started | `REDALERT/COORD.CPP` | — |
 | Not started | `REDALERT/CRATE.CPP` | — |
-| Complete | `REDALERT/CRC.CPP` | rts-formats/src/legacy_crc.rs — complete CRCEngine methods |
-| Not started | `REDALERT/CRCPIPE.CPP` | — |
-| Not started | `REDALERT/CRCSTRAW.CPP` | — |
+| Complete | `REDALERT/CRC.CPP` | crates/rts-formats/src/legacy_crc.rs — rotate-add checksum engine |
+| Complete | `REDALERT/CRCPIPE.CPP` | crates/rts-formats/src/crc_streams.rs — CRC-before-forwarding pipe adapter |
+| Complete | `REDALERT/CRCSTRAW.CPP` | crates/rts-formats/src/crc_streams.rs — hash-actual-bytes pull adapter |
 | Not started | `REDALERT/CREDITS.CPP` | — |
 | Not started | `REDALERT/CREW.CPP` | — |
 | Not started | `REDALERT/CSTRAW.CPP` | — |
@@ -106,7 +107,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/FACTORY.CPP` | — |
 | Not started | `REDALERT/FIELD.CPP` | — |
 | Not started | `REDALERT/FINDPATH.CPP` | — |
-| Complete | `REDALERT/FIXED.CPP` | rts-core/src/fixed16.rs — constants, constructors, ASCII conversion |
+| Complete | `REDALERT/FIXED.CPP` | crates/rts-core/src/fixed16.rs — constructor and ASCII conversion methods |
 | Not started | `REDALERT/FLASHER.CPP` | — |
 | Not started | `REDALERT/FLY.CPP` | — |
 | Not started | `REDALERT/FOOT.CPP` | — |
@@ -173,6 +174,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/MCI.CPP` | — |
 | Not started | `REDALERT/MCIMOVIE.CPP` | — |
 | Not started | `REDALERT/MENUS.CPP` | — |
+| Not started | `REDALERT/MiscAsm.cpp` | — |
 | Not started | `REDALERT/MISSION.CPP` | — |
 | Not started | `REDALERT/MIXFILE.CPP` | — |
 | Not started | `REDALERT/MONOC.CPP` | — |
@@ -186,7 +188,6 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/MPU.CPP` | — |
 | Not started | `REDALERT/MSGBOX.CPP` | — |
 | Not started | `REDALERT/MSGLIST.CPP` | — |
-| Not started | `REDALERT/MiscAsm.cpp` | — |
 | Not started | `REDALERT/NETDLG.CPP` | — |
 | Not started | `REDALERT/NOSEQCON.CPP` | — |
 | Not started | `REDALERT/NULLCONN.CPP` | — |
@@ -208,8 +209,8 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/RADAR.CPP` | — |
 | Not started | `REDALERT/RADIO.CPP` | — |
 | Not started | `REDALERT/RAMFILE.CPP` | — |
-| Complete | `REDALERT/RAND.CPP` | rts-core/src/random.rs — Sim_Random and Sim_IRandom |
-| Not started | `REDALERT/RANDOM.CPP` | — |
+| Complete | `REDALERT/RAND.CPP` | crates/rts-core/src/random.rs — Sim_Random and Sim_IRandom |
+| Complete | `REDALERT/RANDOM.CPP` | crates/rts-core/src/random_class.rs — 32-bit LCG and rejection-sampled ranges |
 | Not started | `REDALERT/RAWFILE.CPP` | — |
 | Not started | `REDALERT/RAWOLAPI.CPP` | — |
 | Not started | `REDALERT/READLINE.CPP` | — |
@@ -229,6 +230,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/SEQCONN.CPP` | — |
 | Not started | `REDALERT/SESSION.CPP` | — |
 | Not started | `REDALERT/SHA.CPP` | — |
+| Not started | `REDALERT/Shape.cpp` | — |
 | Not started | `REDALERT/SHAPEBTN.CPP` | — |
 | Not started | `REDALERT/SHAPIPE.CPP` | — |
 | Not started | `REDALERT/SHASTRAW.CPP` | — |
@@ -246,7 +248,6 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/STUB.CPP` | — |
 | Not started | `REDALERT/SUPER.CPP` | — |
 | Not started | `REDALERT/SURFACE.CPP` | — |
-| Not started | `REDALERT/Shape.cpp` | — |
 | Not started | `REDALERT/TAB.CPP` | — |
 | Not started | `REDALERT/TACTION.CPP` | — |
 | Not started | `REDALERT/TARGET.CPP` | — |
@@ -282,9 +283,6 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WARHEAD.CPP` | — |
 | Not started | `REDALERT/WEAPON.CPP` | — |
 | Not started | `REDALERT/WINSTUB.CPP` | — |
-| Not started | `REDALERT/WOLAPIOB.CPP` | — |
-| Not started | `REDALERT/WOLEDIT.CPP` | — |
-| Not started | `REDALERT/WOLSTRNG.CPP` | — |
 | Not started | `REDALERT/WOL_CGAM.CPP` | — |
 | Not started | `REDALERT/WOL_CHAT.CPP` | — |
 | Not started | `REDALERT/WOL_DNLD.CPP` | — |
@@ -292,25 +290,28 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WOL_LOGN.CPP` | — |
 | Not started | `REDALERT/WOL_MAIN.CPP` | — |
 | Not started | `REDALERT/WOL_OPT.CPP` | — |
+| Not started | `REDALERT/WOLAPIOB.CPP` | — |
+| Not started | `REDALERT/WOLEDIT.CPP` | — |
+| Not started | `REDALERT/WOLSTRNG.CPP` | — |
 | Not started | `REDALERT/WSPIPX.CPP` | — |
 | Not started | `REDALERT/WSPROTO.CPP` | — |
 | Not started | `REDALERT/WSPUDP.CPP` | — |
 | Not started | `REDALERT/XPIPE.CPP` | — |
 | Not started | `REDALERT/XSTRAW.CPP` | — |
-| Not started | `REDALERT/_WSPROTO.CPP` | — |
 
 ### `REDALERT/WIN32LIB/`
 
-| Status | Upstream C++ file | Rust implementation / notes |
+| Status | Upstream C++ file | Rust port / notes |
 |---|---|---|
+| Not started | `REDALERT/WIN32LIB/_DIPTABL.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/ALLOC.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/BUFFER.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/BUFFGLBL.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/DDRAW.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/DELAY.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/DIPTHONG.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/DRAWRECT.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/DrawMisc.cpp` | — |
+| Not started | `REDALERT/WIN32LIB/DRAWRECT.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/FONT.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/GBUFFER.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/GETSHAPE.CPP` | — |
@@ -328,11 +329,10 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/WINDOWS.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/WINHIDE.CPP` | — |
 | Not started | `REDALERT/WIN32LIB/WRITEPCX.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/_DIPTABL.CPP` | — |
 
 ### `TIBERIANDAWN/`
 
-| Status | Upstream C++ file | Rust implementation / notes |
+| Status | Upstream C++ file | Rust port / notes |
 |---|---|---|
 | Not started | `TIBERIANDAWN/AADATA.CPP` | — |
 | Not started | `TIBERIANDAWN/ABSTRACT.CPP` | — |
@@ -429,6 +429,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/MAPEDTM.CPP` | — |
 | Not started | `TIBERIANDAWN/MAPSEL.CPP` | — |
 | Not started | `TIBERIANDAWN/MENUS.CPP` | — |
+| Not started | `TIBERIANDAWN/MiscAsm.cpp` | — |
 | Not started | `TIBERIANDAWN/MISSION.CPP` | — |
 | Not started | `TIBERIANDAWN/MIXFILE.CPP` | — |
 | Not started | `TIBERIANDAWN/MONOC.CPP` | — |
@@ -436,7 +437,6 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/MPLAYER.CPP` | — |
 | Not started | `TIBERIANDAWN/MSGBOX.CPP` | — |
 | Not started | `TIBERIANDAWN/MSGLIST.CPP` | — |
-| Not started | `TIBERIANDAWN/MiscAsm.cpp` | — |
 | Not started | `TIBERIANDAWN/NETDLG.CPP` | — |
 | Not started | `TIBERIANDAWN/NOSEQCON.CPP` | — |
 | Not started | `TIBERIANDAWN/NULLCONN.CPP` | — |
@@ -452,7 +452,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/QUEUE.CPP` | — |
 | Not started | `TIBERIANDAWN/RADAR.CPP` | — |
 | Not started | `TIBERIANDAWN/RADIO.CPP` | — |
-| Complete | `TIBERIANDAWN/RAND.CPP` | rts-core/src/random.rs — Sim_Random and Sim_IRandom |
+| Complete | `TIBERIANDAWN/RAND.CPP` | crates/rts-core/src/random.rs — Sim_Random and Sim_IRandom |
 | Not started | `TIBERIANDAWN/RAWFILE.CPP` | — |
 | Not started | `TIBERIANDAWN/REINF.CPP` | — |
 | Not started | `TIBERIANDAWN/RULES.CPP` | — |
@@ -462,6 +462,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/SCROLL.CPP` | — |
 | Not started | `TIBERIANDAWN/SDATA.CPP` | — |
 | Not started | `TIBERIANDAWN/SEQCONN.CPP` | — |
+| Not started | `TIBERIANDAWN/Shape.cpp` | — |
 | Not started | `TIBERIANDAWN/SHAPEBTN.CPP` | — |
 | Not started | `TIBERIANDAWN/SIDEBAR.CPP` | — |
 | Not started | `TIBERIANDAWN/SIDEBARGlyphx.CPP` | — |
@@ -472,7 +473,6 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/STARTUP.CPP` | — |
 | Not started | `TIBERIANDAWN/STATS.CPP` | — |
 | Not started | `TIBERIANDAWN/SUPER.CPP` | — |
-| Not started | `TIBERIANDAWN/Shape.cpp` | — |
 | Not started | `TIBERIANDAWN/TAB.CPP` | — |
 | Not started | `TIBERIANDAWN/TARCOM.CPP` | — |
 | Not started | `TIBERIANDAWN/TARGET.CPP` | — |
@@ -498,15 +498,16 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 ### `TIBERIANDAWN/WIN32LIB/`
 
-| Status | Upstream C++ file | Rust implementation / notes |
+| Status | Upstream C++ file | Rust port / notes |
 |---|---|---|
+| Not started | `TIBERIANDAWN/WIN32LIB/_DIPTABL.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/ALLOC.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/BUFFER.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/BUFFGLBL.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/DDRAW.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/DIPTHONG.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/DRAWRECT.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/DrawMisc.cpp` | — |
+| Not started | `TIBERIANDAWN/WIN32LIB/DRAWRECT.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/FONT.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/GBUFFER.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/GETSHAPE.CPP` | — |
@@ -531,8 +532,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/WIN32LIB/WINHIDE.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/WRITEPCX.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/WSA.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/_DIPTABL.CPP` | — |
 
-## Porting requirements
+## Completion requirements
 
-Each translation unit must be inspected with its headers, assembly dependencies, build configuration, and callers. Preserve source-defined integer widths, signedness, overflow, byte order, state mutation order, and variant-specific behavior. Platform-specific implementations must be replaced by portable Rust interfaces, not empty modules. Format parsers must validate untrusted lengths and offsets.
+Port each translation unit with its headers, callers, assembly dependencies, build settings, and relevant data structures. Preserve integer widths, signedness, overflow, byte order, call order, state mutation order, and variant-specific behavior. Platform-specific functionality must be replaced with portable implementations, not placeholders. File parsing must validate untrusted data lengths and offsets.
