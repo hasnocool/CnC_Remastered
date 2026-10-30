@@ -6,22 +6,8 @@
 //! CRCStraw hashes only the number of bytes actually returned by its source.
 
 use crate::legacy_crc::LegacyCrcEngine;
-
-/// Push-oriented output endpoint corresponding to the upstream Pipe interface.
-pub trait PipeSink {
-    /// Accept bytes and return the number accepted by the downstream endpoint.
-    fn put(&mut self, source: &[u8]) -> usize;
-
-    /// Flush staged bytes at the endpoint.
-    fn flush(&mut self) -> usize {
-        0
-    }
-
-    /// End the stream; upstream Pipe::End defaults to Flush.
-    fn end(&mut self) -> usize {
-        self.flush()
-    }
-}
+use crate::pipe::PipeSink;
+use crate::straw::StrawSource;
 
 /// Null pipe endpoint: accepts and discards all supplied bytes, as Pipe::Put does
 /// when no ChainTo endpoint is attached.
@@ -84,12 +70,6 @@ impl<P: PipeSink> PipeSink for CrcPipe<P> {
     fn end(&mut self) -> usize {
         self.downstream.end()
     }
-}
-
-/// Pull-oriented input endpoint corresponding to the upstream Straw interface.
-pub trait StrawSource {
-    /// Fill the supplied destination and return the number of bytes produced.
-    fn get(&mut self, destination: &mut [u8]) -> usize;
 }
 
 /// Empty source: Straw::Get with no ChainTo returns zero bytes.
