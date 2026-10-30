@@ -165,7 +165,9 @@ impl LzoPipe {
                         self.header = Some(header);
                     }
 
-                    let header = self.header.expect("header was checked above");
+                    let Some(header) = self.header else {
+                        break;
+                    };
                     let required = usize::from(header.compressed_count);
                     if self.raw.len() < required {
                         break;
