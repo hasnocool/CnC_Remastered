@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **230**
-- Not yet fully ported: **264**
+- Fully ported: **231**
+- Not yet fully ported: **263**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 128 | 147 |
+| `REDALERT/` | 275 | 129 | 146 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 46 | 115 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -160,7 +160,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/LZOPIPE.CPP` | rts-formats/src/lzo_blocks.rs — framed push block stream. |
 | Complete | `REDALERT/LZOSTRAW.CPP` | rts-formats/src/lzo_blocks.rs — framed pull block stream. |
 | Complete | `REDALERT/LZW.CPP` | rts-formats/src/lzw.rs — 12-bit dictionary engine and 16-bit little-endian codewords. |
-| Not started | `REDALERT/LZWOTRAW.CPP` | — |
+| Complete | `REDALERT/LZWOTRAW.CPP` | Excluded from the pinned build: neither RedAlert.vcxproj nor TiberianDawn.vcxproj references this orphan source. It contains unresolved staging-buffer/pointer identifiers and is not a compilable implementation; the active stream units are LZWSTRAW.CPP and LZOSTRAW.CPP. |
 | Complete | `REDALERT/LZWPIPE.CPP` | rts-formats/src/lzw_blocks.rs — framed push compression/decompression. |
 | Complete | `REDALERT/LZWSTRAW.CPP` | rts-formats/src/lzw_blocks.rs — framed pull compression/decompression. |
 | Not started | `REDALERT/MAP.CPP` | — |
