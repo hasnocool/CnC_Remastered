@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **91**
-- Not yet fully ported: **403**
+- Fully ported: **148**
+- Not yet fully ported: **346**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -15,7 +15,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | `REDALERT/` | 275 | 73 | 202 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 14 | 147 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 28 | 4 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
 
@@ -517,7 +517,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/LOAD.CPP` | rts-formats/src/load.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/LOADFONT.CPP` | rts-core/src/load_font.rs — shared implementation of the same IBM loader and five-block validation used by Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/LOADPAL.CPP` | rts-formats/src/palette.rs — 768-byte IBM palette loading contract. |
-| Not started | `TIBERIANDAWN/WIN32LIB/MEM.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/MEM.CPP` | rts-core/src/memory_pool.rs — paragraph-aligned first-fit allocation, block IDs, LRU timestamps, locked/in-use flags, adjacent free-block merging, capacity queries and compaction around locked blocks; legacy 20-byte pool/18-byte block headers model one-byte packing. |
 | Complete | `TIBERIANDAWN/WIN32LIB/MORPHPAL.CPP` | rts-formats/src/palette_fade.rs — 768-channel 6-bit palette interpolation and time-progress update. |
 | Complete | `TIBERIANDAWN/WIN32LIB/MOUSEWW.CPP` | rts-core/src/mouse_ww.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` | rts-core/src/legacy_new_delete.rs — scalar/array new and delete delegation to Alloc(size, MEM_NEW) and Free(pointer). |
