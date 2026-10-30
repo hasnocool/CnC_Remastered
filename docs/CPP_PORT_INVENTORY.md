@@ -15,7 +15,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | `REDALERT/` | 275 | 71 | 204 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 13 | 148 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 28 | 4 |
 
 ## File-by-file coverage
 
@@ -513,7 +513,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/ICONSET.CPP` | rts-formats/src/iconset.rs — shared IFF icon-set loader; variant differences are pointer syntax/include details. |
 | Complete | `TIBERIANDAWN/WIN32LIB/IFF.CPP` | rts-formats/src/iff.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/IRANDOM.CPP` | rts-core/src/legacy_irandom.rs — shared implementation; same source routine in both variants. |
-| Not started | `TIBERIANDAWN/WIN32LIB/KEYBOARD.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/KEYBOARD.CPP` | rts-core/src/td_keyboard.rs — 256-slot ring, locale VK/ASCII remap tables, caps/num toggle table, virtual-key detection, compatibility conversions, mouse triples and source no-op message handler. |
 | Complete | `TIBERIANDAWN/WIN32LIB/LOAD.CPP` | rts-formats/src/load.rs — byte-identical shared implementation with Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/LOADFONT.CPP` | rts-core/src/load_font.rs — shared implementation of the same IBM loader and five-block validation used by Red Alert. |
 | Complete | `TIBERIANDAWN/WIN32LIB/LOADPAL.CPP` | rts-formats/src/palette.rs — 768-byte IBM palette loading contract. |
