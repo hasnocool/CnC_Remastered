@@ -38,6 +38,25 @@ impl FixedFractionFormat {
         }
     }
 
+    /// Port of Cardinal_To_Fixed from each variant's COORDA.ASM.
+    ///
+    /// Division by zero uses the variant's original sentinel. The multiply
+    /// stage wraps to 32 bits exactly as the Win32 assembly does.
+    pub const fn cardinal_to_fixed(self, base: u32, cardinal: u32) -> u32 {
+        if base == 0 {
+            return match self {
+                Self::TiberianDawn8_8 => 0xFFFF,
+                Self::RedAlert16_16 => 0xFFFF_FFFF,
+            };
+        }
+
+        let shifted = match self {
+            Self::TiberianDawn8_8 => cardinal.wrapping_shl(8),
+            Self::RedAlert16_16 => cardinal.wrapping_shl(16),
+        };
+        shifted / base
+    }
+
     /// Exact unsigned 32-bit arithmetic used by each variant's COORDA.ASM helper.
     pub const fn fixed_to_cardinal(self, base: u32, fraction: u32) -> u32 {
         match self {
@@ -133,6 +152,14 @@ mod tests {
         assert_eq!(random.index(), 255);
         assert_eq!(random.next_u8(), 0x47);
         assert_eq!(random.index(), 0);
+    }
+
+    #[test]
+    fn cardinal_to_fixed_uses_the_variant_specific_fractional_width() {
+        assert_eq!(FixedFractionFormat::TiberianDawn8_8.cardinal_to_fixed(100, 50), 128);
+        assert_eq!(FixedFractionFormat::RedAlert16_16.cardinal_to_fixed(100, 50), 32_768);
+        assert_eq!(FixedFractionFormat::TiberianDawn8_8.cardinal_to_fixed(0, 1), 0xFFFF);
+        assert_eq!(FixedFractionFormat::RedAlert16_16.cardinal_to_fixed(0, 1), u32::MAX);
     }
 
     #[test]
