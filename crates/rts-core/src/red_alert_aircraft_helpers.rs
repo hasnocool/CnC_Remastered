@@ -428,6 +428,93 @@ pub fn process_landing(
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftCellOccupier {
+    None,
+    NonTechno,
+    Techno {
+        allied_to_aircraft: bool,
+        cloaked_from_aircraft: bool,
+        is_building: bool,
+        building_is_invisible: bool,
+    },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftMoveResult {
+    No,
+    Ok,
+}
+
+/// Port of AircraftClass::Can_Enter_Cell. The clearance callback represents
+/// CellClass::Is_Clear_To_Move(SPEED_TRACK, false, false) and is invoked only
+/// under the exact occupant-dependent conditions used by the source.
+pub fn can_enter_cell<F>(
+    in_radar: bool,
+    occupier: AircraftCellOccupier,
+    scenario_init: i32,
+    game_is_normal: bool,
+    aircraft_is_player_owned: bool,
+    cell_is_mapped: bool,
+    is_clear_to_move: F,
+) -> AircraftMoveResult
+where
+    F: FnOnce() -> bool,
+{
+    if !in_radar {
+        return AircraftMoveResult::No;
+    }
+
+    let check_cell_clearance = match occupier {
+        AircraftCellOccupier::None | AircraftCellOccupier::NonTechno => true,
+        AircraftCellOccupier::Techno {
+            allied_to_aircraft,
+            cloaked_from_aircraft,
+            is_building,
+            building_is_invisible,
+        } => {
+            allied_to_aircraft
+                || (!cloaked_from_aircraft
+                    && scenario_init == 0
+                    && (!is_building || !building_is_invisible))
+        }
+    };
+    if check_cell_clearance && !is_clear_to_move() {
+        return AircraftMoveResult::No;
+    }
+    if game_is_normal && aircraft_is_player_owned && !cell_is_mapped {
+        return AircraftMoveResult::No;
+    }
+    AircraftMoveResult::Ok
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftTrafficEntry {
+    pub id: u32,
+    pub present: bool,
+    pub in_limbo: bool,
+    pub current_cell: u32,
+    /// Decoded cell target corresponding to NavCom. Other target kinds should
+    /// be represented as None by the engine adapter.
+    pub navcom_cell: Option<u32>,
+}
+
+/// Port of AircraftClass::Cell_Seems_Ok. Strict mode includes this aircraft in
+/// the collision scan; ordinary mode ignores only the current aircraft ID.
+pub fn cell_seems_ok(
+    cell: u32,
+    self_id: u32,
+    strict: bool,
+    aircraft: &[AircraftTrafficEntry],
+) -> bool {
+    !aircraft.iter().any(|entry| {
+        entry.present
+            && (strict || entry.id != self_id)
+            && !entry.in_limbo
+            && (entry.current_cell == cell || entry.navcom_cell == Some(cell))
+    })
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -644,6 +731,66 @@ mod tests {
             shape_number(32, DirType::NORTH, &body, &facing16, &facing32, true, 0),
             Err(ShapeNumberError::BodyShapeIndexOutOfRange { index: 9 })
         );
+    }
+
+    #[test]
+    fn can_enter_cell_applies_radar_clearance_and_fog_rules_in_order() {
+        use AircraftCellOccupier::{None, NonTechno, Techno};
+        assert_eq!(can_enter_cell(false, None, 0, true, true, false, || panic!("out of radar")), AircraftMoveResult::No);
+        assert_eq!(can_enter_cell(true, NonTechno, 0, false, false, false, || false), AircraftMoveResult::No);
+        assert_eq!(can_enter_cell(true, None, 0, false, false, true, || true), AircraftMoveResult::Ok);
+        assert_eq!(can_enter_cell(true, None, 0, true, true, false, || true), AircraftMoveResult::No);
+    }
+
+    #[test]
+    fn can_enter_cell_preserves_enemy_occupier_visibility_exceptions() {
+        use AircraftCellOccupier::Techno;
+        let enemy = Techno {
+            allied_to_aircraft: false,
+            cloaked_from_aircraft: false,
+            is_building: false,
+            building_is_invisible: false,
+        };
+        assert_eq!(can_enter_cell(true, enemy, 0, false, false, true, || false), AircraftMoveResult::No);
+        assert_eq!(
+            can_enter_cell(true, Techno { cloaked_from_aircraft: true, ..enemy }, 0, false, false, true, || panic!("cloaked occupier bypasses cell check")),
+            AircraftMoveResult::Ok
+        );
+        assert_eq!(
+            can_enter_cell(true, Techno { is_building: true, building_is_invisible: true, ..enemy }, 0, false, false, true, || panic!("invisible building bypasses cell check")),
+            AircraftMoveResult::Ok
+        );
+        assert_eq!(
+            can_enter_cell(true, Techno { is_building: true, building_is_invisible: true, ..enemy }, 1, false, false, true, || panic!("scenario init bypasses cell check")),
+            AircraftMoveResult::Ok
+        );
+    }
+
+    #[test]
+    fn can_enter_cell_rechecks_clearance_for_allied_occupiers() {
+        let allied = AircraftCellOccupier::Techno {
+            allied_to_aircraft: true,
+            cloaked_from_aircraft: false,
+            is_building: false,
+            building_is_invisible: false,
+        };
+        assert_eq!(can_enter_cell(true, allied, 0, false, false, true, || false), AircraftMoveResult::No);
+        assert_eq!(can_enter_cell(true, allied, 0, false, false, true, || true), AircraftMoveResult::Ok);
+    }
+
+    #[test]
+    fn cell_seems_ok_ignores_self_unless_strict_and_checks_occupied_or_reserved_cells() {
+        let entries = [
+            AircraftTrafficEntry { id: 1, present: true, in_limbo: false, current_cell: 10, navcom_cell: None },
+            AircraftTrafficEntry { id: 2, present: true, in_limbo: false, current_cell: 20, navcom_cell: Some(30) },
+            AircraftTrafficEntry { id: 3, present: true, in_limbo: true, current_cell: 40, navcom_cell: Some(50) },
+            AircraftTrafficEntry { id: 4, present: false, in_limbo: false, current_cell: 60, navcom_cell: Some(70) },
+        ];
+        assert!(cell_seems_ok(10, 1, false, &entries));
+        assert!(!cell_seems_ok(10, 1, true, &entries));
+        assert!(!cell_seems_ok(30, 1, false, &entries));
+        assert!(cell_seems_ok(40, 1, false, &entries));
+        assert!(cell_seems_ok(60, 1, false, &entries));
     }
 
     #[test]
