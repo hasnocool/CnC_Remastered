@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 77 | 198 |
+| `REDALERT/` | 275 | 78 | 197 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 14 | 147 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
@@ -49,7 +49,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/BUILDING.CPP` | — |
 | Not started | `REDALERT/BULLET.CPP` | — |
 | Not started | `REDALERT/CARGO.CPP` | — |
-| Not started | `REDALERT/CARRY.CPP` | — |
+| Complete | `REDALERT/CARRY.CPP` | rts-core/src/carryover.rs — supported techno RTTI/type/house/strength/cell snapshot and object recreation; infantry temporarily clears and restores ScenarioInit; source's unconditional false return preserved. |
 | Not started | `REDALERT/CCDDE.CPP` | — |
 | Not started | `REDALERT/CCFILE.CPP` | — |
 | Not started | `REDALERT/CCINI.CPP` | — |
