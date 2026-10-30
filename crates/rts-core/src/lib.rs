@@ -17,6 +17,8 @@ pub mod region_size;
 pub mod inibin;
 pub mod shape_buffer;
 pub mod window_mouse;
+pub mod com_init;
+pub mod delay;
 
 pub use clock::{SimTick, TICKS_PER_MINUTE, TICKS_PER_SECOND};
 pub use facing::{Facing, FACING_COUNT};
