@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 412 C++ translation units with source-specific tests.
+- [ ] Port the remaining 411 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -92,3 +92,5 @@
 - [x] Port `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` to `rts-core::legacy_new_delete`.
 
 - [x] Port `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` and `MORPHPAL.CPP` palette set/fade/morph routines.
+
+- [x] Port `REDALERT/WIN32LIB/WRITEPCX.CPP` PCX header, RLE scanline encoder, and palette trailer.
