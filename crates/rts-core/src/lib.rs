@@ -64,6 +64,7 @@ pub mod carryover;
 pub mod cargo;
 pub mod crate_manager;
 pub mod scale_rotate;
+pub mod face;
 pub mod turret;
 pub mod tarcom;
 pub mod heap;
