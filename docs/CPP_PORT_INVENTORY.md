@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 113 | 162 |
+| `REDALERT/` | 275 | 114 | 161 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 35 | 126 |
+| `TIBERIANDAWN/` | 161 | 36 | 125 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -203,7 +203,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/PKPIPE.CPP` | — |
 | Not started | `REDALERT/PKSTRAW.CPP` | — |
 | Not started | `REDALERT/POWER.CPP` | — |
-| Not started | `REDALERT/PROFILE.CPP` | — |
+| Complete | `REDALERT/PROFILE.CPP` | rts-core/src/profile.rs — INI string/key/hex/int get and write routines, sound/language config loading, section/entry replacement/removal, plus all Read_Bin_* and Write_Bin_* buffer initialization, cursor, length, numeric and length-prefixed string operations with original asymmetric bounds checks. |
 | Not started | `REDALERT/QUEUE.CPP` | — |
 | Not started | `REDALERT/RADAR.CPP` | — |
 | Not started | `REDALERT/RADIO.CPP` | — |
@@ -448,7 +448,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/OVERLAY.CPP` | — |
 | Not started | `TIBERIANDAWN/PACKET.CPP` | — |
 | Not started | `TIBERIANDAWN/POWER.CPP` | — |
-| Not started | `TIBERIANDAWN/PROFILE.CPP` | — |
+| Complete | `TIBERIANDAWN/PROFILE.CPP` | rts-core/src/profile.rs — case-insensitive private-profile INI get/write string/int/hex functions and sound/language NewConfigType loading, including the zero-card/IRQ/DMA result; Red Alert-only binary helpers share the module. |
 | Not started | `TIBERIANDAWN/QUEUE.CPP` | — |
 | Not started | `TIBERIANDAWN/RADAR.CPP` | — |
 | Not started | `TIBERIANDAWN/RADIO.CPP` | — |
