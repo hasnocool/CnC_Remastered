@@ -28,6 +28,7 @@ pub mod font_metrics;
 pub mod buffer;
 pub mod legacy_timer;
 pub mod legacy_alloc;
+pub mod legacy_timer_system;
 pub mod legacy_irandom;
 
 pub use clock::{SimTick, TICKS_PER_MINUTE, TICKS_PER_SECOND};
