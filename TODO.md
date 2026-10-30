@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 379 C++ translation units with source-specific tests.
+- [ ] Port the remaining 377 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -125,3 +125,5 @@
 - [x] Port both variants' FLASHER.CPP per-player countdowns, IsBlushing state, flashing bitmask and debug text.
 
 - [x] Port both FLY.CPP variants' speed scaling, pixel-lepton movement accumulation, coordinate movement and edge rollback to `rts-core::fly`.
+
+- [x] Port both IPX95.CPP disabled THIPX32 providers and fixed stub return values to `rts-core::ipx95`.
