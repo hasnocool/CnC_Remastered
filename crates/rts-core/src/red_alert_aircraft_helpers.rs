@@ -1356,8 +1356,8 @@ pub enum RotorPart {
 pub struct RotorDrawRequest {
     pub part: RotorPart,
     pub shape_number: i32,
-    pub x: i16,
-    pub y: i16,
+    pub x: i32,
+    pub y: i32,
     pub centered: bool,
     pub window_relative: bool,
     pub ghost: bool,
@@ -1398,7 +1398,7 @@ where
         (fetch_stage.rem_euclid(4), false, true, true)
     };
     let base_y = y - lepton_to_pixel(height);
-    let common = |part, position: (i16, i16)| RotorDrawRequest {
+    let common = |part, position: (i32, i32)| RotorDrawRequest {
         part,
         shape_number,
         x: position.0,
@@ -1418,16 +1418,16 @@ where
         let stretch = STRETCH[facing_index];
         let first_start = (x as i16, base_y as i16);
         let right_position = move_point(first_start, secondary_facing, stretch);
-        draw_requests.push(common(RotorPart::Right, right_position));
+        draw_requests.push(common(RotorPart::Right, (i32::from(right_position.0), i32::from(right_position.1))));
 
         let left_position = move_point(
             right_position,
             secondary_facing.wrapping_add(128),
             stretch * 2,
         );
-        draw_requests.push(common(RotorPart::Left, left_position));
+        draw_requests.push(common(RotorPart::Left, (i32::from(left_position.0), i32::from(left_position.1))));
     } else {
-        draw_requests.push(common(RotorPart::Right, (x as i16, base_y as i16)));
+        draw_requests.push(common(RotorPart::Right, (x, base_y)));
     }
 
     RotorDrawPlan {
