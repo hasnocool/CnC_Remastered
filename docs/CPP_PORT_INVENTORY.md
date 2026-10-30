@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **38**
-- Not yet fully ported: **456**
+- Fully ported: **39**
+- Not yet fully ported: **455**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 36 | 239 |
+| `REDALERT/` | 275 | 37 | 238 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 2 | 159 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
@@ -151,7 +151,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/LCWPIPE.CPP` | rts-formats/src/lcw_blocks.rs — framed push compression/decompression and partial-block flush. |
 | Complete | `REDALERT/LCWSTRAW.CPP` | rts-formats/src/lcw_blocks.rs — framed pull compression/decompression and buffered reads. |
 | Complete | `REDALERT/LCWUNCMP.CPP` | rts-formats/src/lcw.rs — second LCW decompression entry point. |
-| Not started | `REDALERT/LINK.CPP` | — |
+| Complete | `REDALERT/LINK.CPP` | rts-core/src/link.rs — arena-backed LinkClass insertion, traversal, head/tail, unlink, and list-position assignment. |
 | Not started | `REDALERT/LIST.CPP` | — |
 | Not started | `REDALERT/LOADDLG.CPP` | — |
 | Not started | `REDALERT/LOGIC.CPP` | — |
