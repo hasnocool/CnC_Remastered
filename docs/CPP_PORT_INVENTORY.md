@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **266**
-- Not yet fully ported: **228**
+- Fully ported: **267**
+- Not yet fully ported: **227**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -247,7 +247,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/SUPER.CPP` | — |
 | Complete | `REDALERT/SURFACE.CPP` | No active implementation in the pinned source; the complete constructor, sub-surface and copy implementation is enclosed by #if (0)//PG. |
 | Complete | `REDALERT/Shape.cpp` | rts-core/src/shape_buffer.rs — shape buffer capacity/configuration; caller retains memory ownership. |
-| Not started | `REDALERT/TAB.CPP` | — |
+| Complete | `REDALERT/TAB.CPP` | rts-core/src/red_alert_tab.rs — TabClass timers/credit lifecycle, resolution scaling, tab/credit/mission pulse frame selection, WIN32/non-WIN32 highlight variants, 8-pixel mouse hit band, Win32 right-tab suppression, money-flash invalidation and Sidebar/Credit AI delegation. |
 | Not started | `REDALERT/TACTION.CPP` | — |
 | Not started | `REDALERT/TARGET.CPP` | — |
 | Not started | `REDALERT/TCPIP.CPP` | — |
