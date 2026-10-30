@@ -10,6 +10,7 @@ pub mod lzw;
 pub mod lzw_blocks;
 pub mod legacy_crc;
 pub mod lzo1x;
+pub mod lzo_blocks;
 pub mod pipe;
 pub mod readline;
 pub mod straw;
