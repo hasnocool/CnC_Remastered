@@ -1991,7 +1991,7 @@ mod tests {
     fn camera_fire_consumes_ammo_rearms_and_reveals_correct_houses() {
         let single = aircraft_fire_at_plan(
             false, true, false, 7, true, &[7, 8], Some(7),
-            false, false, true, 30,
+            false, false, true, 20, 30,
         );
         assert_eq!(single.path, AircraftFireAtPath::CameraSnapshot);
         assert_eq!(single.sight_requests, [AircraftSightRequest { house_id: 7, sight_range: 9 }]);
