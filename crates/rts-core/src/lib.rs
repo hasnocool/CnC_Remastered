@@ -68,6 +68,7 @@ pub mod face;
 pub mod door;
 pub mod intro_selection;
 pub mod warhead;
+pub mod weapon;
 pub mod turret;
 pub mod tarcom;
 pub mod heap;
