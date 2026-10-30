@@ -143,3 +143,5 @@
 - [x] Record REDALERT/INICODE.CPP as inactive because the entire implementation is guarded by #ifdef TOFIX.
 
 - [x] Port both DESCDLG.CPP dialog geometry, control initialization, redraw loop, OK/cancel text handling and variant-specific redraw behavior.
+
+- [x] Port REDALERT/MPLIB.CPP interrupt register packing, MGen ordinal calls, queue/node/master operations and return-register semantics to `rts-core::mgen`.
