@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 315 C++ translation units with source-specific tests.
+- [ ] Port the remaining 313 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -201,3 +201,5 @@
 - [x] Verify TIBERIANDAWN/ALLOC.CPP has an unconditional #if (0) around its implementation and record it as intentionally inactive.
 
 - [x] Port REDALERT/NULLCONN.CPP active constructor/initialization, staging-buffer sizing, no-send stub, custom CRC and packet-overhead calculation; verify TIBERIANDAWN/NULLCONN.CPP is wholly #if (0).
+
+- [x] Port REDALERT/NOSEQCON.CPP and TIBERIANDAWN/NOSEQCON.CPP: CommHeader wire layout, ACK/NOACK packet IDs, resend/duplicate suppression, out-of-order buffering, cumulative sequencing, retry/timeout queue servicing, response-delay statistics and variant-specific receive bounds.
