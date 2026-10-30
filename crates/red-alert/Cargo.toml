@@ -6,3 +6,4 @@ rust-version.workspace = true
 
 [dependencies]
 rts-core.workspace = true
+rts-formats.workspace = true
