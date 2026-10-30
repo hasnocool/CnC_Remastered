@@ -4,18 +4,18 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **44**
-- Not yet fully ported: **450**
+- Fully ported: **46**
+- Not yet fully ported: **448**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 42 | 233 |
+| `REDALERT/` | 275 | 43 | 232 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 2 | 159 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 1 | 31 |
 
 ## File-by-file coverage
 
@@ -127,7 +127,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/IDATA.CPP` | — |
 | Not started | `REDALERT/INFANTRY.CPP` | — |
 | Not started | `REDALERT/INI.CPP` | — |
-| Not started | `REDALERT/INIBIN.CPP` | — |
+| Complete | `REDALERT/INIBIN.CPP` | rts-core/src/inibin.rs — intentionally empty upstream translation unit. |
 | Not started | `REDALERT/INICODE.CPP` | — |
 | Not started | `REDALERT/INIT.CPP` | — |
 | Not started | `REDALERT/INT.CPP` | — |
@@ -522,7 +522,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/WIN32LIB/MOUSEWW.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/REGIONSZ.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/REGIONSZ.CPP` | rts-core/src/region_size.rs — signed 32-bit width × height helper with explicit wrapping semantics. |
 | Not started | `TIBERIANDAWN/WIN32LIB/SET_FONT.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/TIMER.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/TIMERDWN.CPP` | — |
