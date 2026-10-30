@@ -186,13 +186,11 @@ impl WindowTextEngine {
             if c == b'%' {
                 match stream.peek() {
                     Some(b's') | Some(b'S') => {
-                        let _ = stream.fetch();
                         if stream.push_text_arg() {
                             c = match stream.fetch() { Some(v) => v, None => continue };
                         }
                     }
                     Some(b'd') | Some(b'D') => {
-                        let _ = stream.fetch();
                         if stream.push_integer_arg() {
                             c = match stream.fetch() { Some(v) => v, None => continue };
                         }
