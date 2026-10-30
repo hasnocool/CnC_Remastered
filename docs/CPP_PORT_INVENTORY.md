@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 56 | 219 |
+| `REDALERT/` | 275 | 57 | 218 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 8 | 153 |
+| `TIBERIANDAWN/` | 161 | 9 | 152 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
 
 ## File-by-file coverage
@@ -137,7 +137,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/IOMAP.CPP` | — |
 | Not started | `REDALERT/IOOBJ.CPP` | — |
 | Not started | `REDALERT/IPX.CPP` | — |
-| Not started | `REDALERT/IPX95.CPP` | — |
+| Complete | `REDALERT/IPX95.CPP` | rts-core/src/ipx95.rs — disabled THIPX32 loader, fixed legacy socket/connection return values, and all exported IPX95 stubs. |
 | Not started | `REDALERT/IPXADDR.CPP` | — |
 | Not started | `REDALERT/IPXCONN.CPP` | — |
 | Not started | `REDALERT/IPXGCONN.CPP` | — |
@@ -409,7 +409,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/IOMAP.CPP` | — |
 | Not started | `TIBERIANDAWN/IOOBJ.CPP` | — |
 | Not started | `TIBERIANDAWN/IPX.CPP` | — |
-| Not started | `TIBERIANDAWN/IPX95.CPP` | — |
+| Complete | `TIBERIANDAWN/IPX95.CPP` | rts-core/src/ipx95.rs — same fixed IPX95 stubs and socket API behavior as Red Alert. |
 | Not started | `TIBERIANDAWN/IPXADDR.CPP` | — |
 | Not started | `TIBERIANDAWN/IPXCONN.CPP` | — |
 | Not started | `TIBERIANDAWN/IPXGCONN.CPP` | — |
