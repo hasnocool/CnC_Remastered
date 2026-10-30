@@ -866,6 +866,171 @@ pub fn rotation_ai(
     result
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftFireCheck {
+    Ok,
+    Ammo,
+    Rearm,
+    Range,
+    Facing,
+    Other(i32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftFireRequest {
+    pub is_passenger_aircraft: bool,
+    pub has_attached_passenger: bool,
+    pub has_primary_weapon: bool,
+    pub primary_weapon_is_camera: bool,
+    pub primary_bullet_is_parachuted: bool,
+    pub has_ammo: bool,
+    pub arm_timer: i32,
+    pub distance_to_target: i32,
+    pub aircraft_center_is_in_radar: bool,
+    pub is_fixed_wing: bool,
+    /// Signed byte-angle difference from the aircraft's primary facing to the
+    /// target direction, equivalent to PrimaryFacing.Difference(Direction(TarCom)).
+    pub facing_difference: i32,
+}
+
+/// Port of AircraftClass::Can_Fire. The base-class check is lazy and invoked
+/// only for ordinary weapons; camera/parachute cargo attacks use their special
+/// arm/range/radar rules before that path.
+pub fn can_fire_aircraft<F>(
+    request: AircraftFireRequest,
+    base_can_fire: F,
+) -> AircraftFireCheck
+where
+    F: FnOnce() -> AircraftFireCheck,
+{
+    if request.is_passenger_aircraft && !request.has_attached_passenger {
+        return AircraftFireCheck::Ammo;
+    }
+    let fudge = request.is_passenger_aircraft || (
+        request.has_primary_weapon && request.primary_bullet_is_parachuted
+    );
+    if fudge
+        && !request.primary_weapon_is_camera
+        && !request.has_ammo
+        && !request.is_passenger_aircraft
+    {
+        return AircraftFireCheck::Ammo;
+    }
+    if request.primary_weapon_is_camera
+        || (fudge && request.is_passenger_aircraft && request.has_attached_passenger)
+    {
+        if request.arm_timer != 0 {
+            return AircraftFireCheck::Rearm;
+        }
+        let range = if request.primary_weapon_is_camera { 0x0380 } else { 0x0200 };
+        if request.distance_to_target < range && request.aircraft_center_is_in_radar {
+            return AircraftFireCheck::Ok;
+        }
+        return AircraftFireCheck::Range;
+    }
+
+    let base_result = base_can_fire();
+    if base_result == AircraftFireCheck::Ok && request.is_fixed_wing {
+        let facing_limit = if fudge { 16 } else { 8 };
+        if request.facing_difference.abs() > facing_limit {
+            return AircraftFireCheck::Facing;
+        }
+    }
+    base_result
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ParadropCargoPlan {
+    pub reattach_passenger: bool,
+    pub play_parachute_sound: bool,
+    pub remove_passenger_from_team: bool,
+    pub assign_passenger_mission: Option<&'static str>,
+    pub arm_after_call: i32,
+}
+
+/// Port of AircraftClass::Paradrop_Cargo. A failed parachute attempt restores
+/// the passenger and retains the rearm timer; success clears Arm and only
+/// changes passenger mission/team state when the aircraft belongs to a team.
+pub const fn paradrop_cargo_plan(
+    passenger_present: bool,
+    paradrop_succeeded: bool,
+    aircraft_has_team: bool,
+    passenger_house_is_human: bool,
+    current_arm: i32,
+) -> ParadropCargoPlan {
+    if !passenger_present {
+        return ParadropCargoPlan {
+            reattach_passenger: false,
+            play_parachute_sound: false,
+            remove_passenger_from_team: false,
+            assign_passenger_mission: None,
+            arm_after_call: current_arm,
+        };
+    }
+    if !paradrop_succeeded {
+        return ParadropCargoPlan {
+            reattach_passenger: true,
+            play_parachute_sound: false,
+            remove_passenger_from_team: false,
+            assign_passenger_mission: None,
+            arm_after_call: current_arm,
+        };
+    }
+    ParadropCargoPlan {
+        reattach_passenger: false,
+        play_parachute_sound: true,
+        remove_passenger_from_team: aircraft_has_team,
+        assign_passenger_mission: if aircraft_has_team {
+            Some(if passenger_house_is_human { "GUARD" } else { "HUNT" })
+        } else {
+            None
+        },
+        arm_after_call: 0,
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AircraftVoicePrompt {
+    Attack,
+    Move,
+    Select,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AircraftVoicePlan {
+    pub sample: &'static str,
+    pub should_play: bool,
+    pub volume: Fixed16,
+    pub speaker_id: i32,
+}
+
+/// Source response voice tables. Selection index is supplied from the
+/// variant's Sim_Random_Pick call; disabled voice still consumes that choice.
+pub fn aircraft_voice_plan(
+    prompt: AircraftVoicePrompt,
+    selection_index: usize,
+    allow_voice: bool,
+    aircraft_id: i32,
+) -> Option<AircraftVoicePlan> {
+    const ATTACK: [&str; 2] = ["VOC_AFFIRM", "VOC_ACKNOWL"];
+    const MOVE: [&str; 2] = ["VOC_ACKNOWL", "VOC_AFFIRM"];
+    const SELECT: [&str; 6] = [
+        "VOC_VEHIC", "VOC_REPORT", "VOC_YESSIR",
+        "VOC_YESSIR", "VOC_YESSIR", "VOC_AWAIT",
+    ];
+    let sample = match prompt {
+        AircraftVoicePrompt::Attack => *ATTACK.get(selection_index)?,
+        AircraftVoicePrompt::Move => *MOVE.get(selection_index)?,
+        AircraftVoicePrompt::Select => *SELECT.get(selection_index)?,
+    };
+    Some(AircraftVoicePlan {
+        sample,
+        should_play: allow_voice,
+        volume: Fixed16::ONE,
+        speaker_id: aircraft_id.wrapping_add(1).wrapping_neg(),
+    })
+}
+
 /// Port of AircraftClass::Fire_Direction: fire from the current body facing.
 pub const fn fire_direction(secondary_facing: DirType) -> DirType {
     secondary_facing
@@ -1459,6 +1624,96 @@ mod tests {
         assert_eq!(secondary.current(), DirType(32));
         assert_eq!(result.primary_redraw_marks, 2);
         assert_eq!(result.secondary_redraw_marks, 2);
+    }
+
+    #[test]
+    fn can_fire_cargo_and_camera_paths_obey_arm_range_and_radar_checks() {
+        let mut base_calls = 0;
+        let passenger_empty = AircraftFireRequest {
+            is_passenger_aircraft: true, has_attached_passenger: false,
+            has_primary_weapon: false, primary_weapon_is_camera: false,
+            primary_bullet_is_parachuted: false, has_ammo: false,
+            arm_timer: 0, distance_to_target: 0, aircraft_center_is_in_radar: true,
+            is_fixed_wing: false, facing_difference: 0,
+        };
+        assert_eq!(can_fire_aircraft(passenger_empty, || { base_calls += 1; AircraftFireCheck::Ok }), AircraftFireCheck::Ammo);
+
+        let camera = AircraftFireRequest {
+            is_passenger_aircraft: false, has_attached_passenger: false,
+            has_primary_weapon: true, primary_weapon_is_camera: true,
+            primary_bullet_is_parachuted: false, has_ammo: false,
+            arm_timer: 0, distance_to_target: 0x037F, aircraft_center_is_in_radar: true,
+            is_fixed_wing: false, facing_difference: 0,
+        };
+        assert_eq!(can_fire_aircraft(camera, || { base_calls += 1; AircraftFireCheck::Other(1) }), AircraftFireCheck::Ok);
+        assert_eq!(can_fire_aircraft(AircraftFireRequest { arm_timer: 1, ..camera }, || panic!("rearm path skips base")), AircraftFireCheck::Rearm);
+        assert_eq!(can_fire_aircraft(AircraftFireRequest { distance_to_target: 0x0380, ..camera }, || panic!("camera path skips base")), AircraftFireCheck::Range);
+        assert_eq!(can_fire_aircraft(AircraftFireRequest { aircraft_center_is_in_radar: false, ..camera }, || panic!("radar path skips base")), AircraftFireCheck::Range);
+        assert_eq!(base_calls, 0);
+    }
+
+    #[test]
+    fn can_fire_parachuted_bullet_requires_ammo_and_fixed_wing_facing() {
+        let parachute = AircraftFireRequest {
+            is_passenger_aircraft: false, has_attached_passenger: false,
+            has_primary_weapon: true, primary_weapon_is_camera: false,
+            primary_bullet_is_parachuted: true, has_ammo: false,
+            arm_timer: 0, distance_to_target: 0, aircraft_center_is_in_radar: true,
+            is_fixed_wing: true, facing_difference: 0,
+        };
+        assert_eq!(can_fire_aircraft(parachute, || AircraftFireCheck::Ok), AircraftFireCheck::Ammo);
+        let armed = AircraftFireRequest { has_ammo: true, facing_difference: 17, ..parachute };
+        assert_eq!(can_fire_aircraft(armed, || AircraftFireCheck::Ok), AircraftFireCheck::Facing);
+        assert_eq!(can_fire_aircraft(AircraftFireRequest { facing_difference: 16, ..armed }, || AircraftFireCheck::Ok), AircraftFireCheck::Ok);
+        assert_eq!(can_fire_aircraft(AircraftFireRequest { is_fixed_wing: false, facing_difference: 127, ..armed }, || AircraftFireCheck::Ok), AircraftFireCheck::Ok);
+    }
+
+    #[test]
+    fn can_fire_ordinary_weapons_delegate_and_apply_fixed_wing_facing_limit() {
+        let request = AircraftFireRequest {
+            is_passenger_aircraft: false, has_attached_passenger: false,
+            has_primary_weapon: true, primary_weapon_is_camera: false,
+            primary_bullet_is_parachuted: false, has_ammo: true,
+            arm_timer: 0, distance_to_target: 10, aircraft_center_is_in_radar: true,
+            is_fixed_wing: true, facing_difference: -9,
+        };
+        assert_eq!(can_fire_aircraft(request, || AircraftFireCheck::Ok), AircraftFireCheck::Facing);
+        assert_eq!(can_fire_aircraft(AircraftFireRequest { facing_difference: 8, ..request }, || AircraftFireCheck::Ok), AircraftFireCheck::Ok);
+        assert_eq!(can_fire_aircraft(request, || AircraftFireCheck::Other(7)), AircraftFireCheck::Other(7));
+    }
+
+    #[test]
+    fn paradrop_cargo_reattaches_failures_and_clears_arm_after_success() {
+        let absent = paradrop_cargo_plan(false, false, true, true, 9);
+        assert_eq!(absent.arm_after_call, 9);
+        let failed = paradrop_cargo_plan(true, false, true, true, 9);
+        assert!(failed.reattach_passenger);
+        assert!(!failed.play_parachute_sound);
+        assert_eq!(failed.arm_after_call, 9);
+        let success = paradrop_cargo_plan(true, true, true, true, 9);
+        assert!(!success.reattach_passenger);
+        assert!(success.play_parachute_sound);
+        assert!(success.remove_passenger_from_team);
+        assert_eq!(success.assign_passenger_mission, Some("GUARD"));
+        assert_eq!(success.arm_after_call, 0);
+        let no_team = paradrop_cargo_plan(true, true, false, false, 9);
+        assert_eq!(no_team.assign_passenger_mission, None);
+        assert!(!no_team.remove_passenger_from_team);
+    }
+
+    #[test]
+    fn aircraft_voice_tables_preserve_random_weighting_and_voice_gate() {
+        assert_eq!(aircraft_voice_plan(AircraftVoicePrompt::Attack, 0, true, 4).unwrap().sample, "VOC_AFFIRM");
+        assert_eq!(aircraft_voice_plan(AircraftVoicePrompt::Attack, 1, true, 4).unwrap().sample, "VOC_ACKNOWL");
+        assert_eq!(aircraft_voice_plan(AircraftVoicePrompt::Move, 0, true, 4).unwrap().sample, "VOC_ACKNOWL");
+        assert_eq!(aircraft_voice_plan(AircraftVoicePrompt::Select, 2, true, 4).unwrap().sample, "VOC_YESSIR");
+        assert_eq!(aircraft_voice_plan(AircraftVoicePrompt::Select, 3, true, 4).unwrap().sample, "VOC_YESSIR");
+        let muted = aircraft_voice_plan(AircraftVoicePrompt::Select, 5, false, 4).unwrap();
+        assert_eq!(muted.sample, "VOC_AWAIT");
+        assert!(!muted.should_play);
+        assert_eq!(muted.volume.raw(), Fixed16::ONE.raw());
+        assert_eq!(muted.speaker_id, -5);
+        assert_eq!(aircraft_voice_plan(AircraftVoicePrompt::Select, 6, true, 0), None);
     }
 
     #[test]
