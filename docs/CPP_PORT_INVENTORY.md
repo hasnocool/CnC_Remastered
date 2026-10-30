@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **269**
-- Not yet fully ported: **225**
+- Fully ported: **270**
+- Not yet fully ported: **224**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 136 | 139 |
+| `REDALERT/` | 275 | 137 | 138 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
 | `TIBERIANDAWN/` | 161 | 63 | 98 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
@@ -24,7 +24,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Status | Upstream C++ file | Rust port / notes |
 |---|---|---|
 | Complete | `REDALERT/2KEYFRAM.CPP` | rts-formats/src/keyframe.rs — packed keyframe header/table parsing, LCW keyframe decode, XOR key-delta/subframe reconstruction, optional 768-byte palette extraction, cached-shape metadata, frame getters and Red Alert uncompressed-buffer policy/sizing. |
-| Not started | `REDALERT/AADATA.CPP` | — |
+| Complete | `REDALERT/AADATA.CPP` | rts-core/src/red_alert_aircraft_types.rs — all seven static aircraft records, enum/name lookup, source-order heap initialization, rotor data asset names, shape asset path generation, dimensions, occupancy/overlap lists, pip calculation and prohibited create-and-place behavior. |
 | Complete | `REDALERT/ABSTRACT.CPP` | rts-core/src/abstract_object.rs — building-adjusted target distance, RTTI/ID target encoding, 24-byte INI name, Full_Name, ownership mask, identity coordinate fixup, and vtable-preserving Delete_This adapter. CHEAT_KEYS debug dump is not enabled by the pinned project. |
 | Not started | `REDALERT/ADATA.CPP` | — |
 | Complete | `REDALERT/ADPCM.CPP` | rts-formats/src/adpcm.rs — SOS ADPCM type-1 decoder. |

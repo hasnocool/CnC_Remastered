@@ -130,3 +130,4 @@ pub mod red_alert_radio;
 pub mod red_alert_tab;
 pub mod red_alert_mpath;
 pub mod red_alert_sound_controls;
+pub mod red_alert_aircraft_types;
