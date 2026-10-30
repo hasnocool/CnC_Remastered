@@ -283,7 +283,7 @@ mod tests {
         let negative = LegacyBuffer::allocate(-5);
         assert!(!negative.is_valid());
         assert_eq!(negative.get_size(), -5);
-        assert_eq!(LegacyBuffer::try_allocate(-1), Err(BufferError::NegativeAllocationSize(-1)));
+        assert!(matches!(LegacyBuffer::try_allocate(-1), Err(BufferError::NegativeAllocationSize(-1))));
     }
 
     #[test]
