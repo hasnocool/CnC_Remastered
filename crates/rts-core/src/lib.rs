@@ -23,6 +23,7 @@ pub mod cpu_info;
 pub mod checkbox;
 pub mod flasher;
 pub mod fly;
+pub mod ipx95;
 pub mod window_mouse;
 pub mod mouse_ww;
 pub mod com_init;
