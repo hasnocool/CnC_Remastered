@@ -4,18 +4,18 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **53**
-- Not yet fully ported: **441**
+- Fully ported: **56**
+- Not yet fully ported: **438**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 45 | 230 |
-| `REDALERT/WIN32LIB/` | 26 | 2 | 24 |
+| `REDALERT/` | 275 | 46 | 229 |
+| `REDALERT/WIN32LIB/` | 26 | 3 | 23 |
 | `TIBERIANDAWN/` | 161 | 3 | 158 |
-| `TIBERIANDAWN/WIN32LIB/` | 32 | 3 | 29 |
+| `TIBERIANDAWN/WIN32LIB/` | 32 | 4 | 28 |
 
 ## File-by-file coverage
 
@@ -130,7 +130,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/INIBIN.CPP` | rts-core/src/inibin.rs — intentionally empty upstream translation unit. |
 | Not started | `REDALERT/INICODE.CPP` | — |
 | Not started | `REDALERT/INIT.CPP` | — |
-| Not started | `REDALERT/INT.CPP` | — |
+| Complete | `REDALERT/INT.CPP` | rts-core/src/bignum_globals.rs — zero-initialized Error, Carry, Borrow, and precision-specific remainder state. |
 | Not started | `REDALERT/INTERNET.CPP` | — |
 | Not started | `REDALERT/INTERPAL.CPP` | — |
 | Not started | `REDALERT/INTRO.CPP` | — |
@@ -328,7 +328,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/WIN32LIB/WINDOWS.CPP` | — |
 | Complete | `REDALERT/WIN32LIB/WINHIDE.CPP` | rts-core/src/window_mouse.rs — mouse hide/show calls are commented out upstream; observable no-op. |
 | Not started | `REDALERT/WIN32LIB/WRITEPCX.CPP` | — |
-| Not started | `REDALERT/WIN32LIB/_DIPTABL.CPP` | — |
+| Complete | `REDALERT/WIN32LIB/_DIPTABL.CPP` | rts-formats/src/dipthong_tables.rs — exact common-character and diphthong lookup tables. |
 
 ### `TIBERIANDAWN/`
 
@@ -531,7 +531,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `TIBERIANDAWN/WIN32LIB/WINHIDE.CPP` | rts-core/src/window_mouse.rs — shared upstream no-op implementation. |
 | Not started | `TIBERIANDAWN/WIN32LIB/WRITEPCX.CPP` | — |
 | Not started | `TIBERIANDAWN/WIN32LIB/WSA.CPP` | — |
-| Not started | `TIBERIANDAWN/WIN32LIB/_DIPTABL.CPP` | — |
+| Complete | `TIBERIANDAWN/WIN32LIB/_DIPTABL.CPP` | rts-formats/src/dipthong_tables.rs — identical shared lookup tables. |
 
 ## Completion requirements
 
