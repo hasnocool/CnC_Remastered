@@ -4,15 +4,15 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **31**
-- Not yet fully ported: **463**
+- Fully ported: **33**
+- Not yet fully ported: **461**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 30 | 245 |
+| `REDALERT/` | 275 | 32 | 243 |
 | `REDALERT/WIN32LIB/` | 26 | 0 | 26 |
 | `TIBERIANDAWN/` | 161 | 1 | 160 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 0 | 32 |
@@ -216,7 +216,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Complete | `REDALERT/RECT.CPP` | rts-core/src/rect.rs — validity, intersection, anchor adjustment, union. |
 | Not started | `REDALERT/REINF.CPP` | — |
 | Not started | `REDALERT/RGB.CPP` | — |
-| Not started | `REDALERT/RNDSTRAW.CPP` | — |
+| Complete | `REDALERT/RNDSTRAW.CPP` | rts-formats/src/random_straw.rs — 32 independent LCGs, 1,024-bit seed collection, iterative SHA-1 scramble. |
 | Not started | `REDALERT/ROTBMP.CPP` | — |
 | Not started | `REDALERT/RULES.CPP` | — |
 | Not started | `REDALERT/SAVELOAD.CPP` | — |
@@ -228,7 +228,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/SENDFILE.CPP` | — |
 | Not started | `REDALERT/SEQCONN.CPP` | — |
 | Not started | `REDALERT/SESSION.CPP` | — |
-| Not started | `REDALERT/SHA.CPP` | — |
+| Complete | `REDALERT/SHA.CPP` | rts-formats/src/sha1.rs — streaming SHA-1 engine and non-destructive result snapshots. |
 | Not started | `REDALERT/SHAPEBTN.CPP` | — |
 | Not started | `REDALERT/SHAPIPE.CPP` | — |
 | Not started | `REDALERT/SHASTRAW.CPP` | — |
