@@ -25,6 +25,7 @@ pub mod flasher;
 pub mod fly;
 pub mod ipx95;
 pub mod ccptr;
+pub mod text_label;
 pub mod window_mouse;
 pub mod mouse_ww;
 pub mod com_init;
