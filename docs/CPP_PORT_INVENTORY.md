@@ -12,9 +12,9 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 55 | 220 |
+| `REDALERT/` | 275 | 56 | 219 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 7 | 154 |
+| `TIBERIANDAWN/` | 161 | 8 | 153 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 27 | 5 |
 
 ## File-by-file coverage
@@ -108,7 +108,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/FINDPATH.CPP` | — |
 | Complete | `REDALERT/FIXED.CPP` | rts-core/src/fixed16.rs — Q16.16 constructors, arithmetic helpers, ASCII conversion. |
 | Complete | `REDALERT/FLASHER.CPP` | rts-core/src/flasher.rs — global countdown, IsBlushing parity, per-player countdowns, flashing bitmask and optional debug text. |
-| Not started | `REDALERT/FLY.CPP` | — |
+| Complete | `REDALERT/FLY.CPP` | rts-core/src/fly.rs — speed scaling via fixed(speed,256), pixel-quantized movement accumulation, Coord_Move, and edge rollback. |
 | Not started | `REDALERT/FOOT.CPP` | — |
 | Not started | `REDALERT/FUSE.CPP` | — |
 | Not started | `REDALERT/GADGET.CPP` | — |
@@ -386,7 +386,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/FIELD.CPP` | — |
 | Not started | `TIBERIANDAWN/FINDPATH.CPP` | — |
 | Complete | `TIBERIANDAWN/FLASHER.CPP` | rts-core/src/flasher.rs — shared per-player flashing state implementation. |
-| Not started | `TIBERIANDAWN/FLY.CPP` | — |
+| Complete | `TIBERIANDAWN/FLY.CPP` | rts-core/src/fly.rs — Fixed_To_Cardinal speed conversion and shared flying-object physics. |
 | Not started | `TIBERIANDAWN/FOOT.CPP` | — |
 | Not started | `TIBERIANDAWN/FUSE.CPP` | — |
 | Not started | `TIBERIANDAWN/GADGET.CPP` | — |
