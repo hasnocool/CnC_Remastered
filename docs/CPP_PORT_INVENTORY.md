@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **185**
-- Not yet fully ported: **309**
+- Fully ported: **186**
+- Not yet fully ported: **308**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 104 | 171 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
-| `TIBERIANDAWN/` | 161 | 28 | 133 |
+| `TIBERIANDAWN/` | 161 | 29 | 132 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
 
 ## File-by-file coverage
@@ -492,7 +492,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/UDATA.CPP` | — |
 | Not started | `TIBERIANDAWN/UNIT.CPP` | — |
 | Not started | `TIBERIANDAWN/UTRACKER.CPP` | — |
-| Not started | `TIBERIANDAWN/VECTOR.CPP` | — |
+| Complete | `TIBERIANDAWN/VECTOR.CPP` | rts-core/src/vector.rs and bool_vector.rs — shared VectorClass/DynamicVectorClass and packed BooleanVectorClass behavior; also ports Tiberian Dawn's Raw_Count() and mutable Raw()/Raw(context) accessors. |
 | Not started | `TIBERIANDAWN/VISUDLG.CPP` | — |
 | Not started | `TIBERIANDAWN/WINSTUB.CPP` | — |
 
