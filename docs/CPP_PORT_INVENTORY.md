@@ -180,7 +180,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/MP.CPP` | — |
 | Not started | `REDALERT/MPGSET.CPP` | — |
 | Not started | `REDALERT/MPLAYER.CPP` | — |
-| Not started | `REDALERT/MPLIB.CPP` | — |
+| Complete | `REDALERT/MPLIB.CPP` | rts-core/src/mgen.rs — DOS yield interrupt, chunnel interrupt register packing, MGen queue/node/master operations and EAX/ECX result handling; external ordinal/device constants are injected. |
 | Not started | `REDALERT/MPMGRD.CPP` | — |
 | Not started | `REDALERT/MPMGRW.CPP` | — |
 | Complete | `REDALERT/MPU.CPP` | No active implementation for the pinned MSVC Win32 project; Get_CPU_Clock exists only under __BORLANDC__. |
