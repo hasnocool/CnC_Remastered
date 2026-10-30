@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 341 C++ translation units with source-specific tests.
+- [ ] Port the remaining 325 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -189,3 +189,5 @@
 - [x] Port REDALERT/KEY.CPP ring-buffer operations, mouse triplets, keyboard modifiers, ASCII conversion adapter, async key state and system-message pump.
 
 - [x] Port REDALERT/MOUSE.CPP and TIBERIANDAWN/MOUSE.CPP cursor shape state, exact 42/34 entry animation tables, small cursor behavior, resource loading hooks and ScrollClass delegation.
+
+- [x] Port both INTERPAL.CPP variants' palette table read/write, Red Alert midpoint nearest-color builder, Tiberian Dawn disabled builder, palette luminance scaling and disabled 2x interpolation entry point.
