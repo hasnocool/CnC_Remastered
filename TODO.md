@@ -301,3 +301,4 @@
 - [x] Port TIBERIANDAWN/UTRACKER.CPP constructor/destructor storage, per-type increment/decrement, clear, totals/count access, guarded in-place htonl/ntohl conversion and safe invalid-index reads.
 - [x] Port REDALERT/UTRACKER.CPP unit totals and dual network-conversion configurations, including non-WIN32 htonl/ntohl macros that return zero, idempotent format-state guards and bounds-safe total access.
 - [x] Port REDALERT/CONTROL.CPP Red Alert ControlClass constructors including copy/NoInit forms, peer cloning, Action key update before peer callback, base gadget Action delegation and peer-first Draw_Me.
+- [x] Port REDALERT/GAMEDLG.CPP option dialog: German and standard coordinates, WOLAPI feature/connection-dependent button list, inverse speed/scroll sliders, callback/map redraw, navigation, speed event, temporary GameSpeed save/restore, sound-card warning and subdialog returns.

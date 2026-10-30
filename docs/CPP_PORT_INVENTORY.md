@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **264**
-- Not yet fully ported: **230**
+- Fully ported: **265**
+- Not yet fully ported: **229**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -112,7 +112,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/FOOT.CPP` | — |
 | Complete | `REDALERT/FUSE.CPP` | rts-core/src/fuse.rs — fuse timer/arming countdown, proximity detonation, HeadTo and raw eight-byte timer/arming/coordinate/proximity save/load format. |
 | Not started | `REDALERT/GADGET.CPP` | — |
-| Not started | `REDALERT/GAMEDLG.CPP` | — |
+| Complete | `REDALERT/GAMEDLG.CPP` | rts-core/src/red_alert_game_controls.rs — Red Alert resolution/German/WOLAPI geometry, speed/scroll thumb mapping, optional connection-aware WOL button index/navigation, session callbacks, map redraw, multiplayer-safe GAMESPEED event/save substitution, and visual/sound/WOL child dialog routing. |
 | Not started | `REDALERT/GAUGE.CPP` | — |
 | Complete | `REDALERT/GETCPU.CPP` | rts-core/src/cpu_info.rs — MMX/CPU-type/vendor-ID wrapper with assembly probe injected through CpuProbe and source-compatible strncpy output behavior. |
 | Not started | `REDALERT/GLOBALS.CPP` | — |
