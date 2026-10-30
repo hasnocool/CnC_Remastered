@@ -278,3 +278,4 @@
 - [x] Port REDALERT/WARHEAD.CPP constructor defaults, indexed heap registration/lookup/free, INI configuration values and fixed-point Verses modifiers.
 
 - [x] Port REDALERT/WEAPON.CPP WeaponTypeClass defaults/destruction, indexed registry, INI data parsing, warhead/bullet references, allowed-threat calculation and weapon/armor name lookup.
+- [x] Port `TIBERIANDAWN/CONNECT.CPP` base connection constructor/destructor state, packet staging capacity, retry/timeout configuration, abstract send/receive queue service order, legacy 60 Hz time conversion and packet command names to `rts-core::connection`.

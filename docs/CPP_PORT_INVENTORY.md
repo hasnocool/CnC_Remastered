@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **241**
-- Not yet fully ported: **253**
+- Fully ported: **242**
+- Not yet fully ported: **252**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -14,7 +14,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 |---|---:|---:|---:|
 | `REDALERT/` | 275 | 136 | 139 |
 | `REDALERT/WIN32LIB/` | 26 | 25 | 1 |
-| `TIBERIANDAWN/` | 161 | 49 | 112 |
+| `TIBERIANDAWN/` | 161 | 50 | 111 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 31 | 1 |
 
 ## File-by-file coverage
@@ -359,7 +359,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `TIBERIANDAWN/COMBUF.CPP` | — |
 | Not started | `TIBERIANDAWN/COMQUEUE.CPP` | — |
 | Complete | `TIBERIANDAWN/CONFDLG.CPP` | rts-core/src/confirmation_dialog.rs — interactive modal confirmation state machine, exact factor-scaled window/button geometry, default No focus, Yes/No/Escape/Enter/arrow input, game callback/main-loop exit handling and surface-restore redraw. |
-| Not started | `TIBERIANDAWN/CONNECT.CPP` | — |
+| Complete | `TIBERIANDAWN/CONNECT.CPP` | rts-core/src/connection.rs — abstract connection base state, 8-byte Win32 packet header layout, queue-service short-circuit semantics, retry/timeout settings, 60 Hz legacy time conversion and command names. |
 | Not started | `TIBERIANDAWN/CONQUER.CPP` | — |
 | Not started | `TIBERIANDAWN/CONST.CPP` | — |
 | Not started | `TIBERIANDAWN/CONTROL.CPP` | — |

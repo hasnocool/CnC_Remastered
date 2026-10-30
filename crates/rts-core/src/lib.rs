@@ -83,6 +83,7 @@ pub mod shape_button;
 pub mod window_mouse;
 pub mod mouse_ww;
 pub mod com_init;
+pub mod connection;
 pub mod delay;
 pub mod bignum_globals;
 pub mod buffer_globals;
