@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 294 C++ translation units with source-specific tests.
+- [ ] Port the remaining 292 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -223,3 +223,5 @@
 - [x] Port TIBERIANDAWN/WIN32LIB/WSA.CPP open/close, resident/file-backed selection, WSA frame offsets, optional palette, frame-zero and delta LCW decode, XOR frame stepping, direct/indirect playback and metadata getters.
 
 - [x] Port REDALERT/DIALOG.CPP and TIBERIANDAWN/DIALOG.CPP dialog box/window drawing, box palettes, text wrapping, Simple/Fancy/Plain/Clipped text, font selection, palette/shadow flags, caption rendering and variant-specific style rules.
+
+- [x] Port REDALERT/DDE.CPP and TIBERIANDAWN/DDE.CPP active DDEML instance operations: enable callback, test/open/close poke connection, CF_TEXT POKE with 60-second timeout, destructor cleanup; preserve disabled initialize/register/dispatcher blocks as inactive.
