@@ -79,4 +79,4 @@ No Rust build/test result is claimed in this commit. The execution environment u
 Latest addition: `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` → `crates/rts-core/src/legacy_new_delete.rs` (scalar/array allocation operator delegation).
 
 Latest additions: `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` and `MORPHPAL.CPP` → `crates/rts-formats/src/palette_fade.rs`.
-Latest addition: REDALERT/INICODE.CPP is entirely inactive under #ifdef TOFIX in the pinned source.
+Latest additions: both DESCDLG.CPP variants → rts-core/src/description_dialog.rs with their variant-specific dialog styles, geometry and input completion behavior.
