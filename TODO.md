@@ -296,3 +296,4 @@
 - [x] Port REDALERT/VISUDLG.CPP as a distinct Red Alert visual-controls variant: resolution-scaled geometry/thumb bump, normalized slider-to-fixed option writes, Reset to 1/2, keyboard/button navigation and click-outside exit.
 - [x] Port REDALERT/BUFF.CPP Buffer constructors, owned allocation, borrowed pointer wrappers, shallow copy/assignment ownership flags, null/zero-size edge cases and Reset/destructor semantics using safe shared leases and nonblocking access.
 - [x] Port TIBERIANDAWN/CONTROL.CPP ControlClass constructor, peer setup, ID access, Action event-to-key mapping, peer notification order and Draw_Me peer/base forwarding.
+- [x] Port REDALERT/STATBTN.CPP StaticButtonClass constructor/default, Set_Text copy/resize order, Draw_Me conditional mouse handling, page background capture/restore and Draw_Text center/right alignment.

@@ -120,3 +120,4 @@ pub mod radio;
 pub mod red_alert_visual_controls;
 pub mod legacy_buffer;
 pub mod control_gadget;
+pub mod static_button;

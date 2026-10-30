@@ -4,8 +4,8 @@ Pinned source: [electronicarts/CnC_Remastered_Collection](https://github.com/ele
 Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 - Total C++ translation units: **494**
-- Fully ported: **259**
-- Not yet fully ported: **235**
+- Fully ported: **260**
+- Not yet fully ported: **234**
 - A translation unit is complete only when its active behavior has a Rust implementation. Intentionally empty source files are identified explicitly; placeholders do not count.
 
 ## Coverage by directory
@@ -240,7 +240,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/SPECIAL.CPP` | — |
 | Complete | `REDALERT/SPRITE.CPP` | rts-core/src/scale_rotate.rs — exact lookup tables, fixed-point rotated corner geometry, both Bresenham rasterization cases, source pixel stepping, transparency and destination writes; Rust safely bounds framebuffer access. |
 | Not started | `REDALERT/STARTUP.CPP` | — |
-| Not started | `REDALERT/STATBTN.CPP` | — |
+| Complete | `REDALERT/STATBTN.CPP` | rts-core/src/static_button.rs — default/text constructors, ignored constructor ID, -1 auto-size semantics, owned text replacement, resize background invalidation, conditional mouse hide/show, background capture/restore under page lock, and center/right text alignment. |
 | Not started | `REDALERT/STATS.CPP` | — |
 | Complete | `REDALERT/STRAW.CPP` | rts-formats/src/straw.rs — demand-driven pull chain and reconnect behavior. |
 | Complete | `REDALERT/STUB.CPP` | rts-core/src/legacy_stub.rs — exact launcher message. |
