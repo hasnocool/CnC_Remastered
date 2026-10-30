@@ -63,6 +63,7 @@ pub mod udp_addr;
 pub mod carryover;
 pub mod cargo;
 pub mod crate_manager;
+pub mod turret;
 pub mod heap;
 pub mod network_stubs;
 pub mod null_connection;
