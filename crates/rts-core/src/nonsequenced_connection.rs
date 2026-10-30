@@ -121,9 +121,10 @@ pub struct NonSequencedConnection {
     counters: ConnectionCounters,
     last_seq_id: u32,
     last_read_id: u32,
-    response_delays: VecDeque<u32>,
-    response_delay_total: u64,
-    response_delay_max: u32,
+    delay_sum: u32,
+    num_delay: u32,
+    mean_delay: u32,
+    max_delay: u32,
     send_total: u32,
     receive_total: u32,
 }
@@ -136,7 +137,7 @@ impl NonSequencedConnection {
     pub fn new(
         send_slots: usize,
         receive_slots: usize,
-        max_packet_len: usize,
+        max_payload_len: usize,
         magic_number: u16,
         retry_delta: u32,
         max_retries: Option<u32>,
@@ -144,7 +145,7 @@ impl NonSequencedConnection {
     ) -> Self {
         Self {
             magic_number,
-            max_packet_len,
+            max_packet_len: max_payload_len.saturating_add(COMM_HEADER_SIZE),
             max_send: send_slots,
             max_receive: receive_slots,
             retry_delta,
@@ -155,9 +156,10 @@ impl NonSequencedConnection {
             counters: ConnectionCounters::default(),
             last_seq_id: NO_PACKET_ID,
             last_read_id: NO_PACKET_ID,
-            response_delays: VecDeque::with_capacity(4),
-            response_delay_total: 0,
-            response_delay_max: 0,
+            delay_sum: 0,
+            num_delay: 0,
+            mean_delay: 0,
+            max_delay: 0,
             send_total: 0,
             receive_total: 0,
         }
@@ -171,9 +173,10 @@ impl NonSequencedConnection {
         self.last_read_id = NO_PACKET_ID;
         self.send_queue.clear();
         self.receive_queue.clear();
-        self.response_delays.clear();
-        self.response_delay_total = 0;
-        self.response_delay_max = 0;
+        self.delay_sum = 0;
+        self.num_delay = 0;
+        self.mean_delay = 0;
+        self.max_delay = 0;
         self.send_total = 0;
         self.receive_total = 0;
     }
@@ -194,13 +197,9 @@ impl NonSequencedConnection {
     pub fn receive_total(&self) -> u32 { self.receive_total }
     pub fn response_delay_stats(&self) -> ResponseDelayStats {
         ResponseDelayStats {
-            sample_count: self.response_delays.len() as u32,
-            average_ticks: if self.response_delays.is_empty() {
-                0
-            } else {
-                (self.response_delay_total / self.response_delays.len() as u64) as u32
-            },
-            maximum_ticks: self.response_delay_max,
+            sample_count: self.num_delay,
+            average_ticks: self.mean_delay,
+            maximum_ticks: self.max_delay,
         }
     }
 
@@ -457,12 +456,19 @@ impl NonSequencedConnection {
     }
 
     fn add_response_delay(&mut self, delay: u32) {
-        if self.response_delays.len() == 4 {
-            self.response_delays.pop_front();
+        // CommBufferClass::Add_Delay uses a 256-sample fixed-point moving average.
+        // After the first 256 samples it subtracts the current mean (not the
+        // oldest sample), adds the new delay, then rounds the high-byte result.
+        if self.num_delay == 256 {
+            self.delay_sum = self.delay_sum.wrapping_sub(self.mean_delay).wrapping_add(delay);
+            let roundoff = u32::from((self.delay_sum & 0xff) > 127);
+            self.mean_delay = (self.delay_sum >> 8).wrapping_add(roundoff);
+        } else {
+            self.num_delay += 1;
+            self.delay_sum = self.delay_sum.wrapping_add(delay);
+            self.mean_delay = self.delay_sum / self.num_delay;
         }
-        self.response_delays.push_back(delay);
-        self.response_delay_total = self.response_delays.iter().map(|value| *value as u64).sum();
-        self.response_delay_max = self.response_delay_max.max(delay);
+        if delay > self.max_delay { self.max_delay = delay; }
     }
 
     pub fn queued_send_wire_packets(&self) -> impl Iterator<Item = &[u8]> {
@@ -576,9 +582,9 @@ mod tests {
         let next = remote_packet(0x3333, PacketCode::DataAck, 0, b"next");
         let mut ack_count = 0;
         assert!(connection.receive_packet(&later, |_| ack_count += 1));
-        assert!(!connection.receive_packet(&later, |_| ack_count += 1)); // one slot reserved; duplicate is blocked by reserve check after old code path? 
+        assert!(connection.receive_packet(&later, |_| ack_count += 1)); // duplicate is ACKed but not queued.
         assert!(connection.receive_packet(&next, |_| ack_count += 1));
-        assert_eq!(ack_count, 2);
+        assert_eq!(ack_count, 3);
     }
 
     #[test]
@@ -591,6 +597,20 @@ mod tests {
         assert_eq!(connection.queued_send_packets(), 1);
         assert!(connection.service_send_queue(2, |_| panic!("first send already marks NOACK complete")));
         assert_eq!(connection.queued_send_packets(), 0);
+    }
+
+    #[test]
+    fn rolling_response_delay_uses_the_legacy_256_sample_filter() {
+        let mut connection = NonSequencedConnection::new(300, 4, 64, 0x5151, 0, None, None);
+        for tick in 1..=256u32 {
+            assert!(connection.send_packet(&[tick as u8], true));
+            assert!(connection.service_send_queue(tick, |_| {}));
+            assert!(connection.receive_packet(&remote_packet(0x5151, PacketCode::Ack, tick - 1, &[]), |_| {}));
+            assert!(connection.service_send_queue(tick, |_| {}));
+        }
+        assert_eq!(connection.response_delay_stats().sample_count, 256);
+        assert_eq!(connection.response_delay_stats().average_ticks, 0);
+        assert_eq!(connection.response_delay_stats().maximum_ticks, 0);
     }
 
     #[test]
