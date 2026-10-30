@@ -33,7 +33,7 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [ ] Port the remaining 370 C++ translation units with source-specific tests.
+- [ ] Port the remaining 362 C++ translation units with source-specific tests.
 
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
@@ -137,3 +137,5 @@
 - [x] Port both TXTLABEL.CPP constructors, Set_Text and variant-specific drawing dispatch to `rts-core::text_label`.
 
 - [x] Record REDALERT/WOLEDIT.CPP and WOL_OPT.CPP as inactive because WOLAPI_INTEGRATION is not defined in the pinned Red Alert project.
+
+- [x] Record RAWOLAPI, WOLAPIOB, WOL_CGAM, WOL_CHAT, WOL_DNLD, WOL_GSUP, WOL_LOGN and WOL_MAIN as inactive because WOLAPI_INTEGRATION is not defined in the pinned project.
