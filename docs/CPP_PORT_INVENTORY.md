@@ -12,7 +12,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 
 | Upstream directory | C++ files | Complete | Remaining |
 |---|---:|---:|---:|
-| `REDALERT/` | 275 | 73 | 202 |
+| `REDALERT/` | 275 | 74 | 201 |
 | `REDALERT/WIN32LIB/` | 26 | 24 | 2 |
 | `TIBERIANDAWN/` | 161 | 14 | 147 |
 | `TIBERIANDAWN/WIN32LIB/` | 32 | 29 | 3 |
@@ -93,7 +93,7 @@ Upstream commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
 | Not started | `REDALERT/DOOR.CPP` | — |
 | Complete | `REDALERT/DPMI.CPP` | No active implementation in the pinned source; the complete translation unit is enclosed by #if (0). |
 | Not started | `REDALERT/DRIVE.CPP` | — |
-| Not started | `REDALERT/DROP.CPP` | — |
+| Complete | `REDALERT/DROP.CPP` | rts-core/src/drop_list.rs — dropdown construction geometry, item selection, peer routing, expand/collapse, position updates, redraw and zap/remove lifecycle. |
 | Complete | `REDALERT/DTABLE.CPP` | rts-formats/src/adpcm.rs — exact 1,424-entry ADPCM difference table. |
 | Not started | `REDALERT/DYNAVEC.CPP` | — |
 | Not started | `REDALERT/EDIT.CPP` | — |
