@@ -848,8 +848,8 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/WIN32LIB/KEYBOARD.H` — Inventory only
 - `REDALERT/WIN32LIB/KEYBOARD.INC` — Inventory only
 - `REDALERT/WIN32LIB/KEYSTRUC.INC` — Inventory only
-- `REDALERT/WIN32LIB/LCWCOMP.ASM` — Inventory only
-- `REDALERT/WIN32LIB/LCWUNCMP.ASM` — Inventory only
+- `REDALERT/WIN32LIB/LCWCOMP.ASM` — Partially reviewed (assembly purpose/directives/PROC labels; ABI and instruction audit pending)
+- `REDALERT/WIN32LIB/LCWUNCMP.ASM` — Partially reviewed (assembly purpose/directives/PROC labels; ABI and instruction audit pending)
 - `REDALERT/WIN32LIB/LOAD.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `REDALERT/WIN32LIB/LOADFONT.CPP` — Inventory only
 - `REDALERT/WIN32LIB/MCGAPRIM.INC` — Inventory only
@@ -886,7 +886,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/WIN32LIB/TIMER.H` — Inventory only
 - `REDALERT/WIN32LIB/TIMERDWN.CPP` — Inventory only
 - `REDALERT/WIN32LIB/TIMERINI.CPP` — Inventory only
-- `REDALERT/WIN32LIB/TOBUFF.ASM` — Inventory only
+- `REDALERT/WIN32LIB/TOBUFF.ASM` — Partially reviewed (assembly purpose/directives/PROC labels; ABI and instruction audit pending)
 - `REDALERT/WIN32LIB/VIDEO.H` — Inventory only
 - `REDALERT/WIN32LIB/WINCOMM.H` — Inventory only
 - `REDALERT/WIN32LIB/WINDOWS.CPP` — Inventory only
@@ -1000,7 +1000,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/CONTROL.CPP` — Inventory only
 - `TIBERIANDAWN/CONTROL.H` — Inventory only
 - `TIBERIANDAWN/COORD.CPP` — Inventory only
-- `TIBERIANDAWN/COORDA.ASM` — Inventory only
+- `TIBERIANDAWN/COORDA.ASM` — Partially reviewed (assembly purpose/directives/PROC labels; ABI and instruction audit pending)
 - `TIBERIANDAWN/COORDA.h` — Inventory only
 - `TIBERIANDAWN/CREDITS.CPP` — Inventory only
 - `TIBERIANDAWN/CREDITS.H` — Inventory only
@@ -1156,7 +1156,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/OVERLAY.H` — Inventory only
 - `TIBERIANDAWN/PACKET.CPP` — Inventory only
 - `TIBERIANDAWN/PACKET.H` — Inventory only
-- `TIBERIANDAWN/PAGFAULT.ASM` — Inventory only
+- `TIBERIANDAWN/PAGFAULT.ASM` — Partially reviewed (assembly purpose/directives/PROC labels; ABI and instruction audit pending)
 - `TIBERIANDAWN/PHONE.H` — Inventory only
 - `TIBERIANDAWN/POWER.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/POWER.H` — Inventory only
@@ -1209,7 +1209,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/STATS.CPP` — Inventory only
 - `TIBERIANDAWN/SUPER.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/SUPER.H` — Inventory only
-- `TIBERIANDAWN/SUPPORT.ASM` — Inventory only
+- `TIBERIANDAWN/SUPPORT.ASM` — Partially reviewed (assembly purpose/directives/PROC labels; ABI and instruction audit pending)
 - `TIBERIANDAWN/Shape.cpp` — Inventory only
 - `TIBERIANDAWN/TAB.CPP` — Inventory only
 - `TIBERIANDAWN/TAB.H` — Inventory only
@@ -1277,7 +1277,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/WIN32LIB/DSOUND.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/DrawMisc.cpp` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/EXTERNS.H` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/FACINGFF.ASM` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/FACINGFF.ASM` — Partially reviewed (assembly purpose/directives/PROC labels; ABI and instruction audit pending)
 - `TIBERIANDAWN/WIN32LIB/FACINGFF.h` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/FASTFILE.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/FILE.H` — Inventory only
@@ -1322,7 +1322,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/WIN32LIB/PROFILE.INC` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/RAWFILE.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/REGIONSZ.CPP` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/REMAP.ASM` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/REMAP.ASM` — Partially reviewed (assembly purpose/directives/PROC labels; ABI and instruction audit pending)
 - `TIBERIANDAWN/WIN32LIB/SET_FONT.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/SHAPE.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/SHAPE.INC` — Inventory only
@@ -1336,7 +1336,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/WIN32LIB/TIMER.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/TIMERDWN.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/TIMERINI.CPP` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/TOBUFF.ASM` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/TOBUFF.ASM` — Partially reviewed (assembly purpose/directives/PROC labels; ABI and instruction audit pending)
 - `TIBERIANDAWN/WIN32LIB/VIDEO.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/WINCOMM.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/WINDOWS.CPP` — Inventory only
@@ -1350,10 +1350,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/WIN32LIB/WWMEM.INC` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/WWSTD.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/WW_WIN.H` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/XORDELTA.ASM` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/XORDELTA.ASM` — Partially reviewed (assembly purpose/directives/PROC labels; ABI and instruction audit pending)
 - `TIBERIANDAWN/WIN32LIB/_DIPTABL.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/_FILE.H` — Inventory only
-- `TIBERIANDAWN/WINASM.ASM` — Inventory only
+- `TIBERIANDAWN/WINASM.ASM` — Partially reviewed (assembly purpose/directives/PROC labels; ABI and instruction audit pending)
 - `TIBERIANDAWN/WINSTUB.CPP` — Inventory only
 - `TIBERIANDAWN/WWALLOC.H` — Inventory only
 - `TIBERIANDAWN/WWFILE.H` — Inventory only

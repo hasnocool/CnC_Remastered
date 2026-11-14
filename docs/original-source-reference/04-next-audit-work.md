@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 7E — assembly and low-level ABI inventory
+
+- Added 11 assembly source references covering facing/remap/buffer/XOR-delta/LCW routines and platform support modules.
+- Captured visible PROC labels and assembler directives where present; documented required calling-convention, register, bounds, and differential-test audits.
+- Marked the paths partially reviewed. This is not a substitute for instruction-level or ABI review.
+
+
 ### Tranche 7D — DirectDraw, buffers, IFF, resource loading, fonts, and input
 
 - Added 12 first-pass guides across both game trees for DDRAW, BUFFER, IFF, LOAD, FONT, KEYBOARD, and MOUSEWW.
