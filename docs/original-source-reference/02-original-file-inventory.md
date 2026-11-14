@@ -14,7 +14,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 ## CnCTDRAMapEditor (286 files)
 
-- `CnCTDRAMapEditor/App.config` — Inventory only
+- `CnCTDRAMapEditor/App.config` — Reviewed (file role and configuration/resource declarations; build parity pending)
 - `CnCTDRAMapEditor/CnCTDRAMapEditor.csproj` — Inventory only
 - `CnCTDRAMapEditor/Controls/BasicSettings.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/BasicSettings.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
@@ -674,7 +674,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/RECT.H` — Inventory only
 - `REDALERT/REGION.H` — Inventory only
 - `REDALERT/REINF.CPP` — Inventory only
-- `REDALERT/RESOURCE/RedAlert.rc` — Inventory only
+- `REDALERT/RESOURCE/RedAlert.rc` — Reviewed (file role and configuration/resource declarations; build parity pending)
 - `REDALERT/RESOURCE/resource.h` — Inventory only
 - `REDALERT/RGB.CPP` — Inventory only
 - `REDALERT/RGB.H` — Inventory only
@@ -685,8 +685,8 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/ROTBMP.H` — Inventory only
 - `REDALERT/RULES.CPP` — Inventory only
 - `REDALERT/RULES.H` — Inventory only
-- `REDALERT/RedAlert.vcxproj` — Inventory only
-- `REDALERT/RedAlert.vcxproj.filters` — Inventory only
+- `REDALERT/RedAlert.vcxproj` — Reviewed (file role and configuration/resource declarations; build parity pending)
+- `REDALERT/RedAlert.vcxproj.filters` — Reviewed (file role and configuration/resource declarations; build parity pending)
 - `REDALERT/SAVEDLG.H` — Inventory only
 - `REDALERT/SAVELOAD.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `REDALERT/SCENARIO.CPP` — Partially reviewed (function index; detailed body/header audit pending)
@@ -935,8 +935,8 @@ This is the complete path inventory at the pinned commit. A path being listed do
 ## ROOT (5 files)
 
 - `.gitignore` — Inventory only
-- `CnCRemastered.sln` — Inventory only
-- `CnCTDRAMapEditor.sln` — Inventory only
+- `CnCRemastered.sln` — Reviewed (file role and configuration/resource declarations; build parity pending)
+- `CnCTDRAMapEditor.sln` — Reviewed (file role and configuration/resource declarations; build parity pending)
 - `LICENSE.md` — Inventory only
 - `README.md` — Inventory only
 
@@ -971,7 +971,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/CCDDE.H` — Inventory only
 - `TIBERIANDAWN/CCFILE.CPP` — Inventory only
 - `TIBERIANDAWN/CCFILE.H` — Inventory only
-- `TIBERIANDAWN/CC_ICON.RC` — Inventory only
+- `TIBERIANDAWN/CC_ICON.RC` — Reviewed (file role and configuration/resource declarations; build parity pending)
 - `TIBERIANDAWN/CDATA.CPP` — Inventory only
 - `TIBERIANDAWN/CDFILE.CPP` — Inventory only
 - `TIBERIANDAWN/CDFILE.H` — Inventory only
@@ -1172,9 +1172,9 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/RAWFILE.H` — Inventory only
 - `TIBERIANDAWN/REAL.H` — Inventory only
 - `TIBERIANDAWN/REGION.H` — Inventory only
-- `TIBERIANDAWN/REG_ICON.RC` — Inventory only
+- `TIBERIANDAWN/REG_ICON.RC` — Reviewed (file role and configuration/resource declarations; build parity pending)
 - `TIBERIANDAWN/REINF.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
-- `TIBERIANDAWN/RESOURCE/TiberianDawn.rc` — Inventory only
+- `TIBERIANDAWN/RESOURCE/TiberianDawn.rc` — Reviewed (file role and configuration/resource declarations; build parity pending)
 - `TIBERIANDAWN/RESOURCE/resource.h` — Inventory only
 - `TIBERIANDAWN/RULES.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/RULES.H` — Inventory only
@@ -1245,8 +1245,8 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/TXTLABEL.H` — Inventory only
 - `TIBERIANDAWN/TXTPRNT.ASM` — Inventory only
 - `TIBERIANDAWN/TYPE.H` — Inventory only
-- `TIBERIANDAWN/TiberianDawn.vcxproj` — Inventory only
-- `TIBERIANDAWN/TiberianDawn.vcxproj.filters` — Inventory only
+- `TIBERIANDAWN/TiberianDawn.vcxproj` — Reviewed (file role and configuration/resource declarations; build parity pending)
+- `TIBERIANDAWN/TiberianDawn.vcxproj.filters` — Reviewed (file role and configuration/resource declarations; build parity pending)
 - `TIBERIANDAWN/UDATA.CPP` — Inventory only
 - `TIBERIANDAWN/UNIT.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/UNIT.H` — Inventory only

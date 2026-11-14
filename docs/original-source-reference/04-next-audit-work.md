@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 8A — solution, project, runtime configuration, and native resource scripts
+
+- Added 11 reference pages for both Visual Studio solutions, both native .vcxproj files and filters, editor App.config, both game .rc files, and legacy icon resource scripts.
+- Captured target architecture/configuration, v141 toolset, Windows SDK target, .NET Framework runtime target, language/resource metadata, and IDE-filter distinction.
+- Inventory statuses updated to Reviewed at file-role/configuration declaration level. Full flags/dependency normalization and reproducible-build parity remain open.
+
+
 ### Tranche 7C — Win32 graphics, palette, icon-set, and timer primitives
 
 - Added eight source guides for GBUFFER, ICONSET, PALETTE, and TIMER in both game trees.
