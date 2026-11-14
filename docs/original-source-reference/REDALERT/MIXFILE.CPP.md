@@ -1,25 +1,50 @@
-# REDALERT/MIXFILE.CPP
+# REDALERT MIXFILE.CPP — source guide
 
-**Review status:** Reviewed for class/function responsibilities.  
-**Upstream:** [REDALERT/MIXFILE.CPP](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/REDALERT/MIXFILE.CPP)
+> **Audit status: partially reviewed.** This first pass inspects the pinned translation unit, its direct includes, and original source function index. Paired headers, exhaustive symbols, full body explanations, call graphs, and Rust parity remain outstanding.
 
-## Purpose
+- Upstream: [REDALERT/MIXFILE.CPP](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/REDALERT/MIXFILE.CPP)
+- Pinned upstream commit: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae
+- Translation-unit size: 28494 characters.
 
-Implements Red Alert's MIX archive manager. It locates resources inside MIX containers, caches archive data, returns embedded file bytes, and reports offsets/sizes.
+## Plain-English system purpose
 
-## Main class
+MIX archive access and cache management. Opens archives, retrieves named entries, reports offsets, finds matching archives, caches content, and releases cache/archive resources.
 
-### `MixFileClass`
+## Direct compile-time dependencies
 
-A mounted archive resource manager. It is responsible for finding and retrieving a packed file, not interpreting the file's internal format.
+- buff.h
+- function.h
+- direct.h
+- fcntl.h
+- io.h
+- dos.h
+- errno.h
+- share.h
+- mixfile.h
+- cdfile.h
 
-## Related files
+## Original function index
 
-- [MIXFILE.H](MIXFILE.H.md): public class declaration.
-- [Tiberian Dawn MIXFILE.CPP](../TIBERIANDAWN/MIXFILE.CPP.md): variant comparison.
-- `WIN32LIB/ICONSET.CPP`: consumes icon-set bytes after archive retrieval.
-- `CDATA.CPP`: requests theatre-specific template resources.
+- MixFileClass::Cache — Caches the named mixfile into RAM.
+- MixFileClass::Cache — Loads this particular mixfile's data into RAM.
+- MixFileClass::Finder — Finds the mixfile object that matches the name specified.
+- MixFileClass::Free — Uncaches a cached mixfile.
+- MixFileClass::MixFileClass — Constructor for mixfile object.
+- MixFileClass::Offset — Searches in mixfile for matching file and returns offset if found.
+- MixFileClass::Retrieve — Retrieves a pointer to the specified data file.
+- MixFileClass::~MixFileClass — Destructor for the mixfile object.
 
-## Rust port mapping
+These entries preserve the source's own responsibility index. They do not establish all branch behavior, state changes, error paths, return contracts, or resource ownership.
 
-See `crates/rts-formats/src/mix.rs`. Verify checksum lookup, archive variants, offsets, caching, and failure behavior against both implementations.
+## TD/RA comparison
+The matching game variant exists in the other game directory. A true parity comparison requires inspecting both complete implementations and paired headers; do not assume the variants are identical.
+
+## Rust mapping
+No equivalent is asserted without inspecting the current Rust implementation and tests. Candidate port concerns: archive index parsing, offset/length validation, cache lifetime, and concurrent-safe reads.
+
+## Outstanding audit checklist
+- [ ] Inspect paired header and enumerate all classes, structs, enums, fields, globals, constants, macros, and exact signatures.
+- [ ] Explain each function body: parameters, return values, branches, loops, side effects, and failure paths.
+- [ ] Trace callers/callees and shared global state.
+- [ ] Compare TD/RA implementations where both exist.
+- [ ] Map every behavior to Rust path and tests; distinguish implemented, partial, absent, and divergent.

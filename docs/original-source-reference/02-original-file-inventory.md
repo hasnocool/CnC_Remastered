@@ -313,9 +313,9 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/ADPCM.CPP` — Inventory only
 - `REDALERT/AIRCRAFT.CPP` — Inventory only
 - `REDALERT/AIRCRAFT.H` — Inventory only
-- `REDALERT/ANIM.CPP` — Inventory only
+- `REDALERT/ANIM.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `REDALERT/ANIM.H` — Inventory only
-- `REDALERT/AUDIO.CPP` — Inventory only
+- `REDALERT/AUDIO.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `REDALERT/AUDIO.H` — Inventory only
 - `REDALERT/B64PIPE.CPP` — Inventory only
 - `REDALERT/B64PIPE.H` — Inventory only
@@ -377,7 +377,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/CLASS.CPP` — Inventory only
 - `REDALERT/COLRLIST.CPP` — Inventory only
 - `REDALERT/COLRLIST.H` — Inventory only
-- `REDALERT/COMBAT.CPP` — Inventory only
+- `REDALERT/COMBAT.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `REDALERT/COMBUF.CPP` — Inventory only
 - `REDALERT/COMBUF.H` — Inventory only
 - `REDALERT/COMINIT.CPP` — Inventory only
@@ -463,7 +463,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/FIELD.CPP` — Inventory only
 - `REDALERT/FIELD.H` — Inventory only
 - `REDALERT/FILEPCX.H` — Inventory only
-- `REDALERT/FINDPATH.CPP` — Inventory only
+- `REDALERT/FINDPATH.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `REDALERT/FIXED.CPP` — Inventory only
 - `REDALERT/FIXED.H` — Inventory only
 - `REDALERT/FLASHER.CPP` — Inventory only
@@ -597,7 +597,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/MESSAGE.H` — Inventory only
 - `REDALERT/MISSION.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `REDALERT/MISSION.H` — Inventory only
-- `REDALERT/MIXFILE.CPP` — Inventory only
+- `REDALERT/MIXFILE.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `REDALERT/MIXFILE.H` — Inventory only
 - `REDALERT/MMX.ASM` — Inventory only
 - `REDALERT/MONOC.CPP` — Inventory only
@@ -688,7 +688,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/RedAlert.vcxproj` — Inventory only
 - `REDALERT/RedAlert.vcxproj.filters` — Inventory only
 - `REDALERT/SAVEDLG.H` — Inventory only
-- `REDALERT/SAVELOAD.CPP` — Inventory only
+- `REDALERT/SAVELOAD.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `REDALERT/SCENARIO.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `REDALERT/SCENARIO.H` — Inventory only
 - `REDALERT/SCORE.CPP` — Inventory only
@@ -802,10 +802,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/VORTEX.H` — Inventory only
 - `REDALERT/W95TRACE.CPP` — Inventory only
 - `REDALERT/W95TRACE.H` — Inventory only
-- `REDALERT/WARHEAD.CPP` — Inventory only
+- `REDALERT/WARHEAD.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `REDALERT/WARHEAD.H` — Inventory only
 - `REDALERT/WATCOM.H` — Inventory only
-- `REDALERT/WEAPON.CPP` — Inventory only
+- `REDALERT/WEAPON.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `REDALERT/WEAPON.H` — Inventory only
 - `REDALERT/WIN32LIB/ALLOC.CPP` — Inventory only
 - `REDALERT/WIN32LIB/AUDIO.H` — Inventory only
@@ -953,9 +953,9 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/AIRCRAFT.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/AIRCRAFT.H` — Inventory only
 - `TIBERIANDAWN/ALLOC.CPP` — Inventory only
-- `TIBERIANDAWN/ANIM.CPP` — Inventory only
+- `TIBERIANDAWN/ANIM.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `TIBERIANDAWN/ANIM.H` — Inventory only
-- `TIBERIANDAWN/AUDIO.CPP` — Inventory only
+- `TIBERIANDAWN/AUDIO.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `TIBERIANDAWN/AUDIO.H` — Inventory only
 - `TIBERIANDAWN/BASE.CPP` — Inventory only
 - `TIBERIANDAWN/BASE.H` — Inventory only
@@ -983,7 +983,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/CHEKLIST.H` — Inventory only
 - `TIBERIANDAWN/COLRLIST.CPP` — Inventory only
 - `TIBERIANDAWN/COLRLIST.H` — Inventory only
-- `TIBERIANDAWN/COMBAT.CPP` — Inventory only
+- `TIBERIANDAWN/COMBAT.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `TIBERIANDAWN/COMBUF.CPP` — Inventory only
 - `TIBERIANDAWN/COMBUF.H` — Inventory only
 - `TIBERIANDAWN/COMPAT.H` — Inventory only
@@ -1042,7 +1042,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/FACTORY.H` — Inventory only
 - `TIBERIANDAWN/FIELD.CPP` — Inventory only
 - `TIBERIANDAWN/FIELD.H` — Inventory only
-- `TIBERIANDAWN/FINDPATH.CPP` — Inventory only
+- `TIBERIANDAWN/FINDPATH.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `TIBERIANDAWN/FLASHER.CPP` — Inventory only
 - `TIBERIANDAWN/FLASHER.H` — Inventory only
 - `TIBERIANDAWN/FLY.CPP` — Inventory only
@@ -1126,7 +1126,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/MESSAGE.H` — Inventory only
 - `TIBERIANDAWN/MISSION.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/MISSION.H` — Inventory only
-- `TIBERIANDAWN/MIXFILE.CPP` — Inventory only
+- `TIBERIANDAWN/MIXFILE.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `TIBERIANDAWN/MIXFILE.H` — Inventory only
 - `TIBERIANDAWN/MMX.ASM` — Inventory only
 - `TIBERIANDAWN/MONOC.CPP` — Inventory only
@@ -1179,7 +1179,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/RULES.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/RULES.H` — Inventory only
 - `TIBERIANDAWN/SAVEDLG.H` — Inventory only
-- `TIBERIANDAWN/SAVELOAD.CPP` — Inventory only
+- `TIBERIANDAWN/SAVELOAD.CPP` — Partially reviewed (source purpose, direct includes, and function index; header/body audit pending)
 - `TIBERIANDAWN/SCENARIO.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/SCORE.CPP` — Inventory only
 - `TIBERIANDAWN/SCORE.H` — Inventory only

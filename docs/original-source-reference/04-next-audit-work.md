@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 7A — animation, combat, pathfinding, persistence, audio, and MIX archives
+
+- Added 14 first-pass guides across Tiberian Dawn and Red Alert for ANIM, COMBAT, FINDPATH, SAVELOAD, AUDIO, MIXFILE, plus Red Alert WEAPON and WARHEAD.
+- Captured each translation unit's direct includes and original function index, and called out important cross-game differences and Rust-port risks.
+- Updated the inventory paths to partially reviewed. Paired headers, full method bodies, dependency graphs, and Rust parity remain open.
+
+
 ### Tranche 6D — editor settings, team/trigger dialogs, and Steam publishing UI
 
 - Added first-pass guides for MapSettingsDialog, NewMapDialog, TeamTypesDialog, TriggersDialog, SteamDialog, BasicSettings, PlayerSettings, and TerrainProperties.
