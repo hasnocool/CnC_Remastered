@@ -17,7 +17,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/App.config` — Inventory only
 - `CnCTDRAMapEditor/CnCTDRAMapEditor.csproj` — Inventory only
 - `CnCTDRAMapEditor/Controls/BasicSettings.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/BasicSettings.cs` — Inventory only
+- `CnCTDRAMapEditor/Controls/BasicSettings.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Controls/BasicSettings.resx` — Inventory only
 - `CnCTDRAMapEditor/Controls/BriefingSettings.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/BriefingSettings.cs` — Inventory only
@@ -33,12 +33,12 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Controls/ObjectProperties.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/ObjectProperties.resx` — Inventory only
 - `CnCTDRAMapEditor/Controls/PlayerSettings.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/PlayerSettings.cs` — Inventory only
+- `CnCTDRAMapEditor/Controls/PlayerSettings.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Controls/PlayerSettings.resx` — Inventory only
 - `CnCTDRAMapEditor/Controls/PropertiesComboBox.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/PropertiesComboBox.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/TerrainProperties.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/TerrainProperties.cs` — Inventory only
+- `CnCTDRAMapEditor/Controls/TerrainProperties.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Controls/TerrainProperties.resx` — Inventory only
 - `CnCTDRAMapEditor/Controls/TypeComboBox.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/TypeComboBox.cs` — Inventory only
@@ -49,19 +49,19 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Dialogs/InviteMessageBox.cs` — Inventory only
 - `CnCTDRAMapEditor/Dialogs/InviteMessageBox.resx` — Inventory only
 - `CnCTDRAMapEditor/Dialogs/MapSettingsDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Dialogs/MapSettingsDialog.cs` — Inventory only
+- `CnCTDRAMapEditor/Dialogs/MapSettingsDialog.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Dialogs/MapSettingsDialog.resx` — Inventory only
 - `CnCTDRAMapEditor/Dialogs/NewMapDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Dialogs/NewMapDialog.cs` — Inventory only
+- `CnCTDRAMapEditor/Dialogs/NewMapDialog.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Dialogs/NewMapDialog.resx` — Inventory only
 - `CnCTDRAMapEditor/Dialogs/SteamDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Dialogs/SteamDialog.cs` — Inventory only
+- `CnCTDRAMapEditor/Dialogs/SteamDialog.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Dialogs/SteamDialog.resx` — Inventory only
 - `CnCTDRAMapEditor/Dialogs/TeamTypesDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Dialogs/TeamTypesDialog.cs` — Inventory only
+- `CnCTDRAMapEditor/Dialogs/TeamTypesDialog.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Dialogs/TeamTypesDialog.resx` — Inventory only
 - `CnCTDRAMapEditor/Dialogs/TriggersDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Dialogs/TriggersDialog.cs` — Inventory only
+- `CnCTDRAMapEditor/Dialogs/TriggersDialog.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Dialogs/TriggersDialog.resx` — Inventory only
 - `CnCTDRAMapEditor/Event/RenderEventArgs.cs` — Inventory only
 - `CnCTDRAMapEditor/Event/UndoRedoEventArgs.cs` — Inventory only

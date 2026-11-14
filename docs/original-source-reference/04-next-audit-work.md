@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 6D — editor settings, team/trigger dialogs, and Steam publishing UI
+
+- Added first-pass guides for MapSettingsDialog, NewMapDialog, TeamTypesDialog, TriggersDialog, SteamDialog, BasicSettings, PlayerSettings, and TerrainProperties.
+- Captured key TD/RA UI differences, cloned working-set semantics, property binding, dirty-state handling, Win32 TreeView interop, and Steam preview/UGC responsibilities.
+- Marked eight files partially reviewed; full handlers, designer resources, lifecycle/callback audits, and Rust mappings remain open.
+
+
 ### Tranche 6C — editor scenario and placed-object models
 
 - Added detailed guides for BasicSection, BriefingSection, MapSection, Building, Infantry/InfantryGroup, Unit, Terrain, Overlay, Smudge, and Waypoint.
