@@ -1202,12 +1202,12 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/SMUDGE.H` — Inventory only
 - `TIBERIANDAWN/SOUNDDLG.CPP` — Inventory only
 - `TIBERIANDAWN/SOUNDDLG.H` — Inventory only
-- `TIBERIANDAWN/SPECIAL.CPP` — Inventory only
+- `TIBERIANDAWN/SPECIAL.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/SPECIAL.H` — Inventory only
 - `TIBERIANDAWN/STAGE.H` — Inventory only
 - `TIBERIANDAWN/STARTUP.CPP` — Inventory only
 - `TIBERIANDAWN/STATS.CPP` — Inventory only
-- `TIBERIANDAWN/SUPER.CPP` — Inventory only
+- `TIBERIANDAWN/SUPER.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/SUPER.H` — Inventory only
 - `TIBERIANDAWN/SUPPORT.ASM` — Inventory only
 - `TIBERIANDAWN/Shape.cpp` — Inventory only
@@ -1215,7 +1215,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/TAB.H` — Inventory only
 - `TIBERIANDAWN/TARCOM.CPP` — Inventory only
 - `TIBERIANDAWN/TARCOM.H` — Inventory only
-- `TIBERIANDAWN/TARGET.CPP` — Inventory only
+- `TIBERIANDAWN/TARGET.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/TARGET.H` — Inventory only
 - `TIBERIANDAWN/TCPIP.CPP` — Inventory only
 - `TIBERIANDAWN/TCPIP.H` — Inventory only

@@ -2,6 +2,12 @@
 
 ## Current tranche
 
+### Tranche 5D — Tiberian Dawn special actions, superweapons, and targets
+
+- Added first-pass guides for SPECIAL, SUPER, and TARGET with pinned source links, direct includes, and original function-index entries.
+- Updated inventory status; complete member inventories, body explanations, call graphs, and Rust parity remain open.
+
+
 ### Tranche 5C — Tiberian Dawn radar, reinforcement, and rules
 
 - Added first-pass guides for RADAR, REINF, and RULES, with source links, direct includes, and function-index entries.
