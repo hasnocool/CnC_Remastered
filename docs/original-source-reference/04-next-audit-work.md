@@ -2,6 +2,12 @@
 
 ## Current tranche
 
+### Tranche 5B — Tiberian Dawn team and economy systems
+
+- Added first-pass source guides for TEAM, TEAMTYPE, and POWER, including direct includes and original function-index entries.
+- Updated the three source inventory entries to partially reviewed; full declarations, body semantics, call graphs, and Rust mappings remain open.
+
+
 ### Tranche 5A — Tiberian Dawn simulation foundations
 
 - Added source-index guides for LOGIC, MISSION, and MAP from the pinned upstream translation units.

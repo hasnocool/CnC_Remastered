@@ -1158,7 +1158,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/PACKET.H` — Inventory only
 - `TIBERIANDAWN/PAGFAULT.ASM` — Inventory only
 - `TIBERIANDAWN/PHONE.H` — Inventory only
-- `TIBERIANDAWN/POWER.CPP` — Inventory only
+- `TIBERIANDAWN/POWER.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/POWER.H` — Inventory only
 - `TIBERIANDAWN/PROFILE.CPP` — Inventory only
 - `TIBERIANDAWN/QUEUE.CPP` — Inventory only
@@ -1220,9 +1220,9 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/TCPIP.CPP` — Inventory only
 - `TIBERIANDAWN/TCPIP.H` — Inventory only
 - `TIBERIANDAWN/TDATA.CPP` — Inventory only
-- `TIBERIANDAWN/TEAM.CPP` — Inventory only
+- `TIBERIANDAWN/TEAM.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/TEAM.H` — Inventory only
-- `TIBERIANDAWN/TEAMTYPE.CPP` — Inventory only
+- `TIBERIANDAWN/TEAMTYPE.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/TEAMTYPE.H` — Inventory only
 - `TIBERIANDAWN/TECHNO.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/TECHNO.H` — Inventory only
