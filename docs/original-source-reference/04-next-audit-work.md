@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 5A — Tiberian Dawn simulation foundations
+
+- Added source-index guides for LOGIC, MISSION, and MAP from the pinned upstream translation units.
+- Captured direct include dependencies and original function-index responsibilities.
+- Marked these paths partially reviewed; declarations, fields, full function bodies, call graphs, and Rust mappings remain open.
+
+
 ### Tranche 4 — Tiberian Dawn gameplay and presentation
 
 - Added guides for BUILDING, AIRCRAFT, BULLET, HOUSE, TRIGGER, TERRAIN, OVERLAY, and DISPLAY.

@@ -1110,10 +1110,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/LIST.H` — Inventory only
 - `TIBERIANDAWN/LOADDLG.CPP` — Inventory only
 - `TIBERIANDAWN/LOADDLG.H` — Inventory only
-- `TIBERIANDAWN/LOGIC.CPP` — Inventory only
+- `TIBERIANDAWN/LOGIC.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/LOGIC.H` — Inventory only
 - `TIBERIANDAWN/License.txt` — Inventory only
-- `TIBERIANDAWN/MAP.CPP` — Inventory only
+- `TIBERIANDAWN/MAP.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/MAP.H` — Inventory only
 - `TIBERIANDAWN/MAPEDDLG.CPP` — Inventory only
 - `TIBERIANDAWN/MAPEDIT.CPP` — Inventory only
@@ -1124,7 +1124,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/MAPSEL.CPP` — Inventory only
 - `TIBERIANDAWN/MENUS.CPP` — Inventory only
 - `TIBERIANDAWN/MESSAGE.H` — Inventory only
-- `TIBERIANDAWN/MISSION.CPP` — Inventory only
+- `TIBERIANDAWN/MISSION.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/MISSION.H` — Inventory only
 - `TIBERIANDAWN/MIXFILE.CPP` — Inventory only
 - `TIBERIANDAWN/MIXFILE.H` — Inventory only
