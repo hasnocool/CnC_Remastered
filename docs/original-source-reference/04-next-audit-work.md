@@ -2,6 +2,12 @@
 
 ## Current tranche
 
+### Tranche 5C — Tiberian Dawn radar, reinforcement, and rules
+
+- Added first-pass guides for RADAR, REINF, and RULES, with source links, direct includes, and function-index entries.
+- Updated inventory status; detailed declarations, function-body analysis, call graphs, and Rust mapping remain pending.
+
+
 ### Tranche 5B — Tiberian Dawn team and economy systems
 
 - Added first-pass source guides for TEAM, TEAMTYPE, and POWER, including direct includes and original function-index entries.

@@ -1163,7 +1163,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/PROFILE.CPP` — Inventory only
 - `TIBERIANDAWN/QUEUE.CPP` — Inventory only
 - `TIBERIANDAWN/QUEUE.H` — Inventory only
-- `TIBERIANDAWN/RADAR.CPP` — Inventory only
+- `TIBERIANDAWN/RADAR.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/RADAR.H` — Inventory only
 - `TIBERIANDAWN/RADIO.CPP` — Inventory only
 - `TIBERIANDAWN/RADIO.H` — Inventory only
@@ -1173,10 +1173,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/REAL.H` — Inventory only
 - `TIBERIANDAWN/REGION.H` — Inventory only
 - `TIBERIANDAWN/REG_ICON.RC` — Inventory only
-- `TIBERIANDAWN/REINF.CPP` — Inventory only
+- `TIBERIANDAWN/REINF.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/RESOURCE/TiberianDawn.rc` — Inventory only
 - `TIBERIANDAWN/RESOURCE/resource.h` — Inventory only
-- `TIBERIANDAWN/RULES.CPP` — Inventory only
+- `TIBERIANDAWN/RULES.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/RULES.H` — Inventory only
 - `TIBERIANDAWN/SAVEDLG.H` — Inventory only
 - `TIBERIANDAWN/SAVELOAD.CPP` — Inventory only
