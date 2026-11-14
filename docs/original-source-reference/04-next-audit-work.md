@@ -2,6 +2,14 @@
 
 ## Current tranche
 
+### Tranche 2 — Tiberian Dawn core runtime
+
+- Added source guides for OBJECT, CELL, TECHNO, FOOT, UNIT, INFANTRY, SCENARIO, and EVENT.
+- Added a conceptual object-hierarchy page linking the inheritance/behavior layers.
+- Updated the file inventory for these eight files to partially reviewed.
+- Function inventories are derived from the original source's own function indexes. These pages are deliberately marked partial until headers, fields, signatures, implementations, and call sites have all been audited.
+
+
 - Created the reference-library structure.
 - Captured all 1,331 original file paths in [the complete inventory](02-original-file-inventory.md).
 - Added detailed first-pass guides for the core terrain/map pipeline in both game variants.

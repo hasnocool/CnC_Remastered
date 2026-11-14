@@ -975,7 +975,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/CDATA.CPP` — Inventory only
 - `TIBERIANDAWN/CDFILE.CPP` — Inventory only
 - `TIBERIANDAWN/CDFILE.H` — Inventory only
-- `TIBERIANDAWN/CELL.CPP` — Inventory only
+- `TIBERIANDAWN/CELL.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/CELL.H` — Inventory only
 - `TIBERIANDAWN/CHECKBOX.CPP` — Inventory only
 - `TIBERIANDAWN/CHECKBOX.H` — Inventory only
@@ -1032,7 +1032,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/EDIT.H` — Inventory only
 - `TIBERIANDAWN/ENDING.CPP` — Inventory only
 - `TIBERIANDAWN/ENDING.H` — Inventory only
-- `TIBERIANDAWN/EVENT.CPP` — Inventory only
+- `TIBERIANDAWN/EVENT.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/EVENT.H` — Inventory only
 - `TIBERIANDAWN/EXPAND.CPP` — Inventory only
 - `TIBERIANDAWN/EXTERNS.H` — Inventory only
@@ -1047,7 +1047,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/FLASHER.H` — Inventory only
 - `TIBERIANDAWN/FLY.CPP` — Inventory only
 - `TIBERIANDAWN/FLY.H` — Inventory only
-- `TIBERIANDAWN/FOOT.CPP` — Inventory only
+- `TIBERIANDAWN/FOOT.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/FOOT.H` — Inventory only
 - `TIBERIANDAWN/FTIMER.H` — Inventory only
 - `TIBERIANDAWN/FUNCTION.H` — Inventory only
@@ -1072,7 +1072,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/HOUSE.CPP` — Inventory only
 - `TIBERIANDAWN/HOUSE.H` — Inventory only
 - `TIBERIANDAWN/IDATA.CPP` — Inventory only
-- `TIBERIANDAWN/INFANTRY.CPP` — Inventory only
+- `TIBERIANDAWN/INFANTRY.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/INFANTRY.H` — Inventory only
 - `TIBERIANDAWN/INI.CPP` — Inventory only
 - `TIBERIANDAWN/INIT.CPP` — Inventory only
@@ -1147,7 +1147,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/NULLDLG.CPP` — Inventory only
 - `TIBERIANDAWN/NULLMGR.CPP` — Inventory only
 - `TIBERIANDAWN/NULLMGR.H` — Inventory only
-- `TIBERIANDAWN/OBJECT.CPP` — Inventory only
+- `TIBERIANDAWN/OBJECT.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/OBJECT.H` — Inventory only
 - `TIBERIANDAWN/ODATA.CPP` — Inventory only
 - `TIBERIANDAWN/OPTIONS.CPP` — Inventory only
@@ -1180,7 +1180,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/RULES.H` — Inventory only
 - `TIBERIANDAWN/SAVEDLG.H` — Inventory only
 - `TIBERIANDAWN/SAVELOAD.CPP` — Inventory only
-- `TIBERIANDAWN/SCENARIO.CPP` — Inventory only
+- `TIBERIANDAWN/SCENARIO.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/SCORE.CPP` — Inventory only
 - `TIBERIANDAWN/SCORE.H` — Inventory only
 - `TIBERIANDAWN/SCREEN.H` — Inventory only
@@ -1224,7 +1224,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/TEAM.H` — Inventory only
 - `TIBERIANDAWN/TEAMTYPE.CPP` — Inventory only
 - `TIBERIANDAWN/TEAMTYPE.H` — Inventory only
-- `TIBERIANDAWN/TECHNO.CPP` — Inventory only
+- `TIBERIANDAWN/TECHNO.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/TECHNO.H` — Inventory only
 - `TIBERIANDAWN/TEMPLATE.CPP` — Inventory only
 - `TIBERIANDAWN/TEMPLATE.H` — Inventory only
@@ -1248,7 +1248,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/TiberianDawn.vcxproj` — Inventory only
 - `TIBERIANDAWN/TiberianDawn.vcxproj.filters` — Inventory only
 - `TIBERIANDAWN/UDATA.CPP` — Inventory only
-- `TIBERIANDAWN/UNIT.CPP` — Inventory only
+- `TIBERIANDAWN/UNIT.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/UNIT.H` — Inventory only
 - `TIBERIANDAWN/UTRACKER.CPP` — Inventory only
 - `TIBERIANDAWN/UTRACKER.H` — Inventory only

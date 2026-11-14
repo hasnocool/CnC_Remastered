@@ -8,10 +8,11 @@ This directory explains the original Electronic Arts / Westwood Command & Conque
 2. [System map](01-system-map.md)
 3. [Complete original file inventory](02-original-file-inventory.md)
 4. [Tiberian Dawn source guide](TIBERIANDAWN/README.md)
-5. [Red Alert source guide](REDALERT/README.md)
-6. [Map editor source guide](MAP_EDITOR/README.md)
-7. [Shared graphics and asset formats](SHARED/README.md)
-8. [Cross-reference: original files to Rust port](03-rust-port-cross-reference.md)
+5. [Core Tiberian Dawn object hierarchy](TIBERIANDAWN/CORE-OBJECT-HIERARCHY.md)
+6. [Red Alert source guide](REDALERT/README.md)
+7. [Map editor source guide](MAP_EDITOR/README.md)
+8. [Shared graphics and asset formats](SHARED/README.md)
+9. [Cross-reference: original files to Rust port](03-rust-port-cross-reference.md)
 
 ## What each file guide contains
 
