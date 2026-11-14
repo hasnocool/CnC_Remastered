@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 6C — editor scenario and placed-object models
+
+- Added detailed guides for BasicSection, BriefingSection, MapSection, Building, Infantry/InfantryGroup, Unit, Terrain, Overlay, Smudge, and Waypoint.
+- Documented concrete fields/properties, converters, constructors, methods, occupancy delegation, notifications, and clone/equality edge cases from source.
+- Updated ten inventory entries to Reviewed at source-documentation level; Rust parity remains a separate open task.
+
+
 ### Tranche 5E — Red Alert simulation orchestration
 
 - Added first-pass source guides for Red Alert LOGIC, MISSION, and TEAM.

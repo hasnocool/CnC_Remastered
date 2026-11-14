@@ -78,9 +78,9 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/MainForm.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/MainForm.cs` — Partially reviewed (first-pass declarations and responsibilities; exhaustive member/body audit pending)
 - `CnCTDRAMapEditor/MainForm.resx` — Inventory only
-- `CnCTDRAMapEditor/Model/BasicSection.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/BriefingSection.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/Building.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/BasicSection.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
+- `CnCTDRAMapEditor/Model/BriefingSection.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
+- `CnCTDRAMapEditor/Model/Building.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/BuildingType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/CellGrid.cs` — Partially reviewed (first-pass declarations and behavior; exhaustive call-site audit pending)
 - `CnCTDRAMapEditor/Model/CellMetrics.cs` — Partially reviewed (first-pass declarations and behavior; exhaustive call-site audit pending)
@@ -88,28 +88,28 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Model/DirectionType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/House.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/HouseType.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/Infantry.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/Infantry.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/InfantryType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/Map.cs` — Partially reviewed (first-pass declarations and responsibilities; exhaustive member/body audit pending)
-- `CnCTDRAMapEditor/Model/MapSection.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/MapSection.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/OccupierSet.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/OverlapperSet.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/Overlay.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/Overlay.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/OverlayType.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/Smudge.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/Smudge.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/SmudgeType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/SteamSection.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/TeamType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/Template.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/TemplateType.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/Terrain.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/Terrain.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/TerrainType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/TheaterType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/Trigger.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/TypeItem.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/Unit.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/Unit.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/UnitType.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/Waypoint.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/Waypoint.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Program.cs` — Partially reviewed (first-pass declarations and responsibilities; exhaustive member/body audit pending)
 - `CnCTDRAMapEditor/Properties/AssemblyInfo.cs` — Inventory only
 - `CnCTDRAMapEditor/Properties/Resources.Designer.cs` — Inventory only
