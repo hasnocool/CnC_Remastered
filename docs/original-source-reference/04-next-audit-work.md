@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 6A — map editor application/model/rendering entry points
+
+- Added first-pass guides for Program.cs, MainForm.cs, Model/Map.cs, and Render/MapRenderer.cs.
+- Recorded startup/resource initialization, main-window orchestration, map model ownership/layer flags, and rendering responsibilities from the actual C# source.
+- Marked these four files partially reviewed; full method-body explanations, exhaustive fields, event flow, serialization, and Rust parity remain open.
+
+
 ### Tranche 5D — Tiberian Dawn special actions, superweapons, and targets
 
 - Added first-pass guides for SPECIAL, SUPER, and TARGET with pinned source links, direct includes, and original function-index entries.

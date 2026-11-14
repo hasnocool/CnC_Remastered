@@ -76,7 +76,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Interface/IWidget.cs` — Inventory only
 - `CnCTDRAMapEditor/License.txt` — Inventory only
 - `CnCTDRAMapEditor/MainForm.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/MainForm.cs` — Inventory only
+- `CnCTDRAMapEditor/MainForm.cs` — Partially reviewed (first-pass declarations and responsibilities; exhaustive member/body audit pending)
 - `CnCTDRAMapEditor/MainForm.resx` — Inventory only
 - `CnCTDRAMapEditor/Model/BasicSection.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/BriefingSection.cs` — Inventory only
@@ -90,7 +90,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Model/HouseType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/Infantry.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/InfantryType.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/Map.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/Map.cs` — Partially reviewed (first-pass declarations and responsibilities; exhaustive member/body audit pending)
 - `CnCTDRAMapEditor/Model/MapSection.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/OccupierSet.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/OverlapperSet.cs` — Inventory only
@@ -110,7 +110,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Model/Unit.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/UnitType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/Waypoint.cs` — Inventory only
-- `CnCTDRAMapEditor/Program.cs` — Inventory only
+- `CnCTDRAMapEditor/Program.cs` — Partially reviewed (first-pass declarations and responsibilities; exhaustive member/body audit pending)
 - `CnCTDRAMapEditor/Properties/AssemblyInfo.cs` — Inventory only
 - `CnCTDRAMapEditor/Properties/Resources.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Properties/Resources.resx` — Inventory only
@@ -135,7 +135,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/RedAlert/TerrainTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/TheaterTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/UnitTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/Render/MapRenderer.cs` — Inventory only
+- `CnCTDRAMapEditor/Render/MapRenderer.cs` — Partially reviewed (first-pass declarations and responsibilities; exhaustive member/body audit pending)
 - `CnCTDRAMapEditor/Resources/GameIcon00.ico` — Inventory only
 - `CnCTDRAMapEditor/Resources/UI_CustomMissionPreviewDefault.png` — Inventory only
 - `CnCTDRAMapEditor/Steamworks.NET/CallbackDispatcher.cs` — Inventory only
