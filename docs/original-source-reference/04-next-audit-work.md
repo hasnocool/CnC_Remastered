@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 3 — Red Alert core runtime
+
+- Added source guides for OBJECT, CELL, TECHNO, FOOT, UNIT, INFANTRY, BUILDING, SCENARIO, and EVENT.
+- Marked these nine original paths as partially reviewed in the inventory.
+- Captured Red Alert-specific behavior such as cell Tiberium growth, navigation queues, anti-unit combat ratings, teleport checks, Tesla charging, variable-sized events, and scenario post-load processing.
+- These pages remain partial until declarations, fields, complete function bodies, and call sites are audited.
+
 ### Tranche 2 — Tiberian Dawn core runtime
 
 - Added source guides for OBJECT, CELL, TECHNO, FOOT, UNIT, INFANTRY, SCENARIO, and EVENT.

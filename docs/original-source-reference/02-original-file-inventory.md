@@ -346,7 +346,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/BUFF.CPP` — Inventory only
 - `REDALERT/BUFF.H` — Inventory only
 - `REDALERT/BUFFERX.H` — Inventory only
-- `REDALERT/BUILDING.CPP` — Inventory only
+- `REDALERT/BUILDING.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `REDALERT/BUILDING.H` — Inventory only
 - `REDALERT/BULLET.CPP` — Inventory only
 - `REDALERT/BULLET.H` — Inventory only
@@ -368,7 +368,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/CDATA.CPP` — Inventory only
 - `REDALERT/CDFILE.CPP` — Inventory only
 - `REDALERT/CDFILE.H` — Inventory only
-- `REDALERT/CELL.CPP` — Inventory only
+- `REDALERT/CELL.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `REDALERT/CELL.H` — Inventory only
 - `REDALERT/CHECKBOX.CPP` — Inventory only
 - `REDALERT/CHECKBOX.H` — Inventory only
@@ -449,7 +449,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/EGOS.H` — Inventory only
 - `REDALERT/ENDING.CPP` — Inventory only
 - `REDALERT/ENDING.H` — Inventory only
-- `REDALERT/EVENT.CPP` — Inventory only
+- `REDALERT/EVENT.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `REDALERT/EVENT.H` — Inventory only
 - `REDALERT/EXPAND.CPP` — Inventory only
 - `REDALERT/EXTERNS.H` — Inventory only
@@ -470,7 +470,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/FLASHER.H` — Inventory only
 - `REDALERT/FLY.CPP` — Inventory only
 - `REDALERT/FLY.H` — Inventory only
-- `REDALERT/FOOT.CPP` — Inventory only
+- `REDALERT/FOOT.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `REDALERT/FOOT.H` — Inventory only
 - `REDALERT/FTIMER.H` — Inventory only
 - `REDALERT/FUNCTION.H` — Inventory only
@@ -500,7 +500,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/ICONLIST.CPP` — Inventory only
 - `REDALERT/ICONLIST.H` — Inventory only
 - `REDALERT/IDATA.CPP` — Inventory only
-- `REDALERT/INFANTRY.CPP` — Inventory only
+- `REDALERT/INFANTRY.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `REDALERT/INFANTRY.H` — Inventory only
 - `REDALERT/INI.CPP` — Inventory only
 - `REDALERT/INI.H` — Inventory only
@@ -630,7 +630,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/NULLDLG.CPP` — Inventory only
 - `REDALERT/NULLMGR.CPP` — Inventory only
 - `REDALERT/NULLMGR.H` — Inventory only
-- `REDALERT/OBJECT.CPP` — Inventory only
+- `REDALERT/OBJECT.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `REDALERT/OBJECT.H` — Inventory only
 - `REDALERT/OCIDL.H` — Inventory only
 - `REDALERT/ODATA.CPP` — Inventory only
@@ -689,7 +689,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/RedAlert.vcxproj.filters` — Inventory only
 - `REDALERT/SAVEDLG.H` — Inventory only
 - `REDALERT/SAVELOAD.CPP` — Inventory only
-- `REDALERT/SCENARIO.CPP` — Inventory only
+- `REDALERT/SCENARIO.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `REDALERT/SCENARIO.H` — Inventory only
 - `REDALERT/SCORE.CPP` — Inventory only
 - `REDALERT/SCORE.H` — Inventory only
@@ -754,7 +754,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/TEAM.H` — Inventory only
 - `REDALERT/TEAMTYPE.CPP` — Inventory only
 - `REDALERT/TEAMTYPE.H` — Inventory only
-- `REDALERT/TECHNO.CPP` — Inventory only
+- `REDALERT/TECHNO.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `REDALERT/TECHNO.H` — Inventory only
 - `REDALERT/TEMPLATE.CPP` — Inventory only
 - `REDALERT/TEMPLATE.H` — Inventory only
@@ -785,7 +785,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/TYPE.H` — Inventory only
 - `REDALERT/UDATA.CPP` — Inventory only
 - `REDALERT/UDPADDR.CPP` — Inventory only
-- `REDALERT/UNIT.CPP` — Inventory only
+- `REDALERT/UNIT.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `REDALERT/UNIT.H` — Inventory only
 - `REDALERT/UTRACKER.CPP` — Inventory only
 - `REDALERT/UTRACKER.H` — Inventory only
