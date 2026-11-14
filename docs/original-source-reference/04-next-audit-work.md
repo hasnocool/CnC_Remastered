@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 7D — DirectDraw, buffers, IFF, resource loading, fonts, and input
+
+- Added 12 first-pass guides across both game trees for DDRAW, BUFFER, IFF, LOAD, FONT, KEYBOARD, and MOUSEWW.
+- Recorded source function indexes and direct includes; highlighted platform renderer boundaries, resource validation, buffer ownership, and non-blocking input requirements.
+- Inventory statuses updated to partially reviewed. Header-level ABI details, function bodies, and Rust parity remain open.
+
+
 ### Tranche 6F — editor type definitions and spatial indexes
 
 - Added ten source guides for BuildingType, CellTrigger, DirectionType, House, HouseType, InfantryType, OccupierSet, OverlapperSet, OverlayType, and SmudgeType.

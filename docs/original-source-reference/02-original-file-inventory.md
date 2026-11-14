@@ -809,10 +809,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/WEAPON.H` — Inventory only
 - `REDALERT/WIN32LIB/ALLOC.CPP` — Inventory only
 - `REDALERT/WIN32LIB/AUDIO.H` — Inventory only
-- `REDALERT/WIN32LIB/BUFFER.CPP` — Inventory only
+- `REDALERT/WIN32LIB/BUFFER.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `REDALERT/WIN32LIB/BUFFER.H` — Inventory only
 - `REDALERT/WIN32LIB/BUFFGLBL.CPP` — Inventory only
-- `REDALERT/WIN32LIB/DDRAW.CPP` — Inventory only
+- `REDALERT/WIN32LIB/DDRAW.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `REDALERT/WIN32LIB/DDRAW.H` — Inventory only
 - `REDALERT/WIN32LIB/DEFINES.H` — Inventory only
 - `REDALERT/WIN32LIB/DELAY.CPP` — Inventory only
@@ -832,7 +832,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/WIN32LIB/FILE.H` — Inventory only
 - `REDALERT/WIN32LIB/FILEPCX.H` — Inventory only
 - `REDALERT/WIN32LIB/FILETEMP.H` — Inventory only
-- `REDALERT/WIN32LIB/FONT.CPP` — Inventory only
+- `REDALERT/WIN32LIB/FONT.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `REDALERT/WIN32LIB/FONT.H` — Inventory only
 - `REDALERT/WIN32LIB/FUNCTION.H` — Inventory only
 - `REDALERT/WIN32LIB/GBUFFER.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
@@ -841,7 +841,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/WIN32LIB/GETSHAPE.CPP` — Inventory only
 - `REDALERT/WIN32LIB/ICONCACH.H` — Inventory only
 - `REDALERT/WIN32LIB/ICONSET.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
-- `REDALERT/WIN32LIB/IFF.CPP` — Inventory only
+- `REDALERT/WIN32LIB/IFF.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `REDALERT/WIN32LIB/IFF.H` — Inventory only
 - `REDALERT/WIN32LIB/INDEXTB.INC` — Inventory only
 - `REDALERT/WIN32LIB/IRANDOM.CPP` — Inventory only
@@ -850,7 +850,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/WIN32LIB/KEYSTRUC.INC` — Inventory only
 - `REDALERT/WIN32LIB/LCWCOMP.ASM` — Inventory only
 - `REDALERT/WIN32LIB/LCWUNCMP.ASM` — Inventory only
-- `REDALERT/WIN32LIB/LOAD.CPP` — Inventory only
+- `REDALERT/WIN32LIB/LOAD.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `REDALERT/WIN32LIB/LOADFONT.CPP` — Inventory only
 - `REDALERT/WIN32LIB/MCGAPRIM.INC` — Inventory only
 - `REDALERT/WIN32LIB/MEMFLAG.H` — Inventory only
@@ -859,7 +859,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/WIN32LIB/MONO.H` — Inventory only
 - `REDALERT/WIN32LIB/MOUSE.H` — Inventory only
 - `REDALERT/WIN32LIB/MOUSE.INC` — Inventory only
-- `REDALERT/WIN32LIB/MOUSEWW.CPP` — Inventory only
+- `REDALERT/WIN32LIB/MOUSEWW.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `REDALERT/WIN32LIB/NYBBTB.INC` — Inventory only
 - `REDALERT/WIN32LIB/PALETTE.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
 - `REDALERT/WIN32LIB/PALETTE.H` — Inventory only
@@ -1259,10 +1259,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/WATCOM.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/ALLOC.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/AUDIO.H` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/BUFFER.CPP` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/BUFFER.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `TIBERIANDAWN/WIN32LIB/BUFFER.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/BUFFGLBL.CPP` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/DDRAW.CPP` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/DDRAW.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `TIBERIANDAWN/WIN32LIB/DDRAW.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/DEFINES.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/DESCMGMT.H` — Inventory only
@@ -1283,7 +1283,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/WIN32LIB/FILE.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/FILEPCX.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/FILETEMP.H` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/FONT.CPP` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/FONT.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `TIBERIANDAWN/WIN32LIB/FONT.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/FUNCTION.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/GBUFFER.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
@@ -1292,15 +1292,15 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/WIN32LIB/GETSHAPE.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/ICONCACH.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/ICONSET.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
-- `TIBERIANDAWN/WIN32LIB/IFF.CPP` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/IFF.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `TIBERIANDAWN/WIN32LIB/IFF.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/INDEXTB.INC` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/IRANDOM.CPP` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/KEYBOARD.CPP` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/KEYBOARD.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `TIBERIANDAWN/WIN32LIB/KEYBOARD.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/KEYBOARD.INC` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/KEYSTRUC.INC` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/LOAD.CPP` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/LOAD.CPP` — Partially reviewed (purpose, includes, function index; detailed header/body audit pending)
 - `TIBERIANDAWN/WIN32LIB/LOADFONT.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/LOADPAL.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/MCGAPRIM.INC` — Inventory only
