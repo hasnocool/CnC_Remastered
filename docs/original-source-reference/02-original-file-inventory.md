@@ -835,12 +835,12 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/WIN32LIB/FONT.CPP` — Inventory only
 - `REDALERT/WIN32LIB/FONT.H` — Inventory only
 - `REDALERT/WIN32LIB/FUNCTION.H` — Inventory only
-- `REDALERT/WIN32LIB/GBUFFER.CPP` — Inventory only
+- `REDALERT/WIN32LIB/GBUFFER.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
 - `REDALERT/WIN32LIB/GBUFFER.H` — Inventory only
 - `REDALERT/WIN32LIB/GBUFFER.INC` — Inventory only
 - `REDALERT/WIN32LIB/GETSHAPE.CPP` — Inventory only
 - `REDALERT/WIN32LIB/ICONCACH.H` — Inventory only
-- `REDALERT/WIN32LIB/ICONSET.CPP` — Inventory only
+- `REDALERT/WIN32LIB/ICONSET.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
 - `REDALERT/WIN32LIB/IFF.CPP` — Inventory only
 - `REDALERT/WIN32LIB/IFF.H` — Inventory only
 - `REDALERT/WIN32LIB/INDEXTB.INC` — Inventory only
@@ -861,7 +861,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/WIN32LIB/MOUSE.INC` — Inventory only
 - `REDALERT/WIN32LIB/MOUSEWW.CPP` — Inventory only
 - `REDALERT/WIN32LIB/NYBBTB.INC` — Inventory only
-- `REDALERT/WIN32LIB/PALETTE.CPP` — Inventory only
+- `REDALERT/WIN32LIB/PALETTE.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
 - `REDALERT/WIN32LIB/PALETTE.H` — Inventory only
 - `REDALERT/WIN32LIB/PLAYCD.H` — Inventory only
 - `REDALERT/WIN32LIB/PROFILE.H` — Inventory only
@@ -882,7 +882,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/WIN32LIB/STRUCTS.H` — Inventory only
 - `REDALERT/WIN32LIB/SVGAPRIM.INC` — Inventory only
 - `REDALERT/WIN32LIB/TILE.H` — Inventory only
-- `REDALERT/WIN32LIB/TIMER.CPP` — Inventory only
+- `REDALERT/WIN32LIB/TIMER.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
 - `REDALERT/WIN32LIB/TIMER.H` — Inventory only
 - `REDALERT/WIN32LIB/TIMERDWN.CPP` — Inventory only
 - `REDALERT/WIN32LIB/TIMERINI.CPP` — Inventory only
@@ -1286,12 +1286,12 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/WIN32LIB/FONT.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/FONT.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/FUNCTION.H` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/GBUFFER.CPP` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/GBUFFER.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
 - `TIBERIANDAWN/WIN32LIB/GBUFFER.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/GBUFFER.INC` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/GETSHAPE.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/ICONCACH.H` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/ICONSET.CPP` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/ICONSET.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
 - `TIBERIANDAWN/WIN32LIB/IFF.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/IFF.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/INDEXTB.INC` — Inventory only
@@ -1315,7 +1315,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/WIN32LIB/MOUSEWW.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/NYBBTB.INC` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
 - `TIBERIANDAWN/WIN32LIB/PALETTE.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/PLAYCD.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/PROFILE.H` — Inventory only
@@ -1332,7 +1332,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/WIN32LIB/STRUCTS.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/SVGAPRIM.INC` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/TILE.H` — Inventory only
-- `TIBERIANDAWN/WIN32LIB/TIMER.CPP` — Inventory only
+- `TIBERIANDAWN/WIN32LIB/TIMER.CPP` — Partially reviewed (purpose, includes, function index; header/body audit pending)
 - `TIBERIANDAWN/WIN32LIB/TIMER.H` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/TIMERDWN.CPP` — Inventory only
 - `TIBERIANDAWN/WIN32LIB/TIMERINI.CPP` — Inventory only

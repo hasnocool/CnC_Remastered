@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 7C — Win32 graphics, palette, icon-set, and timer primitives
+
+- Added eight source guides for GBUFFER, ICONSET, PALETTE, and TIMER in both game trees.
+- Recorded translation-unit dependencies and source function indexes, with porting concerns for buffer ownership, IFF bounds validation, palette determinism, and timer semantics.
+- Updated inventory statuses to partially reviewed; paired-header/member/body audit and Rust parity remain open.
+
+
 ### Tranche 7B — multiplayer, online-service, and settings dialogs
 
 - Added first-pass guides for INTERNET, NETDLG, LOADDLG, and SOUNDDLG in both games.
