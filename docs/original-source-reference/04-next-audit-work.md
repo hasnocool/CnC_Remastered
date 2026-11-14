@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 5E — Red Alert simulation orchestration
+
+- Added first-pass source guides for Red Alert LOGIC, MISSION, and TEAM.
+- Captured pinned source links, direct include dependencies, and original function-index entries.
+- Marked the three files partially reviewed; full member/body/call-graph and TD-difference audits remain open.
+
+
 ### Tranche 6B — editor grid primitives and plugin/tool contracts
 
 - Added source guides for CellGrid, CellMetrics, IGamePlugin, and ITool.

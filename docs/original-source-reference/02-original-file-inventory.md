@@ -559,7 +559,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/LISTNODE.H` — Inventory only
 - `REDALERT/LOADDLG.CPP` — Inventory only
 - `REDALERT/LOADDLG.H` — Inventory only
-- `REDALERT/LOGIC.CPP` — Inventory only
+- `REDALERT/LOGIC.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `REDALERT/LOGIC.H` — Inventory only
 - `REDALERT/LZO.H` — Inventory only
 - `REDALERT/LZO1X.H` — Inventory only
@@ -595,7 +595,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/MEMCHECK.H` — Inventory only
 - `REDALERT/MENUS.CPP` — Inventory only
 - `REDALERT/MESSAGE.H` — Inventory only
-- `REDALERT/MISSION.CPP` — Inventory only
+- `REDALERT/MISSION.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `REDALERT/MISSION.H` — Inventory only
 - `REDALERT/MIXFILE.CPP` — Inventory only
 - `REDALERT/MIXFILE.H` — Inventory only
@@ -750,7 +750,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/TCPIP.CPP` — Inventory only
 - `REDALERT/TCPIP.H` — Inventory only
 - `REDALERT/TDATA.CPP` — Inventory only
-- `REDALERT/TEAM.CPP` — Inventory only
+- `REDALERT/TEAM.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `REDALERT/TEAM.H` — Inventory only
 - `REDALERT/TEAMTYPE.CPP` — Inventory only
 - `REDALERT/TEAMTYPE.H` — Inventory only
