@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 6F — editor type definitions and spatial indexes
+
+- Added ten source guides for BuildingType, CellTrigger, DirectionType, House, HouseType, InfantryType, OccupierSet, OverlapperSet, OverlayType, and SmudgeType.
+- Captured detected types, fields, method declarations, namespaces, and critical occupancy/overlap/alliance-mask invariants.
+- Marked ten paths partially reviewed; exact full member types, function bodies, serializer contracts, and Rust parity remain open.
+
+
 ### Tranche 6E — editor project and control/dialog implementation
 
 - Added first-pass pages for the editor .csproj, BasicSettings, BriefingSettings, MapPanel, ErrorMessageBox, and InviteMessageBox code-behind/designer files.

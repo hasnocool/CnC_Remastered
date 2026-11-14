@@ -81,23 +81,23 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Model/BasicSection.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/BriefingSection.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/Building.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
-- `CnCTDRAMapEditor/Model/BuildingType.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/BuildingType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
 - `CnCTDRAMapEditor/Model/CellGrid.cs` — Partially reviewed (first-pass declarations and behavior; exhaustive call-site audit pending)
 - `CnCTDRAMapEditor/Model/CellMetrics.cs` — Partially reviewed (first-pass declarations and behavior; exhaustive call-site audit pending)
-- `CnCTDRAMapEditor/Model/CellTrigger.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/DirectionType.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/House.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/HouseType.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/CellTrigger.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
+- `CnCTDRAMapEditor/Model/DirectionType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
+- `CnCTDRAMapEditor/Model/House.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
+- `CnCTDRAMapEditor/Model/HouseType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
 - `CnCTDRAMapEditor/Model/Infantry.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
-- `CnCTDRAMapEditor/Model/InfantryType.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/InfantryType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
 - `CnCTDRAMapEditor/Model/Map.cs` — Partially reviewed (first-pass declarations and responsibilities; exhaustive member/body audit pending)
 - `CnCTDRAMapEditor/Model/MapSection.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
-- `CnCTDRAMapEditor/Model/OccupierSet.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/OverlapperSet.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/OccupierSet.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
+- `CnCTDRAMapEditor/Model/OverlapperSet.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
 - `CnCTDRAMapEditor/Model/Overlay.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
-- `CnCTDRAMapEditor/Model/OverlayType.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/OverlayType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
 - `CnCTDRAMapEditor/Model/Smudge.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
-- `CnCTDRAMapEditor/Model/SmudgeType.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/SmudgeType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
 - `CnCTDRAMapEditor/Model/SteamSection.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/TeamType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/Template.cs` — Inventory only
