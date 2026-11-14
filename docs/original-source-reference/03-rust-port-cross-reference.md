@@ -26,3 +26,17 @@ Keep these as separate responsibilities in Rust:
 - Map document: decoded map cells and object/layer references, with TD and RA decoders kept distinct.
 - Terrain resolver: converts a map's template ID + icon index into the actual tile image and occupancy behavior.
 - Renderer: draws already-resolved terrain and layers; it should not guess template identity from atlas coordinates.
+
+
+## Map-editor plugin and serialization findings
+
+| Original file | Responsibility established from source | Current Rust location / status |
+|---|---|---|
+| CnCTDRAMapEditor/Interface/IGamePlugin.cs | Shared editor plugin contract, file/game enums, map/image/dirty state, load/save and disposal boundary. | No matching plugin trait or lifecycle implementation found. |
+| CnCTDRAMapEditor/TiberianDawn/GamePlugin.cs | TD scenario load/save, INI plus per-cell binary map data, object/team/trigger sections. | Not ported; map-editor-model is only an initial generic document model. |
+| CnCTDRAMapEditor/RedAlert/GamePlugin.cs | RA scenario load/save, INI records, LCW MapPack/OverlayPack, team/trigger schemas and preview output. | Not ported; no RA editor serializer or LCW section codec in the current editor model. |
+| CnCTDRAMapEditor/Utility/INI.cs | Ordered case-insensitive INI collections, parsing, reflection conversion, and diff model. | No editor INI parser/writer found. rts-core/inibin.rs is an empty-translation-unit marker, not this serializer. |
+| CnCTDRAMapEditor/Model/SteamSection.cs | Workshop metadata embedded in map INI. | No Rust equivalent found. |
+| CnCTDRAMapEditor/Utility/SteamworksUGC.cs | Steam init/shutdown, callback pump, single active Workshop publish operation. | No Rust Steamworks service found. |
+
+The current crates/map-editor-model source contains MapDocument, CellLayers, dimensions, and waypoints, plus CellMetrics and object-selection planning. Its tests cover generic cell/waypoint behavior, not original TD/RA INI/BIN/MEG/PGM parity. No test execution or format-parity result is claimed by this audit.

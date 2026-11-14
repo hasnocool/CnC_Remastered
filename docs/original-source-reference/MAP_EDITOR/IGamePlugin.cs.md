@@ -1,41 +1,55 @@
-# IGamePlugin.cs — map editor source guide
+# IGamePlugin.cs — map editor plugin contract
 
-> **Audit status: partially reviewed.** This page inspects the pinned source file directly. The symbol list is a first-pass scan; exact member completeness and all call sites still require verification.
+> **Audit status: header reviewed.** The complete interface and enum declarations were inspected at the pinned upstream commit. Concrete game implementations and host call sites were traced in this tranche; exhaustive behavior/parity testing remains open.
 
-- Upstream: [`CnCTDRAMapEditor/Interface/IGamePlugin.cs`](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Interface/IGamePlugin.cs)
-- Pinned commit: `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`
-- Source size: 1,557 characters.
+- Upstream: https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Interface/IGamePlugin.cs
+- Pinned source blob: 6d0915207de1e59f30f69e8eae5ef9e42d202f9c
+- Source size: 1,557 characters
+- Namespace: MobiusEditor.Interface
 
-## Plain-English purpose
+## Exact enums
 
-Defines the editor's game-specific plugin boundary. A plugin supplies its game identity, current Map and rendered image, dirty state, new-map creation, load/save operations, and disposal lifecycle; file and game enums define supported values.
+**FileType** declares None, INI, BIN, MEG, PGM in that order.
 
-## Imports
+**GameType** declares None, TiberianDawn, RedAlert in that order.
 
-- `MobiusEditor.Model`
-- `MobiusEditor.Utility`
-- `System`
-- `System.Collections.Generic`
-- `System.Drawing`
-- `System.IO`
+Neither enum assigns explicit numeric values, so the ordinary zero-based C# values apply.
 
-## Types found
+## Interface contract
 
-- `FileType`
-- `GameType`
-- `IGamePlugin`
+IGamePlugin inherits IDisposable and declares:
 
-## Member and method declarations found
+| Member | Exact contract |
+|---|---|
+| GameType | read-only GameType property |
+| Map | read-only MobiusEditor.Model.Map property |
+| MapImage | read-only System.Drawing.Image property |
+| Dirty | bool property with get and set |
+| New(string theater) | initialize a new map for the selected theatre |
+| Load(string path, FileType fileType) | returns IEnumerable<string> diagnostics; implementation may also throw |
+| Save(string path, FileType fileType) | returns bool success/failure |
+| Dispose() | inherited from IDisposable |
 
-- No matching declarations found.
+The interface has no method bodies, default implementations, cancellation token, async contract, or explicit error type. Load diagnostics are strings; Save failure is only a bool at this boundary.
 
-## Behavior that matters to the port
+## Concrete implementations and host call sites
 
-The plugin owns format-specific map creation and serialization while the host consumes a common Map and image. Load returns a sequence of strings (suitable for warnings/errors); Save reports success as bool.
+- MobiusEditor.RedAlert.GamePlugin implements the contract for Red Alert.
+- MobiusEditor.TiberianDawn.GamePlugin implements it for Tiberian Dawn.
+- MainForm selects the concrete implementation from GameType for new/load operations, invokes Load and displays returned diagnostics, and invokes Save for the selected FileType.
+- MainForm's publish command opens SteamDialog with the current plugin, then triggers the normal save command after the dialog closes.
+- The preview-generation path constructs either plugin with mapImage=false, loads an INI, renders a preview, and disposes the plugin.
 
-## Outstanding audit
+The host catches exceptions around load; in non-DEVELOPER builds it converts them to a failed load result, while developer builds rethrow. The string sequence is therefore not a complete exception contract.
 
-- [ ] Exact members, property accessors, and interface implementation sites.
-- [ ] All call sites and event subscription/unsubscription paths.
-- [ ] Error behavior, nullability, and edge cases.
-- [ ] Rust mapping and behavioral tests.
+## Port boundary
+
+The Rust workspace currently has an initial crates/map-editor-model document model, not a one-for-one IGamePlugin abstraction. Do not treat MapDocument as proof that the C# plugin lifecycle, file-type dispatch, warning collection, preview ownership, or disposal contract has been ported.
+
+## Remaining audit
+
+- [ ] Enumerate every plugin construction, replacement, and disposal path in MainForm.
+- [ ] Confirm Dirty transitions and map-image ownership for both implementations.
+- [ ] Define typed Rust load diagnostics and errors before mapping the string/bool API.
+- [ ] Add TD/RA fixture tests for every FileType, including round-trip and malformed-input cases.
+- [ ] Verify plugin disposal on every host replacement and failure path.

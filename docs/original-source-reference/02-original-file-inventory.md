@@ -8,9 +8,31 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 ## Documentation status key
 
-- `Reviewed`: source inspected and plain-English behavior documented.
-- `Inventory only`: path is captured; implementation details still need source inspection.
-- `Generated/resource`: resource, designer, project, or build metadata; document its role without inventing runtime functions.
+- `Inventory only`: path is captured; no meaningful source/resource inspection has been recorded.
+- `Partially reviewed`: a bounded portion of declarations, bodies, resources, or call sites has been inspected; outstanding work is stated on the page.
+- `Header reviewed`: exact declarations, signatures, fields, or generated control/accessor structure have been inspected; implementation behavior remains open where applicable.
+- `Body reviewed`: the complete body of the small/contained source file has been inspected and documented; Rust mapping and tests are still separate.
+- `Resource reviewed`: XML resource names/types/payload metadata and known linked designer/runtime use have been inspected.
+- `Rust-mapped`: a concrete Rust implementation path and the mapped behavior are identified; this does not by itself prove parity.
+- `Tested`: relevant tests have been executed and evidence/results are recorded.
+- `Complete`: declarations, bodies, dependencies/call sites, Rust mapping, and required parity tests have all been verified.
+- `Reviewed`: legacy status retained on earlier pages; it means the source/configuration was documented at the depth stated there. It does not imply Rust-mapped, Tested, or Complete.
+- `Generated/resource`: legacy category for generated/resource/project/build metadata where only its role is documented; use `Resource reviewed` once payload and linked usage have been inspected.
+
+## Current status snapshot
+
+| Status | Files |
+|---|---:|
+| Inventory only | 1172 |
+| Partially reviewed | 132 |
+| Header reviewed | 3 |
+| Body reviewed | 1 |
+| Resource reviewed | 2 |
+| Legacy Reviewed | 21 |
+| Rust-mapped | 0 |
+| Tested | 0 |
+| Complete | 0 |
+| **Total** | **1331** |
 
 ## CnCTDRAMapEditor (286 files)
 
@@ -54,9 +76,9 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Dialogs/NewMapDialog.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Dialogs/NewMapDialog.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Dialogs/NewMapDialog.resx` — Inventory only
-- `CnCTDRAMapEditor/Dialogs/SteamDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Dialogs/SteamDialog.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
-- `CnCTDRAMapEditor/Dialogs/SteamDialog.resx` — Inventory only
+- `CnCTDRAMapEditor/Dialogs/SteamDialog.Designer.cs` — Header reviewed (control fields, event hooks, and resource lookup; full layout audit pending)
+- `CnCTDRAMapEditor/Dialogs/SteamDialog.cs` — Partially reviewed (code-behind method bodies and MainForm callback path inspected; UI/Steam integration tests pending)
+- `CnCTDRAMapEditor/Dialogs/SteamDialog.resx` — Resource reviewed (five XML data entries; label5.Text lookup traced to generated designer)
 - `CnCTDRAMapEditor/Dialogs/TeamTypesDialog.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Dialogs/TeamTypesDialog.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Dialogs/TeamTypesDialog.resx` — Inventory only
@@ -69,14 +91,14 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Interface/IBrowsableType.cs` — Inventory only
 - `CnCTDRAMapEditor/Interface/ICellOccupier.cs` — Inventory only
 - `CnCTDRAMapEditor/Interface/ICellOverlapper.cs` — Inventory only
-- `CnCTDRAMapEditor/Interface/IGamePlugin.cs` — Partially reviewed (first-pass declarations and behavior; exhaustive call-site audit pending)
+- `CnCTDRAMapEditor/Interface/IGamePlugin.cs` — Header reviewed (exact enums and interface members; complete host lifecycle/parity audit pending)
 - `CnCTDRAMapEditor/Interface/INamedType.cs` — Inventory only
 - `CnCTDRAMapEditor/Interface/ITechnoType.cs` — Inventory only
 - `CnCTDRAMapEditor/Interface/ITool.cs` — Partially reviewed (first-pass declarations and behavior; exhaustive call-site audit pending)
 - `CnCTDRAMapEditor/Interface/IWidget.cs` — Inventory only
 - `CnCTDRAMapEditor/License.txt` — Inventory only
 - `CnCTDRAMapEditor/MainForm.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/MainForm.cs` — Partially reviewed (first-pass declarations and responsibilities; exhaustive member/body audit pending)
+- `CnCTDRAMapEditor/MainForm.cs` — Partially reviewed (plugin creation/load/save and 500 ms Steam callback pump traced; remaining event/body audit pending)
 - `CnCTDRAMapEditor/MainForm.resx` — Inventory only
 - `CnCTDRAMapEditor/Model/BasicSection.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/BriefingSection.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
@@ -98,7 +120,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Model/OverlayType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
 - `CnCTDRAMapEditor/Model/Smudge.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/SmudgeType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
-- `CnCTDRAMapEditor/Model/SteamSection.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/SteamSection.cs` — Body reviewed (all five properties and INI/Workshop consumers documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/TeamType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/Template.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/TemplateType.cs` — Inventory only
@@ -110,10 +132,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Model/Unit.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/UnitType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/Waypoint.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
-- `CnCTDRAMapEditor/Program.cs` — Partially reviewed (first-pass declarations and responsibilities; exhaustive member/body audit pending)
+- `CnCTDRAMapEditor/Program.cs` — Partially reviewed (Steamworks initialization/shutdown lifecycle traced; remaining startup/body audit pending)
 - `CnCTDRAMapEditor/Properties/AssemblyInfo.cs` — Inventory only
-- `CnCTDRAMapEditor/Properties/Resources.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Properties/Resources.resx` — Inventory only
+- `CnCTDRAMapEditor/Properties/Resources.Designer.cs` — Header reviewed (generated ResourceManager/Culture accessors and bitmap property inspected)
+- `CnCTDRAMapEditor/Properties/Resources.resx` — Resource reviewed (five XML entries; embedded 512×512 Workshop banner traced to runtime use)
 - `CnCTDRAMapEditor/Properties/Settings.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Properties/Settings.settings` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/ActionDataTypes.cs` — Inventory only
@@ -123,7 +145,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/RedAlert/Constants.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/DirectionTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/EventTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/RedAlert/GamePlugin.cs` — Inventory only
+- `CnCTDRAMapEditor/RedAlert/GamePlugin.cs` — Partially reviewed (Load/Save, section schemas, LCW map sections, validation, and disposal inspected)
 - `CnCTDRAMapEditor/RedAlert/House.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/HouseTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/InfantryTypes.cs` — Inventory only
@@ -236,7 +258,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/TiberianDawn/Constants.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/DirectionTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/EventTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/TiberianDawn/GamePlugin.cs` — Inventory only
+- `CnCTDRAMapEditor/TiberianDawn/GamePlugin.cs` — Partially reviewed (INI/BIN dispatch, section schemas, binary map codec, and validation entry point inspected)
 - `CnCTDRAMapEditor/TiberianDawn/House.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/HouseTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/InfantryTypes.cs` — Inventory only
@@ -284,13 +306,13 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Utility/CRC.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/ExtensionMethods.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/GameTextManager.cs` — Inventory only
-- `CnCTDRAMapEditor/Utility/INI.cs` — Inventory only
+- `CnCTDRAMapEditor/Utility/INI.cs` — Partially reviewed (lexical rules, ordered collections, reflection codec, and unknown-section mechanism inspected)
 - `CnCTDRAMapEditor/Utility/MRU.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/Megafile.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/MegafileBuilder.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/MegafileManager.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/PropertyTracker.cs` — Inventory only
-- `CnCTDRAMapEditor/Utility/SteamworksUGC.cs` — Inventory only
+- `CnCTDRAMapEditor/Utility/SteamworksUGC.cs` — Partially reviewed (init/shutdown, callback pump, publish state machine, and result handling inspected)
 - `CnCTDRAMapEditor/Utility/TGASharpLib.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/TeamColor.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/TeamColorManager.cs` — Inventory only

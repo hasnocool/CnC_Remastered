@@ -2,6 +2,18 @@
 
 ## Current tranche
 
+### Tranche 6G — game plugin contracts, TD/RA serializers, INI codec, and Workshop publishing
+
+- Corrected the IGamePlugin reference with exact FileType/GameType values and every interface member; traced concrete plugin selection and host load/save call sites.
+- Added bounded source guides for both game-specific GamePlugin implementations. Recorded variant-specific FileType dispatch, section inventories, team/trigger record differences, TD's interleaved two-byte-per-cell BIN format, and RA's LCW-compressed MapPack/OverlayPack format.
+- Added the shared editor INI utility guide: case-insensitive ordered sections, lexical rules, reflection converters, NonSerializedINIKey handling, destructive section extraction, and unknown-section preservation.
+- Audited SteamSection, SteamworksUGC, SteamDialog code-behind, generated controls, and linked resx files. Traced the 500 ms callback pump through MainForm and Init/Shutdown through Program.
+- Recorded a publish-path risk: SteamDialog ignores the bool returned by plugin.Save before requesting a UGC upload. Its OnLoad also replaces the persisted preview path with a generated minimap or solo banner.
+- Updated the 1,331-file inventory with Header reviewed, Body reviewed, and Resource reviewed states. Counts: 21 legacy Reviewed, 132 Partially reviewed, 3 Header reviewed, 1 Body reviewed, 2 Resource reviewed, 1,172 Inventory only. No file is claimed Rust-mapped, tested, or complete by this tranche.
+- Added a cross-variant serialization contract page and updated the Rust cross-reference. The current Rust map-editor-model crate remains a generic initial model; no equivalent plugin, INI codec, TD/RA scenario serializer, or Steam UGC service was found.
+
+
+
 ### Tranche 7E — assembly and low-level ABI inventory
 
 - Added 11 assembly source references covering facing/remap/buffer/XOR-delta/LCW routines and platform support modules.
@@ -158,14 +170,14 @@
 
 ## Priority order
 
-1. Map, template, theatre, icon-set, palette, MIX, IFF, and scenario loading.
-2. Core object model: abstract object, techno, cell, unit, infantry, aircraft, vessel, building, bullet, weapon, warhead.
-3. Simulation loop, events, triggers, team types, missions, AI, pathfinding, combat, damage, and power.
-4. Rendering, animation, sprites, palettes, UI, audio, movies, and input.
-5. Save/load, networking, multiplayer, platform APIs, DDE, WOL, and legacy Windows support.
-6. C# map editor, its data model, tools, dialogs, resources, and serialization.
-7. Build/project configuration, scripts, assembly, and remaining resources.
+1. Finish the editor plugin/serialization second pass: complete TD/RA GamePlugin bodies, per-section layouts, LCW bounds/error behavior, unknown-section edge cases, and host lifecycle.
+2. Audit remaining C# editor Tools, Tools/Dialogs, game-specific type registries, utility classes, generated designer files, and every .resx with linked designer usage.
+3. Add TD/RA golden INI/BIN/MEG/PGM fixtures and byte-for-byte round-trip tests; map codecs and plugin contracts to typed Rust modules.
+4. Map, template, theatre, icon-set, palette, MIX, IFF, and native scenario loading.
+5. Core object model: abstract object, techno, cell, unit, infantry, aircraft, vessel, building, bullet, weapon, warhead.
+6. Simulation loop, events, triggers, team types, missions, AI, pathfinding, combat, damage, power, rendering, animation, audio, input, networking, and platform integration.
+7. Shared libraries, build/project configuration, scripts, assembly, and remaining native source/resources.
 
 ## Quality gate for a completed page
 
-A page is not complete merely because it names the class. It should explain all important symbols and methods, have links to related files, identify the current Rust mapping, and state what behavior is still missing. When a file has no active behavior in the pinned build, say so and cite the build condition that disables it.
+A page is not complete merely because it names the class. It should explain all important symbols and methods, have links to related files, identify the current Rust mapping, and state what behavior is still missing. When a file has no active behavior in the pinned build, say so and cite the build condition that disables it. Keep audit depth separate from port evidence: Header reviewed, Body reviewed, and Resource reviewed do not imply Rust-mapped, Tested, or Complete. Complete requires verified declarations, bodies, dependencies/call sites, an identified Rust mapping, and executed parity tests.
