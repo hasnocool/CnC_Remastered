@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 7B — multiplayer, online-service, and settings dialogs
+
+- Added first-pass guides for INTERNET, NETDLG, LOADDLG, and SOUNDDLG in both games.
+- Captured direct includes and original function-index entries; called out WOL/legacy Windows integration and separation of UI from serialization/playback.
+- Updated inventory statuses to partially reviewed; exhaustive symbols, function bodies, and Rust mappings remain open.
+
+
 ### Tranche 7A — animation, combat, pathfinding, persistence, audio, and MIX archives
 
 - Added 14 first-pass guides across Tiberian Dawn and Red Alert for ANIM, COMBAT, FINDPATH, SAVELOAD, AUDIO, MIXFILE, plus Red Alert WEAPON and WARHEAD.

@@ -510,7 +510,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/INLINE.H` — Inventory only
 - `REDALERT/INT.CPP` — Inventory only
 - `REDALERT/INT.H` — Inventory only
-- `REDALERT/INTERNET.CPP` — Inventory only
+- `REDALERT/INTERNET.CPP` — Partially reviewed (purpose, includes, function index; detailed symbol/body audit pending)
 - `REDALERT/INTERNET.H` — Inventory only
 - `REDALERT/INTERPAL.CPP` — Inventory only
 - `REDALERT/INTRO.CPP` — Inventory only
@@ -557,7 +557,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/LIST.CPP` — Inventory only
 - `REDALERT/LIST.H` — Inventory only
 - `REDALERT/LISTNODE.H` — Inventory only
-- `REDALERT/LOADDLG.CPP` — Inventory only
+- `REDALERT/LOADDLG.CPP` — Partially reviewed (purpose, includes, function index; detailed symbol/body audit pending)
 - `REDALERT/LOADDLG.H` — Inventory only
 - `REDALERT/LOGIC.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `REDALERT/LOGIC.H` — Inventory only
@@ -622,7 +622,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/MSGLIST.CPP` — Inventory only
 - `REDALERT/MSGLIST.H` — Inventory only
 - `REDALERT/MiscAsm.cpp` — Inventory only
-- `REDALERT/NETDLG.CPP` — Inventory only
+- `REDALERT/NETDLG.CPP` — Partially reviewed (purpose, includes, function index; detailed symbol/body audit pending)
 - `REDALERT/NOSEQCON.CPP` — Inventory only
 - `REDALERT/NOSEQCON.H` — Inventory only
 - `REDALERT/NULLCONN.CPP` — Inventory only
@@ -721,7 +721,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `REDALERT/SLIDER.H` — Inventory only
 - `REDALERT/SMUDGE.CPP` — Inventory only
 - `REDALERT/SMUDGE.H` — Inventory only
-- `REDALERT/SOUNDDLG.CPP` — Inventory only
+- `REDALERT/SOUNDDLG.CPP` — Partially reviewed (purpose, includes, function index; detailed symbol/body audit pending)
 - `REDALERT/SOUNDDLG.H` — Inventory only
 - `REDALERT/SPECIAL.CPP` — Inventory only
 - `REDALERT/SPECIAL.H` — Inventory only
@@ -1076,7 +1076,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/INFANTRY.H` — Inventory only
 - `TIBERIANDAWN/INI.CPP` — Inventory only
 - `TIBERIANDAWN/INIT.CPP` — Inventory only
-- `TIBERIANDAWN/INTERNET.CPP` — Inventory only
+- `TIBERIANDAWN/INTERNET.CPP` — Partially reviewed (purpose, includes, function index; detailed symbol/body audit pending)
 - `TIBERIANDAWN/INTERPAL.CPP` — Inventory only
 - `TIBERIANDAWN/INTRO.CPP` — Inventory only
 - `TIBERIANDAWN/INTRO.H` — Inventory only
@@ -1108,7 +1108,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/LINK.H` — Inventory only
 - `TIBERIANDAWN/LIST.CPP` — Inventory only
 - `TIBERIANDAWN/LIST.H` — Inventory only
-- `TIBERIANDAWN/LOADDLG.CPP` — Inventory only
+- `TIBERIANDAWN/LOADDLG.CPP` — Partially reviewed (purpose, includes, function index; detailed symbol/body audit pending)
 - `TIBERIANDAWN/LOADDLG.H` — Inventory only
 - `TIBERIANDAWN/LOGIC.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/LOGIC.H` — Inventory only
@@ -1139,7 +1139,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/MSGLIST.CPP` — Inventory only
 - `TIBERIANDAWN/MSGLIST.H` — Inventory only
 - `TIBERIANDAWN/MiscAsm.cpp` — Inventory only
-- `TIBERIANDAWN/NETDLG.CPP` — Inventory only
+- `TIBERIANDAWN/NETDLG.CPP` — Partially reviewed (purpose, includes, function index; detailed symbol/body audit pending)
 - `TIBERIANDAWN/NOSEQCON.CPP` — Inventory only
 - `TIBERIANDAWN/NOSEQCON.H` — Inventory only
 - `TIBERIANDAWN/NULLCONN.CPP` — Inventory only
@@ -1200,7 +1200,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/SLIDER.H` — Inventory only
 - `TIBERIANDAWN/SMUDGE.CPP` — Inventory only
 - `TIBERIANDAWN/SMUDGE.H` — Inventory only
-- `TIBERIANDAWN/SOUNDDLG.CPP` — Inventory only
+- `TIBERIANDAWN/SOUNDDLG.CPP` — Partially reviewed (purpose, includes, function index; detailed symbol/body audit pending)
 - `TIBERIANDAWN/SOUNDDLG.H` — Inventory only
 - `TIBERIANDAWN/SPECIAL.CPP` — Partially reviewed (function index and direct includes; detailed symbol/body audit pending)
 - `TIBERIANDAWN/SPECIAL.H` — Inventory only
