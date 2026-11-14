@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 6B — editor grid primitives and plugin/tool contracts
+
+- Added source guides for CellGrid, CellMetrics, IGamePlugin, and ITool.
+- Documented concrete grid indexing, change notifications, adjacency/bounds behavior, and game-plugin/tool contracts from source.
+- Marked four files partially reviewed; exhaustive call-site and Rust parity checks remain open.
+
+
 ### Tranche 6A — map editor application/model/rendering entry points
 
 - Added first-pass guides for Program.cs, MainForm.cs, Model/Map.cs, and Render/MapRenderer.cs.

@@ -69,10 +69,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Interface/IBrowsableType.cs` — Inventory only
 - `CnCTDRAMapEditor/Interface/ICellOccupier.cs` — Inventory only
 - `CnCTDRAMapEditor/Interface/ICellOverlapper.cs` — Inventory only
-- `CnCTDRAMapEditor/Interface/IGamePlugin.cs` — Inventory only
+- `CnCTDRAMapEditor/Interface/IGamePlugin.cs` — Partially reviewed (first-pass declarations and behavior; exhaustive call-site audit pending)
 - `CnCTDRAMapEditor/Interface/INamedType.cs` — Inventory only
 - `CnCTDRAMapEditor/Interface/ITechnoType.cs` — Inventory only
-- `CnCTDRAMapEditor/Interface/ITool.cs` — Inventory only
+- `CnCTDRAMapEditor/Interface/ITool.cs` — Partially reviewed (first-pass declarations and behavior; exhaustive call-site audit pending)
 - `CnCTDRAMapEditor/Interface/IWidget.cs` — Inventory only
 - `CnCTDRAMapEditor/License.txt` — Inventory only
 - `CnCTDRAMapEditor/MainForm.Designer.cs` — Inventory only
@@ -82,8 +82,8 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Model/BriefingSection.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/Building.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/BuildingType.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/CellGrid.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/CellMetrics.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/CellGrid.cs` — Partially reviewed (first-pass declarations and behavior; exhaustive call-site audit pending)
+- `CnCTDRAMapEditor/Model/CellMetrics.cs` — Partially reviewed (first-pass declarations and behavior; exhaustive call-site audit pending)
 - `CnCTDRAMapEditor/Model/CellTrigger.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/DirectionType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/House.cs` — Inventory only
