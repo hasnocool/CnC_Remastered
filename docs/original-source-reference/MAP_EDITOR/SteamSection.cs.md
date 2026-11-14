@@ -4,7 +4,7 @@
 
 - Upstream: https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Model/SteamSection.cs
 - Pinned source blob: c264012f2a441a06b8e157d91d68b2f10eaf2822
-- Source size: 1,188 characters
+- Source size: 1,475 characters
 - Namespace/type: MobiusEditor.Model.SteamSection
 
 ## Exact public properties
