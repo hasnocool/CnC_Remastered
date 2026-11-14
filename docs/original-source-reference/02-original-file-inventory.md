@@ -15,17 +15,17 @@ This is the complete path inventory at the pinned commit. A path being listed do
 ## CnCTDRAMapEditor (286 files)
 
 - `CnCTDRAMapEditor/App.config` — Reviewed (file role and configuration/resource declarations; build parity pending)
-- `CnCTDRAMapEditor/CnCTDRAMapEditor.csproj` — Inventory only
-- `CnCTDRAMapEditor/Controls/BasicSettings.Designer.cs` — Inventory only
+- `CnCTDRAMapEditor/CnCTDRAMapEditor.csproj` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
+- `CnCTDRAMapEditor/Controls/BasicSettings.Designer.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
 - `CnCTDRAMapEditor/Controls/BasicSettings.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Controls/BasicSettings.resx` — Inventory only
-- `CnCTDRAMapEditor/Controls/BriefingSettings.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/BriefingSettings.cs` — Inventory only
+- `CnCTDRAMapEditor/Controls/BriefingSettings.Designer.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
+- `CnCTDRAMapEditor/Controls/BriefingSettings.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
 - `CnCTDRAMapEditor/Controls/BriefingSettings.resx` — Inventory only
 - `CnCTDRAMapEditor/Controls/ImageTooltip.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/ImageTooltip.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/MapPanel.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/MapPanel.cs` — Inventory only
+- `CnCTDRAMapEditor/Controls/MapPanel.Designer.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
+- `CnCTDRAMapEditor/Controls/MapPanel.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
 - `CnCTDRAMapEditor/Controls/MapPanel.resx` — Inventory only
 - `CnCTDRAMapEditor/Controls/MenuButton.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/MenuButton.cs` — Inventory only
@@ -42,11 +42,11 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Controls/TerrainProperties.resx` — Inventory only
 - `CnCTDRAMapEditor/Controls/TypeComboBox.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/TypeComboBox.cs` — Inventory only
-- `CnCTDRAMapEditor/Dialogs/ErrorMessageBox.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Dialogs/ErrorMessageBox.cs` — Inventory only
+- `CnCTDRAMapEditor/Dialogs/ErrorMessageBox.Designer.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
+- `CnCTDRAMapEditor/Dialogs/ErrorMessageBox.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
 - `CnCTDRAMapEditor/Dialogs/ErrorMessageBox.resx` — Inventory only
-- `CnCTDRAMapEditor/Dialogs/InviteMessageBox.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Dialogs/InviteMessageBox.cs` — Inventory only
+- `CnCTDRAMapEditor/Dialogs/InviteMessageBox.Designer.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
+- `CnCTDRAMapEditor/Dialogs/InviteMessageBox.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
 - `CnCTDRAMapEditor/Dialogs/InviteMessageBox.resx` — Inventory only
 - `CnCTDRAMapEditor/Dialogs/MapSettingsDialog.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Dialogs/MapSettingsDialog.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)

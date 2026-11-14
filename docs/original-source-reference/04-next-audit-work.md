@@ -2,6 +2,13 @@
 
 ## Current tranche
 
+### Tranche 6E — editor project and control/dialog implementation
+
+- Added first-pass pages for the editor .csproj, BasicSettings, BriefingSettings, MapPanel, ErrorMessageBox, and InviteMessageBox code-behind/designer files.
+- Recorded detected class names, fields, methods, and key viewport/WinForms lifecycle responsibilities.
+- Marked ten inventory paths partially reviewed. Designer/resource synchronization, full handler bodies, and Rust UI mapping remain open.
+
+
 ### Tranche 8A — solution, project, runtime configuration, and native resource scripts
 
 - Added 11 reference pages for both Visual Studio solutions, both native .vcxproj files and filters, editor App.config, both game .rc files, and legacy icon resource scripts.
