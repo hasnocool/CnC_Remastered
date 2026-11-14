@@ -950,7 +950,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/ABSTRACT.CPP` — Inventory only
 - `TIBERIANDAWN/ABSTRACT.H` — Inventory only
 - `TIBERIANDAWN/ADATA.CPP` — Inventory only
-- `TIBERIANDAWN/AIRCRAFT.CPP` — Inventory only
+- `TIBERIANDAWN/AIRCRAFT.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/AIRCRAFT.H` — Inventory only
 - `TIBERIANDAWN/ALLOC.CPP` — Inventory only
 - `TIBERIANDAWN/ANIM.CPP` — Inventory only
@@ -961,9 +961,9 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/BASE.H` — Inventory only
 - `TIBERIANDAWN/BBDATA.CPP` — Inventory only
 - `TIBERIANDAWN/BDATA.CPP` — Inventory only
-- `TIBERIANDAWN/BUILDING.CPP` — Inventory only
+- `TIBERIANDAWN/BUILDING.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/BUILDING.H` — Inventory only
-- `TIBERIANDAWN/BULLET.CPP` — Inventory only
+- `TIBERIANDAWN/BULLET.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/BULLET.H` — Inventory only
 - `TIBERIANDAWN/CARGO.CPP` — Inventory only
 - `TIBERIANDAWN/CARGO.H` — Inventory only
@@ -1016,7 +1016,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/DIAL8.CPP` — Inventory only
 - `TIBERIANDAWN/DIAL8.H` — Inventory only
 - `TIBERIANDAWN/DIALOG.CPP` — Inventory only
-- `TIBERIANDAWN/DISPLAY.CPP` — Inventory only
+- `TIBERIANDAWN/DISPLAY.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/DISPLAY.H` — Inventory only
 - `TIBERIANDAWN/DLLInterface.cpp` — Inventory only
 - `TIBERIANDAWN/DLLInterface.h` — Inventory only
@@ -1069,7 +1069,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/HEAP.H` — Inventory only
 - `TIBERIANDAWN/HELP.CPP` — Inventory only
 - `TIBERIANDAWN/HELP.H` — Inventory only
-- `TIBERIANDAWN/HOUSE.CPP` — Inventory only
+- `TIBERIANDAWN/HOUSE.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/HOUSE.H` — Inventory only
 - `TIBERIANDAWN/IDATA.CPP` — Inventory only
 - `TIBERIANDAWN/INFANTRY.CPP` — Partially reviewed (function index; detailed body/header audit pending)
@@ -1152,7 +1152,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/ODATA.CPP` — Inventory only
 - `TIBERIANDAWN/OPTIONS.CPP` — Inventory only
 - `TIBERIANDAWN/OPTIONS.H` — Inventory only
-- `TIBERIANDAWN/OVERLAY.CPP` — Inventory only
+- `TIBERIANDAWN/OVERLAY.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/OVERLAY.H` — Inventory only
 - `TIBERIANDAWN/PACKET.CPP` — Inventory only
 - `TIBERIANDAWN/PACKET.H` — Inventory only
@@ -1228,7 +1228,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/TECHNO.H` — Inventory only
 - `TIBERIANDAWN/TEMPLATE.CPP` — Inventory only
 - `TIBERIANDAWN/TEMPLATE.H` — Inventory only
-- `TIBERIANDAWN/TERRAIN.CPP` — Inventory only
+- `TIBERIANDAWN/TERRAIN.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/TERRAIN.H` — Inventory only
 - `TIBERIANDAWN/TEXTBLIT.H` — Inventory only
 - `TIBERIANDAWN/TEXTBTN.CPP` — Inventory only
@@ -1237,7 +1237,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `TIBERIANDAWN/THEME.H` — Inventory only
 - `TIBERIANDAWN/TOGGLE.CPP` — Inventory only
 - `TIBERIANDAWN/TOGGLE.H` — Inventory only
-- `TIBERIANDAWN/TRIGGER.CPP` — Inventory only
+- `TIBERIANDAWN/TRIGGER.CPP` — Partially reviewed (function index; detailed body/header audit pending)
 - `TIBERIANDAWN/TRIGGER.H` — Inventory only
 - `TIBERIANDAWN/TURRET.CPP` — Inventory only
 - `TIBERIANDAWN/TURRET.H` — Inventory only

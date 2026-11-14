@@ -2,6 +2,13 @@
 
 Tiberian Dawn's original game code lives under `TIBERIANDAWN/`. It includes the simulation, world/map classes, scenario parsing, units, buildings, interface, file/archive access, and a `WIN32LIB` support layer.
 
+## Runtime and map files reviewed in these tranches
+
+- [Core object hierarchy](CORE-OBJECT-HIERARCHY.md)
+- [OBJECT.CPP](OBJECT.CPP.md), [TECHNO.CPP](TECHNO.CPP.md), [FOOT.CPP](FOOT.CPP.md)
+- [CELL.CPP](CELL.CPP.md), [BUILDING.CPP](BUILDING.CPP.md), [UNIT.CPP](UNIT.CPP.md), [INFANTRY.CPP](INFANTRY.CPP.md), [AIRCRAFT.CPP](AIRCRAFT.CPP.md), [BULLET.CPP](BULLET.CPP.md)
+- [HOUSE.CPP](HOUSE.CPP.md), [TRIGGER.CPP](TRIGGER.CPP.md), [TERRAIN.CPP](TERRAIN.CPP.md), [OVERLAY.CPP](OVERLAY.CPP.md), [DISPLAY.CPP](DISPLAY.CPP.md), [SCENARIO.CPP](SCENARIO.CPP.md), [EVENT.CPP](EVENT.CPP.md)
+
 ## Terrain/map files reviewed in this tranche
 
 - [MAP.CPP](MAP.CPP.md) and [MAP.H](MAP.H.md): map grid and map runtime.

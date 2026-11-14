@@ -2,6 +2,14 @@
 
 ## Current tranche
 
+### Tranche 4 — Tiberian Dawn gameplay and presentation
+
+- Added guides for BUILDING, AIRCRAFT, BULLET, HOUSE, TRIGGER, TERRAIN, OVERLAY, and DISPLAY.
+- Marked the eight paths partially reviewed in the complete source inventory.
+- Captured the distinction between base template terrain, destructible terrain objects, and overlays, plus the tactical display's role.
+- Detailed member/field inventories and implementation-body call graphs remain open.
+
+
 ### Tranche 3 — Red Alert core runtime
 
 - Added source guides for OBJECT, CELL, TECHNO, FOOT, UNIT, INFANTRY, BUILDING, SCENARIO, and EVENT.
