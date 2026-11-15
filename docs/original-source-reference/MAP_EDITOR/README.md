@@ -36,3 +36,10 @@ The common host contract is [IGamePlugin.cs](IGamePlugin.cs.md). Its concrete im
 - [Serialization contract comparison](Serialization-Contract.md) — exact cross-variant differences and required parity tests.
 
 The current Rust map-editor-model crate is still an initial document model. It does not yet implement either C# game plugin, the INI codec, the TD binary sidecar, the RA LCW map sections, or Workshop integration.
+
+
+## Tool windows and placement controls
+
+The tool-window layer is now documented in [Tools/Dialogs](Tools/Dialogs/README.md), with individual guides for CellTriggersToolDialog, GenericToolDialog, ObjectToolDialog, ResourcesToolDialog, TemplateToolDialog, TerrainToolDialog, and WaypointsToolDialog. [TypeComboBox](Controls/TypeComboBox.cs.md) documents the owner-drawn type/thumbnail selector. [PlacementTools](Tools/PlacementTools.md) documents the CellTriggersTool and WaypointsTool event, model-mutation, and undo paths.
+
+The GenericToolDialog designer has a resource-manager type mismatch that can null its missing-thumbnail fallback; the issue and regression-test requirement are recorded in the source guide. The tool windows share one persisted location setting and currently save synchronously on every move event. These UI details are not implemented by the current portable map-editor-model crate.

@@ -94,3 +94,24 @@ Main editor window and application coordinator. It owns tool selection, visible 
 - [ ] UI event flows, model mutation, invalidation, undo/redo, and serialization side effects.
 - [ ] Cross-file dependencies and plugin/tool contracts.
 - [ ] Rust mapping and test evidence.
+
+
+## Tool-dialog routing (bounded call-site audit)
+
+The pinned RefreshActiveTool implementation (MainForm.cs lines 940–1074) creates the tool form and the matching editing tool together, passes the dialog's controls into the tool constructor, assigns activeToolForm, and calls activeToolForm.Show(this).
+
+| ToolType | Dialog | Consumer and source data |
+|---|---|---|
+| Map | TemplateToolDialog | TemplateTool receives its ListView and preview MapPanel |
+| Smudge / Overlay / Wall | GenericToolDialog | SmudgeTool, OverlaysTool, WallsTool receive TypeComboBox and preview; MainForm filters the plugin type collections |
+| Resources | ResourcesToolDialog | ResourcesTool receives count label, brush-size NumericUpDown, and Gems checkbox |
+| Terrain | TerrainToolDialog(plugin) | TerrainTool receives theatre-filtered terrain types, preview, and TerrainProperties |
+| Infantry / Unit / Building | ObjectToolDialog(plugin) | respective tool receives filtered type selector, preview, and ObjectProperties |
+| Waypoint | WaypointsToolDialog | WaypointsTool receives a ComboBox bound to waypoint names |
+| CellTrigger | CellTriggersToolDialog | CellTriggersTool receives a ComboBox bound to trigger names |
+
+The generic selector is implemented by [TypeComboBox](Controls/TypeComboBox.cs.md); its owner-draw and thumbnail fallback behavior is documented there. The GenericToolDialog designer contains a resource-manager type mismatch: it requests its fallback image from TemplateToolDialog resources even though the key is in GenericToolDialog.resx. This can null out MissingThumbnail and fail when a selected type has no thumbnail. See [GenericToolDialog](Tools/Dialogs/GenericToolDialog.md).
+
+All seven tool dialogs restore and persist one shared user setting, ToolDialogPosition (default point 0,0). Every OnMove saves synchronously. This means one dialog's last position becomes the initial position of all seven, and settings persistence is on the UI move path. The setting declaration is in Properties/Settings.Designer.cs; a separate settings-file audit remains open.
+
+The cell-trigger and waypoint placement consumers are documented in [PlacementTools](Tools/PlacementTools.md). This bounded call-site pass does not complete MainForm: other handlers, the remaining tool implementations, lifecycle edges, and UI tests remain outstanding.

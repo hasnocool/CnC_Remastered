@@ -23,11 +23,11 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1172 |
+| Inventory only | 1147 |
 | Partially reviewed | 132 |
-| Header reviewed | 3 |
-| Body reviewed | 1 |
-| Resource reviewed | 2 |
+| Header reviewed | 11 |
+| Body reviewed | 11 |
+| Resource reviewed | 9 |
 | Legacy Reviewed | 21 |
 | Rust-mapped | 0 |
 | Tested | 0 |
@@ -62,8 +62,8 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Controls/TerrainProperties.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/TerrainProperties.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Controls/TerrainProperties.resx` — Inventory only
-- `CnCTDRAMapEditor/Controls/TypeComboBox.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/TypeComboBox.cs` — Inventory only
+- `CnCTDRAMapEditor/Controls/TypeComboBox.Designer.cs` — Header reviewed (generated component container and designer lifecycle inspected; control behavior is in the code-behind guide)
+- `CnCTDRAMapEditor/Controls/TypeComboBox.cs` — Body reviewed (data binding, measurement, owner-draw, and fallback behavior inspected; dependent type contracts remain open)
 - `CnCTDRAMapEditor/Dialogs/ErrorMessageBox.Designer.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
 - `CnCTDRAMapEditor/Dialogs/ErrorMessageBox.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
 - `CnCTDRAMapEditor/Dialogs/ErrorMessageBox.resx` — Inventory only
@@ -271,28 +271,28 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/TiberianDawn/TheaterTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/BuildingTool.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/CellTriggersTool.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/CellTriggersToolDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/CellTriggersToolDialog.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/CellTriggersToolDialog.resx` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/GenericToolDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/GenericToolDialog.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/GenericToolDialog.resx` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/ObjectToolDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/ObjectToolDialog.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/ObjectToolDialog.resx` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/ResourcesToolDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/ResourcesToolDialog.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/ResourcesToolDialog.resx` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/TemplateToolDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/TemplateToolDialog.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/TemplateToolDialog.resx` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/TerrainToolDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/TerrainToolDialog.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/TerrainToolDialog.resx` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/WaypointsToolDialog.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/WaypointsToolDialog.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/Dialogs/WaypointsToolDialog.resx` — Inventory only
+- `CnCTDRAMapEditor/Tools/CellTriggersTool.cs` — Body reviewed (event flow, cell mutations, drag batching, undo/redo, and disposal inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/CellTriggersToolDialog.Designer.cs` — Header reviewed (generated fields, layout, and initialization inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/CellTriggersToolDialog.cs` — Body reviewed (all code-behind methods inspected; placement behavior is documented separately)
+- `CnCTDRAMapEditor/Tools/Dialogs/CellTriggersToolDialog.resx` — Resource reviewed (ResX entries and linked designer usage inspected; no live custom resource)
+- `CnCTDRAMapEditor/Tools/Dialogs/GenericToolDialog.Designer.cs` — Header reviewed (generated fields, layout, and resource lookup inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/GenericToolDialog.cs` — Body reviewed (all code-behind methods inspected; shared position persistence documented)
+- `CnCTDRAMapEditor/Tools/Dialogs/GenericToolDialog.resx` — Resource reviewed (sample entries and 32x32 missing-thumbnail payload linked to designer inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/ObjectToolDialog.Designer.cs` — Header reviewed (generated fields, layout, and resource lookup inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/ObjectToolDialog.cs` — Body reviewed (constructors, control accessors, and move persistence inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/ObjectToolDialog.resx` — Resource reviewed (sample entries and 32x32 missing-thumbnail payload linked to designer inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/ResourcesToolDialog.Designer.cs` — Header reviewed (generated fields, numeric constraints, and layout inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/ResourcesToolDialog.cs` — Body reviewed (all code-behind methods and exposed controls inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/ResourcesToolDialog.resx` — Resource reviewed (ResX entries and linked designer usage inspected; no live custom resource)
+- `CnCTDRAMapEditor/Tools/Dialogs/TemplateToolDialog.Designer.cs` — Header reviewed (generated fields, split layout, and preview controls inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/TemplateToolDialog.cs` — Body reviewed (all code-behind methods and exposed controls inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/TemplateToolDialog.resx` — Resource reviewed (ResX entries and linked designer usage inspected; no live custom resource)
+- `CnCTDRAMapEditor/Tools/Dialogs/TerrainToolDialog.Designer.cs` — Header reviewed (generated fields, layout, and resource lookup inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/TerrainToolDialog.cs` — Body reviewed (constructors, plugin initialization call, and move persistence inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/TerrainToolDialog.resx` — Resource reviewed (sample entries and 32x32 missing-thumbnail payload linked to designer inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/WaypointsToolDialog.Designer.cs` — Header reviewed (generated fields, selector properties, and layout inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/WaypointsToolDialog.cs` — Body reviewed (all code-behind methods and exposed selector inspected)
+- `CnCTDRAMapEditor/Tools/Dialogs/WaypointsToolDialog.resx` — Resource reviewed (ResX entries and linked designer usage inspected; no live custom resource)
 - `CnCTDRAMapEditor/Tools/InfantryTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/OverlaysTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/ResourcesTool.cs` — Inventory only
@@ -302,7 +302,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Tools/UnitTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/ViewTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/WallsTool.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/WaypointsTool.cs` — Inventory only
+- `CnCTDRAMapEditor/Tools/WaypointsTool.cs` — Body reviewed (selection, placement, immediate undo/redo, and disposal inspected)
 - `CnCTDRAMapEditor/Utility/CRC.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/ExtensionMethods.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/GameTextManager.cs` — Inventory only

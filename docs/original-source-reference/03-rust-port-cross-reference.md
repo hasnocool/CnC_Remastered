@@ -40,3 +40,15 @@ Keep these as separate responsibilities in Rust:
 | CnCTDRAMapEditor/Utility/SteamworksUGC.cs | Steam init/shutdown, callback pump, single active Workshop publish operation. | No Rust Steamworks service found. |
 
 The current crates/map-editor-model source contains MapDocument, CellLayers, dimensions, and waypoints, plus CellMetrics and object-selection planning. Its tests cover generic cell/waypoint behavior, not original TD/RA INI/BIN/MEG/PGM parity. No test execution or format-parity result is claimed by this audit.
+
+
+## Map-editor tool UI and placement
+
+| Original source | Responsibility established from source | Current Rust location / status |
+|---|---|---|
+| CnCTDRAMapEditor/Tools/Dialogs/*.cs and generated designers | WinForms tool-window composition, shared position persistence, selectors, preview panels, property controls. | No Rust desktop tool-dialog layer found; keep UI adapters separate from map-format parsing. |
+| CnCTDRAMapEditor/Controls/TypeComboBox.cs | IBrowsableType binding, owner-drawn names, thumbnail measurement/drawing, missing-thumbnail fallback. | No Rust type catalog/thumbnail widget; map-editor-model has no UI layer. |
+| CnCTDRAMapEditor/Tools/CellTriggersTool.cs | Shift-to-paint cell-trigger placement, pick/remove, drag-batched undo/redo. | No CellTrigger collection or placement command in map-editor-model. |
+| CnCTDRAMapEditor/Tools/WaypointsTool.cs | Select, assign, clear waypoint cells with per-operation undo/redo. | MapDocument has waypoint-number-to-CellCoord storage and CellMetrics, but no UI selection, placement mode, or undo command. |
+
+The dialog pass also found a static resource lookup defect in GenericToolDialog: its designer asks TemplateToolDialog's resource manager for a key stored in GenericToolDialog.resx. Fix this before using the original UI as the parity oracle. No GUI test or Rust parity test was executed.

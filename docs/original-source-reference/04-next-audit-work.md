@@ -2,6 +2,18 @@
 
 ## Current tranche
 
+### Tranche 6H — tool dialogs, type selector, and placement tools
+
+- Audited all seven tool-dialog code-behind files, all seven generated designers, and all seven linked .resx files. Documented exact exposed controls, constructor/plugin initialization, designer layouts, selector bindings, and resource payload names/types.
+- Traced MainForm.RefreshActiveTool call sites for Map, Smudge, Overlay, Resources, Terrain, Infantry, Unit, Building, Wall, Waypoint, and CellTrigger tools, including source-type filters and control handoff.
+- Audited TypeComboBox data binding, item measurement, owner-draw, thumbnail fallback, and designer container lifecycle.
+- Audited complete CellTriggersTool and WaypointsTool method bodies, including mouse/keyboard event flow, map mutations, dirty-state changes, undo/redo granularity, and event unsubscription.
+- Found a concrete GenericToolDialog resource-manager mismatch: its designer requests templateTypeComboBox.MissingThumbnail through TemplateToolDialog resources even though the bitmap is stored in GenericToolDialog.resx. The failed lookup overwrites TypeComboBox's non-null default and can trigger null dereferences for entries without thumbnails.
+- Found edge conditions to address in a port: empty type sequences throw in TypeComboBox.Types; CellTriggersTool can construct a trigger with a null name when no selection exists; WaypointsTool indexes the waypoint array without validating SelectedIndex.
+- Updated the 1,331-file inventory: 21 legacy Reviewed, 132 Partially reviewed, 11 Header reviewed, 11 Body reviewed, 9 Resource reviewed, 1,147 Inventory only. No files are claimed Rust-mapped, Tested, or Complete.
+- Added ten reference documents and updated the editor guide, MainForm guide, Rust cross-reference, and next-work plan. No Rust source was changed and no build/UI/parity test was run.
+
+
 ### Tranche 6G — game plugin contracts, TD/RA serializers, INI codec, and Workshop publishing
 
 - Corrected the IGamePlugin reference with exact FileType/GameType values and every interface member; traced concrete plugin selection and host load/save call sites.
@@ -171,7 +183,7 @@
 ## Priority order
 
 1. Finish the editor plugin/serialization second pass: complete TD/RA GamePlugin bodies, per-section layouts, LCW bounds/error behavior, unknown-section edge cases, and host lifecycle.
-2. Audit remaining C# editor Tools, Tools/Dialogs, game-specific type registries, utility classes, generated designer files, and every .resx with linked designer usage.
+2. Continue the remaining C# editor Tools implementations (Building, Infantry, Unit, Terrain, Resources, Template, Overlay, Smudge, Walls, and other tools), ViewTool/base lifecycle, remaining controls (ObjectProperties/TerrainProperties/TypeItem), game-specific type registries, and all remaining .resx files with linked designer usage.
 3. Add TD/RA golden INI/BIN/MEG/PGM fixtures and byte-for-byte round-trip tests; map codecs and plugin contracts to typed Rust modules.
 4. Map, template, theatre, icon-set, palette, MIX, IFF, and native scenario loading.
 5. Core object model: abstract object, techno, cell, unit, infantry, aircraft, vessel, building, bullet, weapon, warhead.
