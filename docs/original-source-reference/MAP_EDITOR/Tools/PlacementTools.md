@@ -48,3 +48,8 @@ The shared cell-trigger and waypoint tools are distinct from the object tools. F
 ## Terrain and resource editing
 
 The next two model layers are covered in [TerrainAndResourceTools.md](TerrainAndResourceTools.md), with per-file guides for [TerrainTool](TerrainTool.cs.md) and [ResourcesTool](ResourcesTool.cs.md). Terrain is stored in Technos and uses occupancy masks; resources are stored in the Overlay cell grid and use grouped brush-stroke undo.
+
+
+## Template and decorative overlays
+
+The template layer and decorative overlay layer are now covered in [TemplateAndOverlayTools.md](TemplateAndOverlayTools.md), with detailed guides for [TemplateTool](TemplateTool.cs.md) and [OverlaysTool](OverlaysTool.cs.md). TemplateTool also edits Map.Bounds through a separate Ctrl-driven edge/corner workflow.
