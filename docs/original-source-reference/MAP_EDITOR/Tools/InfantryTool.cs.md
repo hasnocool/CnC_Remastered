@@ -91,7 +91,7 @@ The model collection stores the group in Technos; the five individual Infantry i
 - PostRenderMap allocates a Pen on each render without disposing it.
 - PreRenderMap clones the complete map synchronously for each non-empty map-panel pre-render; a Rust renderer should consume a stable snapshot and represent the placement ghost as a transient overlay.
 - The UndoRedoList is passed to ViewTool but this class never accesses it or records commands. Placement, removal, and drag writes are direct model mutations, so this class does not itself supply undo/redo parity.
-- NavigationWidget recalculates MouseSubPixel before checking Metrics.Contains, but leaves MouseCell unchanged when the pointer maps outside the map. InfantryTool uses MouseCell for the group and MouseSubPixel for nearest-stop resolution, so these values can describe different cells. Validate and publish the cell/subpixel pair together; see [NavigationWidget audit](../../Widgets/NavigationWidget.cs.md).
+- NavigationWidget recalculates MouseSubPixel before checking Metrics.Contains, but leaves MouseCell unchanged when the pointer maps outside the map. InfantryTool uses MouseCell for the group and MouseSubPixel for nearest-stop resolution, so these values can describe different cells. Validate and publish the cell/subpixel pair together; see [NavigationWidget audit](../Widgets/NavigationWidget.cs.md).
 
 Recommended Rust model: a typed InfantryGroup with exactly five named/ordered stopping slots, a deterministic nearest-stop resolver, explicit member-to-group ownership, and commands for add/remove/move/edit. Keep single-nearest selection semantics distinct from nearest-free placement semantics.
 

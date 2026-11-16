@@ -62,4 +62,4 @@ The final overlay-family tools are documented in [SmudgeAndWallsTools.md](Smudge
 
 ## Shared input and property controls
 
-See [NavigationWidget.cs.md](../../Widgets/NavigationWidget.cs.md) for mouse-cell/subpixel conversion and [TerrainProperties.cs.md](../Controls/TerrainProperties.cs.md) for trigger binding and the unwired dirty-notification handler.
+See [NavigationWidget.cs.md](../Widgets/NavigationWidget.cs.md) for mouse-cell/subpixel conversion and [TerrainProperties.cs.md](../Controls/TerrainProperties.cs.md) for trigger binding and the unwired dirty-notification handler.

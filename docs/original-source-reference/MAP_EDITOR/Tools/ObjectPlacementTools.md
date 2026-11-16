@@ -87,4 +87,4 @@ Test at minimum:
 No tests were run in this documentation tranche.
 
 
-The shared pointer adapter has an additional edge case relevant to infantry movement: [NavigationWidget.cs.md](../../Widgets/NavigationWidget.cs.md) documents how out-of-bounds pointer motion can update MouseSubPixel while retaining the previous MouseCell.
+The shared pointer adapter has an additional edge case relevant to infantry movement: [NavigationWidget.cs.md](../Widgets/NavigationWidget.cs.md) documents how out-of-bounds pointer motion can update MouseSubPixel while retaining the previous MouseCell.
