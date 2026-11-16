@@ -23,10 +23,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1147 |
+| Inventory only | 1144 |
 | Partially reviewed | 132 |
 | Header reviewed | 11 |
-| Body reviewed | 11 |
+| Body reviewed | 14 |
 | Resource reviewed | 9 |
 | Legacy Reviewed | 21 |
 | Rust-mapped | 0 |
@@ -270,7 +270,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/TiberianDawn/TerrainTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/TheaterTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/BuildingTool.cs` — Inventory only
+- `CnCTDRAMapEditor/Tools/BuildingTool.cs` — Body reviewed (all constructor, selector, mouse/key handlers, placement/movement, base-priority, preview/render, and disposal bodies inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Tools/CellTriggersTool.cs` — Body reviewed (event flow, cell mutations, drag batching, undo/redo, and disposal inspected)
 - `CnCTDRAMapEditor/Tools/Dialogs/CellTriggersToolDialog.Designer.cs` — Header reviewed (generated fields, layout, and initialization inspected)
 - `CnCTDRAMapEditor/Tools/Dialogs/CellTriggersToolDialog.cs` — Body reviewed (all code-behind methods inspected; placement behavior is documented separately)
@@ -293,13 +293,13 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Tools/Dialogs/WaypointsToolDialog.Designer.cs` — Header reviewed (generated fields, selector properties, and layout inspected)
 - `CnCTDRAMapEditor/Tools/Dialogs/WaypointsToolDialog.cs` — Body reviewed (all code-behind methods and exposed selector inspected)
 - `CnCTDRAMapEditor/Tools/Dialogs/WaypointsToolDialog.resx` — Resource reviewed (ResX entries and linked designer usage inspected; no live custom resource)
-- `CnCTDRAMapEditor/Tools/InfantryTool.cs` — Inventory only
+- `CnCTDRAMapEditor/Tools/InfantryTool.cs` — Body reviewed (all constructor, selector, five-stop group placement/movement, pick/select, preview/render, and disposal bodies inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Tools/OverlaysTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/ResourcesTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/SmudgeTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/TemplateTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/TerrainTool.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/UnitTool.cs` — Inventory only
+- `CnCTDRAMapEditor/Tools/UnitTool.cs` — Body reviewed (all constructor, selector, occupancy-checked placement/movement rollback, pick/select, preview/render, and disposal bodies inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Tools/ViewTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/WallsTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/WaypointsTool.cs` — Body reviewed (selection, placement, immediate undo/redo, and disposal inspected)

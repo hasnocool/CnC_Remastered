@@ -38,3 +38,8 @@ Pinned upstream: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
 ## Rust mapping
 
 crates/map-editor-model/src/lib.rs stores waypoint number to CellCoord in a BTreeMap; MapDocument::add_waypoint rejects duplicate waypoint numbers and out-of-bounds coordinates. cell_metrics.rs supplies checked coordinate/index conversion. There is no CellTrigger collection, paint command, undo/redo stack, placement-mode state, or UI adapter in this crate. These are partial model building blocks only; neither tool is Rust-mapped or parity-tested.
+
+
+## Related object placement tools
+
+The shared cell-trigger and waypoint tools are distinct from the object tools. For structure, infantry-group, and unit placement semantics, see [ObjectPlacementTools.md](ObjectPlacementTools.md) and the individual [BuildingTool](BuildingTool.cs.md), [InfantryTool](InfantryTool.cs.md), and [UnitTool](UnitTool.cs.md) source guides.

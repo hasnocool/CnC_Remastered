@@ -2,6 +2,18 @@
 
 ## Current tranche
 
+### Tranche 6I — building, infantry, and unit placement tools
+
+- Audited the complete pinned bodies of BuildingTool.cs (503 lines), InfantryTool.cs (540 lines), and UnitTool.cs (427 lines), including all constructors, state properties, event handlers, placement/removal/movement helpers, preview rendering, post-render overlays, and disposal.
+- Traced MainForm.RefreshActiveTool catalog filters and the ViewTool/ITool lifecycle. Inspected the supporting Building, Infantry/InfantryGroup, Unit, Map, and OccupierSet contracts needed to explain occupancy and collection side effects.
+- Documented Building's dual Buildings/Technos registration, BaseOccupyMask versus OccupyMask checks, bib smudge lifecycle, and contiguous BasePriority normalization.
+- Documented InfantryGroup's five stopping slots, nearest-stop ordering, single-nearest pick/select behavior versus nearest-free add/remove/drag behavior, and member/group back-reference updates.
+- Documented Unit placement through OccupierSet.Add and move rollback when the destination is invalid or occupied.
+- Found cross-tool gaps: these three classes do not enqueue undo/redo commands despite receiving the shared UndoRedoList; per-object PropertyChanged handlers are not detached; BuildingTool and InfantryTool do not close their property popup during disposal; and each derived PostRenderMap allocates an undisposed Pen per render.
+- Recorded unchecked First() constructor assumptions, synchronous full-map cloning in the render path, and the existing Rust model's lack of typed Building/Unit/InfantryGroup/occupancy/command support.
+- Added four source-reference documents and updated the cross-reference, tool-dialog index, placement-tool index, inventory, and roadmap. Inventory now records 21 legacy Reviewed, 132 Partially reviewed, 11 Header reviewed, 14 Body reviewed, 9 Resource reviewed, and 1,144 Inventory only. No source is claimed Rust-mapped, Tested, or Complete.
+- No Rust code was changed and no build, UI test, or parity test was executed.
+
 ### Tranche 6H — tool dialogs, type selector, and placement tools
 
 - Audited all seven tool-dialog code-behind files, all seven generated designers, and all seven linked .resx files. Documented exact exposed controls, constructor/plugin initialization, designer layouts, selector bindings, and resource payload names/types.
@@ -183,7 +195,7 @@
 ## Priority order
 
 1. Finish the editor plugin/serialization second pass: complete TD/RA GamePlugin bodies, per-section layouts, LCW bounds/error behavior, unknown-section edge cases, and host lifecycle.
-2. Continue the remaining C# editor Tools implementations (Building, Infantry, Unit, Terrain, Resources, Template, Overlay, Smudge, Walls, and other tools), ViewTool/base lifecycle, remaining controls (ObjectProperties/TerrainProperties/TypeItem), game-specific type registries, and all remaining .resx files with linked designer usage.
+2. Continue the remaining C# editor Tools implementations after BuildingTool, InfantryTool, and UnitTool: TerrainTool, ResourcesTool, TemplateTool, OverlaysTool, SmudgeTool, WallsTool, ViewTool/base lifecycle, remaining controls (ObjectProperties/TerrainProperties/TypeItem), game-specific type registries, and all remaining .resx files with linked designer usage.
 3. Add TD/RA golden INI/BIN/MEG/PGM fixtures and byte-for-byte round-trip tests; map codecs and plugin contracts to typed Rust modules.
 4. Map, template, theatre, icon-set, palette, MIX, IFF, and native scenario loading.
 5. Core object model: abstract object, techno, cell, unit, infantry, aircraft, vessel, building, bullet, weapon, warhead.

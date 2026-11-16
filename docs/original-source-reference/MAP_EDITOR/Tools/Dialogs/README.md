@@ -48,3 +48,13 @@ The current crates/map-editor-model provides MapDocument, CellLayers, CellMetric
 ## Status and limitations
 
 The seven code-behind files are Body reviewed; the seven generated designers are Header reviewed; the seven .resx files are Resource reviewed. TypeComboBox.cs and the two placement-tool source files are Body reviewed, and TypeComboBox.Designer.cs is Header reviewed. None is claimed Rust-mapped, Tested, or Complete. Broader tool implementations, ViewTool, other controls, and runtime UI tests remain open.
+
+
+## Object placement consumers
+
+The shared ObjectToolDialog also hosts three independently audited placement tools:
+- [BuildingTool](../BuildingTool.cs.md): multi-cell structure occupancy, building bibs, and base-priority normalization.
+- [InfantryTool](../InfantryTool.cs.md): one-cell InfantryGroup with five stopping slots.
+- [UnitTool](../UnitTool.cs.md): single Unit occupiers with occupancy-checked drag rollback.
+
+See the [object placement comparison](../ObjectPlacementTools.md) for MainForm filters, inherited ViewTool rendering, lifecycle differences, and Rust command requirements. These source files are Body reviewed; none is Rust-mapped or parity-tested.
