@@ -53,8 +53,12 @@ The current crates/map-editor-model source contains MapDocument, CellLayers, dim
 | CnCTDRAMapEditor/Tools/BuildingTool.cs | Place/remove/move structures, apply two occupancy masks, manage bib smudges and base-building priority order, preview and property editing. | No Building model, occupancy-set equivalent, bib lifecycle, base-priority command, or placement UI found in map-editor-model. 
 | CnCTDRAMapEditor/Tools/InfantryTool.cs | Manage InfantryGroup and five stopping slots, nearest-stop selection, add/remove/move, property editing and preview. | No Infantry/InfantryGroup types, stopping-slot model, or group placement commands found. 
 | CnCTDRAMapEditor/Tools/UnitTool.cs | Place/remove/move individual units with OccupierSet collision validation and rollback, plus pick/edit/preview. | No Unit entity, occupancy mask, or movement command found. |
+| CnCTDRAMapEditor/Tools/ViewTool.cs | Shared ITool lifecycle, map-panel render callbacks, layer toggles, navigation widget, and waypoint/trigger/boundary overlays. | No Rust viewport, layer renderer, navigation adapter, invalidation scheduler, or trigger overlay painter found. |
 
 The dialog pass also found a static resource lookup defect in GenericToolDialog: its designer asks TemplateToolDialog's resource manager for a key stored in GenericToolDialog.resx. Fix this before using the original UI as the parity oracle. No GUI test or Rust parity test was executed.
 
 
 The three object tools are documented in [ObjectPlacementTools.md](MAP_EDITOR/Tools/ObjectPlacementTools.md), with per-file guides for [BuildingTool](MAP_EDITOR/Tools/BuildingTool.cs.md), [InfantryTool](MAP_EDITOR/Tools/InfantryTool.cs.md), and [UnitTool](MAP_EDITOR/Tools/UnitTool.cs.md). All three are Body reviewed only. Their source bodies do not use the inherited UndoRedoList, and the current MapDocument still stores only generic cell layers and waypoints.
+
+
+The shared renderer and lifecycle base is documented in [ViewTool.cs.md](MAP_EDITOR/Tools/ViewTool.cs.md). It is Body reviewed only; its GDI overlay lifetime and synchronous pre-render work remain explicit porting concerns.

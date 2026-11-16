@@ -23,10 +23,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1144 |
+| Inventory only | 1143 |
 | Partially reviewed | 132 |
 | Header reviewed | 11 |
-| Body reviewed | 14 |
+| Body reviewed | 15 |
 | Resource reviewed | 9 |
 | Legacy Reviewed | 21 |
 | Rust-mapped | 0 |
@@ -300,7 +300,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Tools/TemplateTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/TerrainTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/UnitTool.cs` — Body reviewed (all constructor, selector, occupancy-checked placement/movement rollback, pick/select, preview/render, and disposal bodies inspected; Rust mapping pending)
-- `CnCTDRAMapEditor/Tools/ViewTool.cs` — Inventory only
+- `CnCTDRAMapEditor/Tools/ViewTool.cs` — Body reviewed (shared layer lifecycle, render callbacks, waypoint/techno-trigger/cell-trigger/boundary overlays, and disposal inspected; Rust renderer mapping pending)
 - `CnCTDRAMapEditor/Tools/WallsTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/WaypointsTool.cs` — Body reviewed (selection, placement, immediate undo/redo, and disposal inspected)
 - `CnCTDRAMapEditor/Utility/CRC.cs` — Inventory only

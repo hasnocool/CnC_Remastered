@@ -2,6 +2,16 @@
 
 ## Current tranche
 
+### Tranche 6J — shared ViewTool lifecycle and map overlay renderer
+
+- Audited the complete pinned ViewTool.cs body, including ITool implementation, stored fields, Layers property, constructor subscriptions, invalidation, BasicSection change handling, pre/post-render callbacks, every shared overlay branch, and disposal.
+- Documented exact rendering behavior for waypoint labels, techno trigger labels (Terrain, Building, Unit, and each InfantryGroup stop), cell-trigger labels, and map boundaries.
+- Confirmed MapPanel_PreRender treats a null cell set as a full render, skips a non-null empty set, filters supplied cells through Map.Metrics.Contains, applies nearest-neighbor/high-speed graphics settings only when quality is above one, and invokes MapRenderer synchronously.
+- Found shared GDI lifetime gaps: the base post-render overlay branches allocate brushes, pens, and StringFormat objects without deterministic disposal. Derived object tools also allocate pens on each render.
+- Recorded that ViewTool captures plugin.Map at construction, stores but does not consume the UndoRedoList, and requires derived tools to unsubscribe their own event handlers.
+- Added the ViewTool source guide and updated the 1,331-file inventory, Rust cross-reference, and audit roadmap. Inventory now records 21 legacy Reviewed, 132 Partially reviewed, 11 Header reviewed, 15 Body reviewed, 9 Resource reviewed, and 1,143 Inventory only. No source is claimed Rust-mapped, Tested, or Complete.
+- No Rust source was changed and no build, GUI test, or parity test was run.
+
 ### Tranche 6I — building, infantry, and unit placement tools
 
 - Audited the complete pinned bodies of BuildingTool.cs (503 lines), InfantryTool.cs (540 lines), and UnitTool.cs (427 lines), including all constructors, state properties, event handlers, placement/removal/movement helpers, preview rendering, post-render overlays, and disposal.
@@ -195,7 +205,7 @@
 ## Priority order
 
 1. Finish the editor plugin/serialization second pass: complete TD/RA GamePlugin bodies, per-section layouts, LCW bounds/error behavior, unknown-section edge cases, and host lifecycle.
-2. Continue the remaining C# editor Tools implementations after BuildingTool, InfantryTool, and UnitTool: TerrainTool, ResourcesTool, TemplateTool, OverlaysTool, SmudgeTool, WallsTool, ViewTool/base lifecycle, remaining controls (ObjectProperties/TerrainProperties/TypeItem), game-specific type registries, and all remaining .resx files with linked designer usage.
+2. Continue the remaining C# editor Tools implementations after BuildingTool, InfantryTool, UnitTool, and ViewTool: TerrainTool, ResourcesTool, TemplateTool, OverlaysTool, SmudgeTool, WallsTool, remaining controls (ObjectProperties/TerrainProperties/TypeItem), game-specific type registries, and all remaining .resx files with linked designer usage.
 3. Add TD/RA golden INI/BIN/MEG/PGM fixtures and byte-for-byte round-trip tests; map codecs and plugin contracts to typed Rust modules.
 4. Map, template, theatre, icon-set, palette, MIX, IFF, and native scenario loading.
 5. Core object model: abstract object, techno, cell, unit, infantry, aircraft, vessel, building, bullet, weapon, warhead.
