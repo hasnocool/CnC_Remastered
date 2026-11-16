@@ -58,3 +58,8 @@ The template layer and decorative overlay layer are now covered in [TemplateAndO
 ## Smudges and walls
 
 The final overlay-family tools are documented in [SmudgeAndWallsTools.md](SmudgeAndWallsTools.md), with detailed [SmudgeTool](SmudgeTool.cs.md) and [WallsTool](WallsTool.cs.md) guides. Smudges include automatically generated building bibs; wall overlays are also registered in both Buildings and Technos occupancy sets.
+
+
+## Shared input and property controls
+
+See [NavigationWidget.cs.md](../../Widgets/NavigationWidget.cs.md) for mouse-cell/subpixel conversion and [TerrainProperties.cs.md](../Controls/TerrainProperties.cs.md) for trigger binding and the unwired dirty-notification handler.

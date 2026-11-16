@@ -23,11 +23,11 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1137 |
-| Partially reviewed | 132 |
-| Header reviewed | 11 |
-| Body reviewed | 21 |
-| Resource reviewed | 9 |
+| Inventory only | 1134 |
+| Partially reviewed | 131 |
+| Header reviewed | 12 |
+| Body reviewed | 23 |
+| Resource reviewed | 10 |
 | Legacy Reviewed | 21 |
 | Rust-mapped | 0 |
 | Tested | 0 |
@@ -59,9 +59,9 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Controls/PlayerSettings.resx` — Inventory only
 - `CnCTDRAMapEditor/Controls/PropertiesComboBox.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/PropertiesComboBox.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/TerrainProperties.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/TerrainProperties.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
-- `CnCTDRAMapEditor/Controls/TerrainProperties.resx` — Inventory only
+- `CnCTDRAMapEditor/Controls/TerrainProperties.Designer.cs` — Header reviewed (one-row Trigger label/PropertiesComboBox layout and SelectedIndexChanged wiring inspected)
+- `CnCTDRAMapEditor/Controls/TerrainProperties.cs` — Body reviewed (trigger data binding, popup lifecycle, trigger collection subscription, and dirty-notification wiring inspected; Rust property command pending)
+- `CnCTDRAMapEditor/Controls/TerrainProperties.resx` — Resource reviewed (4 resheaders, 0 data entries, 0 metadata entries)
 - `CnCTDRAMapEditor/Controls/TypeComboBox.Designer.cs` — Header reviewed (generated component container and designer lifecycle inspected; control behavior is in the code-behind guide)
 - `CnCTDRAMapEditor/Controls/TypeComboBox.cs` — Body reviewed (data binding, measurement, owner-draw, and fallback behavior inspected; dependent type contracts remain open)
 - `CnCTDRAMapEditor/Dialogs/ErrorMessageBox.Designer.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
@@ -321,7 +321,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Utility/TilesetManager.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/UndoRedoList.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/WWCompression.cs` — Inventory only
-- `CnCTDRAMapEditor/Widgets/NavigationWidget.cs` — Inventory only
+- `CnCTDRAMapEditor/Widgets/NavigationWidget.cs` — Body reviewed (mouse cell/subpixel conversion, valid-cell gating, middle-button pan, odd cursor footprint, rendering, and disposal inspected)
 
 ## REDALERT (628 files)
 

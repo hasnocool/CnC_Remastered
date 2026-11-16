@@ -2,6 +2,16 @@
 
 ## Current tranche
 
+### Tranche 6N — NavigationWidget and TerrainProperties control contracts
+
+- Audited the complete pinned NavigationWidget.cs body (167 lines), including mouse-to-map conversion, MouseCellChanged event semantics, subpixel calculations, odd cursor-footprint normalization, middle-button panning, cursor rendering, and disposal.
+- Audited TerrainProperties.cs (159 lines), its generated designer (113 lines), and TerrainProperties.resx (120 lines). Parsed the actual XML: four resheaders, zero data entries, zero metadata entries, and no image/binary/string payloads.
+- Confirmed the designer contains one Trigger label and one PropertiesComboBox, with SelectedIndexChanged wired to comboBox_SelectedValueChanged; no Terrain.PropertyChanged subscription is present.
+- Found that TerrainProperties.Obj_PropertyChanged contains the only Plugin.Dirty assignment but is not subscribed by either code-behind or designer. Trigger binding writes the value without invoking that dirty handler.
+- Found NavigationWidget updates MouseSubPixel before the bounds check but leaves MouseCell unchanged for an out-of-bounds coordinate; the pair can diverge. This directly affects InfantryTool's use of MouseCell plus MouseSubPixel for stopping-slot selection.
+- Updated the TerrainTool and InfantryTool guides with the control and pointer findings. Inventory now records 21 legacy Reviewed, 131 Partially reviewed, 12 Header reviewed, 23 Body reviewed, 10 Resource reviewed, and 1,134 Inventory only. No source is claimed Rust-mapped, Tested, or Complete.
+- No Rust code was changed and no build, UI test, or save-dirty test was executed.
+
 ### Tranche 6M — smudge and wall tools
 
 - Audited the complete pinned SmudgeTool.cs (338 lines) and WallsTool.cs (385 lines) bodies, including constructors, catalog selection, click/drag input, add/remove/pick, undo/redo, preview rendering, and disposal.
@@ -238,7 +248,7 @@
 ## Priority order
 
 1. Finish the editor plugin/serialization second pass: complete TD/RA GamePlugin bodies, per-section layouts, LCW bounds/error behavior, unknown-section edge cases, and host lifecycle.
-2. Continue remaining editor controls and models after the audited placement tools: ObjectProperties, TerrainProperties, TypeItem, NavigationWidget/MapPanel, map section/collection models, game-specific type registries, and all remaining .resx files with linked designer usage. Reconcile each tool's current behavior with Rust model commands before marking any file Rust-mapped.
+2. Continue remaining editor controls and models after NavigationWidget and TerrainProperties: ObjectProperties and its designer/resources, MapPanel and its designer/resources, PropertiesComboBox, TypeItem, ImageTooltip, MenuButton, map section/collection models, game-specific type registries, and all remaining .resx files with linked designer usage. Reconcile each tool's current behavior with Rust model commands before marking any file Rust-mapped.
 3. Add TD/RA golden INI/BIN/MEG/PGM fixtures and byte-for-byte round-trip tests; map codecs and plugin contracts to typed Rust modules.
 4. Map, template, theatre, icon-set, palette, MIX, IFF, and native scenario loading.
 5. Core object model: abstract object, techno, cell, unit, infantry, aircraft, vessel, building, bullet, weapon, warhead.

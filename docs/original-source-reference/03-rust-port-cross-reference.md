@@ -74,3 +74,11 @@ See [TemplateTool.cs.md](MAP_EDITOR/Tools/TemplateTool.cs.md), [OverlaysTool.cs.
 
 
 See [SmudgeTool.cs.md](MAP_EDITOR/Tools/SmudgeTool.cs.md), [WallsTool.cs.md](MAP_EDITOR/Tools/WallsTool.cs.md), and [SmudgeAndWallsTools.md](MAP_EDITOR/Tools/SmudgeAndWallsTools.md) for bib ownership and wall occupancy/connectivity contracts.
+
+
+| CnCTDRAMapEditor/Widgets/NavigationWidget.cs | Mouse-to-cell/subpixel conversion, pointer-cell events, odd cursor footprint, middle-button panning, and cursor rendering. | No validated pointer-state adapter or continuous subpixel event; current NavigationWidget can publish a new subpixel with a stale cell when outside Metrics. |
+| CnCTDRAMapEditor/Controls/TerrainProperties.cs | Trigger list binding, terrain property popup lifecycle, trigger collection refresh, and intended dirty notification. | No trigger-property command or popup binding adapter; inspected source has an unwired Obj_PropertyChanged dirty handler. |
+| CnCTDRAMapEditor/Controls/TerrainProperties.Designer.cs | One-row Trigger label and PropertiesComboBox with SelectedIndexChanged wiring. | No Rust property editor UI. |
+| CnCTDRAMapEditor/Controls/TerrainProperties.resx | Resource headers only; no data or metadata payload. | No runtime resource payload to port. |
+
+See [NavigationWidget.cs.md](MAP_EDITOR/Widgets/NavigationWidget.cs.md) and [TerrainProperties.cs.md](MAP_EDITOR/Controls/TerrainProperties.cs.md) for complete source and resource findings.
