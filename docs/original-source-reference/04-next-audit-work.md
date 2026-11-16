@@ -2,6 +2,17 @@
 
 ## Current tranche
 
+### Tranche 6O — object property controls and selector adapters
+
+- Audited ObjectProperties.cs (273 lines), its generated designer (346 lines), and ObjectProperties.resx (120 lines); parsed the actual resource XML as four resheaders, zero data entries, and zero metadata entries.
+- Audited PropertiesComboBox.cs (66 lines), its generated designer (51 lines), and TypeItem<T> (30 lines). Confirmed PropertiesComboBox has no .resx file and its designer contains only a component container.
+- Documented Infantry/Unit/Building-specific bindings for House, Strength, Direction, Mission, Trigger, BasePriority, IsPrebuilt, Sellable, and Rebuild; recorded the Red Alert versus Tiberian Dawn visibility split and mock-object dirty isolation.
+- Found a direction-visibility state leak when the same ObjectProperties instance is rebound from a turretless Building to Infantry/Unit; recorded the empty-HouseTypes fallback exception and trigger-name identity limitations.
+- Confirmed PropertiesComboBox temporarily disables the containing ToolStripDropDown.AutoClose and restores it on OnDropDownClosed; its Dispose path does not restore a host if the nested dropdown closes without that event.
+- Documented TypeItem<T> as a display-name/typed-value adapter used by House and Direction selectors.
+- Added four reference documents and updated the inventory, Rust cross-reference, MAP_EDITOR index, and roadmap. Inventory now records 21 legacy Reviewed, 129 Partially reviewed, 14 Header reviewed, 26 Body reviewed, 11 Resource reviewed, and 1,130 Inventory only. No source is claimed Rust-mapped, Tested, or Complete.
+- No Rust code was changed and no build, UI test, or parity test was executed.
+
 ### Tranche 6N — NavigationWidget and TerrainProperties control contracts
 
 - Audited the complete pinned NavigationWidget.cs body (167 lines), including mouse-to-map conversion, MouseCellChanged event semantics, subpixel calculations, odd cursor-footprint normalization, middle-button panning, cursor rendering, and disposal.
@@ -248,7 +259,7 @@
 ## Priority order
 
 1. Finish the editor plugin/serialization second pass: complete TD/RA GamePlugin bodies, per-section layouts, LCW bounds/error behavior, unknown-section edge cases, and host lifecycle.
-2. Continue remaining editor controls and models after NavigationWidget and TerrainProperties: ObjectProperties and its designer/resources, MapPanel and its designer/resources, PropertiesComboBox, TypeItem, ImageTooltip, MenuButton, map section/collection models, game-specific type registries, and all remaining .resx files with linked designer usage. Reconcile each tool's current behavior with Rust model commands before marking any file Rust-mapped.
+2. Continue remaining editor controls and models after NavigationWidget, TerrainProperties, ObjectProperties, PropertiesComboBox, and TypeItem: MapPanel and its designer/resources, ImageTooltip, MenuButton, map section/collection models, game-specific type registries, and all remaining .resx files with linked designer usage. Reconcile each tool's current behavior with Rust model commands before marking any file Rust-mapped.
 3. Add TD/RA golden INI/BIN/MEG/PGM fixtures and byte-for-byte round-trip tests; map codecs and plugin contracts to typed Rust modules.
 4. Map, template, theatre, icon-set, palette, MIX, IFF, and native scenario loading.
 5. Core object model: abstract object, techno, cell, unit, infantry, aircraft, vessel, building, bullet, weapon, warhead.

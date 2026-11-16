@@ -23,11 +23,11 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1134 |
-| Partially reviewed | 131 |
-| Header reviewed | 12 |
-| Body reviewed | 23 |
-| Resource reviewed | 10 |
+| Inventory only | 1130 |
+| Partially reviewed | 129 |
+| Header reviewed | 14 |
+| Body reviewed | 26 |
+| Resource reviewed | 11 |
 | Legacy Reviewed | 21 |
 | Rust-mapped | 0 |
 | Tested | 0 |
@@ -51,13 +51,13 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Controls/MapPanel.resx` — Inventory only
 - `CnCTDRAMapEditor/Controls/MenuButton.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/MenuButton.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/ObjectProperties.Designer.cs` — Inventory only
+- `CnCTDRAMapEditor/Controls/ObjectProperties.Designer.cs` — Header reviewed (property control layout, NumericUpDown ranges, and all change-event wiring inspected)
 - `CnCTDRAMapEditor/Controls/ObjectProperties.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/ObjectProperties.resx` — Inventory only
+- `CnCTDRAMapEditor/Controls/ObjectProperties.resx` — Resource reviewed (4 resheaders, 0 data entries, 0 metadata entries)
 - `CnCTDRAMapEditor/Controls/PlayerSettings.Designer.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/PlayerSettings.cs` — Partially reviewed (principal behavior and declarations; full handler/designer audit pending)
 - `CnCTDRAMapEditor/Controls/PlayerSettings.resx` — Inventory only
-- `CnCTDRAMapEditor/Controls/PropertiesComboBox.Designer.cs` — Inventory only
+- `CnCTDRAMapEditor/Controls/PropertiesComboBox.Designer.cs` — Header reviewed (component-container-only designer and disposal inspected; no resource file exists)
 - `CnCTDRAMapEditor/Controls/PropertiesComboBox.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/TerrainProperties.Designer.cs` — Header reviewed (one-row Trigger label/PropertiesComboBox layout and SelectedIndexChanged wiring inspected)
 - `CnCTDRAMapEditor/Controls/TerrainProperties.cs` — Body reviewed (trigger data binding, popup lifecycle, trigger collection subscription, and dirty-notification wiring inspected; Rust property command pending)
@@ -128,7 +128,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Model/TerrainType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/TheaterType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/Trigger.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/TypeItem.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/TypeItem.cs` — Body reviewed (generic Name/Type wrapper and constructor inspected; Rust selector adapter pending)
 - `CnCTDRAMapEditor/Model/Unit.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/UnitType.cs` — Inventory only
 - `CnCTDRAMapEditor/Model/Waypoint.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)

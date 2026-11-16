@@ -43,3 +43,13 @@ The current Rust map-editor-model crate is still an initial document model. It d
 The tool-window layer is now documented in [Tools/Dialogs](Tools/Dialogs/README.md), with individual guides for CellTriggersToolDialog, GenericToolDialog, ObjectToolDialog, ResourcesToolDialog, TemplateToolDialog, TerrainToolDialog, and WaypointsToolDialog. [TypeComboBox](Controls/TypeComboBox.cs.md) documents the owner-drawn type/thumbnail selector. [PlacementTools](Tools/PlacementTools.md) documents the CellTriggersTool and WaypointsTool event, model-mutation, and undo paths.
 
 The GenericToolDialog designer has a resource-manager type mismatch that can null its missing-thumbnail fallback; the issue and regression-test requirement are recorded in the source guide. The tool windows share one persisted location setting and currently save synchronously on every move event. These UI details are not implemented by the current portable map-editor-model crate.
+
+
+## Property editing and selector controls
+
+- [ObjectProperties](Controls/ObjectProperties.cs.md) — Infantry, Unit, and Building property binding, dirty tracking, mock-object isolation, and popup lifecycle.
+- [PropertiesComboBox](Controls/PropertiesComboBox.cs.md) — nested dropdown AutoClose coordination.
+- [TypeItem<T>](TypeItem.cs.md) — display-name/value adapter for typed selector entries.
+- [Object property editing overview](Controls/ObjectPropertyEditing.md) — control relationships and porting findings.
+- [TerrainProperties](Controls/TerrainProperties.cs.md) — terrain trigger binding and the unwired dirty-notification handler.
+- [NavigationWidget](Widgets/NavigationWidget.cs.md) — mouse-to-cell/subpixel conversion and pan state.

@@ -86,3 +86,11 @@ See [SmudgeTool.cs.md](MAP_EDITOR/Tools/SmudgeTool.cs.md), [WallsTool.cs.md](MAP
 See [NavigationWidget.cs.md](MAP_EDITOR/Widgets/NavigationWidget.cs.md) and [TerrainProperties.cs.md](MAP_EDITOR/Controls/TerrainProperties.cs.md) for complete source and resource findings.
 
 See [NavigationWidget.cs.md](MAP_EDITOR/Widgets/NavigationWidget.cs.md) and [TerrainProperties.cs.md](MAP_EDITOR/Controls/TerrainProperties.cs.md) for complete source and resource findings.
+
+
+- **ObjectProperties.cs:** typed property bindings for Infantry/Unit/Building, mock-object dirty isolation, IsPrebuilt house normalization, and popup event lifetime; the current Rust editor has no equivalent property command/UI adapter.
+- **ObjectProperties.Designer.cs / ObjectProperties.resx:** generated control layout and event wiring; the .resx has four headers and no data/metadata payload.
+- **PropertiesComboBox.cs:** nested ToolStripDropDown AutoClose coordination; no equivalent Rust popup ownership adapter.
+- **TypeItem.cs:** generic display-name/value wrapper used by HouseType and DirectionType selectors; replace with typed selector IDs rather than serializing this UI wrapper.
+
+See [ObjectPropertyEditing.md](MAP_EDITOR/Controls/ObjectPropertyEditing.md), [ObjectProperties.cs.md](MAP_EDITOR/Controls/ObjectProperties.cs.md), [PropertiesComboBox.cs.md](MAP_EDITOR/Controls/PropertiesComboBox.cs.md), and [TypeItem.cs.md](MAP_EDITOR/TypeItem.cs.md).
