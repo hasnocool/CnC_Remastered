@@ -54,6 +54,7 @@ The current crates/map-editor-model source contains MapDocument, CellLayers, dim
 | CnCTDRAMapEditor/Tools/InfantryTool.cs | Manage InfantryGroup and five stopping slots, nearest-stop selection, add/remove/move, property editing and preview. | No Infantry/InfantryGroup types, stopping-slot model, or group placement commands found. 
 | CnCTDRAMapEditor/Tools/UnitTool.cs | Place/remove/move individual units with OccupierSet collision validation and rollback, plus pick/edit/preview. | No Unit entity, occupancy mask, or movement command found. |
 | CnCTDRAMapEditor/Tools/ViewTool.cs | Shared ITool lifecycle, map-panel render callbacks, layer toggles, navigation widget, and waypoint/trigger/boundary overlays. | No Rust viewport, layer renderer, navigation adapter, invalidation scheduler, or trigger overlay painter found. |
+| CnCTDRAMapEditor/Tools/TerrainTool.cs | Place/remove/move terrain technos with type-specific occupancy masks, transformable icons, trigger properties, preview and undo for add/remove. | CellLayers.terrain stores only an optional numeric ID; no TerrainType catalog, occupancy mask, trigger/icon model, or placement commands. |\n| CnCTDRAMapEditor/Tools/ResourcesTool.cs | Paint/erase Tiberium, gold, and gems with a square brush, adjacency-derived icons, resource totals, and per-stroke undo. | CellLayers.overlay stores only an optional numeric ID; no OverlayType flags, resource values, adjacency resolver, brush command, or stroke undo. |
 
 The dialog pass also found a static resource lookup defect in GenericToolDialog: its designer asks TemplateToolDialog's resource manager for a key stored in GenericToolDialog.resx. Fix this before using the original UI as the parity oracle. No GUI test or Rust parity test was executed.
 
@@ -62,3 +63,6 @@ The three object tools are documented in [ObjectPlacementTools.md](MAP_EDITOR/To
 
 
 The shared renderer and lifecycle base is documented in [ViewTool.cs.md](MAP_EDITOR/Tools/ViewTool.cs.md). It is Body reviewed only; its GDI overlay lifetime and synchronous pre-render work remain explicit porting concerns.
+
+
+See [TerrainTool.cs.md](MAP_EDITOR/Tools/TerrainTool.cs.md), [ResourcesTool.cs.md](MAP_EDITOR/Tools/ResourcesTool.cs.md), and [TerrainAndResourceTools.md](MAP_EDITOR/Tools/TerrainAndResourceTools.md) for the source-level contracts and identified dirty/undo/resource-recalculation gaps.

@@ -43,3 +43,8 @@ crates/map-editor-model/src/lib.rs stores waypoint number to CellCoord in a BTre
 ## Related object placement tools
 
 The shared cell-trigger and waypoint tools are distinct from the object tools. For structure, infantry-group, and unit placement semantics, see [ObjectPlacementTools.md](ObjectPlacementTools.md) and the individual [BuildingTool](BuildingTool.cs.md), [InfantryTool](InfantryTool.cs.md), and [UnitTool](UnitTool.cs.md) source guides.
+
+
+## Terrain and resource editing
+
+The next two model layers are covered in [TerrainAndResourceTools.md](TerrainAndResourceTools.md), with per-file guides for [TerrainTool](TerrainTool.cs.md) and [ResourcesTool](ResourcesTool.cs.md). Terrain is stored in Technos and uses occupancy masks; resources are stored in the Overlay cell grid and use grouped brush-stroke undo.

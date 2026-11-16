@@ -2,6 +2,17 @@
 
 ## Current tranche
 
+### Tranche 6K — terrain and resource editing tools
+
+- Audited the complete pinned TerrainTool.cs (456 lines) and ResourcesTool.cs (365 lines) bodies, including constructors, event routing, placement/movement, brush mutation, undo/redo closures, status updates, rendering, and disposal.
+- Inspected Terrain/TerrainType, Overlay/OverlayType, TerrainProperties, TerrainToolDialog, ResourcesToolDialog designer constraints, Map resource-adjacency recalculation, and OccupierSet behavior.
+- Documented Terrain's use of Map.Technos and OccupyMask, theatre-specific type initialization, transformable icon 22, pivot-preserving drag, and per-operation add/remove undo.
+- Found Terrain drag movement does not set plugin.Dirty or register undo/redo; TerrainProperties defines a dirty handler but the inspected code-behind/designer do not subscribe it; Terrain preview dereferences Type.Thumbnail without a null guard.
+- Documented ResourcesTool's 1/3/5/7/9 brush sizes, row-zero/final-row add exclusion, resource-only removal, grouped per-stroke undo, first-matching type selection, adjacent-resource icon tables, and Map.TotalResources formula.
+- Recorded repeated full resource-total recalculation during brush input, undisposed render Pens, and the difference between Terrain per-operation undo and ResourcesTool per-stroke undo.
+- Added three source-reference documents and updated the 1,331-file inventory, Rust cross-reference, placement-tool index, and roadmap. Inventory now records 21 legacy Reviewed, 132 Partially reviewed, 11 Header reviewed, 17 Body reviewed, 9 Resource reviewed, and 1,141 Inventory only. No source is claimed Rust-mapped, Tested, or Complete.
+- No Rust code was changed and no build, UI test, or parity test was executed.
+
 ### Tranche 6J — shared ViewTool lifecycle and map overlay renderer
 
 - Audited the complete pinned ViewTool.cs body, including ITool implementation, stored fields, Layers property, constructor subscriptions, invalidation, BasicSection change handling, pre/post-render callbacks, every shared overlay branch, and disposal.
@@ -205,7 +216,7 @@
 ## Priority order
 
 1. Finish the editor plugin/serialization second pass: complete TD/RA GamePlugin bodies, per-section layouts, LCW bounds/error behavior, unknown-section edge cases, and host lifecycle.
-2. Continue the remaining C# editor Tools implementations after BuildingTool, InfantryTool, UnitTool, and ViewTool: TerrainTool, ResourcesTool, TemplateTool, OverlaysTool, SmudgeTool, WallsTool, remaining controls (ObjectProperties/TerrainProperties/TypeItem), game-specific type registries, and all remaining .resx files with linked designer usage.
+2. Continue the remaining C# editor Tools implementations after BuildingTool, InfantryTool, UnitTool, ViewTool, TerrainTool, and ResourcesTool: TemplateTool, OverlaysTool, SmudgeTool, WallsTool, remaining controls (ObjectProperties/TerrainProperties/TypeItem), game-specific type registries, and all remaining .resx files with linked designer usage.
 3. Add TD/RA golden INI/BIN/MEG/PGM fixtures and byte-for-byte round-trip tests; map codecs and plugin contracts to typed Rust modules.
 4. Map, template, theatre, icon-set, palette, MIX, IFF, and native scenario loading.
 5. Core object model: abstract object, techno, cell, unit, infantry, aircraft, vessel, building, bullet, weapon, warhead.

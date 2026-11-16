@@ -23,10 +23,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1143 |
+| Inventory only | 1141 |
 | Partially reviewed | 132 |
 | Header reviewed | 11 |
-| Body reviewed | 15 |
+| Body reviewed | 17 |
 | Resource reviewed | 9 |
 | Legacy Reviewed | 21 |
 | Rust-mapped | 0 |
@@ -295,10 +295,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Tools/Dialogs/WaypointsToolDialog.resx` — Resource reviewed (ResX entries and linked designer usage inspected; no live custom resource)
 - `CnCTDRAMapEditor/Tools/InfantryTool.cs` — Body reviewed (all constructor, selector, five-stop group placement/movement, pick/select, preview/render, and disposal bodies inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Tools/OverlaysTool.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/ResourcesTool.cs` — Inventory only
+- `CnCTDRAMapEditor/Tools/ResourcesTool.cs` — Body reviewed (brush footprints, resource type selection, cell mutation, grouped stroke undo/redo, total recalculation, rendering, and disposal inspected; Rust command mapping pending)
 - `CnCTDRAMapEditor/Tools/SmudgeTool.cs` — Inventory only
 - `CnCTDRAMapEditor/Tools/TemplateTool.cs` — Inventory only
-- `CnCTDRAMapEditor/Tools/TerrainTool.cs` — Inventory only
+- `CnCTDRAMapEditor/Tools/TerrainTool.cs` — Body reviewed (terrain selection, placement/removal undo, pivot-preserving movement, type preview, property popup, occupancy rendering, and disposal inspected; Rust command mapping pending)
 - `CnCTDRAMapEditor/Tools/UnitTool.cs` — Body reviewed (all constructor, selector, occupancy-checked placement/movement rollback, pick/select, preview/render, and disposal bodies inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Tools/ViewTool.cs` — Body reviewed (shared layer lifecycle, render callbacks, waypoint/techno-trigger/cell-trigger/boundary overlays, and disposal inspected; Rust renderer mapping pending)
 - `CnCTDRAMapEditor/Tools/WallsTool.cs` — Inventory only
