@@ -23,10 +23,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1139 |
+| Inventory only | 1137 |
 | Partially reviewed | 132 |
 | Header reviewed | 11 |
-| Body reviewed | 19 |
+| Body reviewed | 21 |
 | Resource reviewed | 9 |
 | Legacy Reviewed | 21 |
 | Rust-mapped | 0 |
@@ -296,12 +296,12 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Tools/InfantryTool.cs` — Body reviewed (all constructor, selector, five-stop group placement/movement, pick/select, preview/render, and disposal bodies inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Tools/OverlaysTool.cs` — Body reviewed (selector/catalog, click placement/removal, non-wall picking, preview ghost, placeable outlines, and disposal inspected; Rust command mapping pending)
 - `CnCTDRAMapEditor/Tools/ResourcesTool.cs` — Body reviewed (brush footprints, resource type selection, cell mutation, grouped stroke undo/redo, total recalculation, rendering, and disposal inspected; Rust command mapping pending)
-- `CnCTDRAMapEditor/Tools/SmudgeTool.cs` — Inventory only
+- `CnCTDRAMapEditor/Tools/SmudgeTool.cs` — Body reviewed (bib-filtered catalog, click placement/removal, pick behavior, smudge preview/render, and disposal inspected; Rust cell model pending)
 - `CnCTDRAMapEditor/Tools/TemplateTool.cs` — Body reviewed (theatre catalog, icon mask selection, multi-cell placement/removal, bounds resizing, buffered undo/redo, preview, and disposal inspected; Rust command mapping pending)
 - `CnCTDRAMapEditor/Tools/TerrainTool.cs` — Body reviewed (terrain selection, placement/removal undo, pivot-preserving movement, type preview, property popup, occupancy rendering, and disposal inspected; Rust command mapping pending)
 - `CnCTDRAMapEditor/Tools/UnitTool.cs` — Body reviewed (all constructor, selector, occupancy-checked placement/movement rollback, pick/select, preview/render, and disposal bodies inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Tools/ViewTool.cs` — Body reviewed (shared layer lifecycle, render callbacks, waypoint/techno-trigger/cell-trigger/boundary overlays, and disposal inspected; Rust renderer mapping pending)
-- `CnCTDRAMapEditor/Tools/WallsTool.cs` — Inventory only
+- `CnCTDRAMapEditor/Tools/WallsTool.cs` — Body reviewed (wall occupancy checks, overlay replacement, connected icon stroke painting, grouped undo/redo, preview/render, and disposal inspected; Rust command mapping pending)
 - `CnCTDRAMapEditor/Tools/WaypointsTool.cs` — Body reviewed (selection, placement, immediate undo/redo, and disposal inspected)
 - `CnCTDRAMapEditor/Utility/CRC.cs` — Inventory only
 - `CnCTDRAMapEditor/Utility/ExtensionMethods.cs` — Inventory only

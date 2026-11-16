@@ -53,3 +53,8 @@ The next two model layers are covered in [TerrainAndResourceTools.md](TerrainAnd
 ## Template and decorative overlays
 
 The template layer and decorative overlay layer are now covered in [TemplateAndOverlayTools.md](TemplateAndOverlayTools.md), with detailed guides for [TemplateTool](TemplateTool.cs.md) and [OverlaysTool](OverlaysTool.cs.md). TemplateTool also edits Map.Bounds through a separate Ctrl-driven edge/corner workflow.
+
+
+## Smudges and walls
+
+The final overlay-family tools are documented in [SmudgeAndWallsTools.md](SmudgeAndWallsTools.md), with detailed [SmudgeTool](SmudgeTool.cs.md) and [WallsTool](WallsTool.cs.md) guides. Smudges include automatically generated building bibs; wall overlays are also registered in both Buildings and Technos occupancy sets.

@@ -56,6 +56,7 @@ The current crates/map-editor-model source contains MapDocument, CellLayers, dim
 | CnCTDRAMapEditor/Tools/ViewTool.cs | Shared ITool lifecycle, map-panel render callbacks, layer toggles, navigation widget, and waypoint/trigger/boundary overlays. | No Rust viewport, layer renderer, navigation adapter, invalidation scheduler, or trigger overlay painter found. |
 | CnCTDRAMapEditor/Tools/TerrainTool.cs | Place/remove/move terrain technos with type-specific occupancy masks, transformable icons, trigger properties, preview and undo for add/remove. | CellLayers.terrain stores only an optional numeric ID; no TerrainType catalog, occupancy mask, trigger/icon model, or placement commands. |\n| CnCTDRAMapEditor/Tools/ResourcesTool.cs | Paint/erase Tiberium, gold, and gems with a square brush, adjacency-derived icons, resource totals, and per-stroke undo. | CellLayers.overlay stores only an optional numeric ID; no OverlayType flags, resource values, adjacency resolver, brush command, or stroke undo. |
 | CnCTDRAMapEditor/Tools/TemplateTool.cs | Theatre-filtered multi-icon template catalog, IconMask-based placement/removal, per-cell undo, preview selection, and map-boundary resizing. | CellLayers.template stores only an optional numeric ID; no TemplateType/IconMask/icon-index catalog, map-bounds command, or undo adapter. |\n| CnCTDRAMapEditor/Tools/OverlaysTool.cs | Select, place, remove, and preview decorative/crate overlays with category filtering and per-click undo. | CellLayers.overlay stores only an optional numeric ID; no OverlayType flags, placeability policy, or overlay commands. |
+| CnCTDRAMapEditor/Tools/SmudgeTool.cs | Place/remove/pick cell smudges while protecting building bib cells; per-click undo. | No typed Smudge cell, bib ownership marker, or smudge commands. |\n| CnCTDRAMapEditor/Tools/WallsTool.cs | Paint/remove wall overlays with dual occupancy checks, connected icons, and per-stroke undo. | No wall overlay type flags, Buildings/Technos wall registration, connectivity resolver, or stroke commands. |
 
 The dialog pass also found a static resource lookup defect in GenericToolDialog: its designer asks TemplateToolDialog's resource manager for a key stored in GenericToolDialog.resx. Fix this before using the original UI as the parity oracle. No GUI test or Rust parity test was executed.
 
@@ -70,3 +71,6 @@ See [TerrainTool.cs.md](MAP_EDITOR/Tools/TerrainTool.cs.md), [ResourcesTool.cs.m
 
 
 See [TemplateTool.cs.md](MAP_EDITOR/Tools/TemplateTool.cs.md), [OverlaysTool.cs.md](MAP_EDITOR/Tools/OverlaysTool.cs.md), and [TemplateAndOverlayTools.md](MAP_EDITOR/Tools/TemplateAndOverlayTools.md) for the full source contracts and porting findings.
+
+
+See [SmudgeTool.cs.md](MAP_EDITOR/Tools/SmudgeTool.cs.md), [WallsTool.cs.md](MAP_EDITOR/Tools/WallsTool.cs.md), and [SmudgeAndWallsTools.md](MAP_EDITOR/Tools/SmudgeAndWallsTools.md) for bib ownership and wall occupancy/connectivity contracts.

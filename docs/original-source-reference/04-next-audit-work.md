@@ -2,6 +2,17 @@
 
 ## Current tranche
 
+### Tranche 6M — smudge and wall tools
+
+- Audited the complete pinned SmudgeTool.cs (338 lines) and WallsTool.cs (385 lines) bodies, including constructors, catalog selection, click/drag input, add/remove/pick, undo/redo, preview rendering, and disposal.
+- Inspected Smudge/SmudgeType, Overlay/OverlayType, MainForm filters, Map.AddBibs/RemoveBibs, Map.Overlay_CellChanged, Buildings/Technos occupancy registration, and Map.UpdateWallOverlays.
+- Documented automatic building bib ownership: Bib1/Bib2/Bib3 flag values, width-based bib selection, stored Building.BibCells, and removal cleanup.
+- Found SmudgeTool's picker can select Bib types outside its filtered catalog, while AddSmudge itself does not enforce the Bib restriction.
+- Documented wall overlays' dual registration in Map.Buildings and Map.Technos, two-set collision checks, same-type orthogonal connectivity bits, non-wall overlay replacement, and one undo entry per drag stroke.
+- Recorded wall catalog theatre filtering differences, selected-type preview invalidation, undisposed render Pens, and synchronous map cloning.
+- Added three source-reference documents and updated inventory, cross-reference, placement-tool index, and roadmap. Inventory now records 21 legacy Reviewed, 132 Partially reviewed, 11 Header reviewed, 21 Body reviewed, 9 Resource reviewed, and 1,137 Inventory only. No source is claimed Rust-mapped, Tested, or Complete.
+- No Rust code was changed and no build, UI test, or parity test was executed.
+
 ### Tranche 6L — template and decorative overlay tools
 
 - Audited the complete pinned TemplateTool.cs (1,009 lines) and OverlaysTool.cs (342 lines) bodies, including catalog construction, preview selection, placement/removal, mouse/keyboard modes, map-bounds resizing, undo/redo, render overlays, and disposal.
@@ -227,7 +238,7 @@
 ## Priority order
 
 1. Finish the editor plugin/serialization second pass: complete TD/RA GamePlugin bodies, per-section layouts, LCW bounds/error behavior, unknown-section edge cases, and host lifecycle.
-2. Continue the remaining C# editor Tools implementations after BuildingTool, InfantryTool, UnitTool, ViewTool, TerrainTool, ResourcesTool, TemplateTool, and OverlaysTool: SmudgeTool, WallsTool, remaining controls (ObjectProperties/TerrainProperties/TypeItem), game-specific type registries, and all remaining .resx files with linked designer usage.
+2. Continue remaining editor controls and models after the audited placement tools: ObjectProperties, TerrainProperties, TypeItem, NavigationWidget/MapPanel, map section/collection models, game-specific type registries, and all remaining .resx files with linked designer usage. Reconcile each tool's current behavior with Rust model commands before marking any file Rust-mapped.
 3. Add TD/RA golden INI/BIN/MEG/PGM fixtures and byte-for-byte round-trip tests; map codecs and plugin contracts to typed Rust modules.
 4. Map, template, theatre, icon-set, palette, MIX, IFF, and native scenario loading.
 5. Core object model: abstract object, techno, cell, unit, infantry, aircraft, vessel, building, bullet, weapon, warhead.
