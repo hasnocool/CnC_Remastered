@@ -23,11 +23,11 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1130 |
-| Partially reviewed | 129 |
-| Header reviewed | 14 |
-| Body reviewed | 26 |
-| Resource reviewed | 11 |
+| Inventory only | 1124 |
+| Partially reviewed | 128 |
+| Header reviewed | 17 |
+| Body reviewed | 29 |
+| Resource reviewed | 12 |
 | Legacy Reviewed | 21 |
 | Rust-mapped | 0 |
 | Tested | 0 |
@@ -44,13 +44,13 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Controls/BriefingSettings.Designer.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
 - `CnCTDRAMapEditor/Controls/BriefingSettings.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
 - `CnCTDRAMapEditor/Controls/BriefingSettings.resx` — Inventory only
-- `CnCTDRAMapEditor/Controls/ImageTooltip.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/ImageTooltip.cs` — Inventory only
+- `CnCTDRAMapEditor/Controls/ImageTooltip.Designer.cs` — Header reviewed (component-container-only designer; no child controls or resource file)
+- `CnCTDRAMapEditor/Controls/ImageTooltip.cs` — Body reviewed (owner-drawn image tooltip sizing, popup cancellation, draw callback, and MaxSize behavior inspected)
 - `CnCTDRAMapEditor/Controls/MapPanel.Designer.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
 - `CnCTDRAMapEditor/Controls/MapPanel.cs` — Partially reviewed (declarations, UI responsibilities, and key methods; full behavior pending)
-- `CnCTDRAMapEditor/Controls/MapPanel.resx` — Inventory only
-- `CnCTDRAMapEditor/Controls/MenuButton.Designer.cs` — Inventory only
-- `CnCTDRAMapEditor/Controls/MenuButton.cs` — Inventory only
+- `CnCTDRAMapEditor/Controls/MapPanel.resx` — Resource reviewed (4 resheaders, 0 data entries, 1 Boolean metadata entry: $this.TrayLargeIcon=False)
+- `CnCTDRAMapEditor/Controls/MenuButton.Designer.cs` — Header reviewed (component-container-only designer; no child controls or resource file)
+- `CnCTDRAMapEditor/Controls/MenuButton.cs` — Body reviewed (split-region hit testing, ContextMenuStrip dispatch, arrow/separator rendering, and property metadata inspected)
 - `CnCTDRAMapEditor/Controls/ObjectProperties.Designer.cs` — Header reviewed (property control layout, NumericUpDown ranges, and all change-event wiring inspected)
 - `CnCTDRAMapEditor/Controls/ObjectProperties.cs` — Inventory only
 - `CnCTDRAMapEditor/Controls/ObjectProperties.resx` — Resource reviewed (4 resheaders, 0 data entries, 0 metadata entries)

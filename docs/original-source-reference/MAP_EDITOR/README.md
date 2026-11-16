@@ -53,3 +53,11 @@ The GenericToolDialog designer has a resource-manager type mismatch that can nul
 - [Object property editing overview](Controls/ObjectPropertyEditing.md) — control relationships and porting findings.
 - [TerrainProperties](Controls/TerrainProperties.cs.md) — terrain trigger binding and the unwired dirty-notification handler.
 - [NavigationWidget](Widgets/NavigationWidget.cs.md) — mouse-to-cell/subpixel conversion and pan state.
+
+
+## Viewport and utility controls
+
+- [MapPanel](MapPanel.cs.md) — camera transforms, zoom anchoring, incremental invalidation, render lifecycle, and Windows redraw suspension.
+- [MapPanel designer/resources](MapPanel.Designer.cs.md) — component-only designer and the single Boolean tray metadata entry.
+- [ImageTooltip](Controls/ImageTooltip.cs.md) — owner-drawn image tooltip and aspect-ratio behavior.
+- [MenuButton](Controls/MenuButton.cs.md) — split-button menu dispatch and rendering.

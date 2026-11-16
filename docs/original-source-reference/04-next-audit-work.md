@@ -2,6 +2,16 @@
 
 ## Current tranche
 
+### Tranche 6P — MapPanel, ImageTooltip, and MenuButton controls
+
+- Audited the complete MapPanel.cs body (536 lines), MapPanel.Designer.cs (53 lines), and MapPanel.resx (123 lines). Parsed the XML: four resheaders, zero data entries, and one Boolean metadata entry named $this.TrayLargeIcon with value False.
+- Audited ImageTooltip.cs (65 lines) and its designer (51 lines), plus MenuButton.cs (75 lines) and its designer (51 lines). Neither ImageTooltip nor MenuButton has a .resx file.
+- Documented MapPanel's coordinate transform overloads, camera/zoom anchor preservation, incremental cell invalidation and overlap expansion, PreRender/PostRender order, AutoScroll reconciliation, and WM_SETREDRAW P/Invoke.
+- Found MapImage=null returns from UpdateCamera without invalidating or resetting prior scroll/camera state; ZoomStep accepts zero and divides by zero; camera redraw suspension lacks try/finally; four GDI Matrix instances are not disposed; MapImage ownership/replacement is undefined.
+- Documented ImageTooltip's independent width/height clamping, which can distort image aspect ratio, and MenuButton's unbounded SplitWidth geometry and split-click behavior.
+- Updated MapPanel source/designer references, added ImageTooltip and MenuButton guides, and updated inventory, Rust cross-reference, MAP_EDITOR index, and roadmap. Inventory now records 21 legacy Reviewed, 128 Partially reviewed, 17 Header reviewed, 29 Body reviewed, 12 Resource reviewed, and 1,124 Inventory only. No source is claimed Rust-mapped, Tested, or Complete.
+- No Rust code was changed and no build, GUI test, or parity test was executed.
+
 ### Tranche 6O — object property controls and selector adapters
 
 - Audited ObjectProperties.cs (273 lines), its generated designer (346 lines), and ObjectProperties.resx (120 lines); parsed the actual resource XML as four resheaders, zero data entries, and zero metadata entries.
@@ -259,7 +269,7 @@
 ## Priority order
 
 1. Finish the editor plugin/serialization second pass: complete TD/RA GamePlugin bodies, per-section layouts, LCW bounds/error behavior, unknown-section edge cases, and host lifecycle.
-2. Continue remaining editor controls and models after NavigationWidget, TerrainProperties, ObjectProperties, PropertiesComboBox, and TypeItem: MapPanel and its designer/resources, ImageTooltip, MenuButton, map section/collection models, game-specific type registries, and all remaining .resx files with linked designer usage. Reconcile each tool's current behavior with Rust model commands before marking any file Rust-mapped.
+2. Continue remaining editor controls and models after NavigationWidget, TerrainProperties, ObjectProperties, PropertiesComboBox, TypeItem, MapPanel, ImageTooltip, and MenuButton: map section/collection models, game-specific type registries, remaining shared widgets, and all remaining .resx files with linked designer usage. Reconcile each tool's current behavior with Rust model commands before marking any file Rust-mapped.
 3. Add TD/RA golden INI/BIN/MEG/PGM fixtures and byte-for-byte round-trip tests; map codecs and plugin contracts to typed Rust modules.
 4. Map, template, theatre, icon-set, palette, MIX, IFF, and native scenario loading.
 5. Core object model: abstract object, techno, cell, unit, infantry, aircraft, vessel, building, bullet, weapon, warhead.

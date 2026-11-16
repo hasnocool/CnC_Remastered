@@ -94,3 +94,10 @@ See [NavigationWidget.cs.md](MAP_EDITOR/Widgets/NavigationWidget.cs.md) and [Ter
 - **TypeItem.cs:** generic display-name/value wrapper used by HouseType and DirectionType selectors; replace with typed selector IDs rather than serializing this UI wrapper.
 
 See [ObjectPropertyEditing.md](MAP_EDITOR/Controls/ObjectPropertyEditing.md), [ObjectProperties.cs.md](MAP_EDITOR/Controls/ObjectProperties.cs.md), [PropertiesComboBox.cs.md](MAP_EDITOR/Controls/PropertiesComboBox.cs.md), and [TypeItem.cs.md](MAP_EDITOR/TypeItem.cs.md).
+
+
+- **MapPanel.cs / MapPanel.Designer.cs / MapPanel.resx:** camera transforms, zoom anchoring, incremental cell invalidation, render event order, Windows WM_SETREDRAW calls, component-only designer, and one Boolean tray metadata entry. The Rust UI has no equivalent camera/render/invalidation adapter.
+- **ImageTooltip.cs:** owner-drawn image tooltip with MaxSize clipping; the current clamp can distort aspect ratio. No Rust image-tooltip adapter is present.
+- **MenuButton.cs:** split-button ContextMenuStrip hit testing and arrow rendering. No Rust split-button adapter is present.
+
+See [MapPanel.cs.md](MAP_EDITOR/MapPanel.cs.md), [MapPanel.Designer.cs.md](MAP_EDITOR/MapPanel.Designer.cs.md), [ImageTooltip.cs.md](MAP_EDITOR/Controls/ImageTooltip.cs.md), and [MenuButton.cs.md](MAP_EDITOR/Controls/MenuButton.cs.md).
