@@ -297,3 +297,18 @@ A page is not complete merely because it names the class. It should explain all 
 2. Inspect all remaining designer/resource partners and parse each .resx XML payload plus linked generated accessor use.
 3. Trace Map/MapSection/CellGrid/occupancy callers in both GamePlugin implementations and renderer/tools; then complete INI/BIN/LCW serialization edge cases.
 4. Audit shared editor utilities and all Steamworks.NET generated/native binding files, then continue the native TD/RA inventory.
+
+
+### Tranche 6F — remaining compact scenario model records
+
+- Inspected complete pinned source bodies for CellTrigger, Overlay, Smudge, Waypoint, Trigger, and TeamType.
+- Added per-file guides for CellTrigger, Trigger, and TeamType; expanded Overlay, Smudge, and Waypoint guides to record exact fields, defaults, equality/hash behavior, and clone semantics.
+- Updated the editor README and inventory. New inventory totals: 1,121 Inventory only; 122 Partially reviewed; 17 Header reviewed; 42 Body reviewed; 12 Resource reviewed; 17 legacy Reviewed. Total remains 1,331. Rust-mapped, Tested, and Complete remain 0.
+- Recorded the cleanup boundary: Map collection changes reconcile Building.Trigger references, but do not scan CellTrigger cells or TeamType.Trigger references.
+- Existing Rust waypoint map/tests were inspected but tests were not executed. No C# runtime or serialization test was run; no Rust source was changed.
+
+## Next source batch
+
+1. Audit Building, Infantry/InfantryGroup, Unit, Terrain, and type-catalog dependencies against their actual GamePlugin serialization and call sites; upgrade only after full bodies and consumers are read.
+2. Inspect remaining .resx payloads and designer resource references.
+3. Continue TD/RA plugin and INI/BIN/LCW contract edge cases, then shared utilities and Steamworks native bindings.

@@ -75,3 +75,14 @@ The GenericToolDialog designer has a resource-manager type mismatch that can nul
 - [Template.cs](Template.cs.md) — per-cell template instance; distinct from multi-cell TemplateType.IconMask.
 
 The current Rust map-editor-model crate covers only the document/layer/waypoint foundation and part of CellMetrics. It does not yet reproduce the C# aggregate's occupancy, overlap, trigger, bib, batching, invalidation, or typed catalog behavior. Source-body review does not establish parity.
+
+
+## Remaining map/scenario model records
+
+- [CellTrigger](CellTrigger.cs.md) — per-cell trigger-name reference and its separate cleanup behavior.
+- [Overlay](Overlay.cs.md) and [Smudge](Smudge.cs.md) — placed overlay/smudge records, icon/data/tint fields, and type-catalog boundary.
+- [Waypoint](Waypoint.cs.md) — named waypoint, player-start flag, nullable cell, and partial Rust coordinate mapping.
+- [Trigger](Trigger.cs.md) — trigger event/action pairs, defaults, deep clone, and Building reference cleanup.
+- [TeamType](TeamType.cs.md) — team composition, byte-sized limits, mission sequence, and mixed clone semantics.
+
+See [Map model contracts](MapModel-Contracts.md) for how these records participate in the Map aggregate. Their source bodies are reviewed, but no Rust parity is claimed.

@@ -1,22 +1,14 @@
-# Waypoint.cs — editor model source guide
+# Waypoint.cs — named scenario waypoint descriptor
 
-> **Audit status: source inspected; explicit declarations and methods documented. Rust parity remains pending.**
+> **Source status: Body reviewed. Rust mapping: partial number-to-coordinate storage only.**
 
 - Upstream: [CnCTDRAMapEditor/Model/Waypoint.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Model/Waypoint.cs)
-- Pinned upstream commit: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae
-- Source size: 1975 characters.
-- Namespace: MobiusEditor.Model
+- Upstream blob: fd2945014259e15a420defcbb81511983485e927
+- Namespace: MobiusEditor.Model.
+- Imports: MobiusEditor.Interface; System.
 
-## Types and members
-WaypointFlag: None, PlayerStart.
-Waypoint implements INamedType. Name:string and Flag:WaypointFlag have private setters; Cell:int? has public getter/setter.
-Constructors: Waypoint(name, flag); Waypoint(name) defaults flag to None.
+WaypointFlag enum contains None=0 and PlayerStart=1. Waypoint is a public class implementing INamedType. Name:string and Flag:WaypointFlag have private setters; Cell:int? has a public getter/setter. Constructors are Waypoint(string name, WaypointFlag flag) and Waypoint(string name), with the latter delegating using None. There is no validation of name or cell bounds.
 
-## Methods
-Equals(object): for Waypoint delegates to overloaded equality operator; for string compares Name case-insensitively; otherwise base Equals.
-GetHashCode returns Name.GetHashCode() (case-sensitive).
-ToString returns Name.
-Important caveat: case-insensitive string equality and case-sensitive hash code may be inconsistent for hash-based collections; operator definition must be found elsewhere before fully asserting Waypoint equality.
+Equals(object) returns this == obj for another Waypoint; this file declares no operator overload and the class is not partial, so that branch is reference equality. For a string it compares Name with StringComparison.OrdinalIgnoreCase; other values delegate to base.Equals. GetHashCode returns Name.GetHashCode(), and ToString returns Name. A null Name therefore makes GetHashCode throw. Do not use cross-type Equals behavior as a general hash-key contract.
 
-## Port status
-No Rust equivalent is asserted until the current Rust workspace is inspected and behavior is mapped to implementation paths and tests.
+Map owns a Waypoint[] catalog and the waypoint editor tool assigns Cell. The Rust MapDocument uses BTreeMap<u16,CellCoord>, which captures number-to-coordinate association but not Name, WaypointFlag, nullable unplaced state, or the original array/catalog identity. Existing Rust waypoint uniqueness/bounds tests are present in source but were not executed in this run.
