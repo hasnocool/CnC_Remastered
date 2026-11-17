@@ -61,3 +61,17 @@ The GenericToolDialog designer has a resource-manager type mismatch that can nul
 - [MapPanel designer/resources](MapPanel.Designer.cs.md) — component-only designer and the single Boolean tray metadata entry.
 - [ImageTooltip](Controls/ImageTooltip.cs.md) — owner-drawn image tooltip and aspect-ratio behavior.
 - [MenuButton](Controls/MenuButton.cs.md) — split-button menu dispatch and rendering.
+
+
+## Map aggregate and spatial model contracts
+
+- [Map model contracts](MapModel-Contracts.md) — Map aggregate ownership, cell indexing, occupancy masks, overlap closure, update batching, derived resource/wall icons, building bibs, and clone semantics.
+- [Map.cs](Map.cs.md) — full local Map aggregate method bodies and event wiring.
+- [MapSection.cs](MapSection.cs.md) — theatre conversion, map bounds fields, and property notifications.
+- [CellMetrics.cs](CellMetrics.cs.md) — row-major coordinates, adjacency, and clipping.
+- [CellGrid.cs](CellGrid.cs.md) — generic evented cell storage and enumeration.
+- [OccupierSet.cs](OccupierSet.cs.md) — mask-based object occupancy and event order.
+- [OverlapperSet.cs](OverlapperSet.cs.md) — rectangle overlap index and transitive closure.
+- [Template.cs](Template.cs.md) — per-cell template instance; distinct from multi-cell TemplateType.IconMask.
+
+The current Rust map-editor-model crate covers only the document/layer/waypoint foundation and part of CellMetrics. It does not yet reproduce the C# aggregate's occupancy, overlap, trigger, bib, batching, invalidation, or typed catalog behavior. Source-body review does not establish parity.

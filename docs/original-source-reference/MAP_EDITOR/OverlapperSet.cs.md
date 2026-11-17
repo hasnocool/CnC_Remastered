@@ -1,57 +1,48 @@
-# OverlapperSet.cs — editor model source guide
+# OverlapperSet.cs — transitive rectangle-overlap index
 
-> **Audit status: partially reviewed.** This pass inventories local types, explicit fields, method declaration lines, and dependencies. Full body explanations and Rust parity are still required.
+> **Source status: Body reviewed. Rust mapping: none found in map-editor-model.** Full 4,105-byte source body inspected at the pinned upstream commit.
 
-- Upstream: [CnCTDRAMapEditor/Model/OverlapperSet.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Model/OverlapperSet.cs)
-- Pinned source commit: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae
-- Source size: 4103 characters.
+- Upstream source: [CnCTDRAMapEditor/Model/OverlapperSet.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Model/OverlapperSet.cs)
+- Upstream blob: 492f545bbd9d1c4cbb427f7eca4d726a72cb554d
+- Direct interface dependency: ICellOverlapper.OverlapBounds : Rectangle.
+- Utility dependencies: Rectangle.Points() and single-item Yield() from ExtensionMethods.
 
-## Purpose
+## State and API
 
-Generic spatial overlap index for map objects. Supports add/remove, copying, and queries against points/rectangles.
+OverlapperSet<T> is constrained to T : class, ICellOverlapper and implements IEnumerable<(Point Location,T Overlapper)> plus non-generic IEnumerable.
 
-## Types
+- Private readonly metrics:CellMetrics.
+- Private readonly overlappers:Dictionary<T,Rectangle>, storing each object's absolute overlap rectangle.
+- Indexer this[T] returns nullable Rectangle; Overlappers exposes dictionary keys.
+- Constructor stores metrics.
+- Add(Point,T) rejects null or duplicate objects, reads overlapper.OverlapBounds, offsets that rectangle by the supplied anchor, and stores it. It does not clip to map bounds, test collisions, or require the anchor to be valid.
+- Add(x,y,T) delegates to Point. Add(cell,T) first resolves the cell through CellMetrics and returns false for an invalid cell.
+- Clear empties the dictionary. Contains tests dictionary membership.
+- CopyTo iterates this set and calls Add on the destination. The tuple local names are Location and Occupier in source, but the second value is the overlapper.
+- GetEnumerator projects each stored Rectangle.Location and object.
+- Remove rejects null/unregistered objects, then removes the dictionary entry. The retrieved Rectangle local is not otherwise used.
+- OfType<U>() filters by runtime type and casts.
 
-- `OverlapperSet`
+## Overlap query algorithm
 
-## Fields detected
+Overlaps(IEnumerable<Rectangle>) first creates a HashSet<Rectangle> from the supplied rectangles. It then repeats:
+1. Capture the current set count.
+2. Find every stored overlap rectangle that intersects any rectangle already in the set.
+3. Union those stored rectangles into the set.
+4. Stop when the set count no longer changes.
 
-- `metrics`
-- `Overlappers`
+This computes the transitive closure of intersecting stored rectangles: a rectangle that does not intersect the original query can still be included if it intersects a rectangle discovered in an earlier iteration. The final result expands every rectangle in the closure into individual points via Rectangle.Points() and returns a HashSet<Point>.
 
-## Method signatures detected
+Overloads accept one Rectangle, a sequence of Points (converted to 1x1 rectangles), or one Point (converted through Yield). Input rectangles/points and stored overlap rectangles are not clipped to CellMetrics. The result can therefore include negative or off-map coordinates.
 
-- `public bool Add(Point location, T overlapper)`
-- `public bool Add(int x, int y, T occupier) => Add(new Point(x, y), occupier);`
-- `public bool Add(int cell, T overlapper) => metrics.GetLocation(cell, out Point location) ? Add(location, overlapper) : false;`
-- `public void Clear() => overlappers.Clear();`
-- `public bool Contains(T occupier) => overlappers.ContainsKey(occupier);`
-- `public void CopyTo(OverlapperSet<T> other)`
-- `public bool Remove(T overlapper)`
-- `public ISet<Point> Overlaps(IEnumerable<Rectangle> rectangles)`
-- `public ISet<Point> Overlaps(Rectangle rectangle) => Overlaps(rectangle.Yield());`
-- `public ISet<Point> Overlaps(IEnumerable<Point> points) => Overlaps(points.Select(p => new Rectangle(p, new Size(1, 1))));`
-- `public ISet<Point> Overlaps(Point point) => Overlaps(point.Yield());`
+## Map integration
 
-## Direct namespace dependencies
+Map maintains Overlappers for ICellOverlapper technos. Technos_OccupierAdded/Removed update this index immediately outside a Map.BeginUpdate/EndUpdate batch; during a batch they set invalidateOverlappers and Map.Update rebuilds the set from all Technos after the batch. Building and Terrain implement ICellOverlapper; InfantryGroup reports a 3x3 rectangle offset by (-1,-1).
 
-- MobiusEditor.Interface
-- MobiusEditor.Utility
-- System.Collections
-- System.Collections.Generic
-- System.Drawing
-- System.Linq
+## Rust comparison and requirements
 
-## Behavior/port concerns
+No equivalent rectangle-overlap index is present in crates/map-editor-model. A Rust port needs an explicit rectangle type, object identity, and deterministic transitive closure. Tests should cover chains A↔B↔C, edge-touch semantics as defined by Rectangle.IntersectsWith, duplicate/null additions, invalid anchors, negative rectangles, and no map clipping.
 
-Overlap queries convert point/rectangle inputs to sets of map cells. Validate clipping and boundary behavior, especially for negative or off-map rectangles; CopyTo must preserve expected index semantics.
+## Verification
 
-## Rust mapping
-No Rust equivalent path is asserted without inspecting the implementation tree. Candidate responsibilities should be mapped to editor model/configuration crates, with deterministic occupancy/overlap tests and fixture-based INI compatibility tests.
-
-## Outstanding audit
-- [ ] Exact member types, visibility, initializers, and property accessors.
-- [ ] Every function body's branches, loops, side effects, and error behavior.
-- [ ] Callers, serializers, and game-specific data sources.
-- [ ] TD/RA differences and test fixtures.
-- [ ] Rust implementation paths and parity tests.
+Complete source body inspected. No Rust implementation mapping or tests were executed.

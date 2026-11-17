@@ -101,3 +101,18 @@ See [ObjectPropertyEditing.md](MAP_EDITOR/Controls/ObjectPropertyEditing.md), [O
 - **MenuButton.cs:** split-button ContextMenuStrip hit testing and arrow rendering. No Rust split-button adapter is present.
 
 See [MapPanel.cs.md](MAP_EDITOR/MapPanel.cs.md), [MapPanel.Designer.cs.md](MAP_EDITOR/MapPanel.Designer.cs.md), [ImageTooltip.cs.md](MAP_EDITOR/Controls/ImageTooltip.cs.md), and [MenuButton.cs.md](MAP_EDITOR/Controls/MenuButton.cs.md).
+
+
+## Editor map aggregate and spatial model — source-body pass
+
+| Pinned C# source | Verified source contract | Current Rust path/status |
+|---|---|---|
+| CnCTDRAMapEditor/Model/Map.cs | Aggregate owns sections, type catalogs, cell grids, occupier/overlapper indexes, houses, triggers, teams, resource values, derived overlay icons, bib lifecycle, clone and TGA preview behavior. | crates/map-editor-model/src/lib.rs is only MapDocument/CellLayers/waypoints; no equivalent aggregate. |
+| CnCTDRAMapEditor/Model/MapSection.cs | X/Y/Width/Height and Theater with INotifyPropertyChanged; MapContext-scoped string TypeConverter falls back to first theatre on unknown string. | No theatre/bounds section or property-notification adapter. |
+| CnCTDRAMapEditor/Model/CellMetrics.cs | Row-major coordinate conversion, eight-direction adjacency, and two margin-aware clipping overloads. | crates/map-editor-model/src/cell_metrics.rs maps dimensions/index/adjacency/basic clipping; margin overloads and exact invalid-dimension behavior differ. |
+| CnCTDRAMapEditor/Model/CellGrid.cs | Generic T[,] storage, synchronous CellChanged/Cleared events, copy/intersection/enumeration helpers. | Vec<CellLayers> in MapDocument provides flattened typed layers only; no generic event grid. |
+| CnCTDRAMapEditor/Model/OccupierSet.cs | Object-to-anchor dictionary plus per-cell mask index; CanAdd/Add/Remove/Clear and synchronous events. | No occupancy set in map-editor-model. |
+| CnCTDRAMapEditor/Model/OverlapperSet.cs | Rectangle index with iterative transitive overlap closure; no clipping or collision rejection. | No overlapper index in map-editor-model. |
+| CnCTDRAMapEditor/Model/Template.cs | One-cell ICellOccupier instance with TemplateType and Icon. | CellLayers.template is only Option<u16>; no typed icon instance or mask catalog integration. |
+
+See [MapModel-Contracts.md](MAP_EDITOR/MapModel-Contracts.md) and the per-file guides in MAP_EDITOR. Source files are Body reviewed where marked in the inventory; none of these model files is marked Rust-mapped, Tested, or Complete by this documentation pass.

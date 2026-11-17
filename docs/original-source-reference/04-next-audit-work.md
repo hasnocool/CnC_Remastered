@@ -279,3 +279,21 @@
 ## Quality gate for a completed page
 
 A page is not complete merely because it names the class. It should explain all important symbols and methods, have links to related files, identify the current Rust mapping, and state what behavior is still missing. When a file has no active behavior in the pinned build, say so and cite the build condition that disables it. Keep audit depth separate from port evidence: Header reviewed, Body reviewed, and Resource reviewed do not imply Rust-mapped, Tested, or Complete. Complete requires verified declarations, bodies, dependencies/call sites, an identified Rust mapping, and executed parity tests.
+
+
+### Tranche 6E — editor map aggregate and spatial model contracts
+
+- Refreshed target main and the full recursive upstream tree before reading the exact pinned C# sources.
+- Completed body-level guides for Map, MapSection, CellMetrics, CellGrid, OccupierSet, OverlapperSet, and Template.
+- Added a cross-file model contract guide covering row-major indexing, occupancy masks, overlap closure, Map.BeginUpdate/EndUpdate, resource/wall icon recomputation, building bibs, clone aliasing, and current Rust gaps.
+- Updated the source inventory: 1,123 Inventory only; 123 Partially reviewed; 17 Header reviewed; 36 Body reviewed; 12 Resource reviewed; 20 legacy Reviewed. Total remains 1,331. Rust-mapped, Tested, and Complete remain 0 in this source-review tranche.
+- Current Rust comparison found concrete partial CellMetrics coverage and a basic MapDocument/CellLayers/waypoint model, but no Map aggregate, occupancy set, or overlapper index. Existing tests were inspected in source but not executed.
+- Source-derived risks recorded include unvalidated CellMetrics dimensions, CellGrid same-Length shape copy, OccupierSet clear/event semantics, unbounded overlap rectangles, Map update-counter underflow, Update lacking try/finally, mixed shallow/deep Map.Clone, and preview edge cases.
+- No Rust source was modified and no runtime/parity tests were executed.
+
+## Next bounded audit priorities
+
+1. Continue the editor model graph with CellTrigger, Overlay, Smudge, Terrain, Building, InfantryGroup, Unit, Waypoint, Trigger, TeamType, and the type/catalog dependencies. Reconcile each body's occupancy/overlap/event behavior against the Map aggregate.
+2. Inspect all remaining designer/resource partners and parse each .resx XML payload plus linked generated accessor use.
+3. Trace Map/MapSection/CellGrid/occupancy callers in both GamePlugin implementations and renderer/tools; then complete INI/BIN/LCW serialization edge cases.
+4. Audit shared editor utilities and all Steamworks.NET generated/native binding files, then continue the native TD/RA inventory.
