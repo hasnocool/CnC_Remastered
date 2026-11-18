@@ -116,3 +116,25 @@ See [MapPanel.cs.md](MAP_EDITOR/MapPanel.cs.md), [MapPanel.Designer.cs.md](MAP_E
 | CnCTDRAMapEditor/Model/Template.cs | One-cell ICellOccupier instance with TemplateType and Icon. | CellLayers.template is only Option<u16>; no typed icon instance or mask catalog integration. |
 
 See [MapModel-Contracts.md](MAP_EDITOR/MapModel-Contracts.md) and the per-file guides in MAP_EDITOR. Source files are Body reviewed where marked in the inventory; none of these model files is marked Rust-mapped, Tested, or Complete by this documentation pass.
+
+
+## Editor type definitions and catalogs
+
+| Original source | Verified responsibility | Current Rust location / status |
+|---|---|---|
+| CnCTDRAMapEditor/Model/BuildingType.cs | Building identity, localized name, owner/theatre/fake/turret/factory metadata, base/full occupancy masks, bib expansion and preview. | No typed BuildingType/catalog in map-editor-model; CellLayers stores numeric IDs only. |
+| CnCTDRAMapEditor/Model/DirectionType.cs | Byte ID, name and FacingType with cross-type equality. | No DirectionType catalog or selector adapter in map-editor-model. |
+| CnCTDRAMapEditor/Model/HouseType.cs | House ID/name, unit/building team colors and per-type color overrides. | No HouseType catalog or color resolver. |
+| CnCTDRAMapEditor/Model/InfantryType.cs | Infantry identity, owner, tile-index-4 lookup, center-slot preview. | No typed InfantryType/InfantryGroup catalog. |
+| CnCTDRAMapEditor/Model/OverlayType.cs | Resource/wall/crate/flag bitfields, placeability rule and one-cell occupancy. | CellLayers.overlay is only an optional numeric ID; no typed flags/catalog. |
+| CnCTDRAMapEditor/Model/SmudgeType.cs | Logical size, render size, bib bit flags and theatre image fitting. | No typed SmudgeType catalog or bib metadata. |
+| CnCTDRAMapEditor/Model/TemplateType.cs | Multi-icon dimensions, row-major tile lookup, [x,y] IconMask and template flags. | CellLayers.template is only an optional numeric ID; no IconMask catalog. |
+| CnCTDRAMapEditor/Model/TerrainType.cs | Occupancy mask, render-derived overlap rectangle, transformable/OreMine tile selection. | CellLayers.terrain is only an optional numeric ID; no TerrainType catalog. |
+| CnCTDRAMapEditor/Model/TheaterType.cs | Theatre identity and ordered tileset-name sequence. | No theatre catalog or tileset source abstraction. |
+| CnCTDRAMapEditor/Model/UnitType.cs | sbyte ID masks for aircraft/vessels, owner/turret/fixed-wing metadata, occupancy and overlap footprints. | No typed UnitType catalog or variant ID-mask mapping. |
+| CnCTDRAMapEditor/Interface/IBrowsableType.cs | DisplayName and Image Thumbnail getters. | No UI-facing browsable-type trait; avoid System.Drawing in the core model. |
+| CnCTDRAMapEditor/Interface/ICellOccupier.cs | Two-dimensional occupancy-mask getter. | No mask-backed occupancy abstraction. |
+| CnCTDRAMapEditor/Interface/ICellOverlapper.cs | Integer-space overlap rectangle getter. | No overlapper spatial index. |
+| CnCTDRAMapEditor/Interface/ITechnoType.cs | sbyte ID and Name getters. | No typed techno definition identity trait. |
+
+See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is marked Rust-mapped. TD/RA static registry data and initialization order remain the next audit batch.

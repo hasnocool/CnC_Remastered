@@ -2,6 +2,29 @@
 
 ## Current tranche
 
+### Tranche 6Q — model type definitions and catalog interfaces
+
+- Refreshed target main and its complete recursive tree, then fetched the current inventory, Rust cross-reference, roadmap and relevant pinned upstream source bodies.
+- Audited the complete bodies of BuildingType.cs (167 lines), DirectionType.cs (72), HouseType.cs (83), InfantryType.cs (101), OverlayType.cs (129), SmudgeType.cs (117), TemplateType.cs (134), TerrainType.cs (118), TheaterType.cs (64), and UnitType.cs (138).
+- Inspected the exact IBrowsableType, ICellOccupier, ICellOverlapper and ITechnoType interface declarations. These four files are Header reviewed; their implementation semantics are documented separately.
+- Sampled TD/RA BuildingTypes, HouseTypes, InfantryTypes and UnitTypes constructor declarations to establish variant-specific catalog provenance. Their full static tables, ordering, Init invocation paths, and all other registry files remain open and are not marked reviewed by this tranche.
+- Recorded exact ID widths, constructor overloads, flag numeric values, equality/hash behavior, occupancy/overlap distinctions, theatre tile lookup, preview initialization and missing-asset behavior.
+- Important porting constraints: BuildingType bib expansion replaces the bottom two full-mask rows; TemplateType.IconMask uses [x,y] with y-outer/x-inner icon iteration; UnitType has 1x1 occupancy but fixed 3x3 overlap; TerrainType derives overlap from RenderSize; SmudgeType bib values are bit masks; HouseType color overrides use case-sensitive ToDictionary; UnitType aircraft/vessel categories are ID bits.
+- Confirmed the current Rust map-editor-model still has only generic numeric CellLayers, CellMetrics and generic EditorObjectKind. No typed definition catalog or equivalent interface traits were found. No Rust-mapped status is claimed.
+- Updated six existing per-file guides, added four new type guides plus TypeCatalog-Contracts.md and TypeCatalog-Interfaces.md, and updated the inventory, Rust cross-reference, MapModel-Contracts, MAP_EDITOR README and this roadmap.
+- Inventory now records 17 legacy Reviewed, 116 Partially reviewed, 21 Header reviewed, 52 Body reviewed, 12 Resource reviewed and 1,113 Inventory only; total remains 1,331. Reference library now contains 227 Markdown documents.
+- No Rust source was changed and no Rust build, unit test, C# runtime test, renderer comparison or serializer parity test was executed.
+
+### Tranche 6R — next: exhaustive TD/RA static type registries and initialization
+
+- Audit the complete bodies of both variants' BuildingTypes, HouseTypes, InfantryTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes, TheaterTypes, UnitTypes and DirectionTypes files.
+- Record every static field, exact numeric ID, name/text key, owner, mask, theatre list, flag, constructor overload and registry enumeration order.
+- Trace when and where each type's Init method is called, how the selected theatre filters catalogs, and how missing tile/text entries are handled.
+- Compare TD/RA IDs and definitions without assuming cross-variant equivalence. Trace serializer and tool consumers for each registry.
+- Add machine-checkable catalog fixtures or source-derived tables only after every source entry is verified; do not mark registry files body-reviewed from partial constructor sampling.
+- Then continue remaining editor model records and .resx/designer partners before returning to GamePlugin/INI/Steamworks second-pass work.
+
+
 ### Tranche 6P — MapPanel, ImageTooltip, and MenuButton controls
 
 - Audited the complete MapPanel.cs body (536 lines), MapPanel.Designer.cs (53 lines), and MapPanel.resx (123 lines). Parsed the XML: four resheaders, zero data entries, and one Boolean metadata entry named $this.TrayLargeIcon with value False.

@@ -23,10 +23,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1121 |
-| Partially reviewed | 122 |
-| Header reviewed | 17 |
-| Body reviewed | 42 |
+| Inventory only | 1113 |
+| Partially reviewed | 116 |
+| Header reviewed | 21 |
+| Body reviewed | 52 |
 | Resource reviewed | 12 |
 | Legacy Reviewed | 17 |
 | Rust-mapped | 0 |
@@ -88,12 +88,12 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Event/RenderEventArgs.cs` — Inventory only
 - `CnCTDRAMapEditor/Event/UndoRedoEventArgs.cs` — Inventory only
 - `CnCTDRAMapEditor/Globals.cs` — Inventory only
-- `CnCTDRAMapEditor/Interface/IBrowsableType.cs` — Inventory only
-- `CnCTDRAMapEditor/Interface/ICellOccupier.cs` — Inventory only
-- `CnCTDRAMapEditor/Interface/ICellOverlapper.cs` — Inventory only
+- `CnCTDRAMapEditor/Interface/IBrowsableType.cs` — Header reviewed (exact DisplayName/Thumbnail getter contract inspected; implementation is supplied by model types)
+- `CnCTDRAMapEditor/Interface/ICellOccupier.cs` — Header reviewed (exact bool[,] OccupyMask getter contract inspected; mask orientation is defined by consumers)
+- `CnCTDRAMapEditor/Interface/ICellOverlapper.cs` — Header reviewed (exact Rectangle OverlapBounds getter contract inspected; rectangle semantics are implemented by OverlapperSet)
 - `CnCTDRAMapEditor/Interface/IGamePlugin.cs` — Header reviewed (exact enums and interface members; complete host lifecycle/parity audit pending)
 - `CnCTDRAMapEditor/Interface/INamedType.cs` — Inventory only
-- `CnCTDRAMapEditor/Interface/ITechnoType.cs` — Inventory only
+- `CnCTDRAMapEditor/Interface/ITechnoType.cs` — Header reviewed (exact sbyte ID and string Name getter contract inspected)
 - `CnCTDRAMapEditor/Interface/ITool.cs` — Partially reviewed (first-pass declarations and behavior; exhaustive call-site audit pending)
 - `CnCTDRAMapEditor/Interface/IWidget.cs` — Inventory only
 - `CnCTDRAMapEditor/License.txt` — Inventory only
@@ -103,34 +103,34 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Model/BasicSection.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/BriefingSection.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/Building.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
-- `CnCTDRAMapEditor/Model/BuildingType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
+- `CnCTDRAMapEditor/Model/BuildingType.cs` — Body reviewed (complete 167-line source body inspected; Rust mapping and parity pending)
 - `CnCTDRAMapEditor/Model/CellGrid.cs` — Body reviewed (complete generic grid/event/indexer/enumeration body inspected; external call-site and Rust parity work pending)
 - `CnCTDRAMapEditor/Model/CellMetrics.cs` — Body reviewed (complete coordinate conversion/adjacency/clipping body inspected; Rust parity remains partial)
 - `CnCTDRAMapEditor/Model/CellTrigger.cs` — Body reviewed (complete one-property cell trigger reference inspected; Rust mapping pending)
-- `CnCTDRAMapEditor/Model/DirectionType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
+- `CnCTDRAMapEditor/Model/DirectionType.cs` — Body reviewed (complete 72-line source body inspected; Rust mapping and parity pending)
 - `CnCTDRAMapEditor/Model/House.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
-- `CnCTDRAMapEditor/Model/HouseType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
+- `CnCTDRAMapEditor/Model/HouseType.cs` — Body reviewed (complete 83-line source body inspected; Rust mapping and parity pending)
 - `CnCTDRAMapEditor/Model/Infantry.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
-- `CnCTDRAMapEditor/Model/InfantryType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
+- `CnCTDRAMapEditor/Model/InfantryType.cs` — Body reviewed (complete 101-line source body inspected; Rust mapping and parity pending)
 - `CnCTDRAMapEditor/Model/Map.cs` — Body reviewed (all local methods, mutation batching, derived overlays, occupancy wiring, clone, and preview bodies inspected; external call-site/serializer parity pending)
 - `CnCTDRAMapEditor/Model/MapSection.cs` — Body reviewed (complete theatre converter and property-change implementation inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Model/OccupierSet.cs` — Body reviewed (complete mask validation, add/remove/clear, index, and event behavior inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Model/OverlapperSet.cs` — Body reviewed (complete rectangle index and transitive overlap-closure implementation inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Model/Overlay.cs` — Body reviewed (complete placed overlay instance contract inspected; typed Rust parity pending)
-- `CnCTDRAMapEditor/Model/OverlayType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
+- `CnCTDRAMapEditor/Model/OverlayType.cs` — Body reviewed (complete 129-line source body inspected; Rust mapping and parity pending)
 - `CnCTDRAMapEditor/Model/Smudge.cs` — Body reviewed (complete placed smudge record contract inspected; typed Rust parity pending)
-- `CnCTDRAMapEditor/Model/SmudgeType.cs` — Partially reviewed (types, fields, methods, purpose; full behavior and Rust mapping pending)
+- `CnCTDRAMapEditor/Model/SmudgeType.cs` — Body reviewed (complete 117-line source body inspected; Rust mapping and parity pending)
 - `CnCTDRAMapEditor/Model/SteamSection.cs` — Body reviewed (all five properties and INI/Workshop consumers documented; Rust parity pending)
 - `CnCTDRAMapEditor/Model/TeamType.cs` — Body reviewed (team fields, nested records, clone depth, equality, and mission collections inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Model/Template.cs` — Body reviewed (complete one-cell template instance contract inspected; Rust mapping partial at identifier-slot level)
-- `CnCTDRAMapEditor/Model/TemplateType.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/TemplateType.cs` — Body reviewed (complete 134-line source body inspected; Rust mapping and parity pending)
 - `CnCTDRAMapEditor/Model/Terrain.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
-- `CnCTDRAMapEditor/Model/TerrainType.cs` — Inventory only
-- `CnCTDRAMapEditor/Model/TheaterType.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/TerrainType.cs` — Body reviewed (complete 118-line source body inspected; Rust mapping and parity pending)
+- `CnCTDRAMapEditor/Model/TheaterType.cs` — Body reviewed (complete 64-line source body inspected; Rust mapping and parity pending)
 - `CnCTDRAMapEditor/Model/Trigger.cs` — Body reviewed (trigger enums, event/action records, defaults, clone, equality, and nested object behavior inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Model/TypeItem.cs` — Body reviewed (generic Name/Type wrapper and constructor inspected; Rust selector adapter pending)
 - `CnCTDRAMapEditor/Model/Unit.cs` — Reviewed (source declarations and behavior documented; Rust parity pending)
-- `CnCTDRAMapEditor/Model/UnitType.cs` — Inventory only
+- `CnCTDRAMapEditor/Model/UnitType.cs` — Body reviewed (complete 138-line source body inspected; Rust mapping and parity pending)
 - `CnCTDRAMapEditor/Model/Waypoint.cs` — Body reviewed (complete name/flag/cell and equality/hash behavior inspected; Rust mapping partial only)
 - `CnCTDRAMapEditor/Program.cs` — Partially reviewed (Steamworks initialization/shutdown lifecycle traced; remaining startup/body audit pending)
 - `CnCTDRAMapEditor/Properties/AssemblyInfo.cs` — Inventory only

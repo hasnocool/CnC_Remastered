@@ -65,3 +65,18 @@ These tests are present in source, but were not executed during this audit run. 
 ## Audit boundary
 
 The listed source bodies were inspected at the pinned commit. Cross-file call-site and serializer audits are not exhaustive, and no runtime C# or Rust test was executed. Defects described here are source-derived risks; reproduction in the original editor remains a separate validation step.
+
+
+## Type-definition and catalog layer
+
+The placed map records depend on a separate set of definition objects. The ten source-body guides are linked from [TypeCatalog-Contracts.md](TypeCatalog-Contracts.md): BuildingType, DirectionType, HouseType, InfantryType, OverlayType, SmudgeType, TemplateType, TerrainType, TheaterType and UnitType.
+
+Important separations:
+- Definition IDs and names are variant catalog data; placed Building/Unit/Infantry/Overlay/Smudge/Template records hold per-scenario state.
+- OccupyMask and OverlapBounds are independent contracts. BuildingType can expand its full mask for bibs while retaining BaseOccupyMask; TerrainType derives overlap bounds from RenderSize; UnitType uses a 1×1 occupancy mask and fixed 3×3 overlap bounds.
+- TemplateType.IconMask is [IconWidth, IconHeight] and is written as [x,y]; do not transpose it during a Rust port.
+- OverlayTypeFlag, SmudgeTypeFlag, TemplateTypeFlag and UnitTypeIDMask contain meaningful numeric bit values, including non-sequential bib flags and unused TemplateTypeFlag bit zero.
+- TheaterType carries the ordered tileset-name source consumed by type initialization. Catalog and text-manager initialization order therefore matters.
+- The four small interface contracts are recorded in [TypeCatalog-Interfaces.md](TypeCatalog-Interfaces.md).
+
+The current Rust model has no typed equivalents for these definitions or catalogs. Its numeric CellLayers IDs and generic EditorObjectKind are not a Rust mapping of the original definition classes. TD/RA registry data, complete catalog ordering and Init call sites remain a separate follow-up audit.

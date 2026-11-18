@@ -1,43 +1,46 @@
-# DirectionType.cs — editor model source guide
+# DirectionType.cs — body-reviewed editor definition
 
-> **Audit status: partially reviewed.** This pass inventories local types, explicit fields, method declaration lines, and dependencies. Full body explanations and Rust parity are still required.
+> **Audit status: Body reviewed.** Complete 72-line source body inspected. Rust mapping and direction parity tests remain open.
 
 - Upstream: [CnCTDRAMapEditor/Model/DirectionType.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Model/DirectionType.cs)
-- Pinned source commit: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae
-- Source size: 2145 characters.
+- Pinned source blob: `264bd8b4d2a37fce1511349f32285463ce9735eb`
+- Namespace/type: `MobiusEditor.Model.DirectionType`
+- Direct import: `System`
 
-## Purpose
+## Exact members
 
-Named direction definition used by editor object orientation and game-specific direction metadata.
+| Member | Type | Access |
+|---|---|---|
+| ID | `byte` | public get, private set |
+| Name | `string` | public get, private set |
+| Facing | `FacingType` | public get, private set |
 
-## Types
+Constructors:
 
-- `DirectionType`
+- `DirectionType(byte id, string name, FacingType facing)` stores all three arguments.
+- `DirectionType(byte id, string name)` delegates with `FacingType.None`.
 
-## Fields detected
+## Method bodies
 
-- No explicit field declarations detected by first-pass scan.
+- `Equals(object obj)`: for another DirectionType, evaluates `this == obj` (reference equality in this class); for boxed byte, compares ID; for string, compares Name case-insensitively with `StringComparison.OrdinalIgnoreCase`; for FacingType, compares Facing; otherwise delegates to base.
+- `GetHashCode()`: returns ID.GetHashCode().
+- `ToString()`: returns Name.
 
-## Method signatures detected
+No operator overload, mutable state, event, collection, or rendering dependency is declared in this file. Equality is intentionally cross-type: a definition can compare equal to its byte ID, name string, or FacingType value. Two separately constructed DirectionType objects with the same ID/name/facing are not equal by the same-type branch because that branch is reference equality.
 
-- `public override bool Equals(object obj)`
-- `public override int GetHashCode()`
-- `public override string ToString()`
+## Consumers and dependencies
 
-## Direct namespace dependencies
+Object property controls build direction selectors from game-specific direction catalogs; Building/Unit/Infantry instances store a DirectionType. The type is also used by the BuildingType/InfantryType/UnitType preview initialization signatures. The complete TD/RA direction catalog ordering and all serializer consumers remain to be audited in `TiberianDawn/DirectionTypes.cs` and `RedAlert/DirectionTypes.cs`.
 
-- System
+## Rust port requirements
 
-## Behavior/port concerns
+No dedicated Rust DirectionType catalog was found in `map-editor-model`. Represent direction ID and facing semantics explicitly; do not serialize the WinForms selector wrapper. Define whether equality is by stable ID rather than accidentally reproducing C# reference equality. Keep display-name lookup and UI selection separate.
 
-Definition objects are configuration metadata, not placed runtime entities. Keep identity, theatre/game initialization, and render/occupancy metadata separate from instance state.
+## Verification
 
-## Rust mapping
-No Rust equivalent path is asserted without inspecting the implementation tree. Candidate responsibilities should be mapped to editor model/configuration crates, with deterministic occupancy/overlap tests and fixture-based INI compatibility tests.
+- [x] Both constructors and all method bodies inspected.
+- [ ] TD/RA direction tables and facing conversion parity.
+- [ ] Rust mapping and tests.
+- [ ] Runtime validation of invalid/duplicate IDs.
 
-## Outstanding audit
-- [ ] Exact member types, visibility, initializers, and property accessors.
-- [ ] Every function body's branches, loops, side effects, and error behavior.
-- [ ] Callers, serializers, and game-specific data sources.
-- [ ] TD/RA differences and test fixtures.
-- [ ] Rust implementation paths and parity tests.
+No Rust code was changed and no test was executed.

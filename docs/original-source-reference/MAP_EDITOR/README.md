@@ -86,3 +86,14 @@ The current Rust map-editor-model crate covers only the document/layer/waypoint 
 - [TeamType](TeamType.cs.md) — team composition, byte-sized limits, mission sequence, and mixed clone semantics.
 
 See [Map model contracts](MapModel-Contracts.md) for how these records participate in the Map aggregate. Their source bodies are reviewed, but no Rust parity is claimed.
+
+
+## Type definitions and variant catalogs
+
+The model's definition/catalog layer is now documented separately from placed map instances:
+
+- [Type catalog contracts](TypeCatalog-Contracts.md) — ten definition classes, exact IDs/flags, mask and overlap differences, image initialization, equality behavior, and Rust gaps.
+- [Type catalog interfaces](TypeCatalog-Interfaces.md) — exact IBrowsableType, ICellOccupier, ICellOverlapper and ITechnoType declarations.
+- Per-file guides: [BuildingType](BuildingType.cs.md), [DirectionType](DirectionType.cs.md), [HouseType](HouseType.cs.md), [InfantryType](InfantryType.cs.md), [OverlayType](OverlayType.cs.md), [SmudgeType](SmudgeType.cs.md), [TemplateType](TemplateType.cs.md), [TerrainType](TerrainType.cs.md), [TheaterType](TheaterType.cs.md), and [UnitType](UnitType.cs.md).
+
+The ten definition bodies are Body reviewed; the four small interfaces are Header reviewed. The TD/RA static registry data, ordering, all text keys, theatre filters and Init lifecycle are not yet exhaustively reviewed. No typed Rust catalog mapping or parity tests are claimed.
