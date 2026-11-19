@@ -58,6 +58,19 @@ The pinned source tree contains parallel TD and RA registry files: BuildingTypes
 
 This is evidence that the registry data must remain variant-specific. It is not an exhaustive review of the static catalogs: ordering, every entry, every text key, theatre filtering, Init invocation order and serializer call sites remain open. Those registry files are the next audit batch.
 
+## Variant-specific static registries — Tranche 6R
+
+Eight registry bodies are now reviewed: DirectionTypes, HouseTypes, InfantryTypes and UnitTypes for TD and RA. See [Variant-Registry-Catalogs.md](Variant-Registry-Catalogs.md) for comparison and [per-file tables](README.md#tdra-static-registries--tranche-6r).
+
+- Both direction catalogs have 16 byte IDs in 16-step increments, with FacingType only for canonical directions.
+- TD/RA catalog sizes: houses 10/20, infantry 20/26, units 27/36.
+- TD BadGuy has BAD_UNIT/BAD_STRUCTURE plus harv/mcv overrides; its base-player helper maps only BadGuy to GoodGuy. RA maps USSR, Ukraine and BadGuy to GoodGuy.
+- TD infantry field E7 is ID 5 with Name e6; RA E8/E9 use spy/thf tokens.
+- Aircraft/Vessel masks are 32/64. TD has no vessel records.
+- Catalog arrays are reflection-collected without explicit sorting; GetTypes returns backing arrays. InfantryType/UnitType constructors eagerly resolve text through Globals.TheGameTextManager.
+
+The remaining six registry classes per variant (BuildingTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes, TheaterTypes) are not yet body-reviewed. These eight files remain not Rust-mapped, not Tested, and not Complete.
+
 ## Rust implementation comparison
 
 The current `crates/map-editor-model` tree contains `MapDocument`, `CellLayers`, `CellMetrics` and `object_selection`. CellLayers stores optional numeric IDs for template, terrain, overlay and smudge; object_selection defines generic EditorObjectKind values. There is no typed definition catalog for the ten classes above, no house/theatre/direction catalog, no thumbnail/tileset adapter, and no mask-backed type registry. Consequently none of these ten C# files is marked Rust-mapped.

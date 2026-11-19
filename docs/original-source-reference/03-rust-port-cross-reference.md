@@ -137,4 +137,13 @@ See [MapModel-Contracts.md](MAP_EDITOR/MapModel-Contracts.md) and the per-file g
 | CnCTDRAMapEditor/Interface/ICellOverlapper.cs | Integer-space overlap rectangle getter. | No overlapper spatial index. |
 | CnCTDRAMapEditor/Interface/ITechnoType.cs | sbyte ID and Name getters. | No typed techno definition identity trait. |
 
-See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is marked Rust-mapped. TD/RA static registry data and initialization order remain the next audit batch.
+| CnCTDRAMapEditor/RedAlert/DirectionTypes.cs | 16-entry RA direction byte catalog, canonical Facing values and reflection enumeration. | No Rust direction catalog; body reviewed. |
+| CnCTDRAMapEditor/RedAlert/HouseTypes.cs | 20 RA houses, colors and faction/base-player helper. | No typed RA house/color catalog; body reviewed. |
+| CnCTDRAMapEditor/RedAlert/InfantryTypes.cs | 26 RA infantry IDs, tokens, text keys and owner strings. | No typed RA infantry catalog; body reviewed. |
+| CnCTDRAMapEditor/RedAlert/UnitTypes.cs | 22 ground + 7 air + 7 vessels; encoded sbyte masks and flags. | No typed RA unit catalog; body reviewed. |
+| CnCTDRAMapEditor/TiberianDawn/DirectionTypes.cs | 16-entry TD direction catalog, same encoded values as RA. | No Rust direction catalog; body reviewed. |
+| CnCTDRAMapEditor/TiberianDawn/HouseTypes.cs | 10 TD houses, split BadGuy colors and harv/mcv overrides. | No typed TD house/color catalog; body reviewed. |
+| CnCTDRAMapEditor/TiberianDawn/InfantryTypes.cs | 20 TD infantry; field E7 aliases Name token e6. | No typed TD infantry catalog; body reviewed. |
+| CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs | 22 ground + 5 air; no vessels. | No typed TD unit catalog; body reviewed. |
+
+See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is marked Rust-mapped. Eight TD/RA registries (DirectionTypes, HouseTypes, InfantryTypes and UnitTypes for both variants) are Body reviewed. BuildingTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes and TheaterTypes remain open for both variants; initialization and parity tests are still pending.

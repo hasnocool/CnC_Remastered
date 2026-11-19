@@ -15,15 +15,14 @@
 - Inventory now records 17 legacy Reviewed, 116 Partially reviewed, 21 Header reviewed, 52 Body reviewed, 12 Resource reviewed and 1,113 Inventory only; total remains 1,331. Reference library now contains 227 Markdown documents.
 - No Rust source was changed and no Rust build, unit test, C# runtime test, renderer comparison or serializer parity test was executed.
 
-### Tranche 6R — next: exhaustive TD/RA static type registries and initialization
+### Tranche 6R — TD/RA static catalogs (completed in this run)
 
-- Audit the complete bodies of both variants' BuildingTypes, HouseTypes, InfantryTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes, TheaterTypes, UnitTypes and DirectionTypes files.
-- Record every static field, exact numeric ID, name/text key, owner, mask, theatre list, flag, constructor overload and registry enumeration order.
-- Trace when and where each type's Init method is called, how the selected theatre filters catalogs, and how missing tile/text entries are handled.
-- Compare TD/RA IDs and definitions without assuming cross-variant equivalence. Trace serializer and tool consumers for each registry.
-- Add machine-checkable catalog fixtures or source-derived tables only after every source entry is verified; do not mark registry files body-reviewed from partial constructor sampling.
-- Then continue remaining editor model records and .resx/designer partners before returning to GamePlugin/INI/Steamworks second-pass work.
-
+- Refreshed target main/tree and the inventory, cross-reference, roadmap and editor README; pinned upstream tree SHA matched the requested commit.
+- Read and SHA-verified the complete bodies of TD and RA DirectionTypes, HouseTypes, InfantryTypes and UnitTypes (8 files). Added 8 per-file catalog guides and 1 comparison page.
+- Captured exact IDs, field identifiers, Name tokens, localization keys, owner labels, colors, turret/fixed-wing flags and category masks. Verified sizes: directions 16/16, houses 10/20, infantry 20/26, units 27/36 (TD 22 ground+5 air; RA 22 ground+7 air+7 vessels).
+- Recorded TD Infantry field E7 as ID 5/Name e6; RA E8/E9 as spy/thf; TD BadGuy split colors and harv/mcv overrides; RA/TD GetBasePlayer differences; reflection array behavior and eager text-key resolution.
+- Updated inventory: 8 Inventory only → Body reviewed. Counts: 1105 Inventory only; 116 Partially reviewed; 21 Header reviewed; 60 Body reviewed; 12 Resource reviewed; 17 legacy Reviewed; Rust-mapped/Tested/Complete 0; total 1,331. Reference docs: 236 Markdown (227 existing + 9 new).
+- Updated Rust cross-reference, TypeCatalog-Contracts, README and next-work plan. No Rust source changed; no tests executed.
 
 ### Tranche 6P — MapPanel, ImageTooltip, and MenuButton controls
 
@@ -332,6 +331,7 @@ A page is not complete merely because it names the class. It should explain all 
 
 ## Next source batch
 
-1. Audit Building, Infantry/InfantryGroup, Unit, Terrain, and type-catalog dependencies against their actual GamePlugin serialization and call sites; upgrade only after full bodies and consumers are read.
-2. Inspect remaining .resx payloads and designer resource references.
-3. Continue TD/RA plugin and INI/BIN/LCW contract edge cases, then shared utilities and Steamworks native bindings.
+1. Body-review TD/RA BuildingTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes and TheaterTypes. TemplateTypes is large; split documentation into bounded parts but keep the inventory Partially reviewed until the complete body/catalog is covered.
+2. Trace exact catalog Init invocation, theatre filtering, missing tile/text behavior and all tool/plugin consumers.
+3. Add source-derived catalog fixtures and tests only when implementation exists; Rust-mapped/Tested remain 0 until code/tests are concrete and executed.
+4. Continue GamePlugin serialization and INI contracts, resource/designer audits, shared utilities, Steamworks/native bindings, and remaining native runtime inventory.

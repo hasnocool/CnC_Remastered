@@ -96,4 +96,13 @@ The model's definition/catalog layer is now documented separately from placed ma
 - [Type catalog interfaces](TypeCatalog-Interfaces.md) — exact IBrowsableType, ICellOccupier, ICellOverlapper and ITechnoType declarations.
 - Per-file guides: [BuildingType](BuildingType.cs.md), [DirectionType](DirectionType.cs.md), [HouseType](HouseType.cs.md), [InfantryType](InfantryType.cs.md), [OverlayType](OverlayType.cs.md), [SmudgeType](SmudgeType.cs.md), [TemplateType](TemplateType.cs.md), [TerrainType](TerrainType.cs.md), [TheaterType](TheaterType.cs.md), and [UnitType](UnitType.cs.md).
 
+### TD/RA static registries — Tranche 6R
+
+- [Registry comparison](Variant-Registry-Catalogs.md) — catalog sizes, category IDs, house mappings, alias details and initialization behavior.
+- RA: [DirectionTypes](RedAlert/DirectionTypes.cs.md), [HouseTypes](RedAlert/HouseTypes.cs.md), [InfantryTypes](RedAlert/InfantryTypes.cs.md), [UnitTypes](RedAlert/UnitTypes.cs.md).
+- TD: [DirectionTypes](TiberianDawn/DirectionTypes.cs.md), [HouseTypes](TiberianDawn/HouseTypes.cs.md), [InfantryTypes](TiberianDawn/InfantryTypes.cs.md), [UnitTypes](TiberianDawn/UnitTypes.cs.md).
+
+All eight registry source bodies are Body reviewed. The six other registry classes per variant remain open; initialization and parity are not claimed.
+
+
 The ten definition bodies are Body reviewed; the four small interfaces are Header reviewed. The TD/RA static registry data, ordering, all text keys, theatre filters and Init lifecycle are not yet exhaustively reviewed. No typed Rust catalog mapping or parity tests are claimed.

@@ -23,10 +23,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1113 |
+| Inventory only | 1105 |
 | Partially reviewed | 116 |
 | Header reviewed | 21 |
-| Body reviewed | 52 |
+| Body reviewed | 60 |
 | Resource reviewed | 12 |
 | Legacy Reviewed | 17 |
 | Rust-mapped | 0 |
@@ -143,12 +143,12 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/RedAlert/BasicSection.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/BuildingTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/Constants.cs` — Inventory only
-- `CnCTDRAMapEditor/RedAlert/DirectionTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/RedAlert/DirectionTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/RedAlert/EventTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/GamePlugin.cs` — Partially reviewed (Load/Save, section schemas, LCW map sections, validation, and disposal inspected)
 - `CnCTDRAMapEditor/RedAlert/House.cs` — Inventory only
-- `CnCTDRAMapEditor/RedAlert/HouseTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/RedAlert/InfantryTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/RedAlert/HouseTypes.cs` — Body reviewed
+- `CnCTDRAMapEditor/RedAlert/InfantryTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/RedAlert/MissionTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/OverlayTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/SmudgeTypes.cs` — Inventory only
@@ -156,7 +156,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/RedAlert/TemplateTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/TerrainTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/TheaterTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/RedAlert/UnitTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/RedAlert/UnitTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/Render/MapRenderer.cs` — Partially reviewed (first-pass declarations and responsibilities; exhaustive member/body audit pending)
 - `CnCTDRAMapEditor/Resources/GameIcon00.ico` — Inventory only
 - `CnCTDRAMapEditor/Resources/UI_CustomMissionPreviewDefault.png` — Inventory only
@@ -256,12 +256,12 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/TiberianDawn/BasicSection.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/BuildingTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/Constants.cs` — Inventory only
-- `CnCTDRAMapEditor/TiberianDawn/DirectionTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/TiberianDawn/DirectionTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/TiberianDawn/EventTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/GamePlugin.cs` — Partially reviewed (INI/BIN dispatch, section schemas, binary map codec, and validation entry point inspected)
 - `CnCTDRAMapEditor/TiberianDawn/House.cs` — Inventory only
-- `CnCTDRAMapEditor/TiberianDawn/HouseTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/TiberianDawn/InfantryTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/TiberianDawn/HouseTypes.cs` — Body reviewed
+- `CnCTDRAMapEditor/TiberianDawn/InfantryTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/TiberianDawn/MissionTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/OverlayTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/SmudgeTypes.cs` — Inventory only
@@ -269,7 +269,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/TiberianDawn/TemplateTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/TerrainTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/TheaterTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/Tools/BuildingTool.cs` — Body reviewed (all constructor, selector, mouse/key handlers, placement/movement, base-priority, preview/render, and disposal bodies inspected; Rust mapping pending)
 - `CnCTDRAMapEditor/Tools/CellTriggersTool.cs` — Body reviewed (event flow, cell mutations, drag batching, undo/redo, and disposal inspected)
 - `CnCTDRAMapEditor/Tools/Dialogs/CellTriggersToolDialog.Designer.cs` — Header reviewed (generated fields, layout, and initialization inspected)
