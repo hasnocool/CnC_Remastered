@@ -34,6 +34,8 @@ Blob SHA: f19c63378e3488ac1dd18958c3fa78413727b34f
 | 20 | DemoTruck | dtrk | TEXT_UNIT_RA_DTRK | USSR | 0 |
 | 21 | Phase | stnk | TEXT_UNIT_RA_STNK | Greece | 1 |
 
+Turret and Fixed-wing columns are Boolean constructor arguments shown as 1=true and 0=false.
+
 ### Aircraft
 
 | ID | Field | Name | Text key | Owner | Fixed wing |

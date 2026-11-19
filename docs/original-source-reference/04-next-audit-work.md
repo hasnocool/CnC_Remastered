@@ -329,7 +329,7 @@ A page is not complete merely because it names the class. It should explain all 
 - Recorded the cleanup boundary: Map collection changes reconcile Building.Trigger references, but do not scan CellTrigger cells or TeamType.Trigger references.
 - Existing Rust waypoint map/tests were inspected but tests were not executed. No C# runtime or serialization test was run; no Rust source was changed.
 
-## Next source batch
+## Next source batch — Tranche 6S
 
 1. Body-review TD/RA BuildingTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes and TheaterTypes. TemplateTypes is large; split documentation into bounded parts but keep the inventory Partially reviewed until the complete body/catalog is covered.
 2. Trace exact catalog Init invocation, theatre filtering, missing tile/text behavior and all tool/plugin consumers.

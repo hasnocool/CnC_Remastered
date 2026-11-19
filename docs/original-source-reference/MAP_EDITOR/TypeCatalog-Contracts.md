@@ -56,11 +56,11 @@ Missing tile lookups do not have uniform reset behavior: BuildingType/OverlayTyp
 
 The pinned source tree contains parallel TD and RA registry files: BuildingTypes, HouseTypes, InfantryTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes, TheaterTypes, UnitTypes and DirectionTypes. The inspected BuildingTypes/HouseTypes/InfantryTypes/UnitTypes declarations demonstrate that IDs, names, owners, masks, theatre lists and available unit classes differ by variant. In particular, TD and RA use different building footprints and house identifiers; RA UnitTypes includes vessel IDs while TD's sampled UnitTypes list includes aircraft IDs.
 
-This is evidence that the registry data must remain variant-specific. It is not an exhaustive review of the static catalogs: ordering, every entry, every text key, theatre filtering, Init invocation order and serializer call sites remain open. Those registry files are the next audit batch.
+This is evidence that registry data must remain variant-specific. Tranche 6R body-reviewed DirectionTypes, HouseTypes, InfantryTypes and UnitTypes for both variants; BuildingTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes and TheaterTypes remain open in both variants. Exact catalog entries and initialization behavior for the reviewed files are summarized in Variant-Registry-Catalogs.md.
 
 ## Variant-specific static registries — Tranche 6R
 
-Eight registry bodies are now reviewed: DirectionTypes, HouseTypes, InfantryTypes and UnitTypes for TD and RA. See [Variant-Registry-Catalogs.md](Variant-Registry-Catalogs.md) for comparison and [per-file tables](README.md#tdra-static-registries--tranche-6r).
+Eight registry bodies are now reviewed: DirectionTypes, HouseTypes, InfantryTypes and UnitTypes for TD and RA. See [Variant-Registry-Catalogs.md](Variant-Registry-Catalogs.md) for comparison and [per-file tables](README.md).
 
 - Both direction catalogs have 16 byte IDs in 16-step increments, with FacingType only for canonical directions.
 - TD/RA catalog sizes: houses 10/20, infantry 20/26, units 27/36.

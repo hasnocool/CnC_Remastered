@@ -34,6 +34,8 @@ Blob SHA: 184cf7b18354d06499726577a8f81a36e89a4c45
 | 20 | Rapt | rapt | TEXT_UNIT_TITLE_RAPT | Special | 0 |
 | 21 | Steg | steg | TEXT_UNIT_TITLE_STEG | Special | 0 |
 
+Turret and Fixed-wing columns are Boolean constructor arguments shown as 1=true and 0=false.
+
 ### Aircraft
 
 | ID | Field | Name | Text key | Owner | Fixed wing |
