@@ -24,6 +24,17 @@
 - Updated inventory: 8 Inventory only → Body reviewed. Counts: 1105 Inventory only; 116 Partially reviewed; 21 Header reviewed; 60 Body reviewed; 12 Resource reviewed; 17 legacy Reviewed; Rust-mapped/Tested/Complete 0; total 1,331. Reference docs: 236 Markdown (227 existing + 9 new).
 - Updated Rust cross-reference, TypeCatalog-Contracts, README and next-work plan. No Rust source changed; no tests executed.
 
+### Tranche 6S-A — TD/RA BuildingTypes, OverlayTypes and SmudgeTypes (completed)
+
+- Refreshed main/tree at `f7657a09bccdecfc408d7a45542da4e6f3a1fa93`; fetched inventory, roadmap, Rust cross-reference, editor README and type-catalog contracts. Pinned upstream tree was complete and matched `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`.
+- Read all six registry bodies and checked declarations against BuildingType, OverlayType and SmudgeType constructors.
+- Captured 60 TD and 63 RA buildings (IDs, tokens/effective fake names, text keys, base masks, bib, owner, theatre, fake/turret and factory overlay); 27 TD and 25 RA overlays; identical 15-entry smudge catalogs.
+- Added six per-file guides and a comparison page; updated inventory, Rust cross-reference, MAP_EDITOR README, TypeCatalog-Contracts and this roadmap.
+- Traced GamePlugin handoff, Map.InitTheater order and MainForm category filters/sorting. Registries have no Init method; model Init runs after Map construction.
+- Findings: RA building ID gaps 37–42 and 64–81; fake entries derive effective Name by suffix transformation; TD Const uses RA-prefixed text key; overlay IDs/categories differ; smudge catalogs identical. Static definitions share mutable render metadata and successful-only lookups can preserve old metadata (runtime race/stale-state hypotheses untested).
+- Inventory: 17 legacy Reviewed, 116 Partially reviewed, 21 Header reviewed, 66 Body reviewed, 12 Resource reviewed, 1,099 Inventory only; total 1,331. Reference library: 243 Markdown documents.
+- No Rust source changed; no build, unit, runtime or render-parity test executed. Body reviewed does not imply Rust-mapped, Tested or Complete.
+
 ### Tranche 6P — MapPanel, ImageTooltip, and MenuButton controls
 
 - Audited the complete MapPanel.cs body (536 lines), MapPanel.Designer.cs (53 lines), and MapPanel.resx (123 lines). Parsed the XML: four resheaders, zero data entries, and one Boolean metadata entry named $this.TrayLargeIcon with value False.
@@ -329,7 +340,13 @@ A page is not complete merely because it names the class. It should explain all 
 - Recorded the cleanup boundary: Map collection changes reconcile Building.Trigger references, but do not scan CellTrigger cells or TeamType.Trigger references.
 - Existing Rust waypoint map/tests were inspected but tests were not executed. No C# runtime or serialization test was run; no Rust source was changed.
 
-## Next source batch — Tranche 6S
+## Next source batch — Tranche 6S-B
+
+1. Body-review TD/RA TerrainTypes and TheaterTypes (four registry files), including all static entries, theatre tileset sequence, terrain flags/masks, constructors, reflection behavior, and missing tile lookup.
+2. Then audit TD/RA TemplateTypes in bounded sub-batches. Keep TemplateTypes Partially reviewed until all entries, masks, theatre restrictions, static array construction, and Init behavior are covered.
+3. Trace registry-to-Map.InitTheater and exact selector/renderer consumers; record validation and missing-asset behavior.
+4. Generate source-derived catalog fixtures and execute parity tests only after a concrete Rust implementation exists. Rust-mapped/Tested remain separate evidence.
+5. Continue GamePlugin serialization/INI, designer/resources, shared utility, Steamworks/native ABI, and remaining runtime inventory audits.
 
 1. Body-review TD/RA BuildingTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes and TheaterTypes. TemplateTypes is large; split documentation into bounded parts but keep the inventory Partially reviewed until the complete body/catalog is covered.
 2. Trace exact catalog Init invocation, theatre filtering, missing tile/text behavior and all tool/plugin consumers.

@@ -23,10 +23,10 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1105 |
+| Inventory only | 1099 |
 | Partially reviewed | 116 |
 | Header reviewed | 21 |
-| Body reviewed | 60 |
+| Body reviewed | 66 |
 | Resource reviewed | 12 |
 | Legacy Reviewed | 17 |
 | Rust-mapped | 0 |
@@ -141,7 +141,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/RedAlert/ActionDataTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/ActionTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/BasicSection.cs` — Inventory only
-- `CnCTDRAMapEditor/RedAlert/BuildingTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/RedAlert/BuildingTypes.cs` — Body reviewed ([RedAlert BuildingTypes.cs](MAP_EDITOR/RedAlert/BuildingTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/Constants.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/DirectionTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/RedAlert/EventTypes.cs` — Inventory only
@@ -150,8 +150,8 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/RedAlert/HouseTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/RedAlert/InfantryTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/RedAlert/MissionTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/RedAlert/OverlayTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/RedAlert/SmudgeTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/RedAlert/OverlayTypes.cs` — Body reviewed ([RedAlert OverlayTypes.cs](MAP_EDITOR/RedAlert/OverlayTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
+- `CnCTDRAMapEditor/RedAlert/SmudgeTypes.cs` — Body reviewed ([RedAlert SmudgeTypes.cs](MAP_EDITOR/RedAlert/SmudgeTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/TeamMissionTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/TemplateTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/RedAlert/TerrainTypes.cs` — Inventory only
@@ -254,7 +254,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/Steamworks.NET/types/Steam_api_common/HSteamUser.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/ActionTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/BasicSection.cs` — Inventory only
-- `CnCTDRAMapEditor/TiberianDawn/BuildingTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/TiberianDawn/BuildingTypes.cs` — Body reviewed ([TiberianDawn BuildingTypes.cs](MAP_EDITOR/TiberianDawn/BuildingTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/TiberianDawn/Constants.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/DirectionTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/TiberianDawn/EventTypes.cs` — Inventory only
@@ -263,8 +263,8 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/TiberianDawn/HouseTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/TiberianDawn/InfantryTypes.cs` — Body reviewed
 - `CnCTDRAMapEditor/TiberianDawn/MissionTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/TiberianDawn/OverlayTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/TiberianDawn/SmudgeTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/TiberianDawn/OverlayTypes.cs` — Body reviewed ([TiberianDawn OverlayTypes.cs](MAP_EDITOR/TiberianDawn/OverlayTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
+- `CnCTDRAMapEditor/TiberianDawn/SmudgeTypes.cs` — Body reviewed ([TiberianDawn SmudgeTypes.cs](MAP_EDITOR/TiberianDawn/SmudgeTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/TiberianDawn/TeamMissionTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/TemplateTypes.cs` — Inventory only
 - `CnCTDRAMapEditor/TiberianDawn/TerrainTypes.cs` — Inventory only

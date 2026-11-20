@@ -1,6 +1,6 @@
 # Editor type catalog contracts
 
-> **Audit status: cross-file synthesis of ten body-reviewed definition classes.** This page records the model-type layer only. The TD/RA static registry files are sampled for construction provenance but are not marked body-reviewed here. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
+> **Audit status: cross-file synthesis of ten body-reviewed definition classes and fourteen body-reviewed TD/RA static registries (seven classes per variant).** TemplateTypes, TerrainTypes and TheaterTypes registry files remain open for both variants. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
 
 ## Definition versus placed instance
 
@@ -90,3 +90,14 @@ The current `crates/map-editor-model` tree contains `MapDocument`, `CellLayers`,
 ## Verification boundary
 
 The ten definition source bodies and four small interface declarations were inspected at the pinned commit. Four TD/RA registry files were sampled for constructor examples, not exhaustively audited. No Rust code changed and no Rust test, C# runtime test, image comparison, or serializer parity test was executed.
+
+
+## Static registry review update — Tranche 6S-A
+
+TD and RA BuildingTypes, OverlayTypes and SmudgeTypes source bodies are fully documented. Counts: buildings 60/63, overlays 27/25, smudges 15/15. See [Variant-Static-Catalogs-6S-A.md](Variant-Static-Catalogs-6S-A.md) and six per-variant guides.
+
+- Building catalog entries include IDs, field names, tokens/effective fake names, text keys, masks, bib, owner, theatre, fake/turret and factory overlay metadata.
+- Overlay catalogs include IDs, default/explicit display keys, flags and theatre restrictions.
+- Smudge catalogs are identical and include logical sizes and bib flags.
+- Registry initialization, Map.InitTheater and MainForm consumer filters were traced.
+- No typed Rust catalog, tests, or parity results exist. TemplateTypes, TerrainTypes and TheaterTypes remain open for both variants.

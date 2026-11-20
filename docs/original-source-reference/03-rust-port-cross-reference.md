@@ -146,4 +146,15 @@ See [MapModel-Contracts.md](MAP_EDITOR/MapModel-Contracts.md) and the per-file g
 | CnCTDRAMapEditor/TiberianDawn/InfantryTypes.cs | 20 TD infantry; field E7 aliases Name token e6. | No typed TD infantry catalog; body reviewed. |
 | CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs | 22 ground + 5 air; no vessels. | No typed TD unit catalog; body reviewed. |
 
-See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is marked Rust-mapped. Eight TD/RA registries (DirectionTypes, HouseTypes, InfantryTypes and UnitTypes for both variants) are Body reviewed. BuildingTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes and TheaterTypes remain open for both variants; initialization and parity tests are still pending.
+See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is Rust-mapped. Fourteen TD/RA registries are Body reviewed: DirectionTypes, HouseTypes, InfantryTypes, UnitTypes, BuildingTypes, OverlayTypes and SmudgeTypes for both variants. TemplateTypes, TerrainTypes and TheaterTypes remain open for both variants; catalog validation, initialization parity and tests are pending.
+
+
+## Static registry body review — Tranche 6S-A
+
+| Source | Review evidence | Rust status |
+|---|---|---|
+| TD/RA BuildingTypes.cs | Complete catalog fields, masks, reflection and GetTypes documented. | No typed BuildingType catalog. |
+| TD/RA OverlayTypes.cs | IDs, text keys, flags, theatre restrictions and consumers documented. | CellLayers.overlay remains numeric-only. |
+| TD/RA SmudgeTypes.cs | Identical 15-entry catalogs, logical sizes and bib flags documented. | No typed SmudgeType/bib model. |
+
+See [Variant-Static-Catalogs-6S-A.md](MAP_EDITOR/Variant-Static-Catalogs-6S-A.md) and the six per-file guides. Arrays are reflection-derived without explicit sort; GetTypes returns array-backed sequences. Map.InitTheater mutates shared render metadata. Concurrency/stale-state behavior needs runtime tests.
