@@ -348,7 +348,3 @@ A page is not complete merely because it names the class. It should explain all 
 4. Generate source-derived catalog fixtures and execute parity tests only after a concrete Rust implementation exists. Rust-mapped/Tested remain separate evidence.
 5. Continue GamePlugin serialization/INI, designer/resources, shared utility, Steamworks/native ABI, and remaining runtime inventory audits.
 
-1. Body-review TD/RA BuildingTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes and TheaterTypes. TemplateTypes is large; split documentation into bounded parts but keep the inventory Partially reviewed until the complete body/catalog is covered.
-2. Trace exact catalog Init invocation, theatre filtering, missing tile/text behavior and all tool/plugin consumers.
-3. Add source-derived catalog fixtures and tests only when implementation exists; Rust-mapped/Tested remain 0 until code/tests are concrete and executed.
-4. Continue GamePlugin serialization and INI contracts, resource/designer audits, shared utilities, Steamworks/native bindings, and remaining native runtime inventory.

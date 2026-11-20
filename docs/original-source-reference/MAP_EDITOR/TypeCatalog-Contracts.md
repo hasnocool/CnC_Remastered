@@ -89,7 +89,7 @@ The current `crates/map-editor-model` tree contains `MapDocument`, `CellLayers`,
 
 ## Verification boundary
 
-The ten definition source bodies and four small interface declarations were inspected at the pinned commit. Four TD/RA registry files were sampled for constructor examples, not exhaustively audited. No Rust code changed and no Rust test, C# runtime test, image comparison, or serializer parity test was executed.
+The ten definition source bodies and four small interface declarations were inspected at the pinned commit. Fourteen TD/RA registry bodies (DirectionTypes, HouseTypes, InfantryTypes, UnitTypes, BuildingTypes, OverlayTypes and SmudgeTypes for both variants) were inspected. TemplateTypes, TerrainTypes and TheaterTypes remain open for both variants. No Rust code changed and no Rust test, C# runtime test, image comparison, or serializer parity test was executed.
 
 
 ## Static registry review update — Tranche 6S-A
