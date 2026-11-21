@@ -340,11 +340,21 @@ A page is not complete merely because it names the class. It should explain all 
 - Recorded the cleanup boundary: Map collection changes reconcile Building.Trigger references, but do not scan CellTrigger cells or TeamType.Trigger references.
 - Existing Rust waypoint map/tests were inspected but tests were not executed. No C# runtime or serialization test was run; no Rust source was changed.
 
-## Next source batch — Tranche 6S-B
+## Tranche 6S-B — TD/RA TerrainTypes and TheaterTypes (completed)
 
-1. Body-review TD/RA TerrainTypes and TheaterTypes (four registry files), including all static entries, theatre tileset sequence, terrain flags/masks, constructors, reflection behavior, and missing tile lookup.
-2. Then audit TD/RA TemplateTypes in bounded sub-batches. Keep TemplateTypes Partially reviewed until all entries, masks, theatre restrictions, static array construction, and Init behavior are covered.
-3. Trace registry-to-Map.InitTheater and exact selector/renderer consumers; record validation and missing-asset behavior.
-4. Generate source-derived catalog fixtures and execute parity tests only after a concrete Rust implementation exists. Rust-mapped/Tested remain separate evidence.
-5. Continue GamePlugin serialization/INI, designer/resources, shared utility, Steamworks/native ABI, and remaining runtime inventory audits.
+- Refreshed target main/tree, inventory, roadmap, Rust cross-reference and MAP_EDITOR README. Baseline `288f0dca24452d13c3062fa5668af5587c7947f7`; recursive tree 473 entries, not truncated. Pinned upstream tree was complete (1,375 entries).
+- Read four registry bodies: TD/RA TerrainTypes (32/35 entries) and TheaterTypes (3/3). Exact upstream blob SHAs recorded in per-file guides.
+- Documented every terrain ID, field, token, theatre restriction, mask, transformability and flag. TD has two transformable split types; RA has five Water ice entries, nine Interior boxes and OreMine Mine.
+- Documented ordered terrain/common tilesets. TD Temperate and Winter both ID2 (Desert ID0); anomaly preserved, not corrected. RA IDs are 0/1/2.
+- Traced GamePlugin catalog construction, Map.InitTheater order, MapSection Theater event path, MainForm/TerrainTool filters, terrain-name resolution, TerrainType.Init shape/OreMine lookup and false-result metadata retention. Facts and untested risks separated.
+- Added four per-file guides and one comparison; updated inventory, Rust cross-reference, MAP_EDITOR README, TypeCatalog-Contracts and roadmap.
+- Status: 4 Inventory only → Body reviewed. Counts: 17 legacy Reviewed; 116 Partially reviewed; 21 Header reviewed; 70 Body reviewed; 12 Resource reviewed; 1,095 Inventory only; Rust-mapped/Tested/Complete 0; total 1,331. Reference library: 248 Markdown (243+5).
+- No Rust source changed; no Rust build/unit test, C# runtime, rendering, missing-asset or serializer parity test executed.
 
+## Next source batch — Tranche 6S-C (TemplateTypes)
+
+1. Audit TD/RA TemplateTypes in bounded batches. Registries contain 216 TD entries (IDs0–215) and 401 RA entries (IDs0–400); record exact IDs, names, icon dimensions, theatres, flags and initialization.
+2. Keep both inventory paths **Partially reviewed** until all entries, static construction, GetTypes, dependencies and consumers are covered.
+3. Trace TemplateTool category extraction, theatre/thumbnail/Clear filters, icon selection/placement, plugin template serialization, TemplateType.Init missing-icon/mask behavior and terrain interactions.
+4. Continue serialization/INI, designer/resources, shared utility, Steamworks/native binding and remaining TD/RA runtime audits.
+5. Rust-mapped/Tested/Complete remain separate evidence states.

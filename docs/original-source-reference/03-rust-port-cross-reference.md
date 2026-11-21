@@ -158,3 +158,12 @@ See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCat
 | TD/RA SmudgeTypes.cs | Identical 15-entry catalogs, logical sizes and bib flags documented. | No typed SmudgeType/bib model. |
 
 See [Variant-Static-Catalogs-6S-A.md](MAP_EDITOR/Variant-Static-Catalogs-6S-A.md) and the six per-file guides. Arrays are reflection-derived without explicit sort; GetTypes returns array-backed sequences. Map.InitTheater mutates shared render metadata. Concurrency/stale-state behavior needs runtime tests.
+
+## Static registry body review — Tranche 6S-B
+
+| Source | Review evidence | Rust status |
+|---|---|---|
+| TD/RA TerrainTypes.cs | Complete 32/35 catalogs, masks, theatre lists, transformable state, flags, reflection and GetTypes documented. | No typed terrain catalog, masks, theatre restrictions or render cache. |
+| TD/RA TheaterTypes.cs | Three theatres per variant, ordered terrain/common tilesets, reflection/GetTypes; TD duplicate ID2 recorded. | No typed theatre catalog or tileset source abstraction. |
+
+See [Variant-Terrain-Theater-Catalogs-6S-B.md](MAP_EDITOR/Variant-Terrain-Theater-Catalogs-6S-B.md) and four per-file guides. Map.InitTheater initializes all terrain entries before UI theatre filtering. Missing tile lookup leaves TerrainType metadata unchanged. Body-reviewed only; not Rust-mapped/Tested/Complete

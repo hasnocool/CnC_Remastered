@@ -1,6 +1,6 @@
 # Editor type catalog contracts
 
-> **Audit status: cross-file synthesis of ten body-reviewed definition classes and fourteen body-reviewed TD/RA static registries (seven classes per variant).** TemplateTypes, TerrainTypes and TheaterTypes registry files remain open for both variants. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
+> **Audit status: cross-file synthesis of ten body-reviewed definition classes and eighteen body-reviewed TD/RA static registries (nine classes per variant).** Only TemplateTypes registry files remain open for both variants. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
 
 ## Definition versus placed instance
 
@@ -69,7 +69,7 @@ Eight registry bodies are now reviewed: DirectionTypes, HouseTypes, InfantryType
 - Aircraft/Vessel masks are 32/64. TD has no vessel records.
 - Catalog arrays are reflection-collected without explicit sorting; GetTypes returns backing arrays. InfantryType/UnitType constructors eagerly resolve text through Globals.TheGameTextManager.
 
-The remaining six registry classes per variant (BuildingTypes, OverlayTypes, SmudgeTypes, TemplateTypes, TerrainTypes, TheaterTypes) are not yet body-reviewed. These eight files remain not Rust-mapped, not Tested, and not Complete.
+Only TemplateTypes remains open in both variants. TD/RA TemplateTypes contain 216 and 401 entries and will be audited in bounded batches; no typed Rust catalog or parity tests exist.
 
 ## Rust implementation comparison
 
@@ -89,7 +89,7 @@ The current `crates/map-editor-model` tree contains `MapDocument`, `CellLayers`,
 
 ## Verification boundary
 
-The ten definition source bodies and four small interface declarations were inspected at the pinned commit. Fourteen TD/RA registry bodies (DirectionTypes, HouseTypes, InfantryTypes, UnitTypes, BuildingTypes, OverlayTypes and SmudgeTypes for both variants) were inspected. TemplateTypes, TerrainTypes and TheaterTypes remain open for both variants. No Rust code changed and no Rust test, C# runtime test, image comparison, or serializer parity test was executed.
+The ten definition source bodies and four small interface declarations were inspected at the pinned commit. Eighteen TD/RA registry bodies (DirectionTypes, HouseTypes, InfantryTypes, UnitTypes, BuildingTypes, OverlayTypes, SmudgeTypes, TerrainTypes and TheaterTypes for both variants) were inspected. TemplateTypes remains open for both variants. No Rust code changed and no Rust test, C# runtime test, image comparison, or serializer parity test was executed.
 
 
 ## Static registry review update — Tranche 6S-A
@@ -101,3 +101,13 @@ TD and RA BuildingTypes, OverlayTypes and SmudgeTypes source bodies are fully do
 - Smudge catalogs are identical and include logical sizes and bib flags.
 - Registry initialization, Map.InitTheater and MainForm consumer filters were traced.
 - No typed Rust catalog, tests, or parity results exist. TemplateTypes, TerrainTypes and TheaterTypes remain open for both variants.
+
+
+## Static terrain and theatre registries — Tranche 6S-B
+
+Four registry bodies per variant are Body reviewed: TerrainTypes and TheaterTypes. See [Variant-Terrain-Theater-Catalogs-6S-B.md](Variant-Terrain-Theater-Catalogs-6S-B.md) and four per-file guides.
+
+- TD/RA terrain catalogs contain 32/35 entries with exact masks, theatres and flags; TD has two transformable split types; RA has five Water ice entries, nine Interior boxes and OreMine Mine.
+- Theatre sequences put terrain key first, then common tilesets. TD Temperate/Winter share ID2; source anomaly retained.
+- Map.InitTheater initializes every TerrainType before UI filtering. MainForm/TerrainTool filter by theatre; terrain selector doesn't require thumbnails. False tile lookup leaves metadata unchanged.
+- Body-reviewed only; not Rust-mapped/Tested/Complete

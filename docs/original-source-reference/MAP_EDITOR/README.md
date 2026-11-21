@@ -96,14 +96,15 @@ The model's definition/catalog layer is now documented separately from placed ma
 - [Type catalog interfaces](TypeCatalog-Interfaces.md) — exact IBrowsableType, ICellOccupier, ICellOverlapper and ITechnoType declarations.
 - Per-file guides: [BuildingType](BuildingType.cs.md), [DirectionType](DirectionType.cs.md), [HouseType](HouseType.cs.md), [InfantryType](InfantryType.cs.md), [OverlayType](OverlayType.cs.md), [SmudgeType](SmudgeType.cs.md), [TemplateType](TemplateType.cs.md), [TerrainType](TerrainType.cs.md), [TheaterType](TheaterType.cs.md), and [UnitType](UnitType.cs.md).
 
-### TD/RA static registries — Tranches 6R and 6S-A
+### TD/RA static registries — Tranches 6R and 6S-A/B
 
 - [6R registry comparison](Variant-Registry-Catalogs.md) — directions, houses, infantry and units.
-- [6S-A catalog comparison](Variant-Static-Catalogs-6S-A.md) — complete building, overlay and smudge catalogs.
-- RA: [DirectionTypes](RedAlert/DirectionTypes.cs.md), [HouseTypes](RedAlert/HouseTypes.cs.md), [InfantryTypes](RedAlert/InfantryTypes.cs.md), [UnitTypes](RedAlert/UnitTypes.cs.md), [BuildingTypes](RedAlert/BuildingTypes.cs.md), [OverlayTypes](RedAlert/OverlayTypes.cs.md), [SmudgeTypes](RedAlert/SmudgeTypes.cs.md).
-- TD: [DirectionTypes](TiberianDawn/DirectionTypes.cs.md), [HouseTypes](TiberianDawn/HouseTypes.cs.md), [InfantryTypes](TiberianDawn/InfantryTypes.cs.md), [UnitTypes](TiberianDawn/UnitTypes.cs.md), [BuildingTypes](TiberianDawn/BuildingTypes.cs.md), [OverlayTypes](TiberianDawn/OverlayTypes.cs.md), [SmudgeTypes](TiberianDawn/SmudgeTypes.cs.md).
+- [6S-A catalog comparison](Variant-Static-Catalogs-6S-A.md) — buildings, overlays and smudges.
+- [6S-B terrain/theatre comparison](Variant-Terrain-Theater-Catalogs-6S-B.md) — masks, theatre restrictions, ordered tilesets and TD duplicate theatre-ID anomaly.
+- RA: [DirectionTypes](RedAlert/DirectionTypes.cs.md), [HouseTypes](RedAlert/HouseTypes.cs.md), [InfantryTypes](RedAlert/InfantryTypes.cs.md), [UnitTypes](RedAlert/UnitTypes.cs.md), [BuildingTypes](RedAlert/BuildingTypes.cs.md), [OverlayTypes](RedAlert/OverlayTypes.cs.md), [SmudgeTypes](RedAlert/SmudgeTypes.cs.md), [TerrainTypes](RedAlert/TerrainTypes.cs.md), [TheaterTypes](RedAlert/TheaterTypes.cs.md).
+- TD: [DirectionTypes](TiberianDawn/DirectionTypes.cs.md), [HouseTypes](TiberianDawn/HouseTypes.cs.md), [InfantryTypes](TiberianDawn/InfantryTypes.cs.md), [UnitTypes](TiberianDawn/UnitTypes.cs.md), [BuildingTypes](TiberianDawn/BuildingTypes.cs.md), [OverlayTypes](TiberianDawn/OverlayTypes.cs.md), [SmudgeTypes](TiberianDawn/SmudgeTypes.cs.md), [TerrainTypes](TiberianDawn/TerrainTypes.cs.md), [TheaterTypes](TiberianDawn/TheaterTypes.cs.md).
 
-Fourteen registry bodies (seven classes per variant) are Body reviewed. TemplateTypes, TerrainTypes and TheaterTypes remain open for both variants. Initialization parity/tests are not claimed.
+Eighteen registry bodies (nine classes per variant) are Body reviewed. Only TD/RA TemplateTypes remain open. Initialization parity/tests are not claimed.
 
 
 The ten definition bodies are Body reviewed; the four small interfaces are Header reviewed. No typed Rust catalog mapping or parity tests are claimed.
