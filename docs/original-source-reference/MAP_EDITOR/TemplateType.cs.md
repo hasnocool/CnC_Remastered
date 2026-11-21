@@ -65,3 +65,8 @@ No TemplateType catalog exists in `map-editor-model`; `CellLayers.template` stor
 - [ ] Zero-size and missing-icon runtime tests.
 
 No Rust code was changed and no test was executed.
+
+
+## Catalog slice dependency update — Tranche 6S-C-A
+
+TD/RA TemplateTypes IDs0–31 are documented in [Variant-TemplateTypes-6S-C-A.md](Variant-TemplateTypes-6S-C-A.md). Catalog totals 216/401 and remain Partially reviewed. TD Water/Water2 lack Water flag; RA Water/Water2 carry it. Static construction/GetTypes inspected, catalog beyond ID31 open. TemplateTool/serialization traces are in comparison.

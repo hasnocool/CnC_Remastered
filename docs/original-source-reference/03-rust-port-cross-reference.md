@@ -146,7 +146,7 @@ See [MapModel-Contracts.md](MAP_EDITOR/MapModel-Contracts.md) and the per-file g
 | CnCTDRAMapEditor/TiberianDawn/InfantryTypes.cs | 20 TD infantry; field E7 aliases Name token e6. | No typed TD infantry catalog; body reviewed. |
 | CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs | 22 ground + 5 air; no vessels. | No typed TD unit catalog; body reviewed. |
 
-See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is Rust-mapped. Fourteen TD/RA registries are Body reviewed: DirectionTypes, HouseTypes, InfantryTypes, UnitTypes, BuildingTypes, OverlayTypes and SmudgeTypes for both variants. TemplateTypes, TerrainTypes and TheaterTypes remain open for both variants; catalog validation, initialization parity and tests are pending.
+See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is Rust-mapped. Eighteen TD/RA registry bodies are Body reviewed (nine classes per variant). TD/RA TemplateTypes are Partially reviewed for IDs0–31; their full catalogs remain open. Catalog validation, initialization parity and tests are pending.
 
 
 ## Static registry body review — Tranche 6S-A
@@ -167,3 +167,8 @@ See [Variant-Static-Catalogs-6S-A.md](MAP_EDITOR/Variant-Static-Catalogs-6S-A.md
 | TD/RA TheaterTypes.cs | Three theatres per variant, ordered terrain/common tilesets, reflection/GetTypes; TD duplicate ID2 recorded. | No typed theatre catalog or tileset source abstraction. |
 
 See [Variant-Terrain-Theater-Catalogs-6S-B.md](MAP_EDITOR/Variant-Terrain-Theater-Catalogs-6S-B.md) and four per-file guides. Map.InitTheater initializes all terrain entries before UI theatre filtering. Missing tile lookup leaves TerrainType metadata unchanged. Body-reviewed only; not Rust-mapped/Tested/Complete
+
+
+## TemplateTypes partial catalog review — Tranche 6S-C-A
+
+TD and RA TemplateTypes are **Partially reviewed**: IDs0–31 documented (32 entries each), static constructor/GetTypes inspected, totals 216/401 established. Full catalogs and Rust mapping remain open. See [Variant-TemplateTypes-6S-C-A.md](MAP_EDITOR/Variant-TemplateTypes-6S-C-A.md). TD Water entries lack Water flag; RA Water/Water2 carry it. TemplateType.Init derives masks from successful tile lookup; TemplateTool excludes Clear and missing-thumbnail types. Serialization call-site traces are in the comparison; plugin files remain not fully body-reviewed.

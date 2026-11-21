@@ -1,6 +1,6 @@
 # Editor type catalog contracts
 
-> **Audit status: cross-file synthesis of ten body-reviewed definition classes and eighteen body-reviewed TD/RA static registries (nine classes per variant).** Only TemplateTypes registry files remain open for both variants. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
+> **Audit status: cross-file synthesis of ten body-reviewed definition classes and eighteen body-reviewed TD/RA static registries (nine classes per variant).** TD/RA TemplateTypes remain Partially reviewed for IDs0–31; full catalogs remain open. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
 
 ## Definition versus placed instance
 
@@ -100,7 +100,7 @@ TD and RA BuildingTypes, OverlayTypes and SmudgeTypes source bodies are fully do
 - Overlay catalogs include IDs, default/explicit display keys, flags and theatre restrictions.
 - Smudge catalogs are identical and include logical sizes and bib flags.
 - Registry initialization, Map.InitTheater and MainForm consumer filters were traced.
-- No typed Rust catalog, tests, or parity results exist. TemplateTypes, TerrainTypes and TheaterTypes remain open for both variants.
+- No typed Rust catalog, tests, or parity results exist. TerrainTypes and TheaterTypes were Body reviewed; TemplateTypes are Partially reviewed for IDs0–31, full catalogs remain open.
 
 
 ## Static terrain and theatre registries — Tranche 6S-B
@@ -111,3 +111,11 @@ Four registry bodies per variant are Body reviewed: TerrainTypes and TheaterType
 - Theatre sequences put terrain key first, then common tilesets. TD Temperate/Winter share ID2; source anomaly retained.
 - Map.InitTheater initializes every TerrainType before UI filtering. MainForm/TerrainTool filter by theatre; terrain selector doesn't require thumbnails. False tile lookup leaves metadata unchanged.
 - Body-reviewed only; not Rust-mapped/Tested/Complete
+
+## TemplateTypes — Tranche 6S-C-A partial slice
+
+- TD/RA IDs0–31 documented in batch guides; static constructors/GetTypes inspected. Totals 216/401; remaining entries are not body-reviewed.
+- TD Water/Water2 lack Water flag; RA Water/Water2 carry it. RA shore IDs3–31 are Temperate/Snow; TD shore IDs3–12 Winter/Temperate and slopes13–31 all theatres.
+- TemplateType.Init generates thumbnail/mask from successful tile lookup; TemplateTool filters thumbnails, current theatre and Clear; whole placement respects mask, removal clears full footprint.
+- TD binary templates use byte type+icon pairs; RA MapPack stores ushort type array then icon bytes. This is call-site tracing, not full plugin body audit.
+- Both registries remain Partially reviewed, not Rust-mapped/Tested/Complete.

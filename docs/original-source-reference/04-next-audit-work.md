@@ -351,10 +351,21 @@ A page is not complete merely because it names the class. It should explain all 
 - Status: 4 Inventory only → Body reviewed. Counts: 17 legacy Reviewed; 116 Partially reviewed; 21 Header reviewed; 70 Body reviewed; 12 Resource reviewed; 1,095 Inventory only; Rust-mapped/Tested/Complete 0; total 1,331. Reference library: 248 Markdown (243+5).
 - No Rust source changed; no Rust build/unit test, C# runtime, rendering, missing-asset or serializer parity test executed.
 
-## Next source batch — Tranche 6S-C (TemplateTypes)
+## Tranche 6S-C-A — TemplateTypes catalog slice IDs 0–31 (completed)
 
-1. Audit TD/RA TemplateTypes in bounded batches. Registries contain 216 TD entries (IDs0–215) and 401 RA entries (IDs0–400); record exact IDs, names, icon dimensions, theatres, flags and initialization.
-2. Keep both inventory paths **Partially reviewed** until all entries, static construction, GetTypes, dependencies and consumers are covered.
-3. Trace TemplateTool category extraction, theatre/thumbnail/Clear filters, icon selection/placement, plugin template serialization, TemplateType.Init missing-icon/mask behavior and terrain interactions.
-4. Continue serialization/INI, designer/resources, shared utility, Steamworks/native binding and remaining TD/RA runtime audits.
-5. Rust-mapped/Tested/Complete remain separate evidence states.
+- Refreshed target main/tree, inventory, roadmap, Rust cross-reference and editor README. Baseline `4f9027e82045aa627a22e94e177270d3ebb37790`; target tree 478 entries, not truncated; pinned upstream tree is 1,375 entries.
+- Read full TD/RA TemplateTypes sources (257/442 lines), parsed all 216/401 declarations for catalog totals, and body-reviewed IDs0–31 in both variants. Static constructors/GetTypes inspected; IDs32+ remain open.
+- TD: Clear0, Water1, Water2, Shore1–5 and Shore11–15 IDs3–12, Slopes1–19 IDs13–31. TD Water/Water2 do not carry Water flag.
+- RA: Clear0, Water1/Water2 IDs1–2 (both Water flag), Shore01–29 IDs3–31. All shores in this slice are Temperate/Snow.
+- Traced TemplateType.Init mask/thumbnail generation, TemplateTool filters/category/selection/placement/removal and TD binary vs RA MapPack template serialization call sites. GamePlugin files remain not exhaustively body-reviewed.
+- Added two partial catalog guides and a comparison; updated inventory, roadmap, cross-reference, README, TypeCatalog-Contracts, TemplateType and TemplateTool guides.
+- Status: TD/RA TemplateTypes Inventory only → Partially reviewed. Counts: 17 legacy Reviewed; 118 Partially reviewed; 21 Header reviewed; 70 Body reviewed; 12 Resource reviewed; 1,093 Inventory only; Rust-mapped/Tested/Complete 0; total 1,331. Reference library: 251 Markdown (248+3).
+- No Rust source changed; no build or tests executed.
+
+## Next source batch — Tranche 6S-C-B (TemplateTypes IDs 32–63)
+
+1. Continue both TD and RA TemplateTypes declarations in IDs32–63, recording every field, ID, token, dimensions, theatre and flag.
+2. Update partial guides, inventory, cross-reference, comparison and roadmap; keep both registry files Partially reviewed.
+3. Follow catalog initialization and serialization call sites as needed, but do not promote GamePlugin statuses without full-body review.
+4. Continue further TemplateTypes ranges (64–95, then onward), then remaining editor/resources, shared libraries, TD/RA runtime and second-pass audits.
+5. Rust-mapped/Tested/Complete remain independent evidence states.

@@ -23,8 +23,8 @@ This is the complete path inventory at the pinned commit. A path being listed do
 
 | Status | Files |
 |---|---:|
-| Inventory only | 1095 |
-| Partially reviewed | 116 |
+| Inventory only | 1093 |
+| Partially reviewed | 118 |
 | Header reviewed | 21 |
 | Body reviewed | 70 |
 | Resource reviewed | 12 |
@@ -153,7 +153,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/RedAlert/OverlayTypes.cs` — Body reviewed ([RedAlert OverlayTypes.cs](MAP_EDITOR/RedAlert/OverlayTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/SmudgeTypes.cs` — Body reviewed ([RedAlert SmudgeTypes.cs](MAP_EDITOR/RedAlert/SmudgeTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/TeamMissionTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/RedAlert/TemplateTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/RedAlert/TemplateTypes.cs` — Partially reviewed ([batch guide](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-A.md); IDs0–31 cataloged, static constructor/GetTypes inspected; IDs32–400 and consumer parity open)
 - `CnCTDRAMapEditor/RedAlert/TerrainTypes.cs` — Body reviewed ([guide](MAP_EDITOR/RedAlert/TerrainTypes.cs.md); 35 entries, masks/flags/theatres/reflection/GetTypes inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/TheaterTypes.cs` — Body reviewed ([guide](MAP_EDITOR/RedAlert/TheaterTypes.cs.md); three entries, ordered tilesets, reflection/GetTypes and duplicate ID anomaly inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/UnitTypes.cs` — Body reviewed
@@ -266,7 +266,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/TiberianDawn/OverlayTypes.cs` — Body reviewed ([TiberianDawn OverlayTypes.cs](MAP_EDITOR/TiberianDawn/OverlayTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/TiberianDawn/SmudgeTypes.cs` — Body reviewed ([TiberianDawn SmudgeTypes.cs](MAP_EDITOR/TiberianDawn/SmudgeTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/TiberianDawn/TeamMissionTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/TiberianDawn/TemplateTypes.cs` — Inventory only
+- `CnCTDRAMapEditor/TiberianDawn/TemplateTypes.cs` — Partially reviewed ([batch guide](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-A.md); IDs0–31 cataloged, static constructor/GetTypes inspected; IDs32–215 and consumer parity open)
 - `CnCTDRAMapEditor/TiberianDawn/TerrainTypes.cs` — Body reviewed ([guide](MAP_EDITOR/TiberianDawn/TerrainTypes.cs.md); 32 entries, masks/theatres/transformability/reflection/GetTypes inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/TiberianDawn/TheaterTypes.cs` — Body reviewed ([guide](MAP_EDITOR/TiberianDawn/TheaterTypes.cs.md); three entries, ordered tilesets, reflection/GetTypes and duplicate ID anomaly inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs` — Body reviewed

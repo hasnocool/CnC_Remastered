@@ -105,3 +105,8 @@ Recommended Rust design: typed TemplateType catalog with per-theatre IconMask, c
 - [NavigationWidget.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Widgets/NavigationWidget.cs)
 - [ViewTool.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Tools/ViewTool.cs)
 - [MainForm.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/MainForm.cs)
+
+
+## TemplateTypes catalog follow-up — Tranche 6S-C-A
+
+See [Variant-TemplateTypes-6S-C-A.md](../Variant-TemplateTypes-6S-C-A.md) for catalog slice, theatre/flag differences, model mask construction, serializer call-site formats and whole-placement/removal asymmetry. Body-review status unchanged; no runtime parity tests executed.
