@@ -146,7 +146,7 @@ See [MapModel-Contracts.md](MAP_EDITOR/MapModel-Contracts.md) and the per-file g
 | CnCTDRAMapEditor/TiberianDawn/InfantryTypes.cs | 20 TD infantry; field E7 aliases Name token e6. | No typed TD infantry catalog; body reviewed. |
 | CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs | 22 ground + 5 air; no vessels. | No typed TD unit catalog; body reviewed. |
 
-See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is Rust-mapped. Eighteen TD/RA registry bodies are Body reviewed (nine classes per variant). TD/RA TemplateTypes are Partially reviewed for IDs0–31; their full catalogs remain open. Catalog validation, initialization parity and tests are pending.
+See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is Rust-mapped. Eighteen TD/RA registry bodies are Body reviewed (nine classes per variant). TD/RA TemplateTypes are Partially reviewed for IDs0–63; their full catalogs remain open. Catalog validation, initialization parity and tests are pending.
 
 
 ## Static registry body review — Tranche 6S-A
@@ -172,3 +172,7 @@ See [Variant-Terrain-Theater-Catalogs-6S-B.md](MAP_EDITOR/Variant-Terrain-Theate
 ## TemplateTypes partial catalog review — Tranche 6S-C-A
 
 TD and RA TemplateTypes are **Partially reviewed**: IDs0–31 documented (32 entries each), static constructor/GetTypes inspected, totals 216/401 established. Full catalogs and Rust mapping remain open. See [Variant-TemplateTypes-6S-C-A.md](MAP_EDITOR/Variant-TemplateTypes-6S-C-A.md). TD Water entries lack Water flag; RA Water/Water2 carry it. TemplateType.Init derives masks from successful tile lookup; TemplateTool excludes Clear and missing-thumbnail types. Serialization call-site traces are in the comparison; plugin files remain not fully body-reviewed.
+
+## TemplateTypes partial catalog review — Tranche 6S-C-B
+
+TD/RA IDs32–63 documented in [comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-B.md) and per-variant guides. Cumulative slices0–63 catalog-documented; source paths remain Partially reviewed. TD: Slope20–38, Shore32/33, desert Shore20–23, Brush1–7. RA: Shore30–56, ShoreCliff01–05. All Flag=None. IDs64+ and consumer parity open; no Rust mapping/tests.

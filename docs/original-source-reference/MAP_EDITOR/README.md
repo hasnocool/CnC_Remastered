@@ -104,7 +104,7 @@ The model's definition/catalog layer is now documented separately from placed ma
 - RA: [DirectionTypes](RedAlert/DirectionTypes.cs.md), [HouseTypes](RedAlert/HouseTypes.cs.md), [InfantryTypes](RedAlert/InfantryTypes.cs.md), [UnitTypes](RedAlert/UnitTypes.cs.md), [BuildingTypes](RedAlert/BuildingTypes.cs.md), [OverlayTypes](RedAlert/OverlayTypes.cs.md), [SmudgeTypes](RedAlert/SmudgeTypes.cs.md), [TerrainTypes](RedAlert/TerrainTypes.cs.md), [TheaterTypes](RedAlert/TheaterTypes.cs.md).
 - TD: [DirectionTypes](TiberianDawn/DirectionTypes.cs.md), [HouseTypes](TiberianDawn/HouseTypes.cs.md), [InfantryTypes](TiberianDawn/InfantryTypes.cs.md), [UnitTypes](TiberianDawn/UnitTypes.cs.md), [BuildingTypes](TiberianDawn/BuildingTypes.cs.md), [OverlayTypes](TiberianDawn/OverlayTypes.cs.md), [SmudgeTypes](TiberianDawn/SmudgeTypes.cs.md), [TerrainTypes](TiberianDawn/TerrainTypes.cs.md), [TheaterTypes](TiberianDawn/TheaterTypes.cs.md).
 
-Eighteen registry bodies (nine classes per variant) are Body reviewed. TD/RA TemplateTypes are Partially reviewed for IDs0–31; full catalogs remain open. Initialization parity/tests are not claimed.
+Eighteen registry bodies (nine classes per variant) are Body reviewed. TD/RA TemplateTypes are Partially reviewed for IDs0–63; full catalogs remain open. Initialization parity/tests are not claimed.
 
 
 The ten definition bodies are Body reviewed; the four small interfaces are Header reviewed. No typed Rust catalog mapping or parity tests are claimed.
@@ -115,3 +115,9 @@ The ten definition bodies are Body reviewed; the four small interfaces are Heade
 - [TD IDs0–31](TiberianDawn/TemplateTypes-6S-C-A.md) · [RA IDs0–31](RedAlert/TemplateTypes-6S-C-A.md) · [catalog/model/tool/serialization comparison](Variant-TemplateTypes-6S-C-A.md).
 
 Both registries remain Partially reviewed; TD total216 and RA total401, with IDs32+ open. No Rust mapping/tests.
+
+### TemplateTypes — Tranche 6S-C-B
+
+- [TD IDs32–63](TiberianDawn/TemplateTypes-6S-C-B.md) · [RA IDs32–63](RedAlert/TemplateTypes-6S-C-B.md) · [comparison](Variant-TemplateTypes-6S-C-B.md).
+
+Cumulative slices0–63 documented per variant. TD216, RA401 total; IDs64+ remain open. No Rust mapping/tests.

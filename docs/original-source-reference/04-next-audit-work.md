@@ -362,10 +362,20 @@ A page is not complete merely because it names the class. It should explain all 
 - Status: TD/RA TemplateTypes Inventory only → Partially reviewed. Counts: 17 legacy Reviewed; 118 Partially reviewed; 21 Header reviewed; 70 Body reviewed; 12 Resource reviewed; 1,093 Inventory only; Rust-mapped/Tested/Complete 0; total 1,331. Reference library: 251 Markdown (248+3).
 - No Rust source changed; no build or tests executed.
 
-## Next source batch — Tranche 6S-C-B (TemplateTypes IDs 32–63)
+## Tranche 6S-C-B — TemplateTypes IDs 32–63 (completed)
 
-1. Continue both TD and RA TemplateTypes declarations in IDs32–63, recording every field, ID, token, dimensions, theatre and flag.
-2. Update partial guides, inventory, cross-reference, comparison and roadmap; keep both registry files Partially reviewed.
-3. Follow catalog initialization and serialization call sites as needed, but do not promote GamePlugin statuses without full-body review.
-4. Continue further TemplateTypes ranges (64–95, then onward), then remaining editor/resources, shared libraries, TD/RA runtime and second-pass audits.
-5. Rust-mapped/Tested/Complete remain independent evidence states.
+- Branch compare confirmed `main` identical to baseline `7dcc9bf278e5936ea4a4462144ca9a2490db36e8`; refreshed inventory, roadmap, cross-reference, README and pinned TD/RA source.
+- Parsed actual public static readonly declarations and verified exactly 32 contiguous entries IDs32–63 per variant. Upstream blobs TD `97fdfd2109d241da8b51139d974028ed1198b140`, RA `027bb5658e2297cf2ade84f9a01567acc8238db8`.
+- TD: Slope20–38 IDs32–50; Shore32/33 IDs51–52; desert Shore20–23 IDs53–56; Brush1–7 IDs57–63. RA: Shore30–56 IDs32–58; ShoreCliff01–05 IDs59–63. Exact dimensions, tokens and theatre lists documented.
+- All declarations have Flag=None. TD desert-only entries and RA Temperate/Snow shores/cliffs are captured.
+- Added two guides and comparison; updated inventory, cross-reference, README and plan.
+- Both registry rows remain Partially reviewed. Cumulative catalog slice IDs0–63, not complete bodies/dependency reviews. Inventory totals 1,331: 17 legacy Reviewed, 118 Partially reviewed, 21 Header reviewed, 70 Body reviewed, 12 Resource reviewed, 1,093 Inventory only; Rust-mapped/Tested/Complete 0. Reference docs 254 (251+3).
+- No Rust code or tests executed. Connector has no recursive-tree read action; create-tree base is checkpoint tree SHA, with post-update branch and changed-path verification planned, but independent recursive tree enumeration unavailable.
+
+## Next source batch — Tranche 6S-C-C (TemplateTypes IDs64–95)
+
+1. Parse IDs64–95 from both pinned sources; record fields, IDs, tokens, dimensions, theatre arrays and flags.
+2. Add per-variant guides and comparison; update inventory, cross-reference, README and plan. Keep both registry rows Partially reviewed.
+3. Continue further ranges until catalog and dependencies are covered.
+4. Then full GamePlugin serialization bodies, linked tools/resources, Rust parity, shared libraries, runtime systems and second-pass audits.
+5. Rust-mapped/Tested/Complete remain separate evidence states.
