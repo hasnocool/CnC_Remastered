@@ -50,4 +50,4 @@ All entries use `TemplateTypeFlag.None`. Shore30–56 (IDs32–58) and ShoreClif
 - No Clear/Water/OreMine flags in this segment.
 - IDs64–400 and complete catalog dependency/consumer review remain open.
 
-Previous [slice 0–31](TemplateTypes-6S-C-A.md). [Comparison](../Variant-TemplateTypes-6S-C-B.md). Next slice IDs64–95.
+Previous [slice 0–31](TemplateTypes-6S-C-A.md). [Comparison](../Variant-TemplateTypes-6S-C-B.md). Next slice IDs96–127. [6S-C-C](TemplateTypes-6S-C-C.md).

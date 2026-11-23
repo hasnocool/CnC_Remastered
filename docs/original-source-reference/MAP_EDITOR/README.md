@@ -121,3 +121,10 @@ Both registries remain Partially reviewed; TD total216 and RA total401, with IDs
 - [TD IDs32–63](TiberianDawn/TemplateTypes-6S-C-B.md) · [RA IDs32–63](RedAlert/TemplateTypes-6S-C-B.md) · [comparison](Variant-TemplateTypes-6S-C-B.md).
 
 Cumulative slices0–63 documented per variant. TD216, RA401 total; IDs64+ remain open. No Rust mapping/tests.
+
+
+### TemplateTypes — Tranche 6S-C-C
+
+- [TD IDs64–95](TiberianDawn/TemplateTypes-6S-C-C.md) · [RA IDs64–95](RedAlert/TemplateTypes-6S-C-C.md) · [comparison](Variant-TemplateTypes-6S-C-C.md).
+
+Cumulative catalog declaration coverage IDs0–95 (TD216/RA401 totals); both remain Partially reviewed, IDs96+ and parity open.

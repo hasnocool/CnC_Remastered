@@ -176,3 +176,8 @@ TD and RA TemplateTypes are **Partially reviewed**: IDs0–31 documented (32 ent
 ## TemplateTypes partial catalog review — Tranche 6S-C-B
 
 TD/RA IDs32–63 documented in [comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-B.md) and per-variant guides. Cumulative slices0–63 catalog-documented; source paths remain Partially reviewed. TD: Slope20–38, Shore32/33, desert Shore20–23, Brush1–7. RA: Shore30–56, ShoreCliff01–05. All Flag=None. IDs64+ and consumer parity open; no Rust mapping/tests.
+
+
+## TemplateTypes partial catalog review — Tranche 6S-C-C
+
+TD/RA declarations IDs64–95 documented in [the comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-C.md) and per-variant guides. Cumulative coverage IDs0–95 (96 each), full totals TD216/RA401. TD theatre variation and RA ShoreCliff06–37 dimensions/tokens recorded. Both rows remain Partially reviewed; complete body/dependency review, Rust mapping and tests open. Next IDs96–127.

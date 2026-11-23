@@ -26,4 +26,4 @@ Prior review inspected reflection registry construction, TemplateType.Init mask 
 
 Rust map-editor-model currently stores numeric template IDs only; typed per-variant catalogs, theatre arrays, flags, icon dimensions and masks are absent. Documentation only; no Rust code, tests, runtime, render or serialization parity executed.
 
-Next batch **IDs64–95**. Keep both source inventory rows Partially reviewed.
+Next batch **IDs96–127**. [6S-C-C](Variant-TemplateTypes-6S-C-C.md). Keep both source inventory rows Partially reviewed.

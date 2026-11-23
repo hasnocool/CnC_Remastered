@@ -50,4 +50,4 @@ All entries in this segment use `TemplateTypeFlag.None`. Slope20–38 (IDs32–5
 - No Clear/Water/OreMine flags in this segment. Theatre restrictions are catalog data; the model Init's lookup behavior is documented separately.
 - Remaining IDs64–215, full catalog dependencies and consumers remain open.
 
-Previous [slice 0–31](TemplateTypes-6S-C-A.md). [Comparison](../Variant-TemplateTypes-6S-C-B.md). Next slice IDs64–95.
+Previous [slice 0–31](TemplateTypes-6S-C-A.md). [Comparison](../Variant-TemplateTypes-6S-C-B.md). Next slice IDs96–127. [6S-C-C](TemplateTypes-6S-C-C.md).

@@ -119,3 +119,9 @@ Four registry bodies per variant are Body reviewed: TerrainTypes and TheaterType
 - TemplateType.Init generates thumbnail/mask from successful tile lookup; TemplateTool filters thumbnails, current theatre and Clear; whole placement respects mask, removal clears full footprint.
 - TD binary templates use byte type+icon pairs; RA MapPack stores ushort type array then icon bytes. This is call-site tracing, not full plugin body audit.
 - Both registries remain Partially reviewed, not Rust-mapped/Tested/Complete.
+
+## TemplateTypes — Tranche 6S-C-C
+
+- IDs64–95 documented in [comparison](Variant-TemplateTypes-6S-C-C.md) and per-variant guides; cumulative declarations IDs0–95 (96 each), total TD216/RA401.
+- TD brush/patch/shore/boulder/road families have varying theatre whitelists. RA continues ShoreCliff06–37 with `wc` tokens. All entries default to `TemplateTypeFlag.None`.
+- Catalog declarations only. Full behavior/dependency review, Rust mapping and tests remain open.
