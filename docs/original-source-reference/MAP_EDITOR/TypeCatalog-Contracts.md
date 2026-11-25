@@ -1,6 +1,6 @@
 # Editor type catalog contracts
 
-> **Audit status: cross-file synthesis of ten body-reviewed definition classes and eighteen body-reviewed TD/RA static registries (nine classes per variant).** TD/RA TemplateTypes remain Partially reviewed; declaration slices IDs0–127 are catalogued (128 entries each), while TD IDs128–215 and RA IDs128–400 and the complete consumer/initializer review remain open. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
+> **Audit status: cross-file synthesis of ten body-reviewed definition classes and eighteen body-reviewed TD/RA static registries (nine classes per variant).** TD/RA TemplateTypes remain Partially reviewed; declaration slices IDs0–127 are catalogued (128 entries each), while TD IDs160–215 and RA IDs160–400 and the complete consumer/initializer review remain open. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
 
 ## Definition versus placed instance
 
@@ -69,7 +69,7 @@ Eight registry bodies are now reviewed: DirectionTypes, HouseTypes, InfantryType
 - Aircraft/Vessel masks are 32/64. TD has no vessel records.
 - Catalog arrays are reflection-collected without explicit sorting; GetTypes returns backing arrays. InfantryType/UnitType constructors eagerly resolve text through Globals.TheGameTextManager.
 
-TemplateTypes remains Partially reviewed in both variants. The full registries contain 216 TD and 401 RA entries; declaration slices IDs0–127 are documented, but remaining declarations and full initializer/consumer/serializer parity are open. No typed Rust editor catalog or parity tests exist.
+TemplateTypes remains Partially reviewed in both variants. The full registries contain 216 TD and 401 RA entries; declaration slices IDs0–159 are documented, but remaining declarations and full initializer/consumer/serializer parity are open. No typed Rust editor catalog or parity tests exist.
 
 ## Rust implementation comparison
 
@@ -136,3 +136,15 @@ TD and RA IDs96–127 are documented in [Variant-TemplateTypes-6S-C-D.md](Varian
 - RA Boulder4–6 (IDs100–102) and Patch15 (ID111) declare 0×0 footprints. The pinned source call path iterates all template types in Map.InitTheater and calls TemplateType.Init; Init constructs a Bitmap from max(width,height) without a positive-dimension guard. The zero-sized Bitmap request is source-confirmed; runtime exception/reachability testing remains outstanding.
 - The Rust Red Alert TemplateClass lifecycle module is a runtime object implementation, not a mapping of the C# editor's static TemplateType catalog. CellLayers.template remains Option<u16>; no typed editor catalog parity exists.
 - No Rust code or tests changed/executed. Do not advance either inventory row beyond Partially reviewed.
+
+
+## TemplateTypes — Tranche 6S-C-E (partial declaration slice)
+
+TD and RA IDs128–159 are documented in [Variant-TemplateTypes-6S-C-E.md](Variant-TemplateTypes-6S-C-E.md) and the per-variant guides. Cumulative declaration coverage is IDs0–159 (160/216 TD and 160/401 RA); both inventory rows remain Partially reviewed.
+
+- TD IDs128–135 are Road36–Road43, all three theatres; IDs136–148 are River1–13, Winter/Temperate; IDs149–159 are River14–24, Desert-only.
+- RA IDs128–134 cover Falls2a, fords and bridges; IDs135–159 cover Slope01–Slope25, all Temperate/Snow.
+- Every declaration uses the five-argument constructor, verified to delegate with TemplateTypeFlag.None. This slice has no zero-sized dimensions.
+- The shared theatre initialization call path was re-fetched; this remains declaration coverage, not a complete GamePlugin body or serializer review.
+- Rust's numeric CellLayers.template: Option<u16> is not a typed editor catalog mapping; the runtime Red Alert TemplateClass module is a different responsibility.
+- No Rust code or tests changed/executed. Next declaration range: IDs160–191.

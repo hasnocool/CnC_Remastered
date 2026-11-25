@@ -104,7 +104,7 @@ The model's definition/catalog layer is now documented separately from placed ma
 - RA: [DirectionTypes](RedAlert/DirectionTypes.cs.md), [HouseTypes](RedAlert/HouseTypes.cs.md), [InfantryTypes](RedAlert/InfantryTypes.cs.md), [UnitTypes](RedAlert/UnitTypes.cs.md), [BuildingTypes](RedAlert/BuildingTypes.cs.md), [OverlayTypes](RedAlert/OverlayTypes.cs.md), [SmudgeTypes](RedAlert/SmudgeTypes.cs.md), [TerrainTypes](RedAlert/TerrainTypes.cs.md), [TheaterTypes](RedAlert/TheaterTypes.cs.md).
 - TD: [DirectionTypes](TiberianDawn/DirectionTypes.cs.md), [HouseTypes](TiberianDawn/HouseTypes.cs.md), [InfantryTypes](TiberianDawn/InfantryTypes.cs.md), [UnitTypes](TiberianDawn/UnitTypes.cs.md), [BuildingTypes](TiberianDawn/BuildingTypes.cs.md), [OverlayTypes](TiberianDawn/OverlayTypes.cs.md), [SmudgeTypes](TiberianDawn/SmudgeTypes.cs.md), [TerrainTypes](TiberianDawn/TerrainTypes.cs.md), [TheaterTypes](TiberianDawn/TheaterTypes.cs.md).
 
-Eighteen registry bodies (nine classes per variant) are Body reviewed. TD/RA TemplateTypes remain Partially reviewed with declaration slices IDs0–127 catalogued; remaining IDs and full initialization/consumer/serializer parity are open. Initialization parity/tests are not claimed.
+Eighteen registry bodies (nine classes per variant) are Body reviewed. TD/RA TemplateTypes remain Partially reviewed with declaration slices IDs0–159 catalogued; remaining IDs and full initialization/consumer/serializer parity are open. Initialization parity/tests are not claimed.
 
 
 The ten definition bodies are Body reviewed; the four small interfaces are Header reviewed. No typed Rust catalog mapping or parity tests are claimed.
@@ -135,3 +135,10 @@ Cumulative catalog declaration coverage IDs0–95 (TD216/RA401 totals); both rem
 - [TD IDs96–127](TiberianDawn/TemplateTypes-6S-C-D.md) · [RA IDs96–127](RedAlert/TemplateTypes-6S-C-D.md) · [comparison](Variant-TemplateTypes-6S-C-D.md).
 
 Cumulative declaration coverage is IDs0–127 (TD216/RA401 total); both inventory rows remain Partially reviewed. TD's slice is Road4–Road35. RA's slice includes ShoreCliff38, boulders, patches, rivers and falls. RA Boulder4–6 and Patch15 declare 0×0 dimensions; the Map.InitTheater/TemplateType.Init source path requests a zero-sized Bitmap, with runtime exception still untested. No editor catalog Rust mapping or parity tests.
+
+
+### TemplateTypes — Tranche 6S-C-E
+
+- [TD IDs128–159](TiberianDawn/TemplateTypes-6S-C-E.md) · [RA IDs128–159](RedAlert/TemplateTypes-6S-C-E.md) · [comparison](Variant-TemplateTypes-6S-C-E.md).
+
+Cumulative declaration coverage is IDs0–159 (TD216/RA401 total). TD's range covers roads and two theatre-specific river groups; RA covers Falls2a, fords, bridges and slopes. All entries use the None flag through the verified constructor overload. Both registry paths remain Partially reviewed; IDs160+ and full initializer/consumer/serializer parity remain open.

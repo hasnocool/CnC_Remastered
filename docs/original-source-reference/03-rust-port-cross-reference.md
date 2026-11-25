@@ -146,7 +146,7 @@ See [MapModel-Contracts.md](MAP_EDITOR/MapModel-Contracts.md) and the per-file g
 | CnCTDRAMapEditor/TiberianDawn/InfantryTypes.cs | 20 TD infantry; field E7 aliases Name token e6. | No typed TD infantry catalog; body reviewed. |
 | CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs | 22 ground + 5 air; no vessels. | No typed TD unit catalog; body reviewed. |
 
-See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is Rust-mapped. Eighteen TD/RA registry bodies are Body reviewed (nine classes per variant). TD/RA TemplateTypes are Partially reviewed for IDs0–127; remaining declarations and full initializer/consumer/serializer parity remain open. Catalog validation, initialization parity and tests are pending.
+See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is Rust-mapped. Eighteen TD/RA registry bodies are Body reviewed (nine classes per variant). TD/RA TemplateTypes are Partially reviewed for IDs0–159; remaining declarations and full initializer/consumer/serializer parity remain open. Catalog validation, initialization parity and tests are pending.
 
 
 ## Static registry body review — Tranche 6S-A
@@ -186,3 +186,8 @@ TD/RA declarations IDs64–95 documented in [the comparison](MAP_EDITOR/Variant-
 ## TemplateTypes partial catalog review — Tranche 6S-C-D
 
 TD/RA declarations IDs96–127 are documented in [the comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-D.md) and per-variant guides. Cumulative coverage is IDs0–127 (128/216 TD; 128/401 RA). TD IDs96–127 are Road4–Road35, tokens d04–d35, all three theatres. RA IDs96–127 cover ShoreCliff38, Boulder1–6, selected patches, River01–13 and Falls1/1a/2, all Temperate/Snow. RA Boulder4–6 (IDs100–102) and Patch15 (ID111) have source dimensions 0×0; Map.InitTheater iterates all template types and TemplateType.Init requests a zero-sized Bitmap. Exact runtime exception was not executed. Both registry files remain Partially reviewed, not Rust-mapped/Tested/Complete. The existing rts-core Red Alert TemplateClass module is a runtime object port, not the editor TemplateType catalog.
+
+
+## TemplateTypes partial catalog review — Tranche 6S-C-E
+
+TD/RA declarations IDs128–159 are documented in [the comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-E.md) and per-variant guides. Cumulative coverage is IDs0–159 (160/216 TD; 160/401 RA). TD IDs128–135 are Road36–Road43 (all three theatres); IDs136–148 are River1–13 (Winter/Temperate); IDs149–159 are River14–24 (Desert-only). RA IDs128–134 are Falls2a/fords/bridges and IDs135–159 are Slope01–25, all Temperate/Snow. All entries default to TemplateTypeFlag.None through the verified five-argument constructor. No 0×0 declarations occur in this slice. Both rows remain Partially reviewed; IDs160+ and full dependency/serializer review remain open. No Rust mapping or tests.
