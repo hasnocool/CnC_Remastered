@@ -12,14 +12,26 @@
 - Inventory counts recomputed from all 1,331 path rows: 17 legacy Reviewed, 121 Partially reviewed, 20 Header reviewed, 67 Body reviewed, 12 Resource reviewed, 1,094 Inventory only. Rust-mapped/Tested/Complete remain 0.
 - Rust editor model still stores `CellLayers.template: Option<u16>`; no typed catalog mapping. The Rust Red Alert TemplateClass module is runtime object behavior, not the editor registry. No Rust code or tests changed/executed.
 
-## Next batch — Tranche 6S-C-F (TemplateTypes IDs160–191)
+## Tranche 6S-C-F — TemplateTypes IDs160–191 (completed)
 
-1. Refresh target main/ref/tree, inventory, roadmap, cross-reference, README and exact pinned TD/RA sources before editing.
-2. Parse exactly IDs160–191 from both registries, preserving field/token, dimensions, theatre arrays, flags, declaration order and source-line anchors.
-3. Add per-variant guides and comparison; update inventory, cross-reference, TypeCatalog-Contracts, MAP_EDITOR README and roadmap.
-4. TD has 56 declarations remaining after ID159; RA has 241. Keep both inventory rows Partially reviewed until entire source bodies and dependencies are audited.
-5. Complete GamePlugin INI/MapPack serialization body review and theatre/catalog consumer tracing after declaration coverage.
-6. Continue map models, designer/resource XML, shared libraries, runtime systems and second-pass audits. Catalog documentation does not establish Rust mapping or tests.
+- Run-start main: 3fb4ea3965111066fc419cf93ef0ef061aaf856c; target tree 0efbd5dfc23b7f73fd3ca037672ff70473313494, recursive count 493, complete. Pinned upstream tree: 1,375 entries, complete.
+- Re-fetched inventory, roadmap, cross-reference, MAP_EDITOR README and TypeCatalog-Contracts. Exact TD/RA TemplateTypes and shared TemplateType/Map implementations were inspected at the pinned commit.
+- Source blobs matched the pinned tree: TD 97fdfd2109d241da8b51139d974028ed1198b140; RA 027bb5658e2297cf2ade84f9a01567acc8238db8. Shared TemplateType blob f62e53665e9a45ddebba9e1f7d01ca61045fae64; Map blob 1b478aebee005a8db2b4b7bfb4e044356829bd5d.
+- Parsed exactly 32 contiguous IDs160–191 per variant, retaining field, ID, tile key, width, height, theatre array, implicit flag and line.
+- TD: River25; fords/falls; bridge variants; Desert Shore24–31 and Shore36–39; Winter Patch16–20; Temperate/Winter Shore34/35. Shore32/33 are earlier IDs51/52. RA: Slope26–38 then Road01–19, all Temperate/Snow. Slope27 is 3×2; Road05 is 3×4; other road exceptions are recorded in the guide. All 64 flags are None.
+- Re-read shared TemplateType members, constructors, equality/hash/string and Init, plus Map.InitTheater. Init creates a max-dimension square thumbnail and width×height mask, loops y-major/x-minor, and marks successful theatre-specific tile lookups. There is no positive-dimension guard before Bitmap allocation; this tranche has no zero-sized records. RA IDs100–102 and 111 remain an untested source hazard.
+- Added three guides/comparison; updated inventory, cross-reference, README, TypeCatalog-Contracts and roadmap. Both TemplateTypes rows remain Partially reviewed; coverage is IDs0–191 (192/216 TD, 192/401 RA).
+- Inventory counts recomputed from 1,331 path rows: 17 Reviewed, 121 Partially reviewed, 1094 Inventory only, 20 Header reviewed, 67 Body reviewed, 12 Resource reviewed. Rust-mapped/Tested/Complete remain 0.
+- Rust CellLayers.template remains Option<u16>; runtime Red Alert TemplateClass is not the editor catalog. No Rust code/tests changed or executed.
+
+## Next batch — Tranche 6S-C-G (TD IDs192–215; RA IDs192–223)
+
+1. Refresh main/ref, complete recursive target/upstream trees, inventory, roadmap, cross-reference, README and exact pinned sources.
+2. Parse the final 24 TD declarations (IDs192–215) and next 32 RA declarations (IDs192–223), retaining all fields and source-line anchors. Do not invent TD IDs216–223; TD ends at ID215.
+3. Add per-variant guides/comparison and update inventory, cross-reference, TypeCatalog-Contracts, README and roadmap.
+4. TD declaration coverage will reach 216/216 but remains Partially reviewed until full body, consumers and serializers are audited. RA will reach 224/401 and remain Partially reviewed.
+5. Continue RA IDs224–255, then complete GamePlugin INI/MapPack body reviews and theatre/catalog consumer tracing.
+6. Continue map models, designer/resource XML, shared libraries, runtime systems and second-pass audits. Catalog enumeration alone is not Rust mapping or testing.
 
 ## Persistent verification rules
 

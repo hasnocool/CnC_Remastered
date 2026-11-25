@@ -146,7 +146,7 @@ See [MapModel-Contracts.md](MAP_EDITOR/MapModel-Contracts.md) and the per-file g
 | CnCTDRAMapEditor/TiberianDawn/InfantryTypes.cs | 20 TD infantry; field E7 aliases Name token e6. | No typed TD infantry catalog; body reviewed. |
 | CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs | 22 ground + 5 air; no vessels. | No typed TD unit catalog; body reviewed. |
 
-See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is Rust-mapped. Eighteen TD/RA registry bodies are Body reviewed (nine classes per variant). TD/RA TemplateTypes are Partially reviewed for IDs0–159; remaining declarations and full initializer/consumer/serializer parity remain open. Catalog validation, initialization parity and tests are pending.
+See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is Rust-mapped. Eighteen TD/RA registry bodies are Body reviewed (nine classes per variant). TD/RA TemplateTypes are Partially reviewed for IDs0–191; remaining declarations and full initializer/consumer/serializer parity remain open. Catalog validation, initialization parity and tests are pending.
 
 
 ## Static registry body review — Tranche 6S-A
@@ -191,3 +191,13 @@ TD/RA declarations IDs96–127 are documented in [the comparison](MAP_EDITOR/Var
 ## TemplateTypes partial catalog review — Tranche 6S-C-E
 
 TD/RA declarations IDs128–159 are documented in [the comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-E.md) and per-variant guides. Cumulative coverage is IDs0–159 (160/216 TD; 160/401 RA). TD IDs128–135 are Road36–Road43 (all three theatres); IDs136–148 are River1–13 (Winter/Temperate); IDs149–159 are River14–24 (Desert-only). RA IDs128–134 are Falls2a/fords/bridges and IDs135–159 are Slope01–25, all Temperate/Snow. All entries default to TemplateTypeFlag.None through the verified five-argument constructor. No 0×0 declarations occur in this slice. Both rows remain Partially reviewed; IDs160+ and full dependency/serializer review remain open. No Rust mapping or tests.
+
+
+## TemplateTypes partial catalog review — Tranche 6S-C-F
+
+| Source | Review evidence | Rust status |
+|---|---|---|
+| TD TemplateTypes.cs IDs160–191 | 32 declarations parsed: River25, fords/falls, bridges, Desert shores, Winter patches and Temperate/Winter shores. Exact tokens, dimensions, theatre lists, flags and lines documented. | No typed TD editor catalog; CellLayers.template remains Option<u16>. |
+| RA TemplateTypes.cs IDs160–191 | 32 declarations parsed: Slope26–38 and Road01–19. Exact tokens, dimensions, theatre lists, flags and lines documented. | No typed RA editor catalog; runtime TemplateClass is a different layer. |
+
+Cumulative coverage is IDs0–191: 192/216 TD and 192/401 RA. Both paths remain Partially reviewed; TD has 24 declarations remaining and RA 209. Complete registry dependencies and both GamePlugin serializer bodies remain open. No Rust mapping or tests are claimed.

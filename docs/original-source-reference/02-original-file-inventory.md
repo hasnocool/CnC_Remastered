@@ -31,7 +31,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 | Legacy Reviewed | 17 |
 | **Total** | **1331** |
 
-> Counts are recomputed from the individual path-status rows at each audit run. Tranche 6S-C-E advances catalog declaration coverage only; both TemplateTypes paths remain Partially reviewed.
+> Counts are recomputed from the individual path-status rows at each audit run. Tranche 6S-C-F advances declaration coverage only; both TemplateTypes paths remain Partially reviewed.
 ## CnCTDRAMapEditor (286 files)
 
 - `CnCTDRAMapEditor/App.config` — Reviewed (file role and configuration/resource declarations; build parity pending)
@@ -151,7 +151,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/RedAlert/OverlayTypes.cs` — Body reviewed ([RedAlert OverlayTypes.cs](MAP_EDITOR/RedAlert/OverlayTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/SmudgeTypes.cs` — Body reviewed ([RedAlert SmudgeTypes.cs](MAP_EDITOR/RedAlert/SmudgeTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/TeamMissionTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/RedAlert/TemplateTypes.cs` — Partially reviewed ([IDs0–31](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-A.md), [IDs32–63](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-B.md), [IDs64–95](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-C.md), [IDs96–127](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-D.md), [IDs128–159](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-E.md); declarations IDs0–159 documented; IDs160–400 and full initializer/consumer/serializer parity open; IDs100–102 and 111 have source dimensions 0×0)
+- `CnCTDRAMapEditor/RedAlert/TemplateTypes.cs` — Partially reviewed ([IDs0–31](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-A.md), [IDs32–63](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-B.md), [IDs64–95](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-C.md), [IDs96–127](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-D.md), [IDs128–159](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-E.md), [IDs160–191](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-F.md); declarations IDs0–191 documented; IDs192–400 and full initializer/consumer/serializer parity open; IDs100–102 and 111 have source dimensions 0×0)
 - `CnCTDRAMapEditor/RedAlert/TerrainTypes.cs` — Body reviewed ([guide](MAP_EDITOR/RedAlert/TerrainTypes.cs.md); 35 entries, masks/flags/theatres/reflection/GetTypes inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/TheaterTypes.cs` — Body reviewed ([guide](MAP_EDITOR/RedAlert/TheaterTypes.cs.md); three entries, ordered tilesets, reflection/GetTypes and duplicate ID anomaly inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/UnitTypes.cs` — Body reviewed
@@ -264,7 +264,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/TiberianDawn/OverlayTypes.cs` — Body reviewed ([TiberianDawn OverlayTypes.cs](MAP_EDITOR/TiberianDawn/OverlayTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/TiberianDawn/SmudgeTypes.cs` — Body reviewed ([TiberianDawn SmudgeTypes.cs](MAP_EDITOR/TiberianDawn/SmudgeTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/TiberianDawn/TeamMissionTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/TiberianDawn/TemplateTypes.cs` — Partially reviewed ([IDs0–31](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-A.md), [IDs32–63](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-B.md), [IDs64–95](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-C.md), [IDs96–127](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-D.md), [IDs128–159](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-E.md); declarations IDs0–159 documented; IDs160–215 and full initializer/consumer/serializer parity open)
+- `CnCTDRAMapEditor/TiberianDawn/TemplateTypes.cs` — Partially reviewed ([IDs0–31](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-A.md), [IDs32–63](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-B.md), [IDs64–95](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-C.md), [IDs96–127](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-D.md), [IDs128–159](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-E.md), [IDs160–191](MAP_EDITOR/TiberianDawn/TemplateTypes-6S-C-F.md); declarations IDs0–191 documented; IDs192–215 and full initializer/consumer/serializer parity open)
 - `CnCTDRAMapEditor/TiberianDawn/TerrainTypes.cs` — Body reviewed ([guide](MAP_EDITOR/TiberianDawn/TerrainTypes.cs.md); 32 entries, masks/theatres/transformability/reflection/GetTypes inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/TiberianDawn/TheaterTypes.cs` — Body reviewed ([guide](MAP_EDITOR/TiberianDawn/TheaterTypes.cs.md); three entries, ordered tilesets, reflection/GetTypes and duplicate ID anomaly inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs` — Body reviewed

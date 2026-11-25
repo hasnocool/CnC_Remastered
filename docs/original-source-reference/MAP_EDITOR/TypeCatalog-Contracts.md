@@ -148,3 +148,15 @@ TD and RA IDs128–159 are documented in [Variant-TemplateTypes-6S-C-E.md](Varia
 - The shared theatre initialization call path was re-fetched; this remains declaration coverage, not a complete GamePlugin body or serializer review.
 - Rust's numeric CellLayers.template: Option<u16> is not a typed editor catalog mapping; the runtime Red Alert TemplateClass module is a different responsibility.
 - No Rust code or tests changed/executed. Next declaration range: IDs160–191.
+
+
+## TemplateTypes — Tranche 6S-C-F
+
+TD and RA IDs160–191 are documented in [Variant-TemplateTypes-6S-C-F.md](Variant-TemplateTypes-6S-C-F.md) and per-variant guides. Cumulative coverage is IDs0–191 (192/216 TD and 192/401 RA); both inventory rows remain Partially reviewed.
+
+- TD: River25, Ford1/2, Falls1/2, theatre-specific bridge variants, Desert Shore24–31 and Shore36–39, Winter Patch16–20, Temperate/Winter Shore34/35.
+- RA: Slope26–38 then Road01–19, all Temperate/Snow. Slope27 is 3×2; roads range 1×2 through 4×3.
+- All 64 use the five-argument constructor delegating with TemplateTypeFlag.None. IDs are variant-local: TD ID160 River25 differs from RA ID160 Slope26.
+- This slice has no 0×0 dimensions; earlier RA IDs100–102 and 111 remain an untested runtime concern because Init has no positive-dimension guard.
+- CellLayers.template remains Option<u16>; runtime TemplateClass is not the editor catalog. No Rust code/tests changed or executed.
+- Remaining declarations: TD IDs192–215 (24), RA IDs192–400 (209). Keep both paths Partially reviewed.

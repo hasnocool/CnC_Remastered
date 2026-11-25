@@ -104,7 +104,7 @@ The model's definition/catalog layer is now documented separately from placed ma
 - RA: [DirectionTypes](RedAlert/DirectionTypes.cs.md), [HouseTypes](RedAlert/HouseTypes.cs.md), [InfantryTypes](RedAlert/InfantryTypes.cs.md), [UnitTypes](RedAlert/UnitTypes.cs.md), [BuildingTypes](RedAlert/BuildingTypes.cs.md), [OverlayTypes](RedAlert/OverlayTypes.cs.md), [SmudgeTypes](RedAlert/SmudgeTypes.cs.md), [TerrainTypes](RedAlert/TerrainTypes.cs.md), [TheaterTypes](RedAlert/TheaterTypes.cs.md).
 - TD: [DirectionTypes](TiberianDawn/DirectionTypes.cs.md), [HouseTypes](TiberianDawn/HouseTypes.cs.md), [InfantryTypes](TiberianDawn/InfantryTypes.cs.md), [UnitTypes](TiberianDawn/UnitTypes.cs.md), [BuildingTypes](TiberianDawn/BuildingTypes.cs.md), [OverlayTypes](TiberianDawn/OverlayTypes.cs.md), [SmudgeTypes](TiberianDawn/SmudgeTypes.cs.md), [TerrainTypes](TiberianDawn/TerrainTypes.cs.md), [TheaterTypes](TiberianDawn/TheaterTypes.cs.md).
 
-Eighteen registry bodies (nine classes per variant) are Body reviewed. TD/RA TemplateTypes remain Partially reviewed with declaration slices IDs0–159 catalogued; remaining IDs and full initialization/consumer/serializer parity are open. Initialization parity/tests are not claimed.
+Eighteen registry bodies (nine classes per variant) are Body reviewed. TD/RA TemplateTypes remain Partially reviewed with declaration slices IDs0–191 catalogued; remaining IDs and full initialization/consumer/serializer parity are open. Initialization parity/tests are not claimed.
 
 
 The ten definition bodies are Body reviewed; the four small interfaces are Header reviewed. No typed Rust catalog mapping or parity tests are claimed.
@@ -142,3 +142,10 @@ Cumulative declaration coverage is IDs0–127 (TD216/RA401 total); both inventor
 - [TD IDs128–159](TiberianDawn/TemplateTypes-6S-C-E.md) · [RA IDs128–159](RedAlert/TemplateTypes-6S-C-E.md) · [comparison](Variant-TemplateTypes-6S-C-E.md).
 
 Cumulative declaration coverage is IDs0–159 (TD216/RA401 total). TD's range covers roads and two theatre-specific river groups; RA covers Falls2a, fords, bridges and slopes. All entries use the None flag through the verified constructor overload. Both registry paths remain Partially reviewed; IDs160+ and full initializer/consumer/serializer parity remain open.
+
+
+### TemplateTypes — Tranche 6S-C-F
+
+- [TD IDs160–191](TiberianDawn/TemplateTypes-6S-C-F.md) · [RA IDs160–191](RedAlert/TemplateTypes-6S-C-F.md) · [comparison](Variant-TemplateTypes-6S-C-F.md).
+
+Cumulative coverage is IDs0–191 (192/216 TD and 192/401 RA). TD combines River25, fords/falls, bridges, Desert shores, Winter patches and Temperate/Winter shores; RA continues Slope26–38 then Road01–19, all Temperate/Snow. All entries use Flag=None. Both paths remain Partially reviewed; TD IDs192–215 and RA IDs192–400 plus full consumer/serializer parity remain open. No typed Rust editor catalog or parity tests are claimed.
