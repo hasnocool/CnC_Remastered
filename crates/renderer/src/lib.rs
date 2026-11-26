@@ -159,7 +159,7 @@ impl std::fmt::Display for RendererError {
             Self::NoPresentModes => f.write_str("surface exposes no presentation modes"),
             Self::NoAlphaModes => f.write_str("surface exposes no alpha modes"),
             Self::Surface(e) => write!(f, "surface presentation failed: {e}"),
-            Self::InvalidTextureData { width, height, bytes } => write!(f, "RGBA texture {width}x{height} requires {} bytes, got {bytes}", width as usize * height as usize * 4),
+            Self::InvalidTextureData { width, height, bytes } => write!(f, "RGBA texture {width}x{height} requires {} bytes, got {bytes}", expected_rgba_bytes(*width,*height).unwrap_or(usize::MAX)),
         }
     }
 }
@@ -265,7 +265,7 @@ impl WgpuRenderer {
 
     pub fn create_texture_rgba(&self, id: TextureId, width: u32, height: u32, rgba: &[u8]) -> Result<GpuTexture, RendererError> {
         let required = expected_rgba_bytes(width,height);
-        if required.is_none() || rgba.len() != required.unwrap_or(usize::MAX) {
+        if width == 0 || height == 0 || required.is_none() || rgba.len() != required.unwrap_or(usize::MAX) {
             return Err(RendererError::InvalidTextureData { width, height, bytes: rgba.len() });
         }
         let texture = self.device.create_texture(&wgpu::TextureDescriptor {
