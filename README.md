@@ -46,3 +46,21 @@ This is an independent, unofficial community project. It is not affiliated with,
 ## Parity policy
 
 A subsystem is not considered ported merely because a Rust module with a similar name exists. Parity requires source traceability, behavior-focused tests, compatible fixtures where legally available, and explicit notes for any intentional differences. No 1:1 compatibility claim should be made until the corresponding subsystem has passed that process.
+
+## Application runtime (initial foundation)
+
+The workspace now includes:
+
+- `renderer`: wgpu window-surface initialization, clear/present, resize, frame timing, and presentation-only camera/sprite/layer abstractions.
+- `launcher`: the `cnc-remastered` executable with application selection, shared window lifecycle, structured logging, and versioned settings.
+
+Run the launcher with:
+
+```bash
+cargo run -p launcher -- --list
+cargo run -p launcher -- --app td
+cargo run -p launcher -- --app ra
+cargo run -p launcher -- --app editor
+```
+
+The current TD, RA, and editor entries are application integration boundaries, not complete playable runtimes. Sprite rendering, palette-accurate asset presentation, audio, async networking, and editor/game runtime integration remain in progress. See [TODO.md](TODO.md) and [PORTING_STATUS.md](PORTING_STATUS.md).
