@@ -358,3 +358,16 @@
 - [ ] Run `cargo clippy --workspace --all-targets -- -D warnings`.
 - [ ] Verify Vulkan, Metal, and DX12 backends where supported and document platform limitations.
 - [ ] Record actual build/test output; do not infer success from source inspection.
+
+ 
+## Milestone 4A — authentic asset ingestion (first tranche)
+
+- [x] Add explicit 256-color RGB8/RGB6 palette parsing and checked indexed-image-to-RGBA conversion; transparency is opt-in.
+- [x] Add bounds-checked SHP shape-block offsets and packed Shape_Type metadata extraction with malformed-input tests.
+- [ ] Implement source-compatible SHP pixel/run decoding for normal, compact, variable and uncompressed shapes.
+- [ ] Verify the TMP/template tile container against upstream loader code and implement its bounded decoder.
+- [ ] Add legal synthetic binary fixtures and golden vectors; do not commit retail game assets.
+- [ ] Connect decoded palette-indexed terrain and sprite frames to renderer texture upload.
+- [ ] Add bounded CPU/GPU texture caching and explicit device-resource lifetime.
+- [ ] Implement camera-aware terrain chunks, adjacency transitions and viewport culling.
+- [ ] Wire TD, RA and editor asset/runtime providers into launcher application selection.

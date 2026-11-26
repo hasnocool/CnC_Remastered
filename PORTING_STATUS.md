@@ -249,3 +249,11 @@ Dependency choice: wgpu 26.0.1 and winit 0.30.12 are used while preserving the w
 **Remaining:** game-specific SHP/TMP decoding and palette upload, persistent texture cache, tile/terrain composition from actual maps, in-game HUD rendering, audio playback, async multiplayer networking, and runtime integration for the two games and editor.
 
 **Verification:** Cargo is not installed in the current execution environment and outbound GitHub clone access is unavailable. Formatting, compilation, tests, and Clippy have therefore not been run. Treat this branch as implementation-in-progress until the Rust 1.85+ validation commands pass.
+
+ 
+## Authentic asset ingestion — first tranche
+
+- **Palette conversion:** crates/rts-formats/src/palette_rgba.rs adds a 256-entry palette, explicit RGB8/RGB6 decoding, checked indexed-image expansion and opt-in transparent-index handling. Upstream LOADPAL.CPP loads 768 bytes for IBM; component interpretation remains an explicit caller choice.
+- **SHP container metadata:** crates/rts-formats/src/shp.rs reads the u16 shape count, 32-bit frame offsets (relative to the offset-table base), and packed 26-byte Shape_Type header, validating ranges before exposing encoded frame bytes. Upstream references: TIBERIANDAWN/WIN32LIB/SHAPE.H and GETSHAPE.CPP.
+- **Not yet implemented:** SHP pixel/run decoding, TMP/template tile decoding, terrain composition, GPU texture caching and launcher runtime integration. SHP currently exposes bounded encoded payloads only; it does not claim to render decoded shapes.
+- **Verification:** tests have been added but not executed. Formatting, compilation, tests and Clippy remain unverified.
