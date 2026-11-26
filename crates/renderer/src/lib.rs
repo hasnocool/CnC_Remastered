@@ -165,6 +165,10 @@ impl std::fmt::Display for RendererError {
 }
 impl std::error::Error for RendererError {}
 
+fn expected_rgba_bytes(width:u32,height:u32)->Option<usize> {
+    (width as usize).checked_mul(height as usize)?.checked_mul(4)
+}
+
 /// Backend-independent presentation contract. Implementations consume
 /// presentation data only; simulation remains outside this crate.
 pub trait PresentationBackend: Send {
@@ -260,8 +264,8 @@ impl WgpuRenderer {
     }
 
     pub fn create_texture_rgba(&self, id: TextureId, width: u32, height: u32, rgba: &[u8]) -> Result<GpuTexture, RendererError> {
-        let required = width as usize * height as usize * 4;
-        if width == 0 || height == 0 || rgba.len() != required {
+        let required = expected_rgba_bytes(width,height);
+        if required.is_none() || rgba.len() != required.unwrap_or(usize::MAX) {
             return Err(RendererError::InvalidTextureData { width, height, bytes: rgba.len() });
         }
         let texture = self.device.create_texture(&wgpu::TextureDescriptor {
@@ -450,8 +454,11 @@ mod tests {
         ui.text(viewport,10.0,10.0,2.0,Color::ACCENT,"TD 95");
         assert!(ui.vertex_count()>0); ui.clear(); assert!(ui.is_empty());
     }
-    #[test] fn rejects_invalid_texture_upload_size() {
-        let required=4*4*4; assert_ne!(required, 3);
+    #[test] fn validates_rgba_texture_dimensions_without_overflow() {
+        assert_eq!(expected_rgba_bytes(4,4),Some(64));
+        assert_eq!(expected_rgba_bytes(0,4),Some(0));
+        #[cfg(target_pointer_width="32")]
+        assert_eq!(expected_rgba_bytes(u32::MAX,u32::MAX),None);
     }
     #[test] fn zero_sized_viewports_are_not_visible() {
         assert!(!Viewport::new(0,600).is_visible()); assert!(Viewport::new(800,600).is_visible());

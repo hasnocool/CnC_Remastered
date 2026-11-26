@@ -106,6 +106,8 @@ impl LauncherUi {
         let resolution_y=y0+rows.len() as f32*row_h+2.0;
         ui.text(viewport,x+4.0,resolution_y+12.0,1.4,Color::rgba(0.82,0.87,0.86,1.0),"RESOLUTION");
         ui.text(viewport,x+230.0,resolution_y+12.0,1.4,Color::ACCENT,&format!("{} X {}",config.display.width,config.display.height));
+        button(ui,viewport,w-275.0,resolution_y+2.0,34.0,28.0,"-",inside(self.pointer,(w-275.0,resolution_y+2.0,34.0,28.0)),false);
+        button(ui,viewport,w-72.0,resolution_y+2.0,34.0,28.0,"+",inside(self.pointer,(w-72.0,resolution_y+2.0,34.0,28.0)),false);
         ui.text(viewport,x+4.0,resolution_y+48.0,1.2,Color::rgba(0.55,0.64,0.65,1.0),"FRAME LIMIT");
         let fps=format!("{} FPS",config.performance.frame_limit);
         ui.text(viewport,w-210.0,resolution_y+48.0,1.4,Color::ACCENT,&fps);
@@ -158,6 +160,19 @@ impl LauncherUi {
                     }
                 }
                 let resolution_y=y0+7.0*row_h+2.0;
+                const RESOLUTIONS: [(u32,u32);4]=[(1280,720),(1600,900),(1920,1080),(2560,1440)];
+                if inside((x,y),(w-275.0,resolution_y+2.0,34.0,28.0)) {
+                    let current=RESOLUTIONS.iter().position(|size|*size==(config.display.width,config.display.height)).unwrap_or(0);
+                    let next=if current==0 {RESOLUTIONS.len()-1}else{current-1};
+                    (config.display.width,config.display.height)=RESOLUTIONS[next];
+                    return UiAction::SettingsChanged;
+                }
+                if inside((x,y),(w-72.0,resolution_y+2.0,34.0,28.0)) {
+                    let current=RESOLUTIONS.iter().position(|size|*size==(config.display.width,config.display.height)).unwrap_or(0);
+                    let next=(current+1)%RESOLUTIONS.len();
+                    (config.display.width,config.display.height)=RESOLUTIONS[next];
+                    return UiAction::SettingsChanged;
+                }
                 if inside((x,y),(w-275.0,resolution_y+38.0,34.0,28.0)) {
                     config.performance.frame_limit=config.performance.frame_limit.saturating_sub(15).max(30);
                     return UiAction::SettingsChanged;
