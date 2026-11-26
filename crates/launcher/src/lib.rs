@@ -102,7 +102,7 @@ impl ApplicationHandler for MenuRuntime {
         self.window=Some(window);self.renderer_rx=Some(receiver);
     }
     fn window_event(&mut self,event_loop:&ActiveEventLoop,window_id:WindowId,event:WindowEvent){
-        let Some(window)=self.window.as_ref() else{return};
+        let Some(window)=self.window.as_ref().map(Arc::clone) else{return};
         if window.id()!=window_id{return;}
         match event {
             WindowEvent::CloseRequested=>event_loop.exit(),
