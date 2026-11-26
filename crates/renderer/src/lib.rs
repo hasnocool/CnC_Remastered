@@ -318,7 +318,7 @@ impl WgpuRenderer {
                     pass.draw(0..vertices.len() as u32, 0..1);
                 }
             }
-            if let (Some(buffer), Some(vertices)) = (&ui_buffer, !ui.vertices.is_empty().then_some(&ui.vertices)) {
+            if let (Some(buffer), Some(vertices)) = (&ui_buffer, (!ui.vertices.is_empty()).then_some(&ui.vertices)) {
                 pass.set_pipeline(&self.ui_pipeline);
                 pass.set_vertex_buffer(0, buffer.slice(..));
                 pass.draw(0..vertices.len() as u32, 0..1);

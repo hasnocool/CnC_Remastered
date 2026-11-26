@@ -77,6 +77,7 @@ impl LauncherUi {
         }
         let bottom=h-82.0;
         button(ui,viewport,48.0,bottom,164.0,46.0,"SETTINGS",inside(self.pointer,(48.0,bottom,164.0,46.0)),false);
+        button(ui,viewport,230.0,bottom,112.0,46.0,"QUIT",inside(self.pointer,(230.0,bottom,112.0,46.0)),false);
         let launch_x=w-244.0;
         button(ui,viewport,launch_x,bottom,196.0,46.0,"CONTINUE",inside(self.pointer,(launch_x,bottom,196.0,46.0)),true);
         ui.text(viewport,50.0,h-24.0,1.0,Color::rgba(0.43,0.51,0.53,1.0),"SELECT AN APPLICATION  /  SETTINGS  /  CONTINUE");
@@ -91,8 +92,10 @@ impl LauncherUi {
             ("LOW POWER GPU",if config.performance.low_power_adapter {"ON"}else{"OFF"}),
             ("NETWORKING",if config.network.enabled {"ON"}else{"OFF"}),
             ("MASTER AUDIO",if config.audio.master_volume>0.0 {"ON"}else{"MUTED"}),
+            ("EDGE SCROLLING",if config.input.edge_scrolling {"ON"}else{"OFF"}),
+            ("INVERT MOUSE Y",if config.input.invert_mouse_y {"ON"}else{"OFF"}),
         ];
-        let x=64.0; let y0=190.0; let row_h=62.0;
+        let x=64.0; let y0=174.0; let row_h=48.0;
         for (index,(label,value)) in rows.iter().enumerate() {
             let y=y0+index as f32*row_h;
             ui.rect(viewport,x,y,(w-128.0).max(0.0),48.0,Color::PANEL);
@@ -100,12 +103,14 @@ impl LauncherUi {
             let bx=w-210.0;
             button(ui,viewport,bx,y+6.0,124.0,36.0,value,inside(self.pointer,(bx,y+6.0,124.0,36.0)),true);
         }
-        let resolution_y=y0+rows.len() as f32*row_h+8.0;
+        let resolution_y=y0+rows.len() as f32*row_h+2.0;
         ui.text(viewport,x+4.0,resolution_y+12.0,1.4,Color::rgba(0.82,0.87,0.86,1.0),"RESOLUTION");
         ui.text(viewport,x+230.0,resolution_y+12.0,1.4,Color::ACCENT,&format!("{} X {}",config.display.width,config.display.height));
-        ui.text(viewport,x+4.0,resolution_y+48.0,1.2,Color::rgba(0.55,0.64,0.65,1.0),"USE +/- TO CHANGE FRAME LIMIT");
+        ui.text(viewport,x+4.0,resolution_y+48.0,1.2,Color::rgba(0.55,0.64,0.65,1.0),"FRAME LIMIT");
         let fps=format!("{} FPS",config.performance.frame_limit);
         ui.text(viewport,w-210.0,resolution_y+48.0,1.4,Color::ACCENT,&fps);
+        button(ui,viewport,w-275.0,resolution_y+38.0,34.0,28.0,"-",inside(self.pointer,(w-275.0,resolution_y+38.0,34.0,28.0)),false);
+        button(ui,viewport,w-72.0,resolution_y+38.0,34.0,28.0,"+",inside(self.pointer,(w-72.0,resolution_y+38.0,34.0,28.0)),false);
         let bottom=h-82.0;
         button(ui,viewport,48.0,bottom,164.0,46.0,"BACK",inside(self.pointer,(48.0,bottom,164.0,46.0)),false);
         ui.text(viewport,245.0,bottom+17.0,1.0,Color::rgba(0.52,0.60,0.61,1.0),"SETTINGS SAVE AUTOMATICALLY");
@@ -127,6 +132,7 @@ impl LauncherUi {
                 }
                 let bottom=h-82.0;
                 if inside((x,y),(48.0,bottom,164.0,46.0)) { self.screen=Screen::Settings; self.status.clear(); }
+                else if inside((x,y),(230.0,bottom,112.0,46.0)) { return UiAction::Quit; }
                 else if inside((x,y),(w-244.0,bottom,196.0,46.0)) {
                     let name=application_info(self.selected).name;
                     self.status=format!("{name} selected — game/editor runtime integration is the next stage");
@@ -134,8 +140,8 @@ impl LauncherUi {
                 }
             }
             Screen::Settings => {
-                let y0=190.0; let row_h=62.0; let bx=w-210.0;
-                for index in 0..5 {
+                let y0=174.0; let row_h=48.0; let bx=w-210.0;
+                for index in 0..7 {
                     let y=y0+index as f32*row_h+6.0;
                     if inside((x,y),(bx,y,124.0,36.0)) {
                         match index {
@@ -144,10 +150,21 @@ impl LauncherUi {
                             2=>config.performance.low_power_adapter=!config.performance.low_power_adapter,
                             3=>config.network.enabled=!config.network.enabled,
                             4=>config.audio.master_volume=if config.audio.master_volume>0.0 {0.0}else{1.0},
+                            5=>config.input.edge_scrolling=!config.input.edge_scrolling,
+                            6=>config.input.invert_mouse_y=!config.input.invert_mouse_y,
                             _=>{}
                         }
                         return UiAction::SettingsChanged;
                     }
+                }
+                let resolution_y=y0+7.0*row_h+2.0;
+                if inside((x,y),(w-275.0,resolution_y+38.0,34.0,28.0)) {
+                    config.performance.frame_limit=config.performance.frame_limit.saturating_sub(15).max(30);
+                    return UiAction::SettingsChanged;
+                }
+                if inside((x,y),(w-72.0,resolution_y+38.0,34.0,28.0)) {
+                    config.performance.frame_limit=config.performance.frame_limit.saturating_add(15).min(240);
+                    return UiAction::SettingsChanged;
                 }
                 let bottom=h-82.0;
                 if inside((x,y),(48.0,bottom,164.0,46.0)) { self.screen=Screen::Home; }
