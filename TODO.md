@@ -331,7 +331,7 @@
 - [x] Add asynchronous UDP LAN discovery and bounded length-prefixed TCP lobby messages.
 - [x] Add protocol/build/simulation/mod compatibility fingerprints and deterministic lockstep command ordering primitives.
 - [x] Extend the editor model with read-only row-major cell access and serializable cell layers.
-- [x] Add a standalone map editor with terrain painting, grid/zoom, new-map selection, and asynchronous JSON save/load.
+- [x] Add a standalone map editor with terrain/template/overlay/smudge painting, waypoint placement, grid/zoom, new-map selection, and asynchronous JSON save/load.
 - [ ] Run cargo fmt, workspace tests, and Clippy on a Rust 1.95+ toolchain.
 - [ ] Integrate the renderer with decoded MIX/SHP/TMP/PALETTE assets and real game object draw lists.
 - [ ] Implement source-compatible TD/RA scenario serialization and round-trip fixtures.

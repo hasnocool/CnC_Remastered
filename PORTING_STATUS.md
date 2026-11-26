@@ -227,7 +227,7 @@ Partial in progress: `REDALERT/LOGIC.CPP` → `crates/rts-core/src/red_alert_log
 | Bootstrap | Initial executable | apps/cnc-client: starts the sibling launcher process and forwards arguments. No self-update/installer yet. |
 | Tiberian Dawn executable | Application shell | tiberian-dawn now has a standalone eframe entry point and shared map renderer; not playable gameplay. |
 | Red Alert executable | Application shell | red-alert now has a standalone eframe entry point and shared map renderer; not playable gameplay. |
-| Map editor | Initial functional editor | crates/editor/map-editor: map creation, terrain-ID painting, grid/zoom, selection, background-thread JSON save/load. Working JSON format only; not original .MAP compatibility. |
+| Map editor | Initial functional editor | crates/editor/map-editor: map creation, four-layer painting, waypoint placement, grid/zoom, selection, background-thread JSON save/load. Working JSON format only; not original .MAP compatibility. |
 | Editor model serialization | Initial | Cell layers have serde support; row-major cell slice is exposed read-only; waypoint round-trip tests added. |
 | Networking | Transport foundation | rts-net: UDP discovery query/responder, bounded JSON TCP frames, lobby message types, compatibility fingerprints, deterministic tick/peer/sequence ordering. No authenticated internet matchmaking or proven source-protocol interoperability. |
 | Build verification | Not run | This implementation session used remote GitHub repository operations; no local Rust compiler/build runner was available. Do not treat compilation as verified until local commands pass. |

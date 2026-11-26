@@ -50,7 +50,8 @@ The launcher defaults to target/debug/tiberian-dawn, target/debug/red-alert, and
 
 ### Map editor
 - Create a bounded TD or RA map document.
-- Paint terrain IDs into the existing editor model.
+- Paint terrain, template, overlay, and smudge IDs into the existing editor model.
+- Place uniquely numbered waypoints on selected cells.
 - Grid, zoom, cell selection, JSON save/load on a file-I/O worker.
 - JSON is an editor interchange format only; it is not the original Westwood scenario format. Building/unit placement, triggers, teams, theatre palettes, validation, undo/redo, and playtest integration remain to be implemented.
 
