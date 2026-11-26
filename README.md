@@ -22,7 +22,7 @@ See [PORTING_STATUS.md](PORTING_STATUS.md), [TODO.md](TODO.md), [the 494-file C+
 
 ## Build and test
 
-Requires a Rust toolchain with Cargo (Rust 1.85 or newer):
+Requires a Rust toolchain with Cargo (Rust 1.95 or newer):
 
 ```bash
 cargo fmt --all -- --check

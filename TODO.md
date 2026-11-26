@@ -332,7 +332,7 @@
 - [x] Add protocol/build/simulation/mod compatibility fingerprints and deterministic lockstep command ordering primitives.
 - [x] Extend the editor model with read-only row-major cell access and serializable cell layers.
 - [x] Add a standalone map editor with terrain painting, grid/zoom, new-map selection, and asynchronous JSON save/load.
-- [ ] Run cargo fmt, workspace tests, and Clippy on a Rust 1.85+ toolchain.
+- [ ] Run cargo fmt, workspace tests, and Clippy on a Rust 1.95+ toolchain.
 - [ ] Integrate the renderer with decoded MIX/SHP/TMP/PALETTE assets and real game object draw lists.
 - [ ] Implement source-compatible TD/RA scenario serialization and round-trip fixtures.
 - [ ] Connect game simulation command streams to the network lockstep transport and verify deterministic replay.
