@@ -79,9 +79,12 @@ impl MenuRuntime {
 impl ApplicationHandler for MenuRuntime {
     fn resumed(&mut self,event_loop:&ActiveEventLoop) {
         if self.window.is_some(){return;}
-        let attributes=Window::default_attributes()
+        let mut attributes=Window::default_attributes()
             .with_title("CnC Remastered — Command Center")
             .with_inner_size(LogicalSize::new(self.config.display.width,self.config.display.height));
+        if self.config.display.fullscreen {
+            attributes=attributes.with_fullscreen(Some(Fullscreen::Borderless(None)));
+        }
         let window=match event_loop.create_window(attributes){
             Ok(window)=>Arc::new(window),
             Err(error)=>{self.startup_error=Some(error.to_string());event_loop.exit();return;}
@@ -113,8 +116,9 @@ impl ApplicationHandler for MenuRuntime {
                 window.request_redraw();
             }
             WindowEvent::MouseInput{state:winit::event::ElementState::Pressed,button:winit::event::MouseButton::Left,..}=>{
-                if let Some(renderer)=self.renderer.as_ref(){
-                    let action=self.ui.click(renderer.viewport(),&mut self.config,self.pointer.0,self.pointer.1);
+                let viewport=self.renderer.as_ref().map(|renderer|renderer.viewport());
+                if let Some(viewport)=viewport {
+                    let action=self.ui.click(viewport,&mut self.config,self.pointer.0,self.pointer.1);
                     match action {
                         ui::UiAction::Quit=>event_loop.exit(),
                         ui::UiAction::SettingsChanged=>self.persist(),
@@ -227,11 +231,12 @@ struct Runtime {
     window: Option<Arc<Window>>,
     renderer: Option<WgpuRenderer>,
     renderer_rx: Option<Receiver<Result<WgpuRenderer, RendererError>>>,
+    terrain_texture: Option<GpuTexture>,
     startup_error: Option<String>,
 }
 impl Runtime {
     fn new(application: ApplicationId, config: LauncherConfig) -> Self {
-        Self { application, config, window: None, renderer: None, renderer_rx: None, startup_error: None }
+        Self { application, config, window: None, renderer: None, renderer_rx: None, terrain_texture: None, startup_error: None }
     }
     fn application_color(&self) -> Color {
         match self.application {
@@ -289,7 +294,10 @@ impl ApplicationHandler for Runtime {
             }
             WindowEvent::RedrawRequested => {
                 if let Some(renderer) = self.renderer.as_mut() {
-                    if let Err(error) = renderer.render_clear(self.application_color()) {
+                    let viewport=renderer.viewport();
+                    let terrain=build_terrain_backdrop(viewport);
+                    let sprites=self.terrain_texture.as_ref().map(|texture|(&terrain,texture));
+                    if let Err(error) = renderer.render(Color::rgba(0.01,0.02,0.025,1.0),sprites,&renderer::UiFrame::default()) {
                         error!("frame presentation failed: {error}");
                         self.startup_error = Some(error.to_string());
                         event_loop.exit();
@@ -304,6 +312,10 @@ impl ApplicationHandler for Runtime {
         if let Some(receiver) = self.renderer_rx.as_ref() {
             match receiver.try_recv() {
                 Ok(Ok(renderer)) => {
+                    match renderer.create_texture_rgba(1,64,16,&procedural_terrain_atlas()) {
+                        Ok(texture)=>self.terrain_texture=Some(texture),
+                        Err(error)=>{self.startup_error=Some(error.to_string());event_loop.exit();return;}
+                    }
                     self.renderer = Some(renderer);
                     self.renderer_rx = None;
                     info!(application = %self.application, "renderer initialized");
