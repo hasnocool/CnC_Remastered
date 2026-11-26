@@ -11,84 +11,44 @@ use winit::window::Window;
 
 pub type TextureId = u64;
 
-/// A normalized RGBA clear or tint color.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Color {
-    pub r: f64,
-    pub g: f64,
-    pub b: f64,
-    pub a: f64,
-}
+pub struct Color { pub r: f64, pub g: f64, pub b: f64, pub a: f64 }
 
 impl Color {
     pub const BLACK: Self = Self::rgba(0.0, 0.0, 0.0, 1.0);
     pub const DARK_MENU: Self = Self::rgba(0.035, 0.045, 0.065, 1.0);
-
-    pub const fn rgba(r: f64, g: f64, b: f64, a: f64) -> Self {
-        Self { r, g, b, a }
-    }
-
-    fn as_wgpu(self) -> wgpu::Color {
-        wgpu::Color { r: self.r, g: self.g, b: self.b, a: self.a }
-    }
+    pub const fn rgba(r: f64, g: f64, b: f64, a: f64) -> Self { Self { r, g, b, a } }
+    fn as_wgpu(self) -> wgpu::Color { wgpu::Color { r: self.r, g: self.g, b: self.b, a: self.a } }
 }
 
-/// Pixel dimensions of the presentation surface.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Viewport {
-    pub width: u32,
-    pub height: u32,
-}
+pub struct Viewport { pub width: u32, pub height: u32 }
 
 impl Viewport {
-    pub const fn new(width: u32, height: u32) -> Self {
-        Self { width, height }
-    }
-
-    pub const fn is_visible(self) -> bool {
-        self.width > 0 && self.height > 0
-    }
+    pub const fn new(width: u32, height: u32) -> Self { Self { width, height } }
+    pub const fn is_visible(self) -> bool { self.width > 0 && self.height > 0 }
 }
 
-/// Camera values are presentation-only; simulation coordinates remain integral.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Camera2d {
-    pub center_x: f32,
-    pub center_y: f32,
-    pub zoom: f32,
-}
+pub struct Camera2d { pub center_x: f32, pub center_y: f32, pub zoom: f32 }
 
 impl Default for Camera2d {
-    fn default() -> Self {
-        Self { center_x: 0.0, center_y: 0.0, zoom: 1.0 }
-    }
+    fn default() -> Self { Self { center_x: 0.0, center_y: 0.0, zoom: 1.0 } }
 }
 
 impl Camera2d {
     pub fn set_zoom(&mut self, zoom: f32) {
-        if zoom.is_finite() {
-            self.zoom = zoom.clamp(0.05, 64.0);
-        }
+        if zoom.is_finite() { self.zoom = zoom.clamp(0.05, 64.0); }
     }
 }
 
-/// Stable layer ordering shared by game and editor presentation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u8)]
 pub enum RenderLayer {
-    Background = 0,
-    Terrain = 10,
-    Smudge = 20,
-    Overlay = 30,
-    Building = 40,
-    Vehicle = 50,
-    Infantry = 60,
-    Projectile = 70,
-    Effect = 80,
-    Interface = 100,
+    Background = 0, Terrain = 10, Smudge = 20, Overlay = 30, Building = 40,
+    Vehicle = 50, Infantry = 60, Projectile = 70, Effect = 80, Interface = 100,
 }
 
-/// A renderer-facing sprite command. Asset resolution is deliberately external.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct SpriteInstance {
     pub texture: TextureId,
@@ -102,32 +62,15 @@ pub struct SpriteInstance {
 }
 
 #[derive(Debug, Default, Clone)]
-pub struct SpriteBatch {
-    sprites: Vec<SpriteInstance>,
-}
+pub struct SpriteBatch { sprites: Vec<SpriteInstance> }
 
 impl SpriteBatch {
-    pub fn with_capacity(capacity: usize) -> Self {
-        Self { sprites: Vec::with_capacity(capacity) }
-    }
-
-    pub fn push(&mut self, sprite: SpriteInstance) {
-        self.sprites.push(sprite);
-    }
-
-    pub fn clear(&mut self) {
-        self.sprites.clear();
-    }
-
-    pub fn len(&self) -> usize {
-        self.sprites.len()
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.sprites.is_empty()
-    }
-
-    /// Stable sort preserves submission order for sprites sharing a layer.
+    pub fn with_capacity(capacity: usize) -> Self { Self { sprites: Vec::with_capacity(capacity) } }
+    pub fn push(&mut self, sprite: SpriteInstance) { self.sprites.push(sprite); }
+    pub fn clear(&mut self) { self.sprites.clear(); }
+    pub fn len(&self) -> usize { self.sprites.len() }
+    pub fn is_empty(&self) -> bool { self.sprites.is_empty() }
+    /// Stable sorting preserves submission order for sprites sharing a layer.
     pub fn ordered(&mut self) -> &[SpriteInstance] {
         self.sprites.sort_by_key(|sprite| sprite.layer);
         &self.sprites
@@ -135,37 +78,27 @@ impl SpriteBatch {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct FrameStats {
-    pub frame_index: u64,
-    pub frame_time: Duration,
-    pub viewport: Viewport,
-}
+pub struct FrameStats { pub frame_index: u64, pub frame_time: Duration, pub viewport: Viewport }
 
 #[derive(Debug)]
 pub enum RendererError {
-    CreateSurface(String),
-    RequestAdapter(String),
-    RequestDevice(String),
-    NoSurfaceFormats,
-    NoPresentModes,
-    NoAlphaModes,
-    Surface(String),
+    CreateSurface(String), RequestAdapter(String), RequestDevice(String),
+    NoSurfaceFormats, NoPresentModes, NoAlphaModes, Surface(String),
 }
 
 impl std::fmt::Display for RendererError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::CreateSurface(error) => write!(f, "could not create render surface: {error}"),
-            Self::RequestAdapter(error) => write!(f, "could not select graphics adapter: {error}"),
-            Self::RequestDevice(error) => write!(f, "could not create graphics device: {error}"),
-            Self::NoSurfaceFormats => write!(f, "surface exposes no supported formats"),
-            Self::NoPresentModes => write!(f, "surface exposes no presentation modes"),
-            Self::NoAlphaModes => write!(f, "surface exposes no alpha modes"),
-            Self::Surface(error) => write!(f, "surface presentation failed: {error}"),
+            Self::CreateSurface(e) => write!(f, "could not create render surface: {e}"),
+            Self::RequestAdapter(e) => write!(f, "could not select graphics adapter: {e}"),
+            Self::RequestDevice(e) => write!(f, "could not create graphics device: {e}"),
+            Self::NoSurfaceFormats => f.write_str("surface exposes no supported formats"),
+            Self::NoPresentModes => f.write_str("surface exposes no presentation modes"),
+            Self::NoAlphaModes => f.write_str("surface exposes no alpha modes"),
+            Self::Surface(e) => write!(f, "surface presentation failed: {e}"),
         }
     }
 }
-
 impl std::error::Error for RendererError {}
 
 /// wgpu-backed window presenter. The Arc-owned window makes the surface lifetime
@@ -182,55 +115,36 @@ pub struct WgpuRenderer {
 }
 
 impl WgpuRenderer {
-    pub async fn new(window: Arc<Window>) -> Result<Self, RendererError> {
+    pub async fn new(window: Arc<Window>, vsync: bool) -> Result<Self, RendererError> {
         let size = window.inner_size();
         let viewport = Viewport::new(size.width.max(1), size.height.max(1));
         let instance = wgpu::Instance::default();
-        let surface = instance
-            .create_surface(window)
+        let surface = instance.create_surface(window)
             .map_err(|error| RendererError::CreateSurface(error.to_string()))?;
-
-        let adapter = instance
-            .request_adapter(&wgpu::RequestAdapterOptions {
-                power_preference: wgpu::PowerPreference::HighPerformance,
-                compatible_surface: Some(&surface),
-                force_fallback_adapter: false,
-            })
-            .await
-            .map_err(|error| RendererError::RequestAdapter(error.to_string()))?;
-
-        let (device, queue) = adapter
-            .request_device(&wgpu::DeviceDescriptor {
-                label: Some("cnc-remastered-render-device"),
-                required_features: wgpu::Features::empty(),
-                required_limits: wgpu::Limits::default(),
-                memory_hints: wgpu::MemoryHints::Performance,
-                trace: wgpu::Trace::Off,
-            })
-            .await
-            .map_err(|error| RendererError::RequestDevice(error.to_string()))?;
+        let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions {
+            power_preference: wgpu::PowerPreference::HighPerformance,
+            compatible_surface: Some(&surface),
+            force_fallback_adapter: false,
+        }).await.map_err(|error| RendererError::RequestAdapter(error.to_string()))?;
+        let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor {
+            label: Some("cnc-remastered-render-device"),
+            required_features: wgpu::Features::empty(),
+            required_limits: wgpu::Limits::default(),
+            memory_hints: wgpu::MemoryHints::Performance,
+            trace: wgpu::Trace::Off,
+        }).await.map_err(|error| RendererError::RequestDevice(error.to_string()))?;
 
         let capabilities = surface.get_capabilities(&adapter);
-        let format = capabilities
-            .formats
-            .iter()
-            .copied()
+        let format = capabilities.formats.iter().copied()
             .find(wgpu::TextureFormat::is_srgb)
             .or_else(|| capabilities.formats.first().copied())
             .ok_or(RendererError::NoSurfaceFormats)?;
-        let present_mode = capabilities
-            .present_modes
-            .iter()
-            .copied()
-            .find(|mode| *mode == wgpu::PresentMode::Fifo)
+        let requested_mode = if vsync { wgpu::PresentMode::Fifo } else { wgpu::PresentMode::Immediate };
+        let present_mode = capabilities.present_modes.iter().copied()
+            .find(|mode| *mode == requested_mode)
             .or_else(|| capabilities.present_modes.first().copied())
             .ok_or(RendererError::NoPresentModes)?;
-        let alpha_mode = capabilities
-            .alpha_modes
-            .first()
-            .copied()
-            .ok_or(RendererError::NoAlphaModes)?;
-
+        let alpha_mode = capabilities.alpha_modes.first().copied().ok_or(RendererError::NoAlphaModes)?;
         let config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
             format,
@@ -242,55 +156,37 @@ impl WgpuRenderer {
             view_formats: vec![],
         };
         surface.configure(&device, &config);
-
         Ok(Self {
-            _instance: instance,
-            surface,
-            device,
-            queue,
-            config,
-            viewport,
-            frame_index: 0,
-            last_frame: Instant::now(),
+            _instance: instance, surface, device, queue, config, viewport,
+            frame_index: 0, last_frame: Instant::now(),
         })
     }
 
-    pub fn viewport(&self) -> Viewport {
-        self.viewport
-    }
+    pub fn viewport(&self) -> Viewport { self.viewport }
 
     pub fn resize(&mut self, viewport: Viewport) {
-        if !viewport.is_visible() {
-            return;
-        }
+        if !viewport.is_visible() { return; }
         self.viewport = viewport;
         self.config.width = viewport.width;
         self.config.height = viewport.height;
         self.surface.configure(&self.device, &self.config);
     }
 
-    /// Clears and presents one frame. Draw-list execution is the next renderer
-    /// tranche; this method establishes the real GPU/window presentation path.
+    /// Clears and presents one real GPU frame. Sprite pipeline execution is a
+    /// subsequent tranche; this establishes the portable presentation path.
     pub fn render_clear(&mut self, color: Color) -> Result<FrameStats, RendererError> {
-        let frame = self
-            .surface
-            .get_current_texture()
+        let frame = self.surface.get_current_texture()
             .map_err(|error| RendererError::Surface(error.to_string()))?;
         let view = frame.texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let mut encoder = self.device.create_command_encoder(
-            &wgpu::CommandEncoderDescriptor { label: Some("cnc-remastered-frame-encoder") },
-        );
+        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("cnc-remastered-frame-encoder"),
+        });
         {
             let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("cnc-remastered-clear-pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &view,
-                    depth_slice: None,
-                    resolve_target: None,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(color.as_wgpu()),
-                        store: wgpu::StoreOp::Store,
-                    },
+                    view: &view, depth_slice: None, resolve_target: None,
+                    ops: wgpu::Operations { load: wgpu::LoadOp::Clear(color.as_wgpu()), store: wgpu::StoreOp::Store },
                 })],
                 depth_stencil_attachment: None,
                 timestamp_writes: None,
@@ -299,16 +195,11 @@ impl WgpuRenderer {
         }
         self.queue.submit(Some(encoder.finish()));
         frame.present();
-
         self.frame_index = self.frame_index.saturating_add(1);
         let now = Instant::now();
         let frame_time = now.saturating_duration_since(self.last_frame);
         self.last_frame = now;
-        Ok(FrameStats {
-            frame_index: self.frame_index,
-            frame_time,
-            viewport: self.viewport,
-        })
+        Ok(FrameStats { frame_index: self.frame_index, frame_time, viewport: self.viewport })
     }
 }
 

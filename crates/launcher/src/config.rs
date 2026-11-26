@@ -1,15 +1,9 @@
 // Filename: crates/launcher/src/config.rs
 //! Versioned launcher settings with validated, atomic persistence.
 
-use std::{
-    fs,
-    io,
-    path::{Path, PathBuf},
-};
-
+use std::{fs, io::{self, Write}, path::{Path, PathBuf}};
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
-
 use crate::application::ApplicationId;
 
 pub const CONFIG_VERSION: u32 = 1;
@@ -25,7 +19,6 @@ pub struct LauncherConfig {
     pub performance: PerformanceSettings,
     pub network: NetworkSettings,
 }
-
 impl Default for LauncherConfig {
     fn default() -> Self {
         Self {
@@ -39,185 +32,108 @@ impl Default for LauncherConfig {
         }
     }
 }
-
 impl LauncherConfig {
     pub fn validate(&self) -> Result<(), ConfigError> {
-        if self.version != CONFIG_VERSION {
-            return Err(ConfigError::UnsupportedVersion(self.version));
+        if self.version != CONFIG_VERSION { return Err(ConfigError::UnsupportedVersion(self.version)); }
+        if !(640..=7680).contains(&self.display.width) || !(480..=4320).contains(&self.display.height) {
+            return Err(ConfigError::InvalidDisplayDimensions { width: self.display.width, height: self.display.height });
         }
-        if !(640..=7680).contains(&self.display.width)
-            || !(480..=4320).contains(&self.display.height)
-        {
-            return Err(ConfigError::InvalidDisplayDimensions {
-                width: self.display.width,
-                height: self.display.height,
-            });
-        }
-        if !self.audio.master_volume.is_finite()
-            || !(0.0..=1.0).contains(&self.audio.master_volume)
-        {
+        if !self.audio.master_volume.is_finite() || !(0.0..=1.0).contains(&self.audio.master_volume) {
             return Err(ConfigError::InvalidVolume(self.audio.master_volume));
         }
-        if self.network.port == 0 {
-            return Err(ConfigError::InvalidNetworkPort);
-        }
+        if self.network.port == 0 { return Err(ConfigError::InvalidNetworkPort); }
+        if self.performance.frame_limit == 0 { return Err(ConfigError::InvalidFrameLimit); }
         Ok(())
     }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(default)]
-pub struct DisplaySettings {
-    pub width: u32,
-    pub height: u32,
-    pub fullscreen: bool,
-    pub vsync: bool,
-}
-
+pub struct DisplaySettings { pub width: u32, pub height: u32, pub fullscreen: bool, pub vsync: bool }
 impl Default for DisplaySettings {
-    fn default() -> Self {
-        Self { width: 1280, height: 720, fullscreen: false, vsync: true }
-    }
+    fn default() -> Self { Self { width: 1280, height: 720, fullscreen: false, vsync: true } }
 }
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(default)]
-pub struct AudioSettings {
-    pub master_volume: f32,
-    pub music_enabled: bool,
-    pub sound_enabled: bool,
-    pub speech_enabled: bool,
-}
-
+pub struct AudioSettings { pub master_volume: f32, pub music_enabled: bool, pub sound_enabled: bool, pub speech_enabled: bool }
 impl Default for AudioSettings {
-    fn default() -> Self {
-        Self { master_volume: 1.0, music_enabled: true, sound_enabled: true, speech_enabled: true }
-    }
+    fn default() -> Self { Self { master_volume: 1.0, music_enabled: true, sound_enabled: true, speech_enabled: true } }
 }
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(default)]
-pub struct InputSettings {
-    pub invert_mouse_y: bool,
-    pub edge_scrolling: bool,
-    pub scroll_speed: u16,
-}
-
+pub struct InputSettings { pub invert_mouse_y: bool, pub edge_scrolling: bool, pub scroll_speed: u16 }
 impl Default for InputSettings {
-    fn default() -> Self {
-        Self { invert_mouse_y: false, edge_scrolling: true, scroll_speed: 3 }
-    }
+    fn default() -> Self { Self { invert_mouse_y: false, edge_scrolling: true, scroll_speed: 3 } }
 }
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(default)]
-pub struct PerformanceSettings {
-    pub frame_limit: u16,
-    pub low_power_adapter: bool,
-    pub sprite_batch_capacity: usize,
-}
-
+pub struct PerformanceSettings { pub frame_limit: u16, pub low_power_adapter: bool, pub sprite_batch_capacity: usize }
 impl Default for PerformanceSettings {
-    fn default() -> Self {
-        Self { frame_limit: 120, low_power_adapter: false, sprite_batch_capacity: 4096 }
-    }
+    fn default() -> Self { Self { frame_limit: 120, low_power_adapter: false, sprite_batch_capacity: 4096 } }
 }
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(default)]
-pub struct NetworkSettings {
-    pub enabled: bool,
-    pub server_address: String,
-    pub port: u16,
-    pub player_name: String,
-}
-
+pub struct NetworkSettings { pub enabled: bool, pub server_address: String, pub port: u16, pub player_name: String }
 impl Default for NetworkSettings {
     fn default() -> Self {
-        Self {
-            enabled: false,
-            server_address: "127.0.0.1".to_owned(),
-            port: 8054,
-            player_name: "Commander".to_owned(),
-        }
+        Self { enabled: false, server_address: "127.0.0.1".to_owned(), port: 8054, player_name: "Commander".to_owned() }
     }
 }
 
 #[derive(Debug)]
 pub enum ConfigError {
-    Io(io::Error),
-    Parse(toml::de::Error),
-    Serialize(toml::ser::Error),
-    UnsupportedVersion(u32),
-    InvalidDisplayDimensions { width: u32, height: u32 },
-    InvalidVolume(f32),
-    InvalidNetworkPort,
+    Io(io::Error), Parse(toml::de::Error), Serialize(toml::ser::Error),
+    UnsupportedVersion(u32), InvalidDisplayDimensions { width: u32, height: u32 },
+    InvalidVolume(f32), InvalidNetworkPort, InvalidFrameLimit,
 }
-
 impl std::fmt::Display for ConfigError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Io(error) => write!(f, "configuration I/O failed: {error}"),
-            Self::Parse(error) => write!(f, "configuration parse failed: {error}"),
-            Self::Serialize(error) => write!(f, "configuration serialization failed: {error}"),
-            Self::UnsupportedVersion(version) => write!(f, "unsupported configuration version {version}"),
+            Self::Io(e) => write!(f, "configuration I/O failed: {e}"),
+            Self::Parse(e) => write!(f, "configuration parse failed: {e}"),
+            Self::Serialize(e) => write!(f, "configuration serialization failed: {e}"),
+            Self::UnsupportedVersion(v) => write!(f, "unsupported configuration version {v}"),
             Self::InvalidDisplayDimensions { width, height } => write!(f, "invalid display size {width}x{height}"),
-            Self::InvalidVolume(volume) => write!(f, "invalid master volume {volume}"),
+            Self::InvalidVolume(v) => write!(f, "invalid master volume {v}"),
             Self::InvalidNetworkPort => f.write_str("network port must be between 1 and 65535"),
+            Self::InvalidFrameLimit => f.write_str("frame limit must be at least 1 FPS"),
         }
     }
 }
-
 impl std::error::Error for ConfigError {}
+impl From<io::Error> for ConfigError { fn from(value: io::Error) -> Self { Self::Io(value) } }
 
-impl From<io::Error> for ConfigError {
-    fn from(value: io::Error) -> Self { Self::Io(value) }
-}
-
-pub struct SettingsStore {
-    path: PathBuf,
-}
-
+pub struct SettingsStore { path: PathBuf }
 impl SettingsStore {
     pub fn discover() -> io::Result<Self> {
         let project = ProjectDirs::from("org", "CnC Remastered", "CnC Remastered")
             .ok_or_else(|| io::Error::new(io::ErrorKind::NotFound, "platform config directory unavailable"))?;
         Ok(Self { path: project.config_dir().join("settings.toml") })
     }
-
-    pub fn at(path: impl Into<PathBuf>) -> Self {
-        Self { path: path.into() }
-    }
-
-    pub fn path(&self) -> &Path {
-        &self.path
-    }
+    pub fn at(path: impl Into<PathBuf>) -> Self { Self { path: path.into() } }
+    pub fn path(&self) -> &Path { &self.path }
 
     pub fn load(&self) -> Result<LauncherConfig, ConfigError> {
-        if !self.path.exists() {
-            return Ok(LauncherConfig::default());
-        }
+        if !self.path.exists() { return Ok(LauncherConfig::default()); }
         let content = fs::read_to_string(&self.path)?;
         let config: LauncherConfig = toml::from_str(&content).map_err(ConfigError::Parse)?;
         config.validate()?;
         Ok(config)
     }
 
-    /// Writes to a sibling temporary file and renames it into place so a crash
-    /// cannot leave a partially-written settings file.
+    /// Writes and syncs a temporary file in the destination directory, then
+    /// atomically replaces the settings file.
     pub fn save(&self, config: &LauncherConfig) -> Result<(), ConfigError> {
         config.validate()?;
-        let parent = self.path.parent().ok_or_else(|| {
-            ConfigError::Io(io::Error::new(io::ErrorKind::InvalidInput, "config path has no parent"))
-        })?;
+        let parent = self.path.parent().ok_or_else(|| ConfigError::Io(
+            io::Error::new(io::ErrorKind::InvalidInput, "config path has no parent")
+        ))?;
         fs::create_dir_all(parent)?;
         let content = toml::to_string_pretty(config).map_err(ConfigError::Serialize)?;
-        let temporary = self.path.with_extension("toml.tmp");
-        fs::write(&temporary, content)?;
-        if self.path.exists() {
-            fs::remove_file(&self.path)?;
-        }
-        fs::rename(&temporary, &self.path)?;
+        let mut temporary = tempfile::NamedTempFile::new_in(parent)?;
+        temporary.write_all(content.as_bytes())?;
+        temporary.as_file().sync_all()?;
+        temporary.persist(&self.path).map_err(|error| ConfigError::Io(error.error))?;
         Ok(())
     }
 }
@@ -234,13 +150,16 @@ mod tests {
     }
 
     #[test]
-    fn rejects_invalid_display_and_volume() {
+    fn rejects_invalid_display_volume_and_frame_limit() {
         let mut config = LauncherConfig::default();
         config.display.width = 320;
         assert!(matches!(config.validate(), Err(ConfigError::InvalidDisplayDimensions { .. })));
         config.display.width = 1280;
         config.audio.master_volume = f32::NAN;
         assert!(matches!(config.validate(), Err(ConfigError::InvalidVolume(_))));
+        config.audio.master_volume = 1.0;
+        config.performance.frame_limit = 0;
+        assert!(matches!(config.validate(), Err(ConfigError::InvalidFrameLimit)));
     }
 
     #[test]
