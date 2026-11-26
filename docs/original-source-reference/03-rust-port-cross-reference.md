@@ -146,7 +146,7 @@ See [MapModel-Contracts.md](MAP_EDITOR/MapModel-Contracts.md) and the per-file g
 | CnCTDRAMapEditor/TiberianDawn/InfantryTypes.cs | 20 TD infantry; field E7 aliases Name token e6. | No typed TD infantry catalog; body reviewed. |
 | CnCTDRAMapEditor/TiberianDawn/UnitTypes.cs | 22 ground + 5 air; no vessels. | No typed TD unit catalog; body reviewed. |
 
-See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is Rust-mapped. Eighteen TD/RA registry bodies are Body reviewed (nine classes per variant). TD/RA TemplateTypes are Partially reviewed for IDs0–191; remaining declarations and full initializer/consumer/serializer parity remain open. Catalog validation, initialization parity and tests are pending.
+See [TypeCatalog-Contracts.md](MAP_EDITOR/TypeCatalog-Contracts.md) and [TypeCatalog-Interfaces.md](MAP_EDITOR/TypeCatalog-Interfaces.md). The current Rust crate has no typed equivalents, so none of these sources is Rust-mapped. Eighteen TD/RA registry bodies are Body reviewed (nine classes per variant). TD TemplateTypes declarations IDs0–215 are fully enumerated; RA declarations IDs0–223 are documented. Both rows remain Partially reviewed because full dependency/consumer/initializer and GamePlugin serializer parity remain open. Catalog validation, initialization parity and tests are pending.
 
 
 ## Static registry body review — Tranche 6S-A
@@ -201,3 +201,15 @@ TD/RA declarations IDs128–159 are documented in [the comparison](MAP_EDITOR/Va
 | RA TemplateTypes.cs IDs160–191 | 32 declarations parsed: Slope26–38 and Road01–19. Exact tokens, dimensions, theatre lists, flags and lines documented. | No typed RA editor catalog; runtime TemplateClass is a different layer. |
 
 Cumulative coverage is IDs0–191: 192/216 TD and 192/401 RA. Both paths remain Partially reviewed; TD has 24 declarations remaining and RA 209. Complete registry dependencies and both GamePlugin serializer bodies remain open. No Rust mapping or tests are claimed.
+
+
+## TemplateTypes declaration audit — Tranche 6S-C-G
+
+| Source | Review evidence | Rust status |
+|---|---|---|
+| TD TemplateTypes.cs IDs192–215 | Final 24 declarations Shore40–63, keys sh40–sh63, Desert-only; exact dimensions/source lines documented. TD declaration enumeration complete at 216/216. | No typed TD editor catalogue; CellLayers.template remains Option<u16>. |
+| RA TemplateTypes.cs IDs192–223 | Road20–43 followed by Rough01–08; exact keys, dimensions, Temperate/Snow whitelist/source lines documented. Cumulative coverage 224/401. | No typed RA editor catalogue; runtime TemplateClass is separate. |
+
+All 56 declarations use the five-argument constructor and Flag=None. Shared initialization creates a max-footprint square thumbnail and icon mask using successful theatre tile lookups; Map.InitTheater invokes every template initializer. Static registries reflect public static readonly fields without explicit sorting and GetTypes returns the backing array as IEnumerable. Earlier RA zero-dimension records IDs100–102 and 111 remain an untested initialization hazard.
+
+TD declaration enumeration is complete, but both inventory rows remain Partially reviewed pending full dependency, consumer, initialization and GamePlugin serializer audit. Rust-mapped=0, Tested=0, Complete=0. See [the tranche comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-G.md) and per-variant guides.
