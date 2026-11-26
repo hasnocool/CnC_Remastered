@@ -6,14 +6,12 @@
 
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-
 use winit::window::Window;
 
 pub type TextureId = u64;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Color { pub r: f64, pub g: f64, pub b: f64, pub a: f64 }
-
 impl Color {
     pub const BLACK: Self = Self::rgba(0.0, 0.0, 0.0, 1.0);
     pub const DARK_MENU: Self = Self::rgba(0.035, 0.045, 0.065, 1.0);
@@ -23,7 +21,6 @@ impl Color {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Viewport { pub width: u32, pub height: u32 }
-
 impl Viewport {
     pub const fn new(width: u32, height: u32) -> Self { Self { width, height } }
     pub const fn is_visible(self) -> bool { self.width > 0 && self.height > 0 }
@@ -31,11 +28,9 @@ impl Viewport {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Camera2d { pub center_x: f32, pub center_y: f32, pub zoom: f32 }
-
 impl Default for Camera2d {
     fn default() -> Self { Self { center_x: 0.0, center_y: 0.0, zoom: 1.0 } }
 }
-
 impl Camera2d {
     pub fn set_zoom(&mut self, zoom: f32) {
         if zoom.is_finite() { self.zoom = zoom.clamp(0.05, 64.0); }
@@ -51,19 +46,12 @@ pub enum RenderLayer {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct SpriteInstance {
-    pub texture: TextureId,
-    pub layer: RenderLayer,
-    pub x: f32,
-    pub y: f32,
-    pub width: f32,
-    pub height: f32,
-    pub rotation_radians: f32,
-    pub tint: Color,
+    pub texture: TextureId, pub layer: RenderLayer, pub x: f32, pub y: f32,
+    pub width: f32, pub height: f32, pub rotation_radians: f32, pub tint: Color,
 }
 
 #[derive(Debug, Default, Clone)]
 pub struct SpriteBatch { sprites: Vec<SpriteInstance> }
-
 impl SpriteBatch {
     pub fn with_capacity(capacity: usize) -> Self { Self { sprites: Vec::with_capacity(capacity) } }
     pub fn push(&mut self, sprite: SpriteInstance) { self.sprites.push(sprite); }
@@ -85,7 +73,6 @@ pub enum RendererError {
     CreateSurface(String), RequestAdapter(String), RequestDevice(String),
     NoSurfaceFormats, NoPresentModes, NoAlphaModes, Surface(String),
 }
-
 impl std::fmt::Display for RendererError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -101,8 +88,6 @@ impl std::fmt::Display for RendererError {
 }
 impl std::error::Error for RendererError {}
 
-/// wgpu-backed window presenter. The Arc-owned window makes the surface lifetime
-/// independent of the caller's temporary borrow.
 pub struct WgpuRenderer {
     _instance: wgpu::Instance,
     surface: wgpu::Surface<'static>,
@@ -115,14 +100,14 @@ pub struct WgpuRenderer {
 }
 
 impl WgpuRenderer {
-    pub async fn new(window: Arc<Window>, vsync: bool) -> Result<Self, RendererError> {
+    pub async fn new(window: Arc<Window>, vsync: bool, low_power: bool) -> Result<Self, RendererError> {
         let size = window.inner_size();
         let viewport = Viewport::new(size.width.max(1), size.height.max(1));
         let instance = wgpu::Instance::default();
         let surface = instance.create_surface(window)
             .map_err(|error| RendererError::CreateSurface(error.to_string()))?;
         let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions {
-            power_preference: wgpu::PowerPreference::HighPerformance,
+            power_preference: if low_power { wgpu::PowerPreference::LowPower } else { wgpu::PowerPreference::HighPerformance },
             compatible_surface: Some(&surface),
             force_fallback_adapter: false,
         }).await.map_err(|error| RendererError::RequestAdapter(error.to_string()))?;
@@ -130,40 +115,27 @@ impl WgpuRenderer {
             label: Some("cnc-remastered-render-device"),
             required_features: wgpu::Features::empty(),
             required_limits: wgpu::Limits::default(),
-            memory_hints: wgpu::MemoryHints::Performance,
+            memory_hints: if low_power { wgpu::MemoryHints::MemoryUsage } else { wgpu::MemoryHints::Performance },
             trace: wgpu::Trace::Off,
         }).await.map_err(|error| RendererError::RequestDevice(error.to_string()))?;
 
         let capabilities = surface.get_capabilities(&adapter);
-        let format = capabilities.formats.iter().copied()
-            .find(wgpu::TextureFormat::is_srgb)
-            .or_else(|| capabilities.formats.first().copied())
-            .ok_or(RendererError::NoSurfaceFormats)?;
+        let format = capabilities.formats.iter().copied().find(wgpu::TextureFormat::is_srgb)
+            .or_else(|| capabilities.formats.first().copied()).ok_or(RendererError::NoSurfaceFormats)?;
         let requested_mode = if vsync { wgpu::PresentMode::Fifo } else { wgpu::PresentMode::Immediate };
-        let present_mode = capabilities.present_modes.iter().copied()
-            .find(|mode| *mode == requested_mode)
-            .or_else(|| capabilities.present_modes.first().copied())
-            .ok_or(RendererError::NoPresentModes)?;
+        let present_mode = capabilities.present_modes.iter().copied().find(|mode| *mode == requested_mode)
+            .or_else(|| capabilities.present_modes.first().copied()).ok_or(RendererError::NoPresentModes)?;
         let alpha_mode = capabilities.alpha_modes.first().copied().ok_or(RendererError::NoAlphaModes)?;
         let config = wgpu::SurfaceConfiguration {
-            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-            format,
-            width: viewport.width,
-            height: viewport.height,
-            present_mode,
-            desired_maximum_frame_latency: 2,
-            alpha_mode,
-            view_formats: vec![],
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT, format,
+            width: viewport.width, height: viewport.height, present_mode,
+            desired_maximum_frame_latency: 2, alpha_mode, view_formats: vec![],
         };
         surface.configure(&device, &config);
-        Ok(Self {
-            _instance: instance, surface, device, queue, config, viewport,
-            frame_index: 0, last_frame: Instant::now(),
-        })
+        Ok(Self { _instance: instance, surface, device, queue, config, viewport, frame_index: 0, last_frame: Instant::now() })
     }
 
     pub fn viewport(&self) -> Viewport { self.viewport }
-
     pub fn resize(&mut self, viewport: Viewport) {
         if !viewport.is_visible() { return; }
         self.viewport = viewport;
@@ -172,11 +144,8 @@ impl WgpuRenderer {
         self.surface.configure(&self.device, &self.config);
     }
 
-    /// Clears and presents one real GPU frame. Sprite pipeline execution is a
-    /// subsequent tranche; this establishes the portable presentation path.
     pub fn render_clear(&mut self, color: Color) -> Result<FrameStats, RendererError> {
-        let frame = self.surface.get_current_texture()
-            .map_err(|error| RendererError::Surface(error.to_string()))?;
+        let frame = self.surface.get_current_texture().map_err(|error| RendererError::Surface(error.to_string()))?;
         let view = frame.texture.create_view(&wgpu::TextureViewDescriptor::default());
         let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("cnc-remastered-frame-encoder"),
@@ -188,9 +157,7 @@ impl WgpuRenderer {
                     view: &view, depth_slice: None, resolve_target: None,
                     ops: wgpu::Operations { load: wgpu::LoadOp::Clear(color.as_wgpu()), store: wgpu::StoreOp::Store },
                 })],
-                depth_stencil_attachment: None,
-                timestamp_writes: None,
-                occlusion_query_set: None,
+                depth_stencil_attachment: None, timestamp_writes: None, occlusion_query_set: None,
             });
         }
         self.queue.submit(Some(encoder.finish()));
@@ -206,7 +173,6 @@ impl WgpuRenderer {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn camera_rejects_non_finite_zoom_and_clamps_valid_zoom() {
         let mut camera = Camera2d::default();
@@ -217,7 +183,6 @@ mod tests {
         camera.set_zoom(0.0);
         assert_eq!(camera.zoom, 0.05);
     }
-
     #[test]
     fn sprite_batch_orders_layers_stably() {
         let mut batch = SpriteBatch::default();
@@ -233,7 +198,6 @@ mod tests {
         assert_eq!(ordered[1].x, 1.0);
         assert_eq!(ordered[2].x, 3.0);
     }
-
     #[test]
     fn zero_sized_viewports_are_not_visible() {
         assert!(!Viewport::new(0, 600).is_visible());

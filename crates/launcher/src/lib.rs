@@ -5,23 +5,18 @@ pub mod application;
 pub mod config;
 
 use std::{sync::{Arc, mpsc::{self, Receiver, TryRecvError}}, thread, time::{Duration, Instant}};
-
 use application::{ApplicationId, ApplicationInfo};
 use config::{LauncherConfig, SettingsStore};
 use renderer::{Color, RendererError, Viewport, WgpuRenderer};
 use tracing::{error, info};
 use winit::{
-    application::ApplicationHandler,
-    dpi::LogicalSize,
-    event::WindowEvent,
+    application::ApplicationHandler, dpi::LogicalSize, event::WindowEvent,
     event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
     window::{Fullscreen, Window, WindowId},
 };
 
 #[derive(Debug)]
-pub enum LauncherError {
-    Config(String), Window(String), Renderer(RendererError), EventLoop(String),
-}
+pub enum LauncherError { Config(String), Window(String), Renderer(RendererError), EventLoop(String) }
 impl std::fmt::Display for LauncherError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -33,9 +28,7 @@ impl std::fmt::Display for LauncherError {
     }
 }
 impl std::error::Error for LauncherError {}
-impl From<RendererError> for LauncherError {
-    fn from(value: RendererError) -> Self { Self::Renderer(value) }
-}
+impl From<RendererError> for LauncherError { fn from(value: RendererError) -> Self { Self::Renderer(value) } }
 
 pub fn available_applications() -> [ApplicationInfo; 3] {
     [
@@ -50,7 +43,6 @@ pub fn launch(application: ApplicationId) -> Result<(), LauncherError> {
     let mut config = store.load().map_err(|e| LauncherError::Config(e.to_string()))?;
     config.last_application = application;
     store.save(&config).map_err(|e| LauncherError::Config(e.to_string()))?;
-
     let event_loop = EventLoop::new().map_err(|e| LauncherError::EventLoop(e.to_string()))?;
     let mut runtime = Runtime::new(application, config);
     event_loop.run_app(&mut runtime).map_err(|e| LauncherError::EventLoop(e.to_string()))?;
@@ -99,18 +91,15 @@ impl ApplicationHandler for Runtime {
             }
         };
 
-        // GPU adapter/device initialization runs off the event-loop thread. The
-        // event loop polls the one-shot channel without blocking.
+        // GPU initialization runs on a worker; event-loop polling never blocks.
         let renderer_window = Arc::clone(&window);
         let vsync = self.config.display.vsync;
+        let low_power = self.config.performance.low_power_adapter;
         let (sender, receiver) = mpsc::sync_channel(1);
-        if let Err(error) = thread::Builder::new()
-            .name("cnc-renderer-init".to_owned())
-            .spawn(move || {
-                let result = pollster::block_on(WgpuRenderer::new(renderer_window, vsync));
-                let _ = sender.send(result);
-            })
-        {
+        if let Err(error) = thread::Builder::new().name("cnc-renderer-init".to_owned()).spawn(move || {
+            let result = pollster::block_on(WgpuRenderer::new(renderer_window, vsync, low_power));
+            let _ = sender.send(result);
+        }) {
             self.startup_error = Some(error.to_string());
             event_loop.exit();
             return;
@@ -125,9 +114,7 @@ impl ApplicationHandler for Runtime {
         match event {
             WindowEvent::CloseRequested => event_loop.exit(),
             WindowEvent::Resized(size) => {
-                if let Some(renderer) = self.renderer.as_mut() {
-                    renderer.resize(Viewport::new(size.width, size.height));
-                }
+                if let Some(renderer) = self.renderer.as_mut() { renderer.resize(Viewport::new(size.width, size.height)); }
             }
             WindowEvent::RedrawRequested => {
                 if let Some(renderer) = self.renderer.as_mut() {
