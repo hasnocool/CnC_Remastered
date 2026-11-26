@@ -68,6 +68,14 @@ impl SpriteBatch {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct FrameStats { pub frame_index: u64, pub frame_time: Duration, pub viewport: Viewport }
 
+/// Backend-independent presentation contract. Game/editor frontends submit
+/// presentation work through this boundary rather than depending on wgpu.
+pub trait PresentationBackend: Send {
+    fn viewport(&self) -> Viewport;
+    fn resize(&mut self, viewport: Viewport);
+    fn render_clear(&mut self, color: Color) -> Result<FrameStats, RendererError>;
+}
+
 #[derive(Debug)]
 pub enum RendererError {
     CreateSurface(String), RequestAdapter(String), RequestDevice(String),
@@ -167,6 +175,14 @@ impl WgpuRenderer {
         let frame_time = now.saturating_duration_since(self.last_frame);
         self.last_frame = now;
         Ok(FrameStats { frame_index: self.frame_index, frame_time, viewport: self.viewport })
+    }
+}
+
+impl PresentationBackend for WgpuRenderer {
+    fn viewport(&self) -> Viewport { WgpuRenderer::viewport(self) }
+    fn resize(&mut self, viewport: Viewport) { WgpuRenderer::resize(self, viewport); }
+    fn render_clear(&mut self, color: Color) -> Result<FrameStats, RendererError> {
+        WgpuRenderer::render_clear(self, color)
     }
 }
 
