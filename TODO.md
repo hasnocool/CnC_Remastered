@@ -11,13 +11,11 @@
 - [x] Port both variants' Sim_Random lookup table and Sim_IRandom routines.
 - [x] Port Red Alert Q16.16 fixed-point C++ implementation.
 - [x] Port Red Alert's legacy CRCEngine rotate-and-add checksum.
-- [x] Port Red Alert RandomClass's 32-bit LCG and 15-bit output.
 - [x] Port CRC-aware Pipe and Straw adapters.
 - [x] Port base Pipe and Straw chain linking, forwarding, flushing, and unlinking.
 - [x] Port Rect validity, intersection, anchor adjustment, and union.
 - [x] Port packed BooleanVectorClass operations.
 - [x] Port legacy CR/LF line reader and string trimming.
-- [x] Port the legacy command-launcher stub output.
 - [x] Port ADPCM type-1 decode, including the original lookup tables.
 - [x] Port LCW compression/decompression and framed Pipe/Straw block streams.
 - [x] Port Westwood 12-bit LZW and framed Pipe/Straw streams.
@@ -33,26 +31,11 @@
 ## Milestone 1 — behavior inventory and fixtures
 
 - [x] Inventory all 494 upstream C++ translation units by exact path.
-- [x] Port `REDALERT/OVERLAY.CPP`: overlay pool lifecycle, Mark wall/non-wall behavior, OverlayPack and legacy INI loading, multiplayer crate rules, wall ownership selection, and LCW OverlayPack writing.
-- [x] Port `TIBERIANDAWN/GOPTIONS.CPP`: source-ordered options menu, multiplayer filtering/navigation, language and locale variants, action outcomes, movie/palette sequence, caption rendering geometry, and final callbacks.
-- [x] Port source-isolated `REDALERT/LOGIC.CPP` scheduler behavior: mission triggers/timers, shadow growth, time quake, object-list mutation safety, factories/houses, auto-sonar, detach and recently-created cleanup.
-- [ ] Port the optional `REDALERT/LOGIC.CPP` `CHEAT_KEYS` monochrome Debug_Dump visualization and complete final verification.
-- [x] Port `REDALERT/PK.CPP`: DER key import/export, block sizing, full-block RSA modular exponentiation, disabled Generate behavior, and the PKPipe/PKStraw cipher adapter.
-- [x] Port `REDALERT/GOPTIONS.CPP`: resolution geometry, feature-gated menu definitions, multiplayer button filtering, navigation, redraw loop, all action/result branches, and host-driven non-blocking dialog integration.
-- [x] Port `REDALERT/WSPUDP.CPP`: dotted broadcast configuration, UDP socket setup/local address discovery, broadcast fan-out, self-packet filtering, and asynchronous packet event handling.
-- [x] Port `REDALERT/WSPIPX.CPP`: IPX network-card discovery, socket binding/options, asynchronous read/write event handling, address filtering, packet queues, and legacy send backpressure behavior.
-- [x] Port `REDALERT/MSGBOX.CPP`: all Process overloads, source-specific three-button order/input mapping, dialog geometry, preservation, redraw, and non-blocking modal state machine.
-- [x] Port `REDALERT/BBDATA.CPP`: 18-entry bullet type registry, enum/heap order, constructor defaults, complete INI overrides, safe type lookup, and debug/release shape asset planning.
-- [x] Port `REDALERT/PKPIPE.CPP` and `REDALERT/PKSTRAW.CPP`: RSA session-key block sizing, push/pull handshake state machines, random 56-byte Blowfish key handoff, and embedded pipe/straw chain rewiring.
-- [x] Port `REDALERT/ADATA.CPP`: all 89 animation descriptors, exact heap order, lookup helpers, and asset initialization planning.
-- [x] Port independent `REDALERT/AIRCRAFT.CPP` routines: civilian evacuation, overlap lists, Sort_Y, pose/layer, pip count, flight speed, fire direction, sight range, helipad spy flags, landing-approach sweep, destination assignment decisions, takeoff/landing stage plans, shape-frame selection, cell passability, aircraft occupancy/reservation exclusion, landing-zone occupancy/contact validation, friendly support-building selection, concentric-ring fallback landing-zone search, target firing-position scanning with moving-target bias, passenger exit placement/radio handoff, edge-of-map retreat evacuation, aircraft primary/secondary rotation, fire eligibility/facing, paradrop cargo handling, voice-response selection, object/cell action selection overrides, camera reconnaissance, projectile/paradrop firing paths, landing/takeoff frame transition logic, rotor overlay frame/placement planning, aircraft-specific damage/death aftermath, fixed-wing/rotorcraft idle mission and scatter decisions, Process_Fly_To, Mission_Hunt, rotorcraft Mission_Attack, Mission_Retreat, Movement_AI, Mission_Guard and Mission_Guard_Area decision logic, plus Mission_Move navigation, landing-zone retargeting and takeoff/landing transitions.
-- [ ] Finish `REDALERT/AIRCRAFT.CPP` mission, flight state-machine, movement, combat, rendering, radio, INI, and save/load behavior.
-- [ ] Port the remaining 213 C++ translation units with source-specific tests.
-
+- [x] Port the currently completed source units recorded in the source inventory and porting status.
+- [ ] Finish `REDALERT/AIRCRAFT.CPP` and the remaining 213 translation units.
 - [ ] Build a symbol-to-module inventory for every source file in `TIBERIANDAWN` and `REDALERT`.
 - [ ] Inventory the complete map-editor model, tools, renderers, dialogs, and serialization paths.
 - [ ] Identify every serialized structure, integer width, packing rule, endianness assumption, and version gate.
-- [ ] Implement a source-compatible filename CRC routine and test it against upstream vectors.
 - [ ] Create legal, minimal binary fixtures for each supported format; do not include proprietary game assets.
 - [ ] Record exact behavior and compatibility tests before porting each subsystem.
 
@@ -73,20 +56,55 @@
 - [ ] Keep TD-specific and RA-specific differences explicit and testable.
 - [ ] Verify deterministic replay and state hashes across repeated runs.
 
-## Milestone 4 — platform, rendering, audio, and input
+## Milestone 4 — Application Runtime & Rendering Foundation
+
+### Renderer — `crates/renderer`
+
+- [x] Add a dedicated renderer crate and isolate it from authoritative simulation state.
+- [x] Add a portable wgpu window-surface backend with adapter/device selection and presentation.
+- [x] Add viewport, camera, color, render-layer, texture-handle, sprite-instance, and stable sprite-batch abstractions.
+- [x] Add frame timing and resize handling.
+- [ ] Add texture upload/cache lifecycle and palette-aware SHP/TMP rendering.
+- [ ] Execute ordered sprite batches with GPU pipelines and shaders.
+- [ ] Add headless/offscreen renderer tests and platform-specific surface tests.
+
+### Launcher — `crates/launcher`
+
+- [x] Add a unified executable and application registry for Tiberian Dawn, Red Alert, and Map Editor.
+- [x] Add application selection via command line and interactive terminal menu.
+- [x] Add shared window lifecycle, renderer startup, resize, redraw, and graceful shutdown.
+- [x] Add versioned TOML configuration for display, audio, input, performance, and networking settings.
+- [x] Add validated, atomic settings persistence and structured logging.
+- [ ] Add an in-window launcher menu and editable settings UI.
+- [ ] Connect each application registry entry to its game/editor runtime once those runtime APIs exist.
+- [ ] Add async networking services, session discovery, cancellation, and shutdown integration.
+- [ ] Add startup diagnostics and recovery for unavailable GPU adapters.
+
+### Integration and verification
+
+- [ ] Integrate the Tiberian Dawn runtime, Red Alert runtime, and map editor into the launcher lifecycle.
+- [ ] Add non-blocking networking interfaces and versioned network/session configuration.
+- [ ] Run `cargo fmt --all -- --check`.
+- [ ] Run `cargo check --workspace --all-targets`.
+- [ ] Run `cargo test --workspace`.
+- [ ] Run `cargo clippy --workspace --all-targets -- -D warnings`.
+- [ ] Verify the renderer on Vulkan, Metal, and DX12 where supported; document unsupported platforms.
+- [ ] Record actual build/test output and remaining failures in `PORTING_STATUS.md`.
+
+## Milestone 5 — platform, rendering, audio, and input
 
 - [ ] Replace Win32, DirectDraw, DirectSound, WinMM, sockets, and MASM dependencies behind portable interfaces.
 - [ ] Reproduce palette-accurate rendering, scaling, viewport, sidebar, radar, animations, and theater handling.
 - [ ] Port audio playback, mixing, music, speech, and timing behavior.
 - [ ] Port keyboard, mouse, controller-independent input mapping, window lifecycle, and configuration.
 
-## Milestone 5 — networking and online integration
+## Milestone 6 — networking and online integration
 
 - [ ] Port packet layouts, framing, checksums, session state, lobby behavior, and lockstep synchronization.
 - [ ] Verify compatibility boundaries and document services that are no longer available.
 - [ ] Keep platform services optional and isolated from simulation determinism.
 
-## Milestone 6 — map editor
+## Milestone 7 — map editor
 
 - [ ] Port map model and all map section codecs.
 - [ ] Port terrain/template/overlay/smudge layers, object placement, waypoints, houses, triggers, team types, and briefing metadata.
@@ -94,230 +112,10 @@
 - [ ] Replace Windows Forms UI with a portable editor frontend without changing map semantics.
 - [ ] Verify load-save-load equivalence against legal fixtures.
 
-## Milestone 7 — parity and release
+## Milestone 8 — parity and release
 
 - [ ] Run golden scenario tests for both game variants.
 - [ ] Compare tick-by-tick state, map serialization, object transitions, and deterministic replays.
 - [ ] Complete gameplay, asset-format, editor, rendering, audio, and networking parity matrices.
 - [ ] Document known deviations and supported data versions.
 - [ ] Make a release only after license/trademark review and full verification.
-
-
-- [x] Port `TIBERIANDAWN/WIN32LIB/NEWDEL.CPP` to `rts-core::legacy_new_delete`.
-
-- [x] Port `TIBERIANDAWN/WIN32LIB/PALETTE.CPP` and `MORPHPAL.CPP` palette set/fade/morph routines.
-
-- [x] Port `REDALERT/WIN32LIB/WRITEPCX.CPP` PCX header, RLE scanline encoder, and palette trailer.
-
-- [x] Port `REDALERT/WIN32LIB/LOADFONT.CPP` font-file loading and validation to `rts-core::load_font`.
-
-- [x] Share `rts-core::load_font` across both variants' `LOADFONT.CPP` implementations.
-
-- [x] Port byte-identical Red Alert/Tiberian Dawn `IFF.CPP` FORM chunk read/write behavior to `rts-formats::iff`.
-
-- [x] Port byte-identical Red Alert/Tiberian Dawn `MOUSEWW.CPP` active mouse state and conditional-hide behavior to `rts-core::mouse_ww`.
-
-- [x] Port byte-identical Red Alert/Tiberian Dawn `LOAD.CPP` routines to `rts-formats::load`, including bounded file I/O, compression dispatch, reserved skip data, and scratch-tail staging.
-
-- [x] Port both variants' packed `GETSHAPE.CPP` metadata, shape-table extraction, prefix data and height mutation routines to `rts-core::shape_access`.
-
-- [x] Port both variants' IFF-based `ICONSET.CPP` loader and packed control structure to `rts-formats::iconset`.
-
-- [x] Port byte-identical Red Alert/Tiberian Dawn `WINDOWS.CPP` text window state, control codes, dipthong decoding, substitutions, wrapping, scrolling and more-prompt operations to `rts-formats::window_text`.
-
-- [x] Port byte-identical Red Alert/Tiberian Dawn `GBUFFER.CPP` buffer/viewport geometry, DirectDraw state, lock nesting, restore handling and blit geometry to `rts-core::graphic_buffer`.
-
-- [x] Record both include-only CREW.CPP translation units and both #if (0)-disabled DPMI.CPP translation units as having no active implementation.
-- [x] Record REDALERT/MPU.CPP as inactive under the pinned MSVC target and port REDALERT/_WSPROTO.CPP's null PacketTransport initializer.
-
-- [x] Record REDALERT/BIGCHECK.CPP as inactive in the pinned project because WOLAPI_INTEGRATION is not defined.
-
-- [x] Port REDALERT/GETCPU.CPP CPU/MMX/vendor wrapper and preserve bounded vendor-ID copying in `rts-core::cpu_info`.
-
-- [x] Port both variants' CHECKBOX.CPP drawing gates, frames, checked visuals and Red Alert LEFTRELEASE action.
-
-- [x] Port both variants' FLASHER.CPP per-player countdowns, IsBlushing state, flashing bitmask and debug text.
-
-- [x] Port both FLY.CPP variants' speed scaling, pixel-lepton movement accumulation, coordinate movement and edge rollback to `rts-core::fly`.
-
-- [x] Port both IPX95.CPP disabled THIPX32 providers and fixed stub return values to `rts-core::ipx95`.
-
-- [x] Port REDALERT/BMP8.CPP 8-bit bitmap header, palette, pixel data, ownership and draw-plan behavior to `rts-formats::bmp8`.
-
-- [x] Port REDALERT/CCPTR.CPP stable heap-ID pointer construction, lookup, name ordering and all source relational operator expressions.
-
-- [x] Record REDALERT/SURFACE.CPP as inactive because the entire implementation is guarded by #if (0).
-
-- [x] Port both TXTLABEL.CPP constructors, Set_Text and variant-specific drawing dispatch to `rts-core::text_label`.
-
-- [x] Record REDALERT/WOLEDIT.CPP and WOL_OPT.CPP as inactive because WOLAPI_INTEGRATION is not defined in the pinned Red Alert project.
-
-- [x] Record RAWOLAPI, WOLAPIOB, WOL_CGAM, WOL_CHAT, WOL_DNLD, WOL_GSUP, WOL_LOGN and WOL_MAIN as inactive because WOLAPI_INTEGRATION is not defined in the pinned project.
-
-- [x] Record REDALERT/INICODE.CPP as inactive because the entire implementation is guarded by #ifdef TOFIX.
-
-- [x] Port both DESCDLG.CPP dialog geometry, control initialization, redraw loop, OK/cancel text handling and variant-specific redraw behavior.
-
-- [x] Port REDALERT/MPLIB.CPP interrupt register packing, MGen ordinal calls, queue/node/master operations and return-register semantics to `rts-core::mgen`.
-
-- [x] Port all 187 ENGLISH branch TXT_WOL resources from REDALERT/WOLSTRNG.CPP.
-
-- [x] Record REDALERT/ENDING.CPP as inactive because both function bodies are guarded by #ifdef NEVER.
-
-- [x] Port TIBERIANDAWN/ENDING.CPP GDI ending, Nod selection loop, audio/input handling, cleanup, trailers and attract sequences.
-
-- [x] Port TIBERIANDAWN/RULES.CPP DifficultyClass and RulesClass constructor defaults.
-
-- [x] Port REDALERT/KEYBOARD.CPP ring buffer, Windows key modifiers, mouse events, ASCII translation and message handling.
-
-- [x] Port TIBERIANDAWN/WIN32LIB/KEYBOARD.CPP ring buffer, VK/ASCII/toggle remaps, modifier logic, mouse triple handling and compatibility key conversions.
-
-- [x] Port REDALERT/MPMGRD.CPP private/global queue packet routing, connection management and MGen transport integration.
-- [x] Record REDALERT/MPMGRW.CPP as inactive because its complete implementation is #if (0)-disabled.
-
-- [x] Port both FIELD.CPP variants' scalar/string/chunk constructors and Host_To_Net/Net_To_Host conversion behavior.
-
-- [x] Port REDALERT/TRACKER.CPP ordered target detachment, singleton cleanup and dependent trigger recursion.
-
-- [x] Port TIBERIANDAWN/RULES.CPP DifficultyClass and RulesClass default constructor values.
-- [x] Port TIBERIANDAWN/WIN32LIB/MEM.CPP paragraph pool initialization, allocation/free, ID lookup, LRU/lock/in-use markers, free-block merging, capacity queries and cleanup compaction.
-
-- [x] Port REDALERT/DROP.CPP dropdown list geometry, item selection, peer routing, expansion/collapse and lifecycle behavior.
-
-- [x] Port REDALERT/UDPADDR.CPP active false-return stub and record MCI/MCIMOVIE as inactive under the pinned MCIMPEG-disabled project.
-
-- [x] Port REDALERT/CARRY.CPP techno snapshot and recreation logic, including infantry ScenarioInit handling and unconditional false return.
-
-- [x] Port both CARGO.CPP variants' LIFO linked cargo chain, Limbo, attach, detach and quantity behavior.
-
-- [x] Port both TOGGLE.CPP variants' forced redraw, sticky processing, press capture and variant-specific release toggling.
-
-- [x] Record REDALERT/TOOLTIP.CPP as inactive because its complete implementation is guarded by #if (0).
-
-- [x] Port both SCROLL.CPP variants' constructor/timer setup, autoscroll state, Init_IO and active HelpClass::AI delegation.
-
-- [x] Port both SHAPEBTN.CPP variants' shape assignment, draw gate, frame selection and conditional mouse visibility.
-
-- [x] Port both MiscAsm.cpp variants' coordinate/facing algorithms, fixed conversion, bit arrays, palette fading, endian helpers, string trim, fat-pixel output, palette range and screen-shake fallback.
-
-- [x] Port REDALERT/KEY.CPP ring-buffer operations, mouse triplets, keyboard modifiers, ASCII conversion adapter, async key state and system-message pump.
-
-- [x] Port REDALERT/MOUSE.CPP and TIBERIANDAWN/MOUSE.CPP cursor shape state, exact 42/34 entry animation tables, small cursor behavior, resource loading hooks and ScrollClass delegation.
-
-- [x] Port both INTERPAL.CPP variants' palette table read/write, Red Alert midpoint nearest-color builder, Tiberian Dawn disabled builder, palette luminance scaling and disabled 2x interpolation entry point.
-
-- [x] Port REDALERT/RGB.CPP, HSV.CPP, and PALETTEC.CPP into rgb_palette.rs, including RGB/HSV conversions, exact device-channel arithmetic, 256-color palette operations and timed host-driven palette fades.
-
-- [x] Port REDALERT/2KEYFRAM.CPP and TIBERIANDAWN/KEYFRAME.CPP: packed animation headers, LCW decode, XOR delta streams, frame palette extraction, cached shape headers, theater reset and variant-specific buffer allocation policy.
-
-- [x] Verify REDALERT/DEBUG.CPP and TIBERIANDAWN/DEBUG.CPP are entirely CHEAT_KEYS-guarded and that the pinned project configurations/headers do not define CHEAT_KEYS; record both as intentionally inactive.
-
-- [x] Verify TIBERIANDAWN/ALLOC.CPP has an unconditional #if (0) around its implementation and record it as intentionally inactive.
-
-- [x] Port REDALERT/NULLCONN.CPP active constructor/initialization, staging-buffer sizing, no-send stub, custom CRC and packet-overhead calculation; verify TIBERIANDAWN/NULLCONN.CPP is wholly #if (0).
-
-- [x] Port REDALERT/NOSEQCON.CPP and TIBERIANDAWN/NOSEQCON.CPP: CommHeader wire layout, ACK/NOACK packet IDs, resend/duplicate suppression, out-of-order buffering, cumulative sequencing, retry/timeout queue servicing, response-delay statistics and variant-specific receive bounds.
-
-- [x] Port REDALERT/DIAL8.CPP and TIBERIANDAWN/DIAL8.CPP geometry, input handling, shared click/drag state, direction mapping, parent ControlClass callbacks, draw gating, mouse visibility and variant-specific dial styling.
-
-- [x] Port REDALERT/CHEKLIST.CPP and TIBERIANDAWN/CHEKLIST.CPP: check-item storage variants, text lookup/removal, read-only behavior, parent-first mouse action, checked-state toggling and variant-specific row rendering.
-
-- [x] Port TIBERIANDAWN/VECTOR.CPP and its header's Raw_Count() and mutable raw-context interfaces using the shared vector and packed BooleanVector Rust implementations.
-
-- [x] Port REDALERT/COLRLIST.CPP and TIBERIANDAWN/COLRLIST.CPP per-row color storage, text/localized additions, removal, selection style, highlight/box/bar/invert rendering, gradient text flags and variant-specific selected-color semantics.
-
-- [x] Port REDALERT/TEXTBTN.CPP and TIBERIANDAWN/TEXTBTN.CPP default/string/localized constructors, text resize, box/background styles, black border, conditional mouse handling, gradient remap/text color behavior and WOLAPI branch.
-
-- [x] Port both identical WIN32LIB/DDRAW.CPP translation units: active DirectDraw globals, capabilities, Set_DD_Palette conversion, Wait_Vert_Blank, Process_DD_Result and 20-entry SurfaceMonitorClass; Set_Video_Mode is the source's unconditional TRUE stub.
-
-- [x] Port REDALERT/CCDDE.CPP and TIBERIANDAWN/CCDDE.CPP DDE server identity, callback lifecycle, advisory packets, multiplayer-start payload ownership, tickle/heartbeat processing, heartbeat elapsed time and network-order WChat POKE framing.
-
-- [x] Verify REDALERT/DIBUTIL.CPP and REDALERT/DIBFILE.CPP are each entirely enclosed in #if (0) and record the Win32 DIB helpers as intentionally inactive.
-
-- [x] Port TIBERIANDAWN/WIN32LIB/WSA.CPP open/close, resident/file-backed selection, WSA frame offsets, optional palette, frame-zero and delta LCW decode, XOR frame stepping, direct/indirect playback and metadata getters.
-
-- [x] Port REDALERT/DIALOG.CPP and TIBERIANDAWN/DIALOG.CPP dialog box/window drawing, box palettes, text wrapping, Simple/Fancy/Plain/Clipped text, font selection, palette/shadow flags, caption rendering and variant-specific style rules.
-
-- [x] Port REDALERT/DDE.CPP and TIBERIANDAWN/DDE.CPP active DDEML instance operations: enable callback, test/open/close poke connection, CF_TEXT POKE with 60-second timeout, destructor cleanup; preserve disabled initialize/register/dispatcher blocks as inactive.
-
-- [x] Port both CARGO.CPP variants: attach/limbo, linked-chain append, unsigned-byte quantity, attached-object query, detach and destructor reset.
-- [x] Verify REDALERT/BENCH.CPP is entirely guarded by unconditional #if (0) through end-of-file and record as inactive.
-
-- [x] Port REDALERT/HEAP.CPP and TIBERIANDAWN/HEAP.CPP FixedHeapClass/FixedIHeapClass allocation, free, clear, active pointer ordering, serialization and pointer translation routines.
-
-- [x] Port REDALERT/PROFILE.CPP and TIBERIANDAWN/PROFILE.CPP private INI get/write APIs, case-insensitive key lookup, double-NUL key enumeration, section/entry edits, sound/language config parsing, and Red Alert read/write binary cursors.
-
-- [x] Record REDALERT/NULLMGR.CPP and TIBERIANDAWN/NULLMGR.CPP as fully disabled by unconditional #if (0) blocks.
-- [x] Record TIBERIANDAWN/NULLCONN.CPP as fully disabled by unconditional #if (0).
-- [x] Port REDALERT/NULLDLG.CPP active Select_Serial_Dialog() fallback returning GAME_NORMAL; remaining content is disabled.
-
-- [x] Port REDALERT/WINSTUB.CPP and TIBERIANDAWN/WINSTUB.CPP focus, palette queue, title screen, lock-state, debug and memory-error behaviors.
-
-- [x] Port REDALERT/IPXADDR.CPP and TIBERIANDAWN/IPXADDR.CPP constructors, source/destination header transfer, broadcast detection, NETX zero-network equality exception, all relational operators, RA Winsock UDP address copy and TD virtual-subnet host mask.
-
-- [x] Verify REDALERT/DYNAVEC.CPP is entirely #if (0)-guarded through EOF; record it as inactive because DynamicVectorClass's active template implementation is in VECTOR.H.
-
-- [x] Port REDALERT/LIST.CPP and TIBERIANDAWN/LIST.CPP list items, selection, keyboard/mouse actions, scrollbar lifecycle, view clamping, peer notifications, drawing and gadget link operations.
-
-- [x] Port REDALERT/ABSTRACT.CPP and TIBERIANDAWN/ABSTRACT.CPP abstract object/type constructors, building-adjusted target distance, target identity, coordinate fixup, name buffers, ownership masks, active/recent flags and vtable-preserving deletion adapter.
-
-- [x] Port REDALERT/CONFDLG.CPP active Process(int) true stub and TIBERIANDAWN/CONFDLG.CPP modal confirmation behavior, layout, selection, input, game-loop callback and surface-restoration redraw.
-
-- [x] Port REDALERT/LAYER.CPP and TIBERIANDAWN/LAYER.CPP LayerClass submit, sorted insertion, one-pass adjacent-swap sorting, init/no-op One_Time and vector allocation/growth rules.
-
-- [x] Port TIBERIANDAWN/SPECIAL.CPP and SPECIAL.H default settings plus Special_Dialog's ten checkbox settings, local transactional copy, OK/Escape event queue, Cancel discard and surface restore redraw.
-
-- [x] Port REDALERT/CREDITS.CPP and TIBERIANDAWN/CREDITS.CPP counter logic with their variant-specific animation step sizes, frame throttling, sound, mission-timer redraw, and UI positioning.
-
-- [x] Port REDALERT/FUSE.CPP and TIBERIANDAWN/FUSE.CPP fuse construction, Arm_Fuse clamping, timer/arming order, proximity detonation checks, target getter and raw save/load format.
-
-- [x] Port REDALERT/CRATE.CPP crate placement/retry logic, ScenarioInit preservation, overlay selection and cleanup, tracked-cell state and expiration timer.
-
-- [x] Port REDALERT/TURRET.CPP default/parameterized constructors and empty destructor; preserve the base DriveClass forwarding boundary.
-
-- [x] Port REDALERT/SPRITE.CPP GraphicBufferClass::Scale_Rotate, exact sine/cosine lookup tables, rotated corner setup and both Bresenham source/destination stepping cases.
-
-- [x] Verify REDALERT/LZWOTRAW.CPP is excluded from both pinned project files and contains unresolved staging-buffer/pointer references; record it as a non-build orphan rather than fabricating an implementation.
-
-- [x] Port TIBERIANDAWN/TARCOM.CPP target-computer AI: parent turret callback, primary/secondary firing fallback, sound, facing/error handling, cloak, and target-dependent hull/turret alignment.
-
-- [x] Port REDALERT/FACE.CPP Desired_Facing8/256, DirType values and wrapping direction arithmetic using its exact ratio/diagonal logic.
-
-- [x] Port REDALERT/DOOR.CPP and TIBERIANDAWN/DOOR.CPP door constructor, open/close state changes, StageClass control adapter, completion transition and reverse closing frame calculation.
-
-- [x] Port REDALERT/INTRO.CPP and TIBERIANDAWN/INTRO.CPP active Choose_Side branch assignments, confirming OBSOLETE/#if(0)/DEMO guards against pinned project definitions.
-
-- [x] Verify REDALERT/ROTBMP.CPP is entirely disabled by #if(0), and REDALERT/SEDITDLG.CPP is guarded by undefined WOLAPI_INTEGRATION; record both as inactive in the pinned build.
-
-- [x] Port REDALERT/WARHEAD.CPP constructor defaults, indexed heap registration/lookup/free, INI configuration values and fixed-point Verses modifiers.
-
-- [x] Port REDALERT/WEAPON.CPP WeaponTypeClass defaults/destruction, indexed registry, INI data parsing, warhead/bullet references, allowed-threat calculation and weapon/armor name lookup.
-- [x] Port `TIBERIANDAWN/CONNECT.CPP` base connection constructor/destructor state, packet staging capacity, retry/timeout configuration, abstract send/receive queue service order, legacy 60 Hz time conversion and packet command names to `rts-core::connection`.
-- [x] Port `TIBERIANDAWN/COMBAT.CPP` damage modifiers and explosion collateral traversal into `rts-core::combat`, preserving source order, 32-object cap, `IsToDamage` duplicate suppression, building impact handling, HE aircraft bonus and post-damage terrain effects.
-- [x] Port active NEWMENU code from `TIBERIANDAWN/EXPAND.CPP`: expansion and bonus mission discovery/order, first-1000-byte `[Basic] Name` parsing/default, localized mission labels, display entry styling, resolution-dependent dialog geometry, input selection and surface-restoration redraw loop.
-- [x] Port `TIBERIANDAWN/HDATA.CPP` house metadata, pointer-table ordering, case-insensitive INI-name resolution, safe house reference lookup, constructor bias defaults and one-time Jurassic Park radar-color override.
-- [x] Port active Tiberian Dawn tables from `TIBERIANDAWN/CONST.CPP`, including source names, coordinate/facing tables, weapons, warheads, terrain movement costs, theaters and remap palettes.
-- [x] Port `TIBERIANDAWN/MSGBOX.CPP` overloads and modal behavior as a resumable Rust state machine, including bounded message staging, geometry, 1–3 button mapping, keyboard focus, no-button timer callback, surface restoration and preserved-region restore.
-- [x] Port `TIBERIANDAWN/VISUDLG.CPP` and its `SliderClass` interaction semantics: 320/640 dialog layout, four option sliders, 20-unit bump behavior, reset values, six-position keyboard navigation, callback and restored-surface redraw.
-- [x] Port `TIBERIANDAWN/TAB.CPP`, retaining its active code paths and `#if 0` tab-painting behavior: One_Time geometry/asset setup, highlight, click activation, scroll-mod hit testing, credits AI, sidebar AI/draw delegation and redraw invalidation.
-- [x] Port `REDALERT/BAR.CPP` using the existing Fixed16 type, including Q16.16 update threshold, unsigned subtraction wrap, redraw cache, outline and source-specific horizontal/vertical rectangle coordinates.
-- [x] Port active Red Alert MAPSEL.CPP support code: exact country/scenario coordinate data, ant-mission filename table, safe inclusive mouse hit testing, cursor frame parameters, and persistent palette-pulse callback step; keep the disabled Map_Selection function as the compiled NULL stub.
-- [x] Port TIBERIANDAWN/SOUNDDLG.CPP sound controls: 320/640 layout and language geometry, allowed track list/selected row, volume sliders with 255-16 cap, shuffle/repeat actions, play/stop, callback/redraw handling, settings save and stop-when-muted behavior.
-- [x] Port TIBERIANDAWN/GAMEDLG.CPP game-controls dialog: resolution geometry, inverse speed/scroll sliders, keyboard focus transitions, multiplayer GameSpeed event queuing, temporary save/restore, visual and sound dialog routing.
-- [x] Port REDALERT/TEMPLATE.CPP TemplateClass pool lifecycle, constructor placement, footprint/icon-map based map marking, visibility bounds, matching-only mark-up clear, mark-down overlay/smudge clearing and no-double-unmark self deletion.
-- [x] Port REDALERT/MPGSET.CPP MPGSettings constructors, optional MCIMPEG device enumeration and digital-video probe, default/config device matching, save-to-INI behavior, three-button test/accept/cancel dialog and movie-test cleanup/theme reset.
-- [x] Port TIBERIANDAWN/RADIO.CPP RadioClass message table, base receive delegation, contact-gated HELLO negotiation, OVER_OUT teardown, transmit target fallback and limbo cleanup through a peer-network adapter.
-- [x] Port REDALERT/VISUDLG.CPP as a distinct Red Alert visual-controls variant: resolution-scaled geometry/thumb bump, normalized slider-to-fixed option writes, Reset to 1/2, keyboard/button navigation and click-outside exit.
-- [x] Port REDALERT/BUFF.CPP Buffer constructors, owned allocation, borrowed pointer wrappers, shallow copy/assignment ownership flags, null/zero-size edge cases and Reset/destructor semantics using safe shared leases and nonblocking access.
-- [x] Port TIBERIANDAWN/CONTROL.CPP ControlClass constructor, peer setup, ID access, Action event-to-key mapping, peer notification order and Draw_Me peer/base forwarding.
-- [x] Port REDALERT/STATBTN.CPP StaticButtonClass constructor/default, Set_Text copy/resize order, Draw_Me conditional mouse handling, page background capture/restore and Draw_Text center/right alignment.
-- [x] Port TIBERIANDAWN/LOGIC.CPP AI order and mutation-safe iteration: crate regeneration, teams, objects, unit/infantry/aircraft/building scan bits, optional RA attribute recalculation, map logic, factories, game-mode-specific house AI and recently-created flag clearing.
-- [x] Port TIBERIANDAWN/UTRACKER.CPP constructor/destructor storage, per-type increment/decrement, clear, totals/count access, guarded in-place htonl/ntohl conversion and safe invalid-index reads.
-- [x] Port REDALERT/UTRACKER.CPP unit totals and dual network-conversion configurations, including non-WIN32 htonl/ntohl macros that return zero, idempotent format-state guards and bounds-safe total access.
-- [x] Port REDALERT/CONTROL.CPP Red Alert ControlClass constructors including copy/NoInit forms, peer cloning, Action key update before peer callback, base gadget Action delegation and peer-first Draw_Me.
-- [x] Port REDALERT/GAMEDLG.CPP option dialog: German and standard coordinates, WOLAPI feature/connection-dependent button list, inverse speed/scroll sliders, callback/map redraw, navigation, speed event, temporary GameSpeed save/restore, sound-card warning and subdialog returns.
-- [x] Port REDALERT/RADIO.CPP Red Alert message catalogue, distinct-message receive history, HELLO/OVER_OUT contact rules, explicit/default-LParam transmit overloads, debug snapshot and limbo cleanup.
-- [x] Port REDALERT/TAB.CPP TabClass timers, One_Time asset setup, disabled Draw_It path, credits and mission warning pulse frames, Win32/non-Win32 tab highlights, click activation rules, money flash and credit/sidebar AI calls.
-- [x] Port REDALERT/CCMPATH.CPP MPATH compile-gated behavior: default no-op/success, optional packet-buffer/settings/init sequence, player ping/discovery/retry loop, focus redraw/ESC handling and destroy-connection house/player cleanup.
-- [x] Port REDALERT/SOUNDDLG.CPP: locale-dependent layout, FIXIT_CSII Win32 listbox height, theme enumeration/prefix ID, selected-track mapping, sliders and immediate sound/score options, shuffle/repeat, stop/quiet, play, FIXIT_VERSION_3 multiplayer score mirror and cleanup.
-- [x] Port REDALERT/AADATA.CPP static aircraft definitions and type helpers: source-order heap registry, case-insensitive INI names, asset paths, dimensions, occupancy/overlap, max pips and Create_And_Place=false.

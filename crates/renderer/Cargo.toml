@@ -1,0 +1,10 @@
+# Filename: crates/renderer/Cargo.toml
+[package]
+name = "renderer"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+wgpu.workspace = true
+winit.workspace = true
