@@ -9,6 +9,9 @@ use std::{
     sync::mpsc::{self, Receiver, Sender},
 };
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PaintLayer { Terrain, Template, Overlay, Smudge }
+
 enum IoCommand {
     Save(PathBuf, MapFile),
     Load(PathBuf),
@@ -23,6 +26,8 @@ pub struct EditorApp {
     canvas: MapCanvas,
     selected: Option<CellCoord>,
     brush: u16,
+    brush_layer: PaintLayer,
+    waypoint_number: u16,
     file_path: String,
     status: String,
     io_tx: Sender<IoCommand>,
@@ -73,6 +78,8 @@ impl EditorApp {
             canvas: MapCanvas::default(),
             selected: None,
             brush: 1,
+            brush_layer: PaintLayer::Terrain,
+            waypoint_number: 0,
             file_path: "./maps/new-map.rtsmap.json".into(),
             status: "New Tiberian Dawn map".into(),
             io_tx,
@@ -154,8 +161,28 @@ impl eframe::App for EditorApp {
             ui.horizontal(|ui| {
                 ui.label("File");
                 ui.text_edit_singleline(&mut self.file_path);
-                ui.label("Terrain ID");
+                egui::ComboBox::from_label("Layer")
+                    .selected_text(format!("{:?}", self.brush_layer))
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(&mut self.brush_layer, PaintLayer::Terrain, "Terrain");
+                        ui.selectable_value(&mut self.brush_layer, PaintLayer::Template, "Template");
+                        ui.selectable_value(&mut self.brush_layer, PaintLayer::Overlay, "Overlay");
+                        ui.selectable_value(&mut self.brush_layer, PaintLayer::Smudge, "Smudge");
+                    });
+                ui.label("ID");
                 ui.add(egui::DragValue::new(&mut self.brush).range(0..=u16::MAX));
+                ui.label("Waypoint");
+                ui.add(egui::DragValue::new(&mut self.waypoint_number));
+                if ui.button("Add at selected").clicked() {
+                    if let Some(cell) = self.selected {
+                        self.status = match self.map.add_waypoint(self.waypoint_number, cell) {
+                            Ok(()) => format!("Waypoint {} added", self.waypoint_number),
+                            Err(error) => format!("Waypoint rejected: {error:?}"),
+                        };
+                    } else {
+                        self.status = "Select a map cell before adding a waypoint".into();
+                    }
+                }
                 ui.label("Selected");
                 ui.label(self.selected.map(|cell| format!("{}, {}", cell.x, cell.y)).unwrap_or_else(|| "none".into()));
             });
@@ -166,7 +193,12 @@ impl eframe::App for EditorApp {
                     self.selected = Some(cell);
                     self.canvas.selected = Some(cell);
                     let mut layers = self.map.cell(cell).copied().unwrap_or_default();
-                    layers.terrain = Some(self.brush);
+                    match self.brush_layer {
+                        PaintLayer::Terrain => layers.terrain = Some(self.brush),
+                        PaintLayer::Template => layers.template = Some(self.brush),
+                        PaintLayer::Overlay => layers.overlay = Some(self.brush),
+                        PaintLayer::Smudge => layers.smudge = Some(self.brush),
+                    }
                     if let Err(error) = self.map.set_cell(cell, layers) {
                         self.status = format!("Paint failed: {error:?}");
                     }
