@@ -8,7 +8,7 @@ pub mod ui;
 use std::{sync::{Arc, mpsc::{self, Receiver, TryRecvError}}, thread, time::{Duration, Instant}};
 use application::{ApplicationId, ApplicationInfo};
 use config::{LauncherConfig, SettingsStore};
-use renderer::{Color, RendererError, Viewport, WgpuRenderer};
+use renderer::{Color, GpuTexture, RenderLayer, RendererError, SpriteBatch, SpriteInstance, Viewport, WgpuRenderer};
 use tracing::{error, info};
 use winit::{
     application::ApplicationHandler, dpi::LogicalSize, event::WindowEvent,
@@ -59,28 +59,20 @@ struct MenuRuntime {
     window: Option<Arc<Window>>,
     renderer: Option<WgpuRenderer>,
     renderer_rx: Option<Receiver<Result<WgpuRenderer, RendererError>>>,
+    terrain_texture: Option<GpuTexture>,
     pointer: (f32, f32),
     startup_error: Option<String>,
 }
 impl MenuRuntime {
     fn new(config: LauncherConfig, store: SettingsStore) -> Self {
         Self { config, store, ui: ui::LauncherUi::default(), window: None, renderer: None,
-            renderer_rx: None, pointer: (0.0,0.0), startup_error: None }
+            renderer_rx: None, terrain_texture: None, pointer: (0.0,0.0), startup_error: None }
     }
     fn persist(&mut self) {
         if let Err(error) = self.store.save(&self.config) {
             self.startup_error = Some(error.to_string());
             error!("settings persistence failed: {error}");
         }
-    }
-    fn draw(&self) {
-        let (Some(renderer),Some(window))=(&self.renderer,&self.window) else { return };
-        let viewport=renderer.viewport();
-        let frame=self.ui.draw(viewport,&self.config);
-        let _=window;
-        // A transient surface error is handled by the next redraw; fatal errors
-        // are captured by the window event path.
-        let _=frame;
     }
 }
 
@@ -140,8 +132,11 @@ impl ApplicationHandler for MenuRuntime {
                 }
             WindowEvent::RedrawRequested=>{
                 if let Some(renderer)=self.renderer.as_mut(){
-                    let frame=self.ui.draw(renderer.viewport(),&self.config);
-                    if let Err(error)=renderer.render(Color::DARK_MENU,None,&frame){
+                    let viewport=renderer.viewport();
+                    let frame=self.ui.draw(viewport,&self.config);
+                    let terrain=build_terrain_backdrop(viewport);
+                    let sprites=self.terrain_texture.as_ref().map(|texture|(&terrain,texture));
+                    if let Err(error)=renderer.render(Color::rgba(0.01,0.02,0.025,1.0),sprites,&frame){
                         self.startup_error=Some(error.to_string());
                         error!("launcher frame failed: {error}");
                         event_loop.exit();
@@ -154,7 +149,13 @@ impl ApplicationHandler for MenuRuntime {
     fn about_to_wait(&mut self,event_loop:&ActiveEventLoop){
         if let Some(receiver)=self.renderer_rx.as_ref(){
             match receiver.try_recv(){
-                Ok(Ok(renderer))=>{self.renderer=Some(renderer);self.renderer_rx=None;info!("launcher renderer initialized");}
+                Ok(Ok(renderer))=>{
+                    match renderer.create_texture_rgba(1,64,16,&procedural_terrain_atlas()) {
+                        Ok(texture)=>self.terrain_texture=Some(texture),
+                        Err(error)=>{self.startup_error=Some(error.to_string());event_loop.exit();return;}
+                    }
+                    self.renderer=Some(renderer);self.renderer_rx=None;info!("launcher renderer initialized");
+                }
                 Ok(Err(error))=>{self.startup_error=Some(error.to_string());self.renderer_rx=None;error!("launcher renderer init failed: {error}");event_loop.exit();return;}
                 Err(TryRecvError::Disconnected)=>{self.startup_error=Some("renderer worker stopped unexpectedly".to_owned());self.renderer_rx=None;event_loop.exit();return;}
                 Err(TryRecvError::Empty)=>{}
@@ -166,6 +167,46 @@ impl ApplicationHandler for MenuRuntime {
     fn exiting(&mut self,_event_loop:&ActiveEventLoop){
         self.renderer=None;self.window=None;info!("graphical launcher shut down");
     }
+}
+
+
+/// Deterministic 4-tile atlas used to exercise the textured-sprite path until
+/// palette-aware SHP/TMP assets are connected to the runtime.
+fn procedural_terrain_atlas() -> Vec<u8> {
+    let mut pixels=vec![0u8;64*16*4];
+    for y in 0..16u32 {
+        for x in 0..64u32 {
+            let tile=x/16; let local_x=x%16;
+            let noise=((local_x*13+y*7+tile*19)%17) as i16-8;
+            let base=match tile { 0=>[48i16,76,43], 1=>[91,68,42], 2=>[35,69,91], _=>[91,94,87] };
+            let accent=match tile {
+                0=>(local_x+y*3)%11==0, 1=>(local_x*2+y)%9==0,
+                2=>(y+(local_x/4))%5==0, _=>(local_x+y)%7==0,
+            };
+            let offset=if accent {12}else{noise};
+            let index=((y*64+x)*4) as usize;
+            pixels[index]=(base[0]+offset).clamp(0,255) as u8;
+            pixels[index+1]=(base[1]+offset).clamp(0,255) as u8;
+            pixels[index+2]=(base[2]+offset).clamp(0,255) as u8;
+            pixels[index+3]=255;
+        }
+    }
+    pixels
+}
+
+fn build_terrain_backdrop(viewport:Viewport)->SpriteBatch {
+    let tile=48.0;
+    let mut batch=SpriteBatch::with_capacity(((viewport.width/48+1)*(viewport.height/48+1)) as usize);
+    for row in 0..(viewport.height as f32/tile).ceil() as u32 {
+        for col in 0..(viewport.width as f32/tile).ceil() as u32 {
+            let kind=(col.wrapping_add(row.wrapping_mul(3)))%4;
+            let mut sprite=SpriteInstance::new(1,RenderLayer::Terrain,col as f32*tile,row as f32*tile,tile,tile);
+            sprite.uv=[kind as f32/4.0,0.0,(kind+1) as f32/4.0,1.0];
+            sprite.tint=Color::rgba(0.75,0.82,0.78,0.38);
+            batch.push(sprite);
+        }
+    }
+    batch
 }
 
 pub fn launch(application: ApplicationId) -> Result<(), LauncherError> {

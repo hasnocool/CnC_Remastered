@@ -29,7 +29,7 @@ impl LauncherUi {
         let mut ui = UiFrame::new();
         let w = viewport.width as f32;
         let h = viewport.height as f32;
-        ui.rect(viewport,0.0,0.0,w,h,Color::DARK_MENU);
+        ui.rect(viewport,0.0,0.0,w,h,Color::rgba(0.025,0.035,0.052,0.82));
         ui.rect(viewport,0.0,0.0,w,8.0,Color::ACCENT);
         ui.text(viewport,48.0,36.0,4.0,Color::ACCENT,"COMMAND AND CONQUER");
         ui.text(viewport,50.0,68.0,1.8,Color::rgba(0.70,0.76,0.80,1.0),"REMastered RTS COLLECTION");

@@ -206,7 +206,7 @@ impl WgpuRenderer {
         }).await.map_err(|e| RendererError::RequestDevice(e.to_string()))?;
 
         let capabilities = surface.get_capabilities(&adapter);
-        let format = capabilities.formats.iter().copied().find(wgpu::TextureFormat::is_srgb)
+        let format = capabilities.formats.iter().copied().find(|format| format.is_srgb())
             .or_else(|| capabilities.formats.first().copied()).ok_or(RendererError::NoSurfaceFormats)?;
         let requested = if vsync { wgpu::PresentMode::Fifo } else { wgpu::PresentMode::Immediate };
         let present_mode = capabilities.present_modes.iter().copied().find(|m| *m == requested)
