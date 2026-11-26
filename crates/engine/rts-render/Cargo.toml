@@ -1,0 +1,10 @@
+[package]
+name = "rts-render"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+egui.workspace = true
+map-editor-model.workspace = true
+rts-core.workspace = true

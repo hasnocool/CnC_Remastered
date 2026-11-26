@@ -46,3 +46,15 @@ This is an independent, unofficial community project. It is not affiliated with,
 ## Parity policy
 
 A subsystem is not considered ported merely because a Rust module with a similar name exists. Parity requires source traceability, behavior-focused tests, compatible fixtures where legally available, and explicit notes for any intentional differences. No 1:1 compatibility claim should be made until the corresponding subsystem has passed that process.
+
+## Desktop application platform (new foundation)
+
+The workspace now includes a shared egui/wgpu-backed map renderer, a standalone command-center launcher, separate Tiberian Dawn and Red Alert executable shells, a standalone map editor, a lightweight bootstrap executable, and asynchronous LAN discovery/lobby transport primitives. See docs/PLATFORM_IMPLEMENTATION.md.
+
+Build desktop applications with: cargo build --workspace
+Run the launcher with: cargo run -p rts-launcher
+Run the editor with: cargo run -p map-editor
+Run the game shells with: cargo run -p tiberian-dawn and cargo run -p red-alert
+Run the bootstrap with: cargo run -p cnc-client
+
+The initial editor working format is versioned JSON (.rtsmap.json); it is not the original Westwood scenario format. The game executables are application/rendering shells, not yet playable game ports. Renderer sprite/asset integration, legacy scenario codecs, full game simulation, audio playback, authenticated internet matchmaking, and production lockstep session orchestration remain separate parity milestones.

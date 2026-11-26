@@ -1,0 +1,9 @@
+[package]
+name = "cnc-client"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "cnc-client"
+path = "src/main.rs"

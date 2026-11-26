@@ -321,3 +321,20 @@
 - [x] Port REDALERT/CCMPATH.CPP MPATH compile-gated behavior: default no-op/success, optional packet-buffer/settings/init sequence, player ping/discovery/retry loop, focus redraw/ESC handling and destroy-connection house/player cleanup.
 - [x] Port REDALERT/SOUNDDLG.CPP: locale-dependent layout, FIXIT_CSII Win32 listbox height, theme enumeration/prefix ID, selected-track mapping, sliders and immediate sound/score options, shuffle/repeat, stop/quiet, play, FIXIT_VERSION_3 multiplayer score mirror and cleanup.
 - [x] Port REDALERT/AADATA.CPP static aircraft definitions and type helpers: source-order heap registry, case-insensitive INI names, asset paths, dimensions, occupancy/overlap, max pips and Create_And_Place=false.
+
+## Milestone 2 — desktop platform and application integration
+
+- [x] Add a shared GPU-backed 2D renderer abstraction using egui's wgpu-backed native renderer.
+- [x] Add a standalone launcher with TOML settings, game/editor selection, and non-blocking process supervision.
+- [x] Add a bootstrap executable that starts the launcher.
+- [x] Add standalone Tiberian Dawn and Red Alert application entry points.
+- [x] Add asynchronous UDP LAN discovery and bounded length-prefixed TCP lobby messages.
+- [x] Add protocol/build/simulation/mod compatibility fingerprints and deterministic lockstep command ordering primitives.
+- [x] Extend the editor model with read-only row-major cell access and serializable cell layers.
+- [x] Add a standalone map editor with terrain painting, grid/zoom, new-map selection, and asynchronous JSON save/load.
+- [ ] Run cargo fmt, workspace tests, and Clippy on a Rust 1.85+ toolchain.
+- [ ] Integrate the renderer with decoded MIX/SHP/TMP/PALETTE assets and real game object draw lists.
+- [ ] Implement source-compatible TD/RA scenario serialization and round-trip fixtures.
+- [ ] Connect game simulation command streams to the network lockstep transport and verify deterministic replay.
+- [ ] Add authenticated internet matchmaking, server hosting lifecycle, NAT traversal, reconnect, and abuse controls.
+- [ ] Replace game application shells with complete variant runtime, menus, input, audio, campaigns, and gameplay.

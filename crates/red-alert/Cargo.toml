@@ -7,3 +7,7 @@ rust-version.workspace = true
 [dependencies]
 rts-core.workspace = true
 rts-formats.workspace = true
+rts-render.workspace = true
+map-editor-model.workspace = true
+eframe.workspace = true
+egui.workspace = true
