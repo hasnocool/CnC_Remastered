@@ -215,6 +215,16 @@ mod tests {
         assert_eq!(action,UiAction::SettingsChanged);
         assert!(config.display.fullscreen);
     }
+    #[test] fn resolution_and_frame_limit_controls_update_values() {
+        let mut ui=LauncherUi::default(); let mut config=LauncherConfig::default();
+        let viewport=Viewport::new(1280,720);
+        ui.click(viewport,&mut config,60.0,650.0);
+        let resolution_y=174.0+7.0*48.0+2.0;
+        assert_eq!(ui.click(viewport,&mut config,1280.0-72.0+5.0,resolution_y+8.0),UiAction::SettingsChanged);
+        assert_eq!((config.display.width,config.display.height),(1600,900));
+        assert_eq!(ui.click(viewport,&mut config,1280.0-72.0+5.0,resolution_y+45.0),UiAction::SettingsChanged);
+        assert_eq!(config.performance.frame_limit,135);
+    }
     #[test] fn selecting_red_alert_returns_it_from_continue_action() {
         let mut ui=LauncherUi::default(); let mut config=LauncherConfig::default();
         let viewport=Viewport::new(1280,720);

@@ -343,3 +343,21 @@ impl ApplicationHandler for Runtime {
         info!("application runtime shut down");
     }
 }
+
+#[cfg(test)]
+mod terrain_fixture_tests {
+    use super::*;
+
+    #[test]
+    fn procedural_atlas_has_four_rgba_16px_tiles() {
+        let atlas=procedural_terrain_atlas();
+        assert_eq!(atlas.len(),64*16*4);
+        assert!(atlas.chunks_exact(4).all(|pixel|pixel[3]==255));
+    }
+
+    #[test]
+    fn terrain_batch_covers_visible_viewport() {
+        let batch=build_terrain_backdrop(Viewport::new(1280,720));
+        assert_eq!(batch.len(),(1280_u32.div_ceil(48)*720_u32.div_ceil(48)) as usize);
+    }
+}
