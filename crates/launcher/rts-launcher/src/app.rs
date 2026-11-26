@@ -143,6 +143,35 @@ impl eframe::App for LauncherApp {
                 ui.label("Region");
                 ui.text_edit_singleline(&mut self.config.network.region);
                 ui.end_row();
+                ui.label("Language");
+                ui.text_edit_singleline(&mut self.config.general.language);
+                ui.end_row();
+                ui.label("Check for updates");
+                ui.checkbox(&mut self.config.general.check_updates, "");
+                ui.end_row();
+                ui.label("Network enabled");
+                ui.checkbox(&mut self.config.network.enabled, "");
+                ui.end_row();
+                ui.label("Server browser");
+                ui.checkbox(&mut self.config.network.server_browser, "");
+                ui.end_row();
+                ui.label("Music volume");
+                ui.add(egui::Slider::new(&mut self.config.audio.music_volume, 0.0..=1.0));
+                ui.end_row();
+                ui.label("Effects volume");
+                ui.add(egui::Slider::new(&mut self.config.audio.effects_volume, 0.0..=1.0));
+                ui.end_row();
+            });
+            ui.collapsing("Installation paths and executables", |ui| {
+                egui::Grid::new("launcher-paths").num_columns(2).show(ui, |ui| {
+                    ui.label("Assets"); ui.text_edit_singleline(&mut self.config.paths.assets); ui.end_row();
+                    ui.label("Maps"); ui.text_edit_singleline(&mut self.config.paths.maps); ui.end_row();
+                    ui.label("Mods"); ui.text_edit_singleline(&mut self.config.paths.mods); ui.end_row();
+                    ui.label("Saves"); ui.text_edit_singleline(&mut self.config.paths.saves); ui.end_row();
+                    ui.label("Tiberian Dawn"); ui.text_edit_singleline(&mut self.config.paths.tiberian_dawn_executable); ui.end_row();
+                    ui.label("Red Alert"); ui.text_edit_singleline(&mut self.config.paths.red_alert_executable); ui.end_row();
+                    ui.label("Map Editor"); ui.text_edit_singleline(&mut self.config.paths.map_editor_executable); ui.end_row();
+                });
             });
             if ui.button("Save settings").clicked() { self.save_config(); }
             if let Some(warning) = &self.config_warning {
