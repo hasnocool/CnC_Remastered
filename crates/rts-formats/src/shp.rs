@@ -42,7 +42,7 @@ pub struct ShapeFrame<'a> {
     pub encoded_data: &'a [u8],
 }
 #[derive(Clone, Copy, Debug)]
-pub struct ShpBlock<'a> { bytes: &'a [u8], frame_count: usize }
+pub struct ShpBlock<'a> { bytes: &'a [u8], frame_count: usize, data_start: usize }
 
 impl<'a> ShpBlock<'a> {
     pub fn parse(bytes: &'a [u8]) -> Result<Self, ShpError> {
@@ -53,7 +53,7 @@ impl<'a> ShpBlock<'a> {
         if table_end > bytes.len() {
             return Err(ShpError::TruncatedOffsetTable { required: table_end, available: bytes.len() });
         }
-        Ok(Self { bytes, frame_count })
+        Ok(Self { bytes, frame_count, data_start: table_end })
     }
     pub fn frame_count(&self) -> usize { self.frame_count }
 
@@ -67,6 +67,9 @@ impl<'a> ShpBlock<'a> {
             .try_into().expect("validated four-byte offset entry")) as usize;
         let start = COUNT_BYTES.checked_add(offset)
             .ok_or(ShpError::InvalidFrameOffset { index, offset })?;
+        if start < self.data_start {
+            return Err(ShpError::InvalidFrameOffset { index, offset });
+        }
         let header_end = start.checked_add(SHAPE_HEADER_BYTES)
             .ok_or(ShpError::TruncatedShapeHeader { index })?;
         let h = self.bytes.get(start..header_end).ok_or(ShpError::TruncatedShapeHeader { index })?;
@@ -86,11 +89,8 @@ impl<'a> ShpBlock<'a> {
         if size < SHAPE_HEADER_BYTES || size > available {
             return Err(ShpError::InvalidShapeSize { index, size, available });
         }
-        let capacity = size - SHAPE_HEADER_BYTES;
-        let data_length = header.data_length as usize;
-        if data_length > capacity {
-            return Err(ShpError::InvalidDataLength { index, length: data_length, capacity });
-        }
+        // DataLength is the decoded/uncompressed payload size in Shape_Type;
+        // it may legitimately exceed the compressed bytes stored in ShapeSize.
         Ok(ShapeFrame { header, encoded_data: &self.bytes[header_end..start + size] })
     }
 }
@@ -125,6 +125,18 @@ mod tests {
         assert!(matches!(ShpBlock::parse(&[1, 0]), Err(ShpError::TruncatedOffsetTable { .. })));
         assert!(matches!(ShpBlock::parse(&fixture()).unwrap().frame(1),
             Err(ShpError::FrameIndexOutOfRange { .. })));
+    }
+    #[test]
+    fn accepts_compressed_payload_smaller_than_decoded_data_length() {
+        let mut b = fixture();
+        b[14..16].copy_from_slice(&900u16.to_le_bytes());
+        assert_eq!(ShpBlock::parse(&b).unwrap().frame(0).unwrap().header.data_length, 900);
+    }
+    #[test]
+    fn rejects_offsets_that_point_into_the_offset_table() {
+        let mut b = fixture();
+        b[2..6].copy_from_slice(&0u32.to_le_bytes());
+        assert!(matches!(ShpBlock::parse(&b).unwrap().frame(0), Err(ShpError::InvalidFrameOffset { .. })));
     }
     #[test]
     fn rejects_shape_extent_outside_archive() {
