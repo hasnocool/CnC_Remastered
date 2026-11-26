@@ -223,17 +223,29 @@ Partial in progress: `REDALERT/LOGIC.CPP` → `crates/rts-core/src/red_alert_log
 | Component | State | Evidence / remaining work |
 |---|---|---|
 | Workspace | Expanded | Eight crates; renderer and launcher are workspace members |
-| Renderer | Initial wgpu backend | Adapter/device selection, window surface, clear/present, resize, frame timing, viewport/camera/color/layer/sprite/batch abstractions |
-| Launcher | Initial executable | `cnc-remastered`, `--app`, `--list`, terminal selection, shared window lifecycle and shutdown |
+| Renderer | Initial textured 2D backend | wgpu adapter/device, surface presentation, RGBA atlas upload, nearest-sampled textured sprites, rotated quads, render-layer batching, alpha-blended UI rectangles and bundled bitmap text |
+| Launcher | Graphical initial release | `cnc-remastered` opens an in-window application selector/settings UI; `--app` direct preview, `--list`, mouse selection, Escape/close handling and shared lifecycle |
 | Application registry | Initial | Tiberian Dawn, Red Alert, and Map Editor identities; runtime integration is not yet complete |
 | Settings | Initial | Versioned TOML display/audio/input/performance/network settings, validation, atomic replacement |
 | GPU startup | Non-blocking | Renderer initialization is performed on a worker; event loop polls a one-shot channel |
 | Logging | Initial | tracing subscriber, environment filter, startup and presentation error reporting |
-| Rendering parity | Not implemented | No SHP/TMP sprite GPU pipeline, palette conversion, texture cache, terrain composition, or game UI |
+| Rendering parity | Partial foundation | Textured RGBA sprite/terrain pipeline and bitmap UI are active; authentic SHP/TMP decode/upload, palette conversion, texture cache, terrain composition from game maps and game UI remain outstanding |
 | Audio | Not implemented | Audio settings are persisted; playback/mixing remains outstanding |
 | Networking | Not implemented | Network preferences are persisted; async transport, lobby, and lockstep remain outstanding |
-| Application integration | Not implemented | Launcher registry entries are scaffolding; TD, RA, and editor runtime APIs are not yet wired |
+| Application integration | Not implemented | Launcher registry entries and preview windows exist; TD, RA, and editor runtime APIs are not yet wired |
 
 Dependency choice: wgpu 26.0.1 and winit 0.30.12 are used while preserving the workspace Rust 1.85 MSRV. The latest wgpu 30.0.2 release requires Rust 1.87, so adopting it would require an explicit MSRV change.
 
 **Verification status:** source files have been committed to the feature branch, but Cargo formatting, compilation, tests, and Clippy have not been run. The GitHub repository connector cannot execute Cargo commands. Do not consider this implementation verified or merge-ready until the commands in the README pass on a Rust 1.85+ host.
+
+## Graphical Launcher & Textured 2D Presentation — implementation tranche
+
+- The default `cargo run -p launcher` path now opens a graphical menu with Tiberian Dawn, Red Alert, and Map Editor cards.
+- The settings screen exposes fullscreen, four resolution presets, vsync, low-power GPU selection, frame limit, master-audio mute, edge scrolling, mouse-Y inversion, and networking enablement. Changes are persisted automatically; display/GPU changes are applied on the next launch.
+- The renderer now has separate textured-sprite and UI pipelines, an RGBA texture upload API, atlas UV regions, nearest-neighbor sampling, sprite tint/rotation, render-layer ordering, alpha blending, and a bundled 5x7 bitmap font.
+- A deterministic four-region procedural terrain atlas is drawn behind both the launcher and direct application preview windows. It is a renderer fixture, not authentic TD/RA artwork.
+- The launcher initializes the GPU on a worker thread and polls completion from the event loop. Frame pacing uses the configured frame limit.
+
+**Remaining:** game-specific SHP/TMP decoding and palette upload, persistent texture cache, tile/terrain composition from actual maps, in-game HUD rendering, audio playback, async multiplayer networking, and runtime integration for the two games and editor.
+
+**Verification:** Cargo is not installed in the current execution environment and outbound GitHub clone access is unavailable. Formatting, compilation, tests, and Clippy have therefore not been run. Treat this branch as implementation-in-progress until the Rust 1.85+ validation commands pass.

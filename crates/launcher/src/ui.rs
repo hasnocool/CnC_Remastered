@@ -115,7 +115,7 @@ impl LauncherUi {
         button(ui,viewport,w-72.0,resolution_y+38.0,34.0,28.0,"+",inside(self.pointer,(w-72.0,resolution_y+38.0,34.0,28.0)),false);
         let bottom=h-82.0;
         button(ui,viewport,48.0,bottom,164.0,46.0,"BACK",inside(self.pointer,(48.0,bottom,164.0,46.0)),false);
-        ui.text(viewport,245.0,bottom+17.0,1.0,Color::rgba(0.52,0.60,0.61,1.0),"SETTINGS SAVE AUTOMATICALLY");
+        ui.text(viewport,245.0,bottom+17.0,1.0,Color::rgba(0.52,0.60,0.61,1.0),"AUTO-SAVED  /  DISPLAY AND GPU CHANGES APPLY AFTER RESTART");
     }
 
     pub fn click(&mut self, viewport: Viewport, config: &mut LauncherConfig, x: f32, y: f32) -> UiAction {

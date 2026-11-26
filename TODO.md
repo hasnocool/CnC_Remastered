@@ -331,7 +331,7 @@
 - [x] Initialize an adapter/device, configure a window surface, clear and present frames.
 - [x] Add viewport, camera, color, render-layer, texture-handle, sprite-instance, and stable sprite-batch abstractions.
 - [x] Add resize handling, frame timing, vsync selection, and low-power/high-performance adapter preference.
-- [ ] Add GPU sprite pipelines, shader assets, texture upload/cache lifecycle, and ordered sprite execution.
+- [x] Add GPU textured-sprite pipeline, WGSL shaders, RGBA texture upload, nearest-neighbor sampling, and ordered sprite execution.
 - [ ] Add palette-aware SHP/TMP rendering and game-specific presentation composition.
 - [ ] Add headless/offscreen renderer tests and platform-specific surface tests.
 
@@ -344,7 +344,7 @@
 - [x] Add versioned TOML configuration for display, audio, input, performance, and network preferences.
 - [x] Validate settings and atomically replace the persisted configuration file.
 - [x] Add structured logging and startup error reporting.
-- [ ] Add an in-window launcher menu and editable settings UI.
+- [x] Add an in-window launcher menu and editable settings UI for application selection, display, performance, audio, input, and network enablement.
 - [ ] Connect each registry entry to a functioning game/editor runtime when those runtime APIs exist.
 
 ### Integration and verification

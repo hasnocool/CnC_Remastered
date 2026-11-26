@@ -166,7 +166,8 @@ impl ApplicationHandler for MenuRuntime {
             }
         }
         if let Some(window)=self.window.as_ref(){if self.renderer.is_some(){window.request_redraw();}}
-        event_loop.set_control_flow(ControlFlow::WaitUntil(Instant::now()+Duration::from_millis(16)));
+        let fps=self.config.performance.frame_limit.clamp(1,240) as f64;
+        event_loop.set_control_flow(ControlFlow::WaitUntil(Instant::now()+Duration::from_secs_f64(1.0/fps)));
     }
     fn exiting(&mut self,_event_loop:&ActiveEventLoop){
         self.renderer=None;self.window=None;info!("graphical launcher shut down");
@@ -237,13 +238,6 @@ struct Runtime {
 impl Runtime {
     fn new(application: ApplicationId, config: LauncherConfig) -> Self {
         Self { application, config, window: None, renderer: None, renderer_rx: None, terrain_texture: None, startup_error: None }
-    }
-    fn application_color(&self) -> Color {
-        match self.application {
-            ApplicationId::TiberianDawn => Color::rgba(0.10, 0.20, 0.12, 1.0),
-            ApplicationId::RedAlert => Color::rgba(0.28, 0.10, 0.10, 1.0),
-            ApplicationId::MapEditor => Color::rgba(0.10, 0.15, 0.25, 1.0),
-        }
     }
 }
 

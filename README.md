@@ -51,16 +51,25 @@ A subsystem is not considered ported merely because a Rust module with a similar
 
 The workspace now includes:
 
-- `renderer`: wgpu window-surface initialization, clear/present, resize, frame timing, and presentation-only camera/sprite/layer abstractions.
-- `launcher`: the `cnc-remastered` executable with application selection, shared window lifecycle, structured logging, and versioned settings.
+- `renderer`: wgpu surface presentation, GPU textured-sprite atlas pipeline, nearest-neighbor sampling, alpha-blended UI primitives, bitmap text, viewport/camera abstractions and render-layer batching.
+- `launcher`: a graphical application menu, selectable TD/RA/editor entries, interactive settings, platform-persisted TOML configuration, mouse/keyboard input and a shared window lifecycle.
+- A deterministic four-region procedural terrain atlas used as a rendering fixture behind the launcher and application preview windows.
 
 Run the launcher with:
 
 ```bash
-cargo run -p launcher -- --list
+# Opens the graphical launcher.
+cargo run -p launcher
+
+# Direct renderer preview for a selected application boundary.
 cargo run -p launcher -- --app td
 cargo run -p launcher -- --app ra
 cargo run -p launcher -- --app editor
+
+# Print application IDs without opening a window.
+cargo run -p launcher -- --list
 ```
 
-The current TD, RA, and editor entries are application integration boundaries, not complete playable runtimes. Sprite rendering, palette-accurate asset presentation, audio, async networking, and editor/game runtime integration remain in progress. See [TODO.md](TODO.md) and [PORTING_STATUS.md](PORTING_STATUS.md).
+The launcher settings currently expose fullscreen, resolution presets, vsync, low-power GPU selection, frame limit, master-audio enable/mute, edge scrolling, mouse-Y inversion and networking enablement. Settings are saved automatically; display/GPU settings take effect after restart.
+
+The terrain atlas is a procedural renderer fixture, not an authentic game asset. The TD, RA and editor entries remain integration boundaries rather than complete playable runtimes. Palette-aware SHP/TMP loading, asset caching, game/editor runtime integration, audio playback and asynchronous multiplayer transport remain in progress. See [TODO.md](TODO.md) and [PORTING_STATUS.md](PORTING_STATUS.md).
