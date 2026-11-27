@@ -43,15 +43,27 @@ impl MapEditHistory {
 
     /// Whether the next undo changes a template reference or logical icon.
     pub fn undo_changes_templates(&self) -> bool {
-        self.undo.last().is_some_and(|command| match command {\n            HistoryCommand::Cells(batch) => batch.edits.iter().any(|edit| {
+        self.undo.last().is_some_and(|command| match command {
+            HistoryCommand::Cells(batch) => batch.edits.iter().any(|edit| {
             edit.before.template != edit.after.template
                 || edit.before.template_icon != edit.after.template_icon
-        }),\n            HistoryCommand::TerrainObject(_) => false,\n        })\n    }\n\n    /// Whether the next redo changes a template reference or logical icon.
+        }),
+            HistoryCommand::TerrainObject(_) => false,
+        })
+    }
+
+    /// Whether the next redo changes a template reference or logical icon.
     pub fn redo_changes_templates(&self) -> bool {
-        self.redo.last().is_some_and(|command| match command {\n            HistoryCommand::Cells(batch) => batch.edits.iter().any(|edit| {
+        self.redo.last().is_some_and(|command| match command {
+            HistoryCommand::Cells(batch) => batch.edits.iter().any(|edit| {
             edit.before.template != edit.after.template
                 || edit.before.template_icon != edit.after.template_icon
-        }),\n            HistoryCommand::TerrainObject(_) => false,\n        })\n    }\n\n    pub fn apply_cell(&mut self, document: &mut MapDocument, coordinate: CellCoord, after: CellLayers) -> Result<bool, MapDocumentError> {
+        }),
+            HistoryCommand::TerrainObject(_) => false,
+        })
+    }
+
+    pub fn apply_cell(&mut self, document: &mut MapDocument, coordinate: CellCoord, after: CellLayers) -> Result<bool, MapDocumentError> {
         Ok(self.apply_cells(document, &[(coordinate, after)])? != 0)
     }
 
