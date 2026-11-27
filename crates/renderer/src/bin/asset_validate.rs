@@ -217,7 +217,7 @@ fn run() -> Result<()> {
     let ini = IniDocument::parse(&scenario_text);
     let width = ini.required_u32("map", "width")?;
     let height = ini.required_u32("map", "height")?;
-    let cell_count = checked_cell_count(width, height)?;
+    let expected_cell_count = checked_cell_count(width, height)?;
     let theater = match options.theater_override {
         Some(theater) => theater,
         None => ini.theater()?,
@@ -263,6 +263,10 @@ fn run() -> Result<()> {
             (terrain, atlas, types, count)
         }
     };
+
+    if cell_count != expected_cell_count {
+        return Err(format!("decoded map contains {cell_count} cells; scenario metadata describes {expected_cell_count}").into());
+    }
 
     let mut mix_entries = 0usize;
     for archive in &archives { mix_entries += archive.entries().len(); }
