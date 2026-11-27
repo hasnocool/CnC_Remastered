@@ -1,6 +1,6 @@
 //! Versioned JSON editor interchange format; not a legacy .MAP parity claim.
 
-use map_editor_model::{CellLayers, MapDocument, TerrainObjectId, TerrainPlacementDefinition};
+use map_editor_model::{CellLayers, MapDocument, TerrainObjectId};
 use rts_core::{CellCoord, GameVariant, MapDimensions};
 use serde::{Deserialize, Serialize};
 
@@ -123,6 +123,29 @@ mod tests {
         let restored = decoded.into_document().expect("restore");
         assert_eq!(restored.cell(CellCoord::new(3, 2)), document.cell(CellCoord::new(3, 2)));
         assert_eq!(restored.waypoints(), document.waypoints());
+    }
+
+    #[test]
+    fn map_file_round_trips_terrain_object_identity_anchor_icon_and_trigger() {
+        let dimensions = MapDimensions::new(8, 6).expect("dimensions");
+        let mut document = MapDocument::new(GameVariant::TiberianDawn, dimensions).expect("document");
+        let terrain = map_editor_model::TerrainCatalog::new(
+            GameVariant::TiberianDawn,
+            rts_core::template_catalog::TemplateTheater::Temperate,
+        ).get(18).expect("transformable terrain");
+        let definition = terrain.placement_definition().expect("source mask");
+        let id = document.add_terrain_object(
+            CellCoord::new(2, 1), &definition, 22, Some("TRIGGER_1".into()),
+        ).expect("terrain object");
+        let encoded = serde_json::to_vec(&MapFile::from_document(&document)).expect("encode");
+        let decoded: MapFile = serde_json::from_slice(&encoded).expect("decode");
+        let restored = decoded.into_document().expect("restore");
+        let object = restored.terrain_object(id).expect("restored object");
+        assert_eq!(object.origin, CellCoord::new(2, 1));
+        assert_eq!(object.terrain_type, 18);
+        assert_eq!(object.icon, 22);
+        assert_eq!(object.trigger.as_deref(), Some("TRIGGER_1"));
+        assert_eq!(restored.terrain_object_at(CellCoord::new(2, 2)).unwrap().id, id);
     }
 
     #[test]
