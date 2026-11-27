@@ -65,6 +65,15 @@ impl MapDocument {
         self.cells.get(index)
     }
 
+    /// Iterates template references in the document's row-major cell order.
+    ///
+    /// The values are map-model template IDs, not necessarily TMP archive tile
+    /// indices. A game/theater-specific resolver must translate them before
+    /// passing them to the renderer.
+    pub fn template_indices(&self) -> impl ExactSizeIterator<Item = Option<u16>> + '_ {
+        self.cells.iter().map(|cell| cell.template)
+    }
+
     pub fn set_cell(
         &mut self,
         coordinate: CellCoord,
@@ -105,6 +114,16 @@ impl MapDocument {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn template_indices_preserve_row_major_cell_order() {
+        let dimensions = MapDimensions::new(3, 1).expect("valid dimensions");
+        let mut map = MapDocument::new(GameVariant::TiberianDawn, dimensions).expect("valid map");
+        map.set_cell(CellCoord::new(0, 0), CellLayers { template: Some(7), ..CellLayers::default() }).unwrap();
+        map.set_cell(CellCoord::new(2, 0), CellLayers { template: Some(3), ..CellLayers::default() }).unwrap();
+
+        assert_eq!(map.template_indices().collect::<Vec<_>>(), vec![Some(7), None, Some(3)]);
+    }
 
     #[test]
     fn stores_and_reads_cell_layers() {

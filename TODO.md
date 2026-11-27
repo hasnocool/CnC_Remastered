@@ -430,3 +430,14 @@
 - [ ] Implement TRNS transparency semantics and the separate legacy Shape_Type pixel decoder.
 - [ ] Add camera input/panning, terrain animation, SHP unit/building rendering and CPU-side decoded-image caching.
 - [ ] Connect the rendered terrain and object layers to playable TD/RA and map-editor runtime providers.
+
+
+## Map-document to terrain renderer adapter
+
+- [x] Expose row-major MapDocument::template_indices() without leaking the document's internal cell storage.
+- [x] Add TerrainMap::from_template_cells() with an explicit game/theater resolver from map template IDs to TMP archive tile indices; do not assume the numeric IDs are interchangeable.
+- [x] Reject unresolved non-empty template IDs rather than silently rendering the wrong tile.
+- [ ] Implement TD and RA template-definition resolvers from authentic theater/template metadata, then feed their resolved cell grids to TerrainAtlas.
+- [ ] Add reusable per-chunk CPU composition keyed by map revision and invalidate only edited chunks.
+- [ ] Derive adjacency/transition selection from source-backed TD/RA template rules and real theater fixtures.
+- Verification: integration seams and CPU tests are authored; Cargo formatting, compilation and tests remain unexecuted in this environment.

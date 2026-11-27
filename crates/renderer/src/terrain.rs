@@ -19,6 +19,7 @@ const MAX_ATLAS_BYTES: usize = 128 * 1024 * 1024;
 pub enum TerrainError {
     InvalidMapDimensions { width: u32, height: u32, cells: usize },
     InvalidTileIndex(usize),
+    UnknownTemplate(u16),
     AtlasTooLarge { width: u32, height: u32, bytes: usize },
     InvalidCamera,
     Renderer(String),
@@ -30,6 +31,7 @@ impl std::fmt::Display for TerrainError {
             Self::InvalidMapDimensions { width, height, cells } =>
                 write!(f, "terrain map {width}x{height} does not match {cells} cell entries"),
             Self::InvalidTileIndex(index) => write!(f, "terrain map references missing TMP tile {index}"),
+            Self::UnknownTemplate(template) => write!(f, "map template {template} has no resolved TMP tile"),
             Self::AtlasTooLarge { width, height, bytes } =>
                 write!(f, "terrain atlas {width}x{height} ({bytes} bytes) exceeds supported limits"),
             Self::InvalidCamera => f.write_str("terrain camera, zoom, or viewport is invalid"),
@@ -60,6 +62,28 @@ impl TerrainMap {
             return Err(TerrainError::InvalidMapDimensions { width, height, cells: cells.len() });
         }
         Ok(Self { width, height, cells })
+    }
+
+    /// Resolves row-major map-model template IDs to TMP archive tile indices.
+    ///
+    /// The resolver is deliberately supplied by the game/theater layer: a
+    /// template ID is not assumed to be a TMP tile index. Empty cells remain
+    /// empty, and unresolved non-empty template IDs are rejected.
+    pub fn from_template_cells(
+        width: u32,
+        height: u32,
+        templates: impl IntoIterator<Item = Option<u16>>,
+        mut resolve: impl FnMut(u16) -> Option<usize>,
+    ) -> Result<Self, TerrainError> {
+        let mut cells = Vec::new();
+        for template in templates {
+            let tile = match template {
+                Some(template) => Some(resolve(template).ok_or(TerrainError::UnknownTemplate(template))?),
+                None => None,
+            };
+            cells.push(tile);
+        }
+        Self::new(width, height, cells)
     }
     pub const fn width(&self) -> u32 { self.width }
     pub const fn height(&self) -> u32 { self.height }
@@ -243,6 +267,32 @@ mod tests {
         raw[3..6].copy_from_slice(&[200, 10, 20]);
         raw[6..9].copy_from_slice(&[10, 200, 20]);
         Palette256::parse(&raw, PaletteEncoding::Rgb8).unwrap()
+    }
+
+    #[test]
+    fn resolves_map_document_template_ids_without_assuming_tile_identity() {
+        let map = TerrainMap::from_template_cells(
+            3,
+            1,
+            [Some(12), None, Some(4)],
+            |template| match template {
+                12 => Some(7),
+                4 => Some(2),
+                _ => None,
+            },
+        ).unwrap();
+
+        assert_eq!(map.tile_at(0, 0), Some(7));
+        assert_eq!(map.tile_at(1, 0), None);
+        assert_eq!(map.tile_at(2, 0), Some(2));
+    }
+
+    #[test]
+    fn rejects_unresolved_map_template_ids() {
+        assert_eq!(
+            TerrainMap::from_template_cells(1, 1, [Some(99)], |_| None).unwrap_err(),
+            TerrainError::UnknownTemplate(99),
+        );
     }
 
     #[test]
