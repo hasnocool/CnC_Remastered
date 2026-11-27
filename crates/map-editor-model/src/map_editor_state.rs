@@ -292,10 +292,14 @@ impl MapEditorState {
     }
 
     pub fn remove_wall(&mut self, id: OccupierId) -> bool {
+        let cell = self.overlays.iter().find_map(|(cell, (_, overlay_id))| (*overlay_id == Some(id)).then_some(*cell));
         let removed = self.spatial.remove_wall(id);
         if removed {
-            if let Some(cell) = self.overlays.iter().find_map(|(cell, (_, overlay_id))| (*overlay_id == Some(id)).then_some(*cell)) {
+            if let Some(cell) = cell {
                 self.overlays.remove(&cell);
+                if let Ok(work) = self.document.invalidate_overlay(cell, OverlayInvalidation::Walls) {
+                    if let Some(ref pending) = work { self.apply_update_work(pending); }
+                }
             }
         }
         removed
@@ -359,6 +363,16 @@ mod tests {
         assert!(!state.spatial().buildings().contains(old_id));
         assert!(!state.spatial().technos().contains(old_id));
         assert_eq!(state.overlay_at(CellCoord::new(5, 5)).unwrap().type_id, 2);
+    }
+
+    #[test]
+    fn removing_wall_id_zero_does_not_remove_non_wall_overlay() {
+        let mut state = MapEditorState::new(GameVariant::RedAlert, dimensions()).unwrap();
+        state.register_overlay_type(OverlayTypeDefinition { id: 1, name: "crate".into(), flags: 8 });
+        state.set_overlay(CellCoord::new(2, 2), Some(PlacedOverlay::new(1))).unwrap();
+        state.add_wall(OccupierId(0), CellCoord::new(8, 8), &[(0, 0)]).unwrap();
+        assert!(state.remove_wall(OccupierId(0)));
+        assert_eq!(state.overlay_at(CellCoord::new(2, 2)).unwrap().type_id, 1);
     }
 
     #[test]
