@@ -8,7 +8,7 @@ use rts_core::{CellCoord, GameVariant, MapDimensions};
 use crate::{
     MapDocument, MapDocumentError, MapSpatialIndex, OccupierId, OverlapRect,
     SpatialIndexError, OverlayInvalidation, MapUpdateError, MapUpdateWork,
-    OverlayTypeDefinition, PlacedOverlay, SmudgeTypeDefinition, PlacedSmudge, EditorColor, SmudgeTypeFlag, resource_icon, wall_icon,
+    OverlayTypeDefinition, PlacedOverlay, SmudgeTypeDefinition, PlacedSmudge, EditorColor, SmudgeTypeFlag, BuildingTypeDefinition, PlacedBuilding, resource_icon, wall_icon,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -18,6 +18,8 @@ pub struct MapEditorState {
     overlay_types: BTreeMap<i8, OverlayTypeDefinition>,
     wall_ids: HashMap<CellCoord, OccupierId>,
     smudge_types: BTreeMap<i8, SmudgeTypeDefinition>,
+    building_types: BTreeMap<i8, BuildingTypeDefinition>,
+    buildings: HashMap<OccupierId, PlacedBuilding>,
     building_bib_cells: HashMap<OccupierId, Vec<CellCoord>>,
     next_internal_occupier: u64,
 }
@@ -30,6 +32,8 @@ impl MapEditorState {
             overlay_types: BTreeMap::new(),
             wall_ids: HashMap::new(),
             smudge_types: BTreeMap::new(),
+            building_types: BTreeMap::new(),
+            buildings: HashMap::new(),
             building_bib_cells: HashMap::new(),
             next_internal_occupier: u64::MAX,
         })
@@ -54,6 +58,14 @@ impl MapEditorState {
 
     pub fn register_smudge_type(&mut self, definition: SmudgeTypeDefinition) {
         self.smudge_types.insert(definition.id, definition);
+    }
+
+    pub fn register_building_type(&mut self, definition: BuildingTypeDefinition) {
+        self.building_types.insert(definition.id, definition);
+    }
+
+    pub fn building(&self, id: OccupierId) -> Option<&PlacedBuilding> {
+        self.buildings.get(&id)
     }
 
     pub fn smudge_at(&self, cell: CellCoord) -> Option<&PlacedSmudge> {
@@ -243,6 +255,67 @@ impl MapEditorState {
         Ok(())
     }
 
+    /// Places a catalog-backed Building. Occupancy masks, bib eligibility,
+    /// width/height, default instance state and bib ownership all come from
+    /// the registered source-derived definitions.
+    pub fn add_typed_building(
+        &mut self,
+        id: OccupierId,
+        type_id: i8,
+        anchor: CellCoord,
+        overlap_bounds: OverlapRect,
+        house: String,
+        direction: i8,
+    ) -> Result<(), MapEditorStateError> {
+        let definition = self.building_types.get(&type_id)
+            .ok_or(MapEditorStateError::UnknownBuildingType(type_id))?.clone();
+        if !self.document.dimensions().contains(anchor) {
+            return Err(MapEditorStateError::CellOutOfBounds(anchor));
+        }
+        let mut placed = PlacedBuilding::new(type_id, house, direction);
+        let mut staged_bibs = Vec::new();
+        if definition.has_bib {
+            let selected_flags = match definition.width {
+                2 => Some(SmudgeTypeFlag::Bib3.bits()),
+                3 => Some(SmudgeTypeFlag::Bib2.bits()),
+                4 => Some(SmudgeTypeFlag::Bib1.bits()),
+                _ => None,
+            };
+            if let Some(flags) = selected_flags {
+                if let Some(smudge_type) = self.smudge_types.values().find(|kind| kind.flags == flags) {
+                    for row in 0..smudge_type.height {
+                        for column in 0..smudge_type.width {
+                            let x = u32::from(anchor.x) + u32::from(column);
+                            let y = u32::from(anchor.y) + u32::from(definition.height) + u32::from(row);
+                            if y == 0 || x >= u32::from(self.document.dimensions().width())
+                                || y - 1 >= u32::from(self.document.dimensions().height()) { continue; }
+                            let cell = CellCoord::new(x as u16, (y - 1) as u16);
+                            staged_bibs.push((cell, PlacedSmudge {
+                                type_id: smudge_type.id,
+                                icon: (row * smudge_type.width + column) as i32,
+                                data: 0,
+                                tint: placed.tint,
+                            }));
+                            placed.bib_cells.push(cell);
+                        }
+                    }
+                }
+            }
+        }
+
+        self.spatial.add_building(
+            id, anchor, &definition.occupy_mask, &definition.base_occupy_mask, overlap_bounds,
+        ).map_err(MapEditorStateError::Spatial)?;
+        for (cell, smudge) in staged_bibs {
+            self.document.set_smudge_instance(cell, Some(smudge))
+                .map_err(MapEditorStateError::Document)?;
+        }
+        self.building_bib_cells.insert(id, placed.bib_cells.clone());
+        self.buildings.insert(id, placed);
+        let _ = self.document.request_overlapper_rebuild();
+        Ok(())
+    }
+
     pub fn add_building(
         &mut self,
         id: OccupierId,
@@ -268,6 +341,7 @@ impl MapEditorState {
 
     pub fn remove_building(&mut self, id: OccupierId) -> bool {
         self.remove_building_bibs(id);
+        self.buildings.remove(&id);
         let removed = self.spatial.remove_building(id);
         if removed { let _ = self.document.request_overlapper_rebuild(); }
         removed
@@ -307,6 +381,7 @@ impl MapEditorState {
 pub enum MapEditorStateError {
     CellOutOfBounds(CellCoord),
     UnknownOverlayType(i8),
+    UnknownBuildingType(i8),
     Document(MapDocumentError),
     Spatial(SpatialIndexError),
     Update(MapUpdateError),
