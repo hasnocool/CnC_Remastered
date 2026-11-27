@@ -3,6 +3,8 @@
 pub mod cell_metrics;
 pub mod edit_history;
 pub mod template_catalog;
+pub mod terrain_placement;
+pub use terrain_placement::{place_terrain, remove_terrain, OccupancyMask, OccupancyMaskError, OccupancyMaskErrorTag, TerrainPlacementDefinition, TerrainPlacementError};
 pub use template_catalog::TemplateCatalog;
 pub use edit_history::MapEditHistory;
 pub use cell_metrics::CellMetrics;
