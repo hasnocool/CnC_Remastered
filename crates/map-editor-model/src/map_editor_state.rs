@@ -400,6 +400,58 @@ mod tests {
     }
 
     #[test]
+    fn building_bib_uses_width_selected_type_and_source_row_major_icons() {
+        let mut state = MapEditorState::new(GameVariant::TiberianDawn, dimensions()).unwrap();
+        state.register_smudge_type(SmudgeTypeDefinition {
+            id: 10, name: "BIB3".into(), flags: SmudgeTypeFlag::Bib3.bits(), width: 2, height: 1,
+        });
+        state.add_building_with_bibs(
+            OccupierId(70), CellCoord::new(4, 4), &[(0, 0), (1, 0)], &[(0, 0)],
+            OverlapRect::new(0, 0, 8, 8), true, 2, 2, EditorColor::WHITE,
+        ).unwrap();
+        assert_eq!(state.building_bib_cells(OccupierId(70)).unwrap(), &[CellCoord::new(4, 5), CellCoord::new(5, 5)]);
+        assert_eq!(state.smudge_at(CellCoord::new(4, 5)).unwrap().type_id, 10);
+        assert_eq!(state.smudge_at(CellCoord::new(4, 5)).unwrap().icon, 0);
+        assert_eq!(state.smudge_at(CellCoord::new(5, 5)).unwrap().icon, 1);
+        assert!(state.remove_building(OccupierId(70)));
+        assert!(state.smudge_at(CellCoord::new(4, 5)).is_none());
+        assert!(state.building_bib_cells(OccupierId(70)).is_none());
+    }
+
+    #[test]
+    fn removing_building_bibs_preserves_replacement_non_bib_smudges() {
+        let mut state = MapEditorState::new(GameVariant::RedAlert, dimensions()).unwrap();
+        state.register_smudge_type(SmudgeTypeDefinition {
+            id: 10, name: "BIB2".into(), flags: SmudgeTypeFlag::Bib2.bits(), width: 1, height: 1,
+        });
+        state.register_smudge_type(SmudgeTypeDefinition {
+            id: 11, name: "CRATER".into(), flags: SmudgeTypeFlag::None.bits(), width: 1, height: 1,
+        });
+        state.add_building_with_bibs(
+            OccupierId(71), CellCoord::new(3, 3), &[(0, 0)], &[(0, 0)],
+            OverlapRect::new(0, 0, 8, 8), true, 3, 2, EditorColor::WHITE,
+        ).unwrap();
+        let bib_cell = CellCoord::new(3, 4);
+        assert_eq!(state.smudge_at(bib_cell).unwrap().type_id, 10);
+        state.smudges.insert(bib_cell, PlacedSmudge::new(11));
+        assert!(state.remove_building(OccupierId(71)));
+        assert_eq!(state.smudge_at(bib_cell).unwrap().type_id, 11);
+    }
+
+    #[test]
+    fn building_without_bib_or_unsupported_width_creates_no_bib_cells() {
+        let mut state = MapEditorState::new(GameVariant::TiberianDawn, dimensions()).unwrap();
+        state.register_smudge_type(SmudgeTypeDefinition {
+            id: 10, name: "BIB1".into(), flags: SmudgeTypeFlag::Bib1.bits(), width: 4, height: 1,
+        });
+        state.add_building_with_bibs(
+            OccupierId(72), CellCoord::new(1, 1), &[(0, 0)], &[(0, 0)],
+            OverlapRect::new(0, 0, 8, 8), false, 4, 2, EditorColor::WHITE,
+        ).unwrap();
+        assert!(state.building_bib_cells(OccupierId(72)).unwrap().is_empty());
+    }
+
+    #[test]
     fn aggregate_routes_building_and_wall_registration_to_distinct_indexes() {
         let mut state = MapEditorState::new(GameVariant::RedAlert, dimensions()).unwrap();
         state.add_building(
