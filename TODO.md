@@ -503,3 +503,14 @@ Scope limits: current harness supports the existing legacy unencrypted MIX parse
 - [x] Add synthetic tests for indexing, events, clear, same-area shape copy, and bounds failures.
 - [ ] Add Map aggregate event wiring, typed per-layer grids, update batching, invalidation, and derived wall/resource recalculation.
 - [ ] Run cargo fmt/check/test/clippy once the Rust toolchain is available.
+
+
+## Map editor tranche — update batching and invalidation
+
+- [x] Add nested update-batch depth tracking with safe underflow rejection.
+- [x] Coalesce overlay resource/wall invalidation over clipped 3x3 neighborhoods.
+- [x] Coalesce overlapper rebuild requests until the outermost batch ends.
+- [x] Integrate update scheduling state into MapDocument and add synthetic tests.
+- [ ] Wire typed overlay/techno events into occupancy and overlapper indexes.
+- [ ] Implement resource/wall derived-icon recalculation and Building bib ownership.
+- [ ] Run cargo fmt/check/test/clippy once the Rust toolchain is available.
