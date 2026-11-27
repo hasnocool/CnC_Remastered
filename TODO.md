@@ -465,8 +465,11 @@
 - [x] Add `MixArchive::get_by_filename` without changing the existing CRC-index lookup API.
 - [x] Add renderer::TemplateAssetProvider to validate the variant/theater catalog entry, construct the theater-suffixed filename, search caller-supplied MIX archives in caller order, and parse the resolved bytes with the existing IFF/ICON loader.
 - [x] Keep asset archives caller-owned and do not bundle proprietary game files.
-- [ ] Add loose-file directory lookup and strict INI Base64 section decoding.
+- [ ] Add loose-file directory lookup.
+- [x] Add strict Base64 decoding for concatenated INI [MapPack] values, including whitespace, padding validation, and an output-size limit.
 - [ ] Validate the complete path against legally supplied retail files.
 - Verification: synthetic filename/theater checks are authored; Cargo formatting, compilation and tests remain unexecuted.
 
 - [x] Add `TemplateAssetProvider::build_ra_terrain_atlas`: collect the unique template types referenced by a decoded RA map, load their theater-specific ICON sets from MIX archives, then call the catalog-validated renderer atlas builder with each cell's (template type, logical icon) reference.
+
+- [x] Add `RaTemplateMap::decode_ini_section` so callers can pass the concatenated INI Base64 value directly; it bounds decoded compressed bytes before LCW chunk parsing.

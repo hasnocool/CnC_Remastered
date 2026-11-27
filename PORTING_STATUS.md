@@ -353,3 +353,5 @@ The caller still needs to concatenate and Base64-decode the INI `[MapPack]` valu
 - Cargo formatting, compilation, tests and Clippy remain unverified in this environment.
 
 The provider now also exposes `build_ra_terrain_atlas`, which gathers unique template IDs from a decoded RA map, loads only the matching theater ICON sets, and passes the row-major (template type, logical icon) references into the catalog-validated renderer atlas builder. The caller still supplies the decoded map, palette, and parsed MIX archives. Retail archive/scenario validation remains outstanding.
+
+The RA MapPack decoder now also accepts the concatenated INI `[MapPack]` Base64 value directly. Its strict decoder ignores ASCII whitespace, validates quartet/padding structure, bounds the decoded compressed payload based on map dimensions and the upstream chunk limit, then invokes the LCW chunk and two-plane decoder. The API does not parse INI text or determine section key order; callers pass the already-concatenated values in section order.

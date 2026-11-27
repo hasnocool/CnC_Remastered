@@ -30,6 +30,10 @@ pub enum RaMapPackError {
     Lcw { offset: usize, source: LcwError },
     OutputSizeMismatch { actual: usize, expected: usize },
     TrailingIncompleteData { offset: usize, remaining: usize },
+    InvalidBase64 { offset: usize, byte: u8 },
+    InvalidBase64Length { remaining: usize },
+    InvalidBase64Padding { offset: usize },
+    Base64OutputTooLarge { requested: usize, limit: usize },
 }
 
 impl fmt::Display for RaMapPackError {
@@ -45,6 +49,10 @@ impl fmt::Display for RaMapPackError {
             Self::Lcw { offset, source } => write!(f, "RA MapPack LCW chunk at byte {offset} failed: {source:?}"),
             Self::OutputSizeMismatch { actual, expected } => write!(f, "RA MapPack decoded to {actual} bytes, expected exactly {expected}"),
             Self::TrailingIncompleteData { offset, remaining } => write!(f, "RA MapPack has {remaining} trailing bytes at byte {offset}"),
+            Self::InvalidBase64 { offset, byte } => write!(f, "invalid Base64 byte {byte:#04x} at offset {offset}"),
+            Self::InvalidBase64Length { remaining } => write!(f, "RA MapPack Base64 ends with an incomplete {remaining}-byte quartet"),
+            Self::InvalidBase64Padding { offset } => write!(f, "invalid RA MapPack Base64 padding at offset {offset}"),
+            Self::Base64OutputTooLarge { requested, limit } => write!(f, "RA MapPack Base64 decoded to at least {requested} bytes, limit is {limit}"),
         }
     }
 }
@@ -68,6 +76,22 @@ pub struct RaTemplateMap {
 }
 
 impl RaTemplateMap {
+    /// Decode concatenated INI [MapPack] Base64 values and their LCW chunks.
+    /// ASCII whitespace is ignored, matching Convert.FromBase64String.
+    pub fn decode_ini_section(encoded: &str, width: u32, height: u32) -> Result<Self, RaMapPackError> {
+        if width == 0 || height == 0 {
+            return Err(RaMapPackError::InvalidDimensions { width, height });
+        }
+        let cells = (width as usize).checked_mul(height as usize).ok_or(RaMapPackError::SizeOverflow)?;
+        let expected = cells.checked_mul(3).ok_or(RaMapPackError::SizeOverflow)?;
+        let chunk_count = expected.div_ceil(RA_MAPPACK_CHUNK_LIMIT);
+        let compressed_limit = expected.checked_mul(2)
+            .and_then(|n| n.checked_add(chunk_count.checked_mul(4)?))
+            .ok_or(RaMapPackError::SizeOverflow)?;
+        let framed = decode_base64(encoded, compressed_limit)?;
+        Self::decode_lcw_chunks(&framed, width, height)
+    }
+
     pub fn decode_lcw_chunks(bytes: &[u8], width: u32, height: u32) -> Result<Self, RaMapPackError> {
         if width == 0 || height == 0 {
             return Err(RaMapPackError::InvalidDimensions { width, height });
@@ -140,6 +164,64 @@ impl RaTemplateMap {
     }
 }
 
+fn decode_base64(encoded: &str, output_limit: usize) -> Result<Vec<u8>, RaMapPackError> {
+    fn value(byte: u8) -> Option<u8> {
+        match byte {
+            b'A'..=b'Z' => Some(byte - b'A'),
+            b'a'..=b'z' => Some(byte - b'a' + 26),
+            b'0'..=b'9' => Some(byte - b'0' + 52),
+            b'+' => Some(62),
+            b'/' => Some(63),
+            _ => None,
+        }
+    }
+
+    let mut output = Vec::new();
+    let mut quartet = [0u8; 4];
+    let mut count = 0usize;
+    let mut padded = false;
+    for (offset, byte) in encoded.bytes().enumerate() {
+        if byte.is_ascii_whitespace() { continue; }
+        if padded { return Err(RaMapPackError::InvalidBase64Padding { offset }); }
+        quartet[count] = byte;
+        count += 1;
+        if count != 4 { continue; }
+
+        let a = value(quartet[0]).ok_or(RaMapPackError::InvalidBase64 { offset: offset - 3, byte: quartet[0] })?;
+        let b = value(quartet[1]).ok_or(RaMapPackError::InvalidBase64 { offset: offset - 2, byte: quartet[1] })?;
+        let (c, d, produced, has_padding) = match (quartet[2], quartet[3]) {
+            (b'=', b'=') => (0, 0, 1usize, true),
+            (b'=', _) => return Err(RaMapPackError::InvalidBase64Padding { offset: offset - 1 }),
+            (third, b'=') => (value(third).ok_or(RaMapPackError::InvalidBase64 { offset: offset - 1, byte: third })?, 0, 2usize, true),
+            (third, fourth) => (
+                value(third).ok_or(RaMapPackError::InvalidBase64 { offset: offset - 1, byte: third })?,
+                value(fourth).ok_or(RaMapPackError::InvalidBase64 { offset, byte: fourth })?,
+                3usize,
+                false,
+            ),
+        };
+        if (quartet[2] == b'=' && quartet[3] != b'=') ||
+            (quartet[2] == b'=' && (b & 0x0F) != 0) ||
+            (quartet[3] == b'=' && quartet[2] != b'=' && (c & 0x03) != 0)
+        {
+            return Err(RaMapPackError::InvalidBase64Padding { offset: offset - 1 });
+        }
+
+        let requested = output.len().checked_add(produced).ok_or(RaMapPackError::SizeOverflow)?;
+        if requested > output_limit {
+            return Err(RaMapPackError::Base64OutputTooLarge { requested, limit: output_limit });
+        }
+        output.try_reserve(produced).map_err(|_| RaMapPackError::AllocationFailed { bytes: requested })?;
+        output.push((a << 2) | (b >> 4));
+        if produced > 1 { output.push((b << 4) | (c >> 2)); }
+        if produced > 2 { output.push((c << 6) | d); }
+        padded = has_padding;
+        count = 0;
+    }
+    if count != 0 { return Err(RaMapPackError::InvalidBase64Length { remaining: count }); }
+    Ok(output)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -159,6 +241,21 @@ mod tests {
         output.extend_from_slice(&u16::try_from(compressed.len()).unwrap().to_le_bytes());
         output.extend_from_slice(&u16::try_from(input.len()).unwrap().to_le_bytes());
         output.extend_from_slice(&compressed);
+    }
+
+    #[test]
+    fn decodes_base64_ini_section_and_whitespace() {
+        let raw = [5, 0, 3, 0, 0x83, 1, 2, 3, 0x80];
+        let encoded = crate::base64::encode_all(&raw);
+        let wrapped = format!("{}\r\n{}", &encoded[..4], &encoded[4..]);
+        let map = RaTemplateMap::decode_ini_section(&wrapped, 1, 1).unwrap();
+        assert_eq!(map.cell_at(0, 0), Some(RaTemplateCell { template_type: 0x0201, icon: 3 }));
+    }
+
+    #[test]
+    fn rejects_invalid_base64_padding_and_incomplete_quartets() {
+        assert!(matches!(decode_base64("AA=A", 16), Err(RaMapPackError::InvalidBase64Padding { .. })));
+        assert!(matches!(decode_base64("AAA", 16), Err(RaMapPackError::InvalidBase64Length { .. })));
     }
 
     #[test]
