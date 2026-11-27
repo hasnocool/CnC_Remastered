@@ -7,6 +7,7 @@ pub mod map_spatial_index;
 pub mod map_editor_state;
 pub mod placed_objects;
 pub mod source_catalogs;
+pub mod catalog_validation;
 pub mod derived_icons;
 pub use derived_icons::{resource_icon, wall_icon, GEM_RESOURCE_ICONS, TIBERIUM_GOLD_RESOURCE_ICONS};
 pub use cell_grid::{CellGrid, CellGridError, CellGridEvent};
@@ -14,6 +15,7 @@ pub use map_update::{MapUpdateError, MapUpdateState, MapUpdateWork, OverlayInval
 pub use map_spatial_index::{MapSpatialIndex, SpatialIndexError};
 pub use map_editor_state::{MapEditorState, MapEditorStateError};
 pub use source_catalogs::{red_alert_building_types, red_alert_smudge_types, tiberian_dawn_building_types, tiberian_dawn_smudge_types};
+pub use catalog_validation::{validate_building_catalog, validate_smudge_catalog, validate_variant_catalogs, CatalogValidationError};
 pub use placed_objects::{BuildingTypeDefinition, EditorColor, OverlayTypeDefinition, OverlayTypeFlag, PlacedBuilding, PlacedOverlay, PlacedSmudge, SmudgeTypeDefinition, SmudgeTypeFlag};
 pub mod occupier_set;
 pub mod overlapper_set;
