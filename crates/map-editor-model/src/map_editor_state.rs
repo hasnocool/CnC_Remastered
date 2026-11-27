@@ -73,7 +73,8 @@ impl MapEditorState {
     }
 
     pub fn building_bib_cells(&self, id: OccupierId) -> Option<&[CellCoord]> {
-        self.building_bib_cells.get(&id).map(Vec::as_slice)
+        self.buildings.get(&id).map(|building| building.bib_cells.as_slice())
+            .or_else(|| self.building_bib_cells.get(&id).map(Vec::as_slice))
     }
 
     pub fn overlay_at(&self, cell: CellCoord) -> Option<&PlacedOverlay> {
@@ -310,7 +311,6 @@ impl MapEditorState {
             self.document.set_smudge_instance(cell, Some(smudge))
                 .map_err(MapEditorStateError::Document)?;
         }
-        self.building_bib_cells.insert(id, placed.bib_cells.clone());
         self.buildings.insert(id, placed);
         let _ = self.document.request_overlapper_rebuild();
         Ok(())
@@ -351,7 +351,10 @@ impl MapEditorState {
     /// The ownership set is cleared even when a cell was replaced by another
     /// smudge type after the building was placed.
     pub fn remove_building_bibs(&mut self, id: OccupierId) {
-        if let Some(cells) = self.building_bib_cells.remove(&id) {
+        let owned_cells = self.buildings.get_mut(&id)
+            .map(|building| std::mem::take(&mut building.bib_cells))
+            .or_else(|| self.building_bib_cells.remove(&id));
+        if let Some(cells) = owned_cells {
             for cell in cells {
                 let is_bib = self.document.smudge_instance(cell).and_then(|smudge| self.smudge_types.get(&smudge.type_id))
                     .is_some_and(SmudgeTypeDefinition::is_bib);
