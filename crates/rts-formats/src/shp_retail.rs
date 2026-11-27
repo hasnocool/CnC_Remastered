@@ -332,7 +332,7 @@ mod tests {
     fn rejects_truncated_and_out_of_bounds_delta_commands() {
         assert!(matches!(apply_xor_delta(&mut [0; 2], &[1]), Err(RetailShpError::InvalidDelta(_))));
         assert!(matches!(apply_xor_delta(&mut [0; 1], &[2, 1, 2, 0x80, 0, 0]), Err(RetailShpError::InvalidDelta(_))));
-        assert!(matches!(apply_xor_delta(&mut [0; 1], &[0x81, 0x80, 0, 0]), Err(RetailShpError::InvalidDelta(_))));
+        assert!(matches!(apply_xor_delta(&mut [0; 1], &[0x82, 0x80, 0, 0]), Err(RetailShpError::InvalidDelta(_))));
         assert!(matches!(apply_xor_delta(&mut [0; 1], &[0x80, 2, 0, 0x80, 0, 0]), Err(RetailShpError::InvalidDelta(_))));
     }
     #[test]
