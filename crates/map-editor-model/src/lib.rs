@@ -5,7 +5,8 @@ pub mod edit_history;
 pub mod template_catalog;
 pub mod terrain_placement;
 pub use terrain_placement::{
-    place_terrain, remove_terrain, OccupancyMask, OccupancyMaskError,
+    place_terrain, place_terrain_with_history, remove_terrain, remove_terrain_with_history,
+    OccupancyMask, OccupancyMaskError,
     TerrainPlacementDefinition, TerrainPlacementError,
 };
 pub use template_catalog::TemplateCatalog;
@@ -34,6 +35,8 @@ pub enum MapDocumentError {
     CellOutOfBounds(CellCoord),
     WaypointOutOfBounds(CellCoord),
     DuplicateWaypoint(u16),
+    DuplicateCellEdit(CellCoord),
+    CellStateConflict(CellCoord),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
