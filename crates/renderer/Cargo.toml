@@ -8,6 +8,7 @@ rust-version.workspace = true
 [dependencies]
 rts-core.workspace = true
 rts-formats.workspace = true
+rts-assets.workspace = true
 bytemuck = { version = "1.24", features = ["derive"] }
 wgpu.workspace = true
 winit.workspace = true

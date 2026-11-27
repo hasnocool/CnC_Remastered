@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "crates/rts-core",
     "crates/rts-formats",
+    "crates/rts-assets",
     "crates/rts-sim",
     "crates/map-editor-model",
     "crates/tiberian-dawn",
@@ -24,6 +25,7 @@ authors = ["CnC_Remastered contributors"]
 [workspace.dependencies]
 rts-core = { path = "crates/rts-core" }
 rts-formats = { path = "crates/rts-formats" }
+rts-assets = { path = "crates/rts-assets" }
 rts-sim = { path = "crates/rts-sim" }
 map-editor-model = { path = "crates/map-editor-model" }
 tiberian-dawn = { path = "crates/tiberian-dawn" }
