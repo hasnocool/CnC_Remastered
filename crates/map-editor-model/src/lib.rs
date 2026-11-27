@@ -134,6 +134,18 @@ impl MapDocument {
             .dimensions
             .index(coordinate)
             .ok_or(MapDocumentError::CellOutOfBounds(coordinate))?;
+        self.validate_cell_update(coordinate, layers)?;
+        self.cells[index] = layers;
+        Ok(())
+    }
+
+    pub(crate) fn validate_cell_update(
+        &self,
+        coordinate: CellCoord,
+        layers: CellLayers,
+    ) -> Result<(), MapDocumentError> {
+        let index = self.dimensions.index(coordinate)
+            .ok_or(MapDocumentError::CellOutOfBounds(coordinate))?;
         if let Some(owner) = self.terrain_occupancy.get(index).copied().flatten() {
             let object = self.terrain_objects.get(&owner)
                 .ok_or(MapDocumentError::TerrainObjectCellConflict(coordinate))?;
@@ -141,7 +153,6 @@ impl MapDocument {
                 return Err(MapDocumentError::TerrainObjectCellConflict(coordinate));
             }
         }
-        self.cells[index] = layers;
         Ok(())
     }
 
