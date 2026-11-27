@@ -64,6 +64,22 @@ impl MapEditorState {
         self.building_types.insert(definition.id, definition);
     }
 
+    /// Loads the pinned static BuildingType and SmudgeType registries for this map variant.
+    pub fn register_variant_building_and_smudge_catalogs(&mut self) {
+        let (buildings, smudges) = match self.document.variant() {
+            GameVariant::TiberianDawn => (
+                crate::source_catalogs::tiberian_dawn_building_types(),
+                crate::source_catalogs::tiberian_dawn_smudge_types(),
+            ),
+            GameVariant::RedAlert => (
+                crate::source_catalogs::red_alert_building_types(),
+                crate::source_catalogs::red_alert_smudge_types(),
+            ),
+        };
+        for definition in buildings { self.register_building_type(definition); }
+        for definition in smudges { self.register_smudge_type(definition); }
+    }
+
     pub fn building(&self, id: OccupierId) -> Option<&PlacedBuilding> {
         self.buildings.get(&id)
     }
@@ -260,6 +276,17 @@ impl MapEditorState {
     /// width/height, default instance state and bib ownership all come from
     /// the registered source-derived definitions.
     pub fn add_typed_building(
+        &mut self, id: OccupierId, type_id: i8, anchor: CellCoord,
+        house: String, direction: i8,
+    ) -> Result<(), MapEditorStateError> {
+        let definition = self.building_types.get(&type_id)
+            .ok_or(MapEditorStateError::UnknownBuildingType(type_id))?;
+        let overlap_height = definition.height + u16::from(definition.has_bib);
+        let bounds = OverlapRect::new(i32::from(anchor.x), i32::from(anchor.y),
+            i32::from(definition.width), i32::from(overlap_height));
+        self.add_typed_building_with_overlap_bounds(id, type_id, anchor, bounds, house, direction)
+    }
+    pub fn add_typed_building_with_overlap_bounds(
         &mut self,
         id: OccupierId,
         type_id: i8,
@@ -573,8 +600,7 @@ mod tests {
             vec![(0,0),(1,0),(0,1),(1,1)], 2, 2, true, "GDI".into(), false, true, None,
         ));
         state.add_typed_building(
-            OccupierId(90), 3, CellCoord::new(4, 4), OverlapRect::new(32,32,48,48),
-            "GDI".into(), 0,
+            OccupierId(90), 3, CellCoord::new(4, 4), "GDI".into(), 0,
         ).unwrap();
         let building = state.building(OccupierId(90)).unwrap();
         assert_eq!(building.strength, 256);
@@ -592,8 +618,7 @@ mod tests {
     fn typed_building_requires_registered_type_without_mutating_indexes() {
         let mut state = MapEditorState::new(GameVariant::TiberianDawn, dimensions()).unwrap();
         assert_eq!(
-            state.add_typed_building(OccupierId(91), 99, CellCoord::new(1,1),
-                OverlapRect::new(1,1,2,2), "GDI".into(), 0),
+            state.add_typed_building(OccupierId(91), 99, CellCoord::new(1,1), "GDI".into(), 0),
             Err(MapEditorStateError::UnknownBuildingType(99)),
         );
         assert!(!state.spatial().buildings().contains(OccupierId(91)));
