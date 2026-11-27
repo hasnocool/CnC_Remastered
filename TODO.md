@@ -427,7 +427,9 @@
 - [ ] Validate TMP, SHP, icon-set and palette behavior against legally supplied original TD/RA assets.
 - [ ] Implement theater-specific adjacency/transition resolution from source-derived map/theater metadata.
 - [x] Implement Red Alert MapPack INI Base64/LCW decoding and connect decoded RA template references to the theater MIX asset provider and catalog-validated terrain atlas builder.
-- [ ] Implement Tiberian Dawn binary map decoding as a separate format-specific path.
+- [x] Decode the Tiberian Dawn editor BIN terrain layer as row-major (template_type: u8, logical_icon: u8) pairs using externally supplied map metrics; keep it independent of RA MapPack/LCW decoding.
+- [x] Connect decoded TD template references through the TD theater MIX asset provider and catalog-validated IFF/ICON terrain atlas builder.
+- [ ] Validate TD BIN decoding and theater ICON lookup against legally supplied retail scenarios and MIX archives.
 - [ ] Implement TRNS transparency semantics and the separate legacy Shape_Type pixel decoder.
 - [ ] Add camera input/panning, terrain animation, SHP unit/building rendering and CPU-side decoded-image caching.
 - [ ] Connect the rendered terrain and object layers to playable TD/RA and map-editor runtime providers.
