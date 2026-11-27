@@ -12,7 +12,7 @@
 - `tiberian-dawn` / `red-alert`: separate application shells.
 
 ## Authentic terrain integration
-The editor accepts a user-supplied MIX archive and 768-byte palette, a TD/RA theater, and RGB6/RGB8 palette encoding. Archive parsing, palette loading, ICONSET lookup, MAP-indirection resolution, and RGBA expansion run on the editor's background worker. The shared `rts-assets::TerrainAssetSet` contains deduplicated decoded tile images and row-major cell references. `rts-render` adapts these images into nearest-neighbor egui textures and paints template cells.
+The editor accepts a user-supplied MIX archive and 768-byte palette, a TD/RA theater, RGB6/RGB8 palette encoding, and a per-cell logical ICONSET icon index. Archive parsing, palette loading, ICONSET lookup, MAP-indirection resolution, and RGBA expansion run on the editor's background worker. The shared `rts-assets::TerrainAssetSet` contains deduplicated decoded tile images and row-major cell references. `rts-render` adapts these images into nearest-neighbor egui textures and paints template cells.
 
 The wgpu renderer retains a compatibility facade around the shared provider and its own GPU atlas/sprite adapter. Multiple-MIX archive precedence in the editor and a shared packed-atlas/UV model remain follow-up work.
 

@@ -22,7 +22,7 @@ The former `launcher` package was removed. Its wgpu preview menu and duplicate a
 
 The map editor uses the following path:
 
-1. A user selects a MIX archive, palette file, theater, and RGB6/RGB8 palette encoding.
+1. A user selects a MIX archive, palette file, theater, RGB6/RGB8 palette encoding, template type, and logical icon index.
 2. The editor's dedicated background worker reads and parses the archive and palette.
 3. `rts-assets::TemplateAssetProvider` resolves source-derived template IDs to theater-specific filenames and searches the supplied MIX archive.
 4. `rts-formats::IconSet` parses ICON/SINF/SSET/TRNS/MAP chunks. Logical icon indices are resolved through MAP indirection.
