@@ -552,7 +552,7 @@ mod tests {
     }
 
     #[test]
-    fn resolves_map_document_template_ids_without_assuming_tile_identity() {
+    fn resolves_template_type_and_icon_without_assuming_tile_identity() {
         let map = TerrainMap::from_template_cells(
             3,
             1,
