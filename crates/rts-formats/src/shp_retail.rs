@@ -88,18 +88,21 @@ impl<'a> RetailShpFile<'a> {
             });
         }
 
-        let palette_end = if header.has_embedded_palette() {
-            table_end.checked_add(768).ok_or(RetailShpError::InvalidOffset {
-                offset: usize::MAX, bound: bytes.len(),
-            })?
-        } else { table_end };
+        // Build_Frame adds 768 to encoded offsets when the palette flag is set.
+        // The table offsets therefore address the data region before the embedded
+        // palette adjustment; apply the same adjustment to frame and EOF offsets.
+        let palette_bytes = if header.has_embedded_palette() { 768usize } else { 0 };
+        let palette_end = table_end.checked_add(palette_bytes)
+            .ok_or(RetailShpError::InvalidOffset { offset: usize::MAX, bound: bytes.len() })?;
         if palette_end > bytes.len() {
             return Err(RetailShpError::Truncated { needed: palette_end, available: bytes.len() });
         }
         let embedded_palette = header.has_embedded_palette().then(|| &bytes[table_end..palette_end]);
 
         let eof = entries[count];
-        if eof.format != 0 || (eof.offset as usize) < palette_end || (eof.offset as usize) > bytes.len() {
+        let eof_data_offset = (eof.offset as usize).checked_add(palette_bytes)
+            .ok_or(RetailShpError::InvalidSentinel)?;
+        if eof.format != 0 || (eof.offset as usize) < table_end || eof_data_offset > bytes.len() {
             return Err(RetailShpError::InvalidSentinel);
         }
         if matches!(entries[count + 1].format, 0x20 | 0x40 | 0x80) {
@@ -115,8 +118,13 @@ impl<'a> RetailShpFile<'a> {
                 0x20 => RetailShpFormat::XorPrevious,
                 other => return Err(RetailShpError::InvalidFormat(other)),
             };
-            let start = entry.offset as usize;
-            if start < palette_end || end < start || end > bytes.len() {
+            let encoded_start = entry.offset as usize;
+            let encoded_end = end;
+            let start = encoded_start.checked_add(palette_bytes)
+                .ok_or(RetailShpError::InvalidOffset { offset: usize::MAX, bound: bytes.len() })?;
+            let end = encoded_end.checked_add(palette_bytes)
+                .ok_or(RetailShpError::InvalidOffset { offset: usize::MAX, bound: bytes.len() })?;
+            if encoded_start < table_end || encoded_end < encoded_start || start < palette_end || end > bytes.len() {
                 return Err(RetailShpError::InvalidOffset { offset: start.max(end), bound: bytes.len() });
             }
             if i == 0 && format != RetailShpFormat::Lcw {
@@ -293,7 +301,7 @@ mod tests {
     #[test]
     fn parses_embedded_palette_before_frame_data() {
         let table_end = HEADER + 3 * ENTRY;
-        let start = table_end + 768;
+        let start = table_end;
         let key = [0x81, 7, 0x80];
         let eof = start + key.len();
         let mut b = Vec::new();
