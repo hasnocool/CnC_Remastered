@@ -399,9 +399,7 @@ impl WgpuRenderer {
         )
     }
 
-    /// Render using a texture ID from the renderer-owned cache. Cloning the
-    /// Arc keeps the bind group alive without borrowing the cache across the
-    /// mutable frame submission operation.
+    /// Render using a texture ID from the renderer-owned cache.
     pub fn render_cached(
         &mut self,
         clear: Color,
@@ -424,20 +422,65 @@ impl WgpuRenderer {
         self.render_inner(clear, sprite_data, ui)
     }
 
+    /// Render one ordered sprite list using any number of cached textures.
+    /// Texture switches are emitted only between adjacent runs, preserving
+    /// stable render-layer order and alpha-compositing semantics.
+    pub fn render_cached_multi(
+        &mut self,
+        clear: Color,
+        sprites: Option<&SpriteBatch>,
+        ui: &UiFrame,
+    ) -> Result<FrameStats, RendererError> {
+        let mut runs: Vec<(TextureId, Arc<wgpu::BindGroup>, Vec<Vertex>)> = Vec::new();
+        if let Some(batch) = sprites {
+            let mut ordered = batch.clone();
+            for sprite in ordered.ordered() {
+                if sprite.width <= 0.0 || sprite.height <= 0.0 { continue; }
+                let texture = self.texture_cache.get(sprite.texture)
+                    .ok_or(RendererError::TextureNotCached(sprite.texture))?;
+                if runs.last().is_none_or(|run| run.0 != sprite.texture) {
+                    runs.push((sprite.texture, Arc::clone(&texture.bind_group), Vec::new()));
+                }
+                if let Some((_, _, vertices)) = runs.last_mut() {
+                    append_sprite_vertices(vertices, sprite, self.viewport);
+                }
+            }
+        }
+        self.render_runs(clear, runs, ui)
+    }
+
     fn render_inner(
         &mut self,
         clear: Color,
         sprites: Option<(&SpriteBatch, TextureId, &wgpu::BindGroup)>,
         ui: &UiFrame,
     ) -> Result<FrameStats, RendererError> {
+        let mut runs = Vec::new();
+        if let Some((batch, texture_id, bind_group)) = sprites {
+            let vertices = build_sprite_vertices(batch, texture_id, self.viewport);
+            if !vertices.is_empty() {
+                runs.push((texture_id, Arc::new(bind_group.clone()), vertices));
+            }
+        }
+        self.render_runs(clear, runs, ui)
+    }
+
+    fn render_runs(
+        &mut self,
+        clear: Color,
+        runs: Vec<(TextureId, Arc<wgpu::BindGroup>, Vec<Vertex>)>,
+        ui: &UiFrame,
+    ) -> Result<FrameStats, RendererError> {
         let frame = self.surface.get_current_texture().map_err(|e| RendererError::Surface(e.to_string()))?;
         let view = frame.texture.create_view(&wgpu::TextureViewDescriptor::default());
         let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("cnc-frame-encoder") });
 
-        let sprite_vertices = sprites.map(|(batch, texture_id, _)| build_sprite_vertices(batch, texture_id, self.viewport));
-        let sprite_buffer = sprite_vertices.as_ref().filter(|v| !v.is_empty()).map(|vertices| self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("cnc-sprite-vertices"), contents: bytemuck::cast_slice(vertices), usage: wgpu::BufferUsages::VERTEX,
-        }));
+        let sprite_buffers: Vec<_> = runs.iter().filter(|run| !run.2.is_empty()).map(|run| {
+            self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("cnc-sprite-vertices"), contents: bytemuck::cast_slice(&run.2),
+                usage: wgpu::BufferUsages::VERTEX,
+            })
+        }).collect();
         let ui_buffer = (!ui.vertices.is_empty()).then(|| self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("cnc-ui-vertices"), contents: bytemuck::cast_slice(&ui.vertices), usage: wgpu::BufferUsages::VERTEX,
         }));
@@ -451,18 +494,21 @@ impl WgpuRenderer {
                 })],
                 depth_stencil_attachment: None, timestamp_writes: None, occlusion_query_set: None,
             });
-            if let (Some(buffer), Some((_, _, bind_group)), Some(vertices)) = (&sprite_buffer, sprites, &sprite_vertices) {
-                if !vertices.is_empty() {
+            let mut buffer_index = 0usize;
+            for (_, bind_group, vertices) in &runs {
+                if vertices.is_empty() { continue; }
+                if let Some(buffer) = sprite_buffers.get(buffer_index) {
                     pass.set_pipeline(&self.sprite_pipeline);
-                    pass.set_bind_group(0, bind_group, &[]);
+                    pass.set_bind_group(0, bind_group.as_ref(), &[]);
                     pass.set_vertex_buffer(0, buffer.slice(..));
                     pass.draw(0..vertices.len() as u32, 0..1);
+                    buffer_index += 1;
                 }
             }
-            if let (Some(buffer), Some(vertices)) = (&ui_buffer, (!ui.vertices.is_empty()).then_some(&ui.vertices)) {
+            if let Some(buffer) = &ui_buffer {
                 pass.set_pipeline(&self.ui_pipeline);
                 pass.set_vertex_buffer(0, buffer.slice(..));
-                pass.draw(0..vertices.len() as u32, 0..1);
+                pass.draw(0..ui.vertices.len() as u32, 0..1);
             }
         }
         self.queue.submit(Some(encoder.finish()));
@@ -505,23 +551,27 @@ fn build_sprite_vertices(batch: &SpriteBatch, texture_id: TextureId, viewport: V
     let mut vertices = Vec::with_capacity(ordered.len() * 6);
     for sprite in ordered.ordered().iter().filter(|sprite| sprite.texture == texture_id) {
         if sprite.width <= 0.0 || sprite.height <= 0.0 { continue; }
-        let cx = sprite.x + sprite.width * 0.5;
-        let cy = sprite.y + sprite.height * 0.5;
-        let (sin, cos) = sprite.rotation_radians.sin_cos();
-        let corners = [
-            (-0.5,-0.5,sprite.uv[0],sprite.uv[1]), (0.5,-0.5,sprite.uv[2],sprite.uv[1]),
-            (0.5,0.5,sprite.uv[2],sprite.uv[3]), (-0.5,0.5,sprite.uv[0],sprite.uv[3]),
-        ];
-        let mut quad = [Vertex::zeroed(); 4];
-        for (i,(dx,dy,u,v)) in corners.into_iter().enumerate() {
-            let px = cx + (dx * sprite.width) * cos - (dy * sprite.height) * sin;
-            let py = cy + (dx * sprite.width) * sin + (dy * sprite.height) * cos;
-            let position = [(px / viewport.width as f32) * 2.0 - 1.0, 1.0 - (py / viewport.height as f32) * 2.0];
-            quad[i] = Vertex::new(position,[u,v],sprite.tint.as_f32());
-        }
-        vertices.extend_from_slice(&[quad[0],quad[1],quad[2],quad[0],quad[2],quad[3]]);
+        append_sprite_vertices(&mut vertices, sprite, viewport);
     }
     vertices
+}
+
+fn append_sprite_vertices(vertices: &mut Vec<Vertex>, sprite: &SpriteInstance, viewport: Viewport) {
+    let cx = sprite.x + sprite.width * 0.5;
+    let cy = sprite.y + sprite.height * 0.5;
+    let (sin, cos) = sprite.rotation_radians.sin_cos();
+    let corners = [
+        (-0.5,-0.5,sprite.uv[0],sprite.uv[1]), (0.5,-0.5,sprite.uv[2],sprite.uv[1]),
+        (0.5,0.5,sprite.uv[2],sprite.uv[3]), (-0.5,0.5,sprite.uv[0],sprite.uv[3]),
+    ];
+    let mut quad = [Vertex::zeroed(); 4];
+    for (i,(dx,dy,u,v)) in corners.into_iter().enumerate() {
+        let px = cx + (dx * sprite.width) * cos - (dy * sprite.height) * sin;
+        let py = cy + (dx * sprite.width) * sin + (dy * sprite.height) * cos;
+        let position = [(px / viewport.width as f32) * 2.0 - 1.0, 1.0 - (py / viewport.height as f32) * 2.0];
+        quad[i] = Vertex::new(position,[u,v],sprite.tint.as_f32());
+    }
+    vertices.extend_from_slice(&[quad[0],quad[1],quad[2],quad[0],quad[2],quad[3]]);
 }
 
 const SPRITE_SHADER: &str = r#"
