@@ -434,7 +434,7 @@ mod tests {
     fn rejects_bad_eof_unknown_format_and_zero_frame_count() {
         assert!(matches!(RetailShpFile::parse(&[0; 14]), Err(RetailShpError::ZeroFrameCount)));
         let mut bytes = fixture();
-        bytes[14 + 7] = 0x55;
+        bytes[14 + 3] = 0x55;
         assert!(matches!(RetailShpFile::parse(&bytes), Err(RetailShpError::InvalidFormat { .. })));
         let mut bytes = fixture();
         let eof_record = HEADER_SIZE + 3 * FRAME_RECORD_SIZE;
