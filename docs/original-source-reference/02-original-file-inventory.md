@@ -31,7 +31,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 | Legacy Reviewed | 17 |
 | **Total** | **1331** |
 
-> Counts are recomputed from the individual path-status rows at each audit run. Tranche 6S-C-G completes TD declaration enumeration and advances RA through ID223; both TemplateTypes paths remain Partially reviewed.
+> Counts are recomputed from the individual path-status rows at each audit run. Tranche 6S-C-H completes TD declaration enumeration and advances RA through ID255; both TemplateTypes paths remain Partially reviewed.
 ## CnCTDRAMapEditor (286 files)
 
 - `CnCTDRAMapEditor/App.config` — Reviewed (file role and configuration/resource declarations; build parity pending)
@@ -151,7 +151,7 @@ This is the complete path inventory at the pinned commit. A path being listed do
 - `CnCTDRAMapEditor/RedAlert/OverlayTypes.cs` — Body reviewed ([RedAlert OverlayTypes.cs](MAP_EDITOR/RedAlert/OverlayTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/SmudgeTypes.cs` — Body reviewed ([RedAlert SmudgeTypes.cs](MAP_EDITOR/RedAlert/SmudgeTypes.cs.md); complete catalog, reflection array, and GetTypes body inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/TeamMissionTypes.cs` — Inventory only
-- `CnCTDRAMapEditor/RedAlert/TemplateTypes.cs` — Partially reviewed ([IDs0–31](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-A.md), [IDs32–63](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-B.md), [IDs64–95](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-C.md), [IDs96–127](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-D.md), [IDs128–159](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-E.md), [IDs160–191](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-F.md), [IDs192–223](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-G.md); declarations IDs0–223 documented; IDs224–400 and full dependency, initializer/consumer and serializer parity audit remain open; IDs100–102 and 111 have source dimensions 0×0)
+- `CnCTDRAMapEditor/RedAlert/TemplateTypes.cs` — Partially reviewed ([IDs0–31](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-A.md), [IDs32–63](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-B.md), [IDs64–95](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-C.md), [IDs96–127](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-D.md), [IDs128–159](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-E.md), [IDs160–191](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-F.md), [IDs192–223](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-G.md), [IDs224–255](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-H.md); declarations IDs0–255 documented; IDs256–400 and full dependency, initializer/consumer and serializer parity audit remain open; IDs100–102 and 111 have source dimensions 0×0)
 - `CnCTDRAMapEditor/RedAlert/TerrainTypes.cs` — Body reviewed ([guide](MAP_EDITOR/RedAlert/TerrainTypes.cs.md); 35 entries, masks/flags/theatres/reflection/GetTypes inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/TheaterTypes.cs` — Body reviewed ([guide](MAP_EDITOR/RedAlert/TheaterTypes.cs.md); three entries, ordered tilesets, reflection/GetTypes and duplicate ID anomaly inspected; Rust mapping/tests open)
 - `CnCTDRAMapEditor/RedAlert/UnitTypes.cs` — Body reviewed

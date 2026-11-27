@@ -156,3 +156,7 @@ Cumulative coverage is IDs0–191 (192/216 TD and 192/401 RA). TD combines River
 - [TD final IDs192–215](TiberianDawn/TemplateTypes-6S-C-G.md) · [RA IDs192–223](RedAlert/TemplateTypes-6S-C-G.md) · [comparison](Variant-TemplateTypes-6S-C-G.md).
 
 TD declaration enumeration is complete (216/216). RA coverage is 224/401. TD IDs192–215 are Desert Shore40–63; RA IDs192–215 are Road20–43 and IDs216–223 are Rough01–08. All entries use Flag=None; TD is Desert-only and RA is Temperate/Snow. Both rows remain Partially reviewed until dependencies, initialization, consumers and GamePlugin serializers are fully audited. No typed Rust catalogue or parity tests are claimed.
+
+## Template registry declaration audit
+
+The bounded catalogue covers all 216 Tiberian Dawn IDs and Red Alert IDs0–255 of 401. The RA 6S-C-H guide records IDs224–255, including Temperate/Snow bridge declarations and three Interior-only `ARRO` entries. This is metadata enumeration, not proof of complete tile availability or Rust parity. Both registry source rows remain Partially reviewed until implementation bodies, plugin consumers, theatre initialization and serialization paths are audited.

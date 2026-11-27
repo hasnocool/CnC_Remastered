@@ -52,3 +52,30 @@
 - The 1,331 individual inventory path rows remain the source of truth; recompute status counts from those rows every run.
 - Body reviewed, Rust-mapped, Tested and Complete are separate evidence states. Catalog tables alone do not advance a registry to Body reviewed.
 - Commit through a base-tree update and expected-SHA ref lease with force=false; fetch the new ref, commit/tree, full recursive tree and each changed blob after update.
+
+
+## Tranche 6S-C-H — Red Alert TemplateTypes IDs224–255 (completed)
+
+- Run-start target `main`: `a278d4d52c570309f164cca103d42218c4f3aa13`; commit tree `dffc982ad40eb98d61ff3fc19dd401db2889b8af`; recursive target tree 554 entries, `truncated=false`. Pinned upstream `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`; recursive upstream tree 1,375 entries, `truncated=false`.
+- Re-fetched current inventory, roadmap, Rust cross-reference, MAP_EDITOR README and TypeCatalog-Contracts. Full RA `TemplateTypes.cs` fetched at the pinned commit; blob `027bb5658e2297cf2ade84f9a01567acc8238db8` matches the upstream recursive tree.
+- Parsed exactly 32 contiguous declarations, IDs224–255, source lines248–279. Field, explicit ID, key, dimensions, theatre whitelist, default flag and source-line anchors are recorded.
+- IDs224–226 Rough09–11: 1×2, 2×1, 2×1; Temperate/Snow. IDs227–228 Road44/45: 1×1; Temperate/Snow. IDs229–230 River14/15: 1×2 and 2×1; Temperate/Snow.
+- IDs231–234 RiverCliff01–04: 2×2; Temperate/Snow. IDs235–237 Bridge1a–1c: 4×3; IDs238–240 Bridge2a–2c: 5×3; IDs241–246 Bridge3a–3f: 4×2; all Temperate/Snow.
+- IDs247–252 F01–F06: 3×3; Temperate/Snow. IDs253–255 ARRO0001–0003: 1×1; Interior only.
+- All 32 use the five-argument constructor, which delegates with `TemplateTypeFlag.None`. TD has 216 declarations (IDs0–215); RA has 401 (IDs0–400). Coverage: TD216/216 and RA256/401. Both inventory rows remain Partially reviewed pending complete body/dependency/consumer/serializer review.
+- Inventory reconciliation: the upstream recursive tree contains 1,331 blobs. The inventory markdown has 1,341 `- `` bullets because ten are status-key definitions, not source paths. Comparing path names to the upstream tree yields 1,331/1,331 exact matches, no missing paths and no extra source paths. Status counts remain 17 Reviewed, 121 Partially reviewed, 20 Header reviewed, 67 Body reviewed, 12 Resource reviewed, 1,094 Inventory only; Rust-mapped/Tested/Complete=0.
+- No Rust code changed; no tests or runtime bitmap/tile lookup were executed. Rust `CellLayers.template: Option<u16>` remains an untyped identifier, not a concrete RA registry mapping.
+
+## Next tranche — 6S-C-I: Red Alert TemplateTypes IDs256–287
+
+1. Refresh `main`, commit/tree and both recursive trees; fetch inventory, roadmap, cross-reference, MAP_EDITOR README, TypeCatalog-Contracts and exact pinned RA source.
+2. Parse exactly IDs256–287 and record field, ID, tile key, dimensions, theatre whitelist, flag and source line.
+3. Add an RA slice guide and TD/RA comparison; update inventory, cross-reference, README, catalogue synthesis and roadmap.
+4. Keep RA TemplateTypes Partially reviewed until IDs288–400 and full body, initializer, consumers and GamePlugin serialization are audited. TD remains Partially reviewed pending dependency/consumer/serializer review despite complete declaration enumeration.
+5. After RA IDs288–400, prioritize both GamePlugin full-body serialization/INI contracts, theatre initialization consumers, editor map models and designer/resource files, Steamworks/native bindings, shared libraries and remaining engine systems.
+
+## Persistent verification rules
+
+- Reconcile inventory path rows against the pinned upstream recursive tree; exclude the ten status-key definition bullets from the 1,331 source paths.
+- Body reviewed, Rust-mapped, Tested and Complete remain separate evidence states. Catalogue declaration slices do not promote either TemplateTypes source beyond Partially reviewed.
+- Commit using a base-tree update and expected-SHA lease with `force=false`; verify the updated ref, commit/tree, complete recursive target tree and every changed blob after the update.

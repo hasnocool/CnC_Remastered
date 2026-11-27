@@ -1,6 +1,6 @@
 # Editor type catalog contracts
 
-> **Audit status: cross-file synthesis of ten body-reviewed definition classes and eighteen body-reviewed TD/RA static registries (nine classes per variant).** TD/RA TemplateTypes remain Partially reviewed; declaration slices IDs0–127 are catalogued (128 entries each), while TD IDs160–215 and RA IDs160–400 and the complete consumer/initializer review remain open. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
+> **Audit status: cross-file synthesis of ten body-reviewed definition classes and eighteen body-reviewed TD/RA static registries (nine classes per variant).** TD/RA TemplateTypes remain Partially reviewed; declaration slices IDs0–127 are catalogued (128 entries each), while TD IDs0–215 are fully enumerated; RA IDs0–255 are enumerated. RA IDs256–400 and the complete consumer/initializer/serializer review remain open. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
 
 ## Definition versus placed instance
 
@@ -173,3 +173,10 @@ TD IDs192–215 and RA IDs192–223 are documented in [Variant-TemplateTypes-6S-
 - Reflection registry construction uses public static readonly TemplateType fields and ToArray without explicit sorting; GetTypes exposes the backing array as IEnumerable.
 - Rust CellLayers.template remains Option<u16>; runtime TemplateClass is not the editor registry. No Rust mapping/tests.
 - Next RA declaration slice: IDs224–255. TD has no remaining declarations. Full dependency/consumer/serializer audit remains open.
+
+## Latest declaration tranche — 6S-C-H
+
+- RA IDs224–255: Rough09–11, Road44–45, River14–15, RiverCliff01–04, Bridge1a–3f, F01–F06 and Interior-only ARRO0001–0003. All use the five-argument constructor and therefore `TemplateTypeFlag.None`.
+- IDs253–255 are 1×1 and explicitly restricted to `TheaterTypes.Interior`; the preceding 29 declarations are Temperate/Snow.
+- A declaration does not prove a key resolves to a tile. `TemplateType.Init` performs theatre-specific lookup and mask population.
+- Coverage: TD216/216; RA256/401. Both registry paths remain Partially reviewed pending complete implementation/dependency/consumer/serialization review. Rust mapping and tests remain absent.

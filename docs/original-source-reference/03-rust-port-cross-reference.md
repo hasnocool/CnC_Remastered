@@ -213,3 +213,10 @@ Cumulative coverage is IDs0–191: 192/216 TD and 192/401 RA. Both paths remain 
 All 56 declarations use the five-argument constructor and Flag=None. Shared initialization creates a max-footprint square thumbnail and icon mask using successful theatre tile lookups; Map.InitTheater invokes every template initializer. Static registries reflect public static readonly fields without explicit sorting and GetTypes returns the backing array as IEnumerable. Earlier RA zero-dimension records IDs100–102 and 111 remain an untested initialization hazard.
 
 TD declaration enumeration is complete, but both inventory rows remain Partially reviewed pending full dependency, consumer, initialization and GamePlugin serializer audit. Rust-mapped=0, Tested=0, Complete=0. See [the tranche comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-G.md) and per-variant guides.
+
+## Editor template registry — latest declaration coverage
+
+- Pinned RA `TemplateTypes.cs` declares 401 contiguous explicit IDs0–400. Tranche 6S-C-H documents IDs224–255 (source lines248–279): Rough09–11, Road44–45, River14–15, RiverCliff01–04, Bridge1a–3f, F01–F06 and Interior-only ARRO0001–0003.
+- The five-argument constructor defaults to `TemplateTypeFlag.None`; this metadata is not proof that a tile payload exists for each theatre/key.
+- TD declaration enumeration is complete at 216/216. RA coverage is 256/401. Both inventory rows remain Partially reviewed pending full body/dependency/consumer/serialization review; neither is Rust-mapped or Tested.
+- Rust `CellLayers.template: Option<u16>` is an untyped ID slot, not a theatre-aware template registry. See [6S-C-H guide](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-H.md) and [variant comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-H.md).
