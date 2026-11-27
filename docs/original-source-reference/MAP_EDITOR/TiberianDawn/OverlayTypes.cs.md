@@ -69,3 +69,8 @@ OverlayTypeFlag values: None=0, TiberiumOrGold=1, Gems=2, Wall=4, Crate=8, Flag=
 Dependencies: OverlayType/OverlayTypeFlag, theatre definitions, text/tileset managers, Map.InitTheater and MainForm filters.
 
 **Rust mapping:** none; `CellLayers.overlay` is numeric-only. Preserve IDs, keys, category flags and theatre restrictions. No catalog/render/Rust tests executed.
+
+
+## Rust mapping update — partial
+
+The 27 source declarations are now represented in `map-editor-model::OverlayCatalog` for Tiberian Dawn, including original IDs, name/display keys, category flags and theatre restrictions. The source registry remains body-reviewed; runtime tile lookup, localization and map-derived resource/wall behavior are not yet mapped. Rust tests were added but have not been executed in this environment.
