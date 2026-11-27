@@ -137,7 +137,13 @@ impl MapEditorState {
     }
 
     pub fn remove_wall(&mut self, id: OccupierId) -> bool {
-        self.spatial.remove_wall(id)
+        let removed = self.spatial.remove_wall(id);
+        if removed {
+            if let Some(cell) = self.overlays.iter().find_map(|(cell, (_, overlay_id))| (*overlay_id == id).then_some(*cell)) {
+                self.overlays.remove(&cell);
+            }
+        }
+        removed
     }
 }
 
@@ -183,6 +189,8 @@ mod tests {
         assert!(state.spatial().is_wall(id));
         assert_eq!(state.spatial().buildings().occupant_at(CellCoord::new(3, 3)), Some(id));
         assert_eq!(state.spatial().technos().occupant_at(CellCoord::new(3, 3)), Some(id));
+        let work = state.document_mut().end_update().unwrap().unwrap();
+        assert_eq!(work.walls.len(), 9);
     }
 
     #[test]
