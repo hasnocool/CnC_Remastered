@@ -314,10 +314,6 @@ mod tests {
         let mut body = b"ICON".to_vec();
         chunk(FORM_SINF, &[1, 1, 0, 8], &mut body);
         let mut pixels = vec![1u8; 64];
-        for pair in pixels[64..].chunks_exact_mut(2) {
-            pair[0] = 9;
-            pair[1] = 10;
-        }
         pixels.extend((0..64).map(|i| if i % 2 == 0 { 9 } else { 10 }));
         chunk(FORM_SSET, &pixels, &mut body);
         chunk(FORM_TRNS, &[9, 10], &mut body);
@@ -346,7 +342,8 @@ mod tests {
         let icon = IconSet::load(&sample_iff(), None).unwrap();
         assert_eq!(icon.physical_icon_count(), 2);
         assert_eq!(icon.bitplanes(), 8);
-        assert_eq!(icon.physical_icon_pixels(1).unwrap(), Some(&vec![9, 10].into_iter().cycle().take(64).collect::<Vec<_>>()[..]));
+        let expected: Vec<u8> = (0..64).map(|i| if i % 2 == 0 { 9 } else { 10 }).collect();
+        assert_eq!(icon.physical_icon_pixels(1).unwrap(), Some(expected.as_slice()));
         assert_eq!(icon.logical_icon_pixels(0).unwrap(), icon.physical_icon_pixels(1).unwrap());
         assert_eq!(icon.logical_icon_pixels(1).unwrap(), None); // 0xFF empty sentinel
         assert_eq!(icon.logical_icon_pixels(2).unwrap(), icon.physical_icon_pixels(0).unwrap());
