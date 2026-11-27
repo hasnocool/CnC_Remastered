@@ -3,8 +3,12 @@
 pub mod cell_metrics;
 pub mod cell_grid;
 pub mod map_update;
+pub mod map_spatial_index;
+pub mod map_editor_state;
 pub use cell_grid::{CellGrid, CellGridError, CellGridEvent};
 pub use map_update::{MapUpdateError, MapUpdateState, MapUpdateWork, OverlayInvalidation};
+pub use map_spatial_index::{MapSpatialIndex, SpatialIndexError};
+pub use map_editor_state::MapEditorState;
 pub mod occupier_set;
 pub mod overlapper_set;
 pub use cell_metrics::CellMetrics;
