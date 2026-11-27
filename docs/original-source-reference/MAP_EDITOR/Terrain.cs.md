@@ -27,3 +27,8 @@ Added `crates/map-editor-model/src/terrain_objects.rs` and integrated it into `M
 Object insertion validates the complete footprint before mutation; overlapping/out-of-bounds placements are rejected atomically. Removal checks that every occupied cell is still owned by the same object. Movement validates the full destination before releasing the old footprint and preserves identity and trigger. Existing `CellLayers.terrain` / `terrain_icon` are maintained as compatibility mirrors, not used as the object identity or occupancy index.
 
 The source C# `Terrain` also has Tint, PropertyChanged notifications and Clone behavior (which resets Tint to white). These are not yet ported. Object-level history commands and editor selection/drag integration remain open. Render overlap is not calculated from occupancy.
+
+
+## Rust history integration update
+
+`MapEditHistory` now records terrain object placement, removal and movement as distinct atomic history commands. Each command carries the before/after `TerrainObject` and its source occupancy definition. Undo/redo validates the current expected object and complete footprint before changing the object collection, owner index and legacy cell mirror. A conflict retains the command and leaves the map unchanged. The editor currently exposes placement, object picking by occupied cell, and undoable removal; object movement is model/history-supported but not yet exposed in the UI.
