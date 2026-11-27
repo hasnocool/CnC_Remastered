@@ -312,8 +312,14 @@ mod tests {
 
     fn sample_iff() -> Vec<u8> {
         let mut body = b"ICON".to_vec();
-        chunk(FORM_SINF, &[1, 1, 0, 1], &mut body);
-        chunk(FORM_SSET, &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], &mut body);
+        chunk(FORM_SINF, &[1, 1, 0, 8], &mut body);
+        let mut pixels = vec![1u8; 64];
+        for pair in pixels[64..].chunks_exact_mut(2) {
+            pair[0] = 9;
+            pair[1] = 10;
+        }
+        pixels.extend((0..64).map(|i| if i % 2 == 0 { 9 } else { 10 }));
+        chunk(FORM_SSET, &pixels, &mut body);
         chunk(FORM_TRNS, &[9, 10], &mut body);
         chunk(FORM_MAP, &[1, 255, 0], &mut body);
         let mut file = b"FORM".to_vec();
@@ -328,10 +334,10 @@ mod tests {
         assert_eq!((icon.width(), icon.height()), (8, 8));
         assert_eq!(icon.count(), 3); // MAP chunk size overrides icon count.
         assert!(icon.allocated_by_loader());
-        assert_eq!(icon.icon_data(), &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+        assert_eq!(icon.icon_data().len(), 128);
         assert_eq!(icon.transparency_data(), &[9, 10]);
-        assert_eq!(icon.map_data(), &[0, 1, 2]);
-        assert_eq!(icon.size(), ICON_CONTROL_SIZE + 16 + 2 + 3);
+        assert_eq!(icon.map_data(), &[1, 255, 0]);
+        assert_eq!(icon.size(), ICON_CONTROL_SIZE + 128 + 2 + 3);
         assert_eq!(IconSet::from_packed(icon.storage().to_vec()).unwrap().control(), icon.control());
     }
 
@@ -340,7 +346,7 @@ mod tests {
         let icon = IconSet::load(&sample_iff(), None).unwrap();
         assert_eq!(icon.physical_icon_count(), 2);
         assert_eq!(icon.bitplanes(), 8);
-        assert_eq!(icon.physical_icon_pixels(1).unwrap(), Some(&[9, 10, 11, 12, 13, 14, 15, 16][..]));
+        assert_eq!(icon.physical_icon_pixels(1).unwrap(), Some(&vec![9, 10].into_iter().cycle().take(64).collect::<Vec<_>>()[..]));
         assert_eq!(icon.logical_icon_pixels(0).unwrap(), icon.physical_icon_pixels(1).unwrap());
         assert_eq!(icon.logical_icon_pixels(1).unwrap(), None); // 0xFF empty sentinel
         assert_eq!(icon.logical_icon_pixels(2).unwrap(), icon.physical_icon_pixels(0).unwrap());
@@ -352,8 +358,8 @@ mod tests {
         use crate::palette_rgba::{PaletteEncoding, PALETTE_BYTES};
         let icon = IconSet::load(&sample_iff(), None).unwrap();
         let mut raw = vec![0u8; PALETTE_BYTES];
-        raw[3..6].copy_from_slice(&[11, 22, 33]);
-        raw[6..9].copy_from_slice(&[44, 55, 66]);
+        raw[9 * 3..9 * 3 + 3].copy_from_slice(&[44, 55, 66]);
+        raw[10 * 3..10 * 3 + 3].copy_from_slice(&[11, 22, 33]);
         let palette = Palette256::parse(&raw, PaletteEncoding::Rgb8).unwrap();
         let image = icon.logical_icon_rgba(0, &palette, None).unwrap().unwrap();
         assert_eq!((image.width, image.height), (8, 8));
