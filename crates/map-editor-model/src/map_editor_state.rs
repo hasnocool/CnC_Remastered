@@ -65,7 +65,9 @@ impl MapEditorState {
     }
 
     /// Loads the pinned static BuildingType and SmudgeType registries for this map variant.
-    pub fn register_variant_building_and_smudge_catalogs(&mut self) {
+    pub fn register_variant_building_and_smudge_catalogs(
+        &mut self,
+    ) -> Result<(), crate::CatalogValidationError> {
         let (buildings, smudges) = match self.document.variant() {
             GameVariant::TiberianDawn => (
                 crate::source_catalogs::tiberian_dawn_building_types(),
@@ -76,8 +78,10 @@ impl MapEditorState {
                 crate::source_catalogs::red_alert_smudge_types(),
             ),
         };
+        crate::validate_variant_catalogs(&buildings, &smudges)?;
         for definition in buildings { self.register_building_type(definition); }
         for definition in smudges { self.register_smudge_type(definition); }
+        Ok(())
     }
 
     pub fn building(&self, id: OccupierId) -> Option<&PlacedBuilding> {
