@@ -219,6 +219,12 @@ impl MapDocument {
             new_indices.push(index);
         }
 
+        let target_next_id = if target.is_some() {
+            Some(id.0.checked_add(1).ok_or(TerrainObjectError::IdExhausted)?)
+        } else {
+            None
+        };
+
         for (coordinate, index) in old_cells.iter().zip(old_indices) {
             if !new_indices.contains(&index) {
                 self.terrain_occupancy[index] = None;
@@ -329,7 +335,7 @@ impl MapDocument {
         if let Some(target) = target {
             self.terrain_objects.insert(id, target.clone());
             self.next_terrain_object_id = self.next_terrain_object_id.max(
-                id.0.checked_add(1).ok_or(TerrainObjectError::IdExhausted)?
+                target_next_id.expect("target object has next ID")
             );
         } else {
             self.terrain_objects.remove(&id);
