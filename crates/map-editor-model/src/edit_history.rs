@@ -22,6 +22,22 @@ impl MapEditHistory {
     pub fn undo_depth(&self) -> usize { self.undo.len() }
     pub fn redo_depth(&self) -> usize { self.redo.len() }
 
+    /// Whether the next undo changes a template reference or logical icon.
+    pub fn undo_changes_templates(&self) -> bool {
+        self.undo.last().is_some_and(|command| command.edits.iter().any(|edit| {
+            edit.before.template != edit.after.template
+                || edit.before.template_icon != edit.after.template_icon
+        }))
+    }
+
+    /// Whether the next redo changes a template reference or logical icon.
+    pub fn redo_changes_templates(&self) -> bool {
+        self.redo.last().is_some_and(|command| command.edits.iter().any(|edit| {
+            edit.before.template != edit.after.template
+                || edit.before.template_icon != edit.after.template_icon
+        }))
+    }
+
     pub fn apply_cell(&mut self, document: &mut MapDocument, coordinate: CellCoord, after: CellLayers) -> Result<bool, MapDocumentError> {
         Ok(self.apply_cells(document, &[(coordinate, after)])? != 0)
     }
