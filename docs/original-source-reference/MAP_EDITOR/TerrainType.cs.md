@@ -47,11 +47,14 @@ No typed TerrainType catalog exists in `map-editor-model`; the current layer is 
 
 - [x] All properties, four constructor overloads and every method body inspected.
 - [x] OreMine name substitution, transformable tile index and footprint split recorded.
-- [ ] Complete TD/RA terrain catalog and tool/map call-site audit.
+- [x] TD/RA catalog declarations and masks imported into the Rust model.
+- [x] Terrain brush resolves source definitions by variant and theatre and places source occupancy masks.
+- [x] Transformable icon selection (22 vs 0) is represented in undoable map-cell state.
 - [ ] Golden occupancy/overlap and renderer fixture tests.
-- [ ] Rust catalog mapping and missing-tile tests.
+- [ ] Missing-tile and renderer initialization tests.
+- [ ] Full Map.Technos object aggregation and collision parity.
 
-No Rust code was changed and no test was executed.
+Rust tests were added but not executed in this environment.
 
 
 ## Rust mapping update — source catalog imported (partial runtime parity)
