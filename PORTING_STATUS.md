@@ -22,7 +22,7 @@
 | Binary reader | Initial | Checked little-endian reads |
 | Editor CRC-32 | Initial | Standard reflected CRC-32; checked against the 123456789 vector |
 | Editor cell metrics | Initial | Row-major indexing, 8-way adjacency, clipping, bounds checks |
-| Legacy MIX archive | Partial | Reads the legacy 6-byte header and 12-byte index entries used by upstream `MixFileClass`; no filename CRC mapping yet |
+| Legacy MIX archive | Partial | Reads the legacy 6-byte header and 12-byte index entries and resolves filenames with the upstream uppercase rotate-and-add CRC; encrypted MIX variants and loose-file fallback remain outstanding |
 | Event scheduler | Initial | Stable ordering by tick and insertion sequence |
 | Simulation RNG | Ported | Exact shared 256-byte table; byte index increments before lookup; both variant Sim_IRandom scaling routines |
 | Red Alert fixed point | Ported | Q16.16 constructors, arithmetic helpers, rounding, saturation, ASCII conversion |
@@ -355,3 +355,5 @@ The caller still needs to concatenate and Base64-decode the INI `[MapPack]` valu
 The provider now also exposes `build_ra_terrain_atlas`, which gathers unique template IDs from a decoded RA map, loads only the matching theater ICON sets, and passes the row-major (template type, logical icon) references into the catalog-validated renderer atlas builder. The caller still supplies the decoded map, palette, and parsed MIX archives. Retail archive/scenario validation remains outstanding.
 
 The RA MapPack decoder now also accepts the concatenated INI `[MapPack]` Base64 value directly. Its strict decoder ignores ASCII whitespace, validates quartet/padding structure, bounds the decoded compressed payload based on map dimensions and the upstream chunk limit, then invokes the LCW chunk and two-plane decoder. The API does not parse INI text or determine section key order; callers pass the already-concatenated values in section order.
+
+The TODO now separates the completed Red Alert MapPack path from the still-outstanding Tiberian Dawn binary map decoder. The legacy MIX status also reflects the newly implemented filename-to-CRC lookup; this does not claim encrypted MIX support or retail archive validation.

@@ -426,7 +426,8 @@
 - [x] Submit sprites from multiple cached textures in stable render-layer order, switching bind groups only between adjacent texture runs.
 - [ ] Validate TMP, SHP, icon-set and palette behavior against legally supplied original TD/RA assets.
 - [ ] Implement theater-specific adjacency/transition resolution from source-derived map/theater metadata.
-- [ ] Implement authentic TD/RA map decoding and connect its terrain/template layers to the renderer.
+- [x] Implement Red Alert MapPack INI Base64/LCW decoding and connect decoded RA template references to the theater MIX asset provider and catalog-validated terrain atlas builder.
+- [ ] Implement Tiberian Dawn binary map decoding as a separate format-specific path.
 - [ ] Implement TRNS transparency semantics and the separate legacy Shape_Type pixel decoder.
 - [ ] Add camera input/panning, terrain animation, SHP unit/building rendering and CPU-side decoded-image caching.
 - [ ] Connect the rendered terrain and object layers to playable TD/RA and map-editor runtime providers.
