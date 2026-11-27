@@ -144,7 +144,7 @@ enum BindGroupHandle<'a> {
     Borrowed(&'a wgpu::BindGroup),
     Owned(Arc<wgpu::BindGroup>),
 }
-impl BindGroupHandle<'_> {
+impl<'a> BindGroupHandle<'a> {
     fn as_ref(&self) -> &wgpu::BindGroup {
         match self { Self::Borrowed(group) => group, Self::Owned(group) => group.as_ref() }
     }
