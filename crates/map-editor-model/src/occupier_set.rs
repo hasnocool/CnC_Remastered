@@ -46,7 +46,8 @@ impl OccupierSet {
             if x >= u32::from(self.dimensions.width()) || y >= u32::from(self.dimensions.height()) {
                 return Err(OccupierError::CellOutOfBounds(CellCoord::new(x as u16, y as u16)));
             }
-            let cell = CellCoord::new(x as u16, y as u16);\n            if !unique.contains(&cell) { unique.push(cell); }
+            let cell = CellCoord::new(x as u16, y as u16);
+            if !unique.contains(&cell) { unique.push(cell); }
         }
         let cells = unique;
         for &cell in &cells {
