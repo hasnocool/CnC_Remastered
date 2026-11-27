@@ -1,7 +1,9 @@
 use crate::format::{MapFile, MAX_MAP_FILE_BYTES};
 use egui::RichText;
 use map_editor_model::{CellLayers, MapDocument};
-use rts_core::{CellCoord, GameVariant, MapDimensions};
+use rts_core::{CellCoord, GameVariant, MapDimensions, template_catalog::TemplateTheater};
+use rts_assets::{TemplateAssetProvider, TerrainAssetSet};
+use rts_formats::{mix::MixArchive, palette_rgba::{Palette256, PaletteEncoding}};
 use rts_render::MapCanvas;
 use std::{
     fs,
@@ -15,10 +17,12 @@ enum PaintLayer { Terrain, Template, Overlay, Smudge }
 enum IoCommand {
     Save(PathBuf, MapFile),
     Load(PathBuf),
+    LoadAssets { mix_path: PathBuf, palette_path: PathBuf, variant: GameVariant, theater: TemplateTheater, palette_encoding: PaletteEncoding, width: u32, height: u32, templates: Vec<Option<(u16, u8)>> },
 }
 enum IoEvent {
     Saved(Result<(), String>),
     Loaded(Result<MapDocument, String>),
+    Assets(Result<TerrainAssetSet, String>),
 }
 
 pub struct EditorApp {
@@ -29,6 +33,10 @@ pub struct EditorApp {
     brush_layer: PaintLayer,
     waypoint_number: u16,
     file_path: String,
+    mix_path: String,
+    palette_path: String,
+    theater: TemplateTheater,
+    palette_encoding: PaletteEncoding,
     status: String,
     io_tx: Sender<IoCommand>,
     io_rx: Receiver<IoEvent>,
@@ -69,6 +77,27 @@ impl EditorApp {
                             .and_then(MapFile::into_document);
                         let _ = event_tx.send(IoEvent::Loaded(result));
                     }
+                    IoCommand::LoadAssets { mix_path, palette_path, variant, theater, palette_encoding, width, height, templates } => {
+                        let result = (|| {
+                            const MAX_MIX_BYTES: u64 = 512 * 1024 * 1024;
+                            let mix_size = fs::metadata(&mix_path).map_err(|error| error.to_string())?.len();
+                            if mix_size > MAX_MIX_BYTES {
+                                return Err(format!("MIX archive exceeds the {MAX_MIX_BYTES} byte safety limit"));
+                            }
+                            let mix_bytes = fs::read(&mix_path).map_err(|error| error.to_string())?;
+                            let palette_size = fs::metadata(&palette_path).map_err(|error| error.to_string())?.len();
+                            if palette_size != 768 {
+                                return Err(format!("Palette must contain exactly 768 RGB bytes, got {palette_size}"));
+                            }
+                            let palette_bytes = fs::read(&palette_path).map_err(|error| error.to_string())?;
+                            let archive = MixArchive::parse(&mix_bytes).map_err(|error| error.to_string())?;
+                            let archives = [&archive];
+                            let provider = TemplateAssetProvider::new(variant, theater, &archives);
+                            let palette = Palette256::parse(&palette_bytes, palette_encoding).map_err(|error| error.to_string())?;
+                            provider.build_terrain(width, height, templates, &palette).map_err(|error| error.to_string())
+                        })();
+                        let _ = event_tx.send(IoEvent::Assets(result));
+                    }
                 }
             }
         }).map_err(|error| error.to_string())?;
@@ -81,6 +110,10 @@ impl EditorApp {
             brush_layer: PaintLayer::Terrain,
             waypoint_number: 0,
             file_path: "./maps/new-map.rtsmap.json".into(),
+            mix_path: "./assets/conquer.mix".into(),
+            palette_path: "./assets/temperat.pal".into(),
+            theater: TemplateTheater::Temperate,
+            palette_encoding: PaletteEncoding::Rgb8,
             status: "New Tiberian Dawn map".into(),
             io_tx,
             io_rx,
@@ -127,6 +160,31 @@ impl EditorApp {
             self.status = "Map file worker stopped".into();
         }
     }
+
+    fn load_assets(&mut self) {
+        let mix_path = PathBuf::from(self.mix_path.trim());
+        let palette_path = PathBuf::from(self.palette_path.trim());
+        if mix_path.as_os_str().is_empty() || palette_path.as_os_str().is_empty() {
+            self.status = "Enter both a MIX archive and palette path".into();
+            return;
+        }
+        let dimensions = self.map.dimensions();
+        let command = IoCommand::LoadAssets {
+            mix_path,
+            palette_path,
+            variant: self.map.variant(),
+            theater: self.theater,
+            palette_encoding: self.palette_encoding,
+            width: dimensions.width(),
+            height: dimensions.height(),
+            templates: self.map.template_cells().collect(),
+        };
+        if self.io_tx.send(command).is_ok() {
+            self.status = "Loading theater assets in background…".into();
+        } else {
+            self.status = "Asset worker stopped".into();
+        }
+    }
 }
 
 impl eframe::App for EditorApp {
@@ -143,6 +201,11 @@ impl eframe::App for EditorApp {
                     self.status = "Map loaded".into();
                 }
                 IoEvent::Loaded(Err(error)) => self.status = format!("Load failed: {error}"),
+                IoEvent::Assets(Ok(assets)) => {
+                    self.canvas.set_terrain_assets(ctx, assets);
+                    self.status = "Authentic theater terrain loaded".into();
+                }
+                IoEvent::Assets(Err(error)) => self.status = format!("Theater asset load failed: {error}"),
             }
         }
         ctx.request_repaint_after(std::time::Duration::from_millis(200));
@@ -156,6 +219,7 @@ impl eframe::App for EditorApp {
                 if ui.button("New Red Alert").clicked() { self.new_map(GameVariant::RedAlert); }
                 if ui.button("Save").clicked() { self.save(); }
                 if ui.button("Load").clicked() { self.load(); }
+                if ui.button("Load Theater Assets").clicked() { self.load_assets(); }
                 ui.checkbox(&mut self.canvas.show_grid, "Grid");
                 ui.add(egui::Slider::new(&mut self.canvas.cell_size, 8.0..=40.0).text("Zoom"));
             });
@@ -186,6 +250,30 @@ impl eframe::App for EditorApp {
                 }
                 ui.label("Selected");
                 ui.label(self.selected.map(|cell| format!("{}, {}", cell.x, cell.y)).unwrap_or_else(|| "none".into()));
+            });
+            ui.horizontal(|ui| {
+                ui.label("MIX");
+                ui.text_edit_singleline(&mut self.mix_path);
+                ui.label("Palette");
+                ui.text_edit_singleline(&mut self.palette_path);
+            });
+            ui.horizontal(|ui| {
+                egui::ComboBox::from_label("Theater")
+                    .selected_text(format!("{:?}", self.theater))
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Desert, "Desert");
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Jungle, "Jungle");
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Temperate, "Temperate");
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Winter, "Winter");
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Snow, "Snow");
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Interior, "Interior");
+                    });
+                egui::ComboBox::from_label("Palette encoding")
+                    .selected_text(match self.palette_encoding { PaletteEncoding::Rgb8 => "RGB8", PaletteEncoding::Rgb6 => "RGB6" })
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(&mut self.palette_encoding, PaletteEncoding::Rgb8, "RGB8");
+                        ui.selectable_value(&mut self.palette_encoding, PaletteEncoding::Rgb6, "RGB6");
+                    });
             });
             ui.separator();
             egui::ScrollArea::both().auto_shrink([false, false]).show(ui, |ui| {
