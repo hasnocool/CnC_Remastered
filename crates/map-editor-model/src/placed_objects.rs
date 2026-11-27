@@ -141,7 +141,7 @@ impl BuildingTypeDefinition {
     ) -> Self {
         let occupy_mask = if has_bib && height > 0 {
             let mut full = base_occupy_mask.iter()
-                .copied().filter(|(_, y)| *y + 1 < height).collect::<Vec<_>>();
+                .copied().filter(|(_, y)| *y < height - 1).collect::<Vec<_>>();
             for y in height..height.saturating_add(2) {
                 for x in 0..width { full.push((x, y)); }
             }
@@ -165,7 +165,7 @@ impl BuildingTypeDefinition {
 
 /// Mutable editor Building instance. BibCells are owned by this building,
 /// matching the original model's private-set HashSet<int>.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct PlacedBuilding {
     pub type_id: i8,
     pub house: String,
@@ -178,6 +178,27 @@ pub struct PlacedBuilding {
     pub rebuild: bool,
     pub tint: EditorColor,
     pub bib_cells: Vec<rts_core::CellCoord>,
+}
+
+
+impl Clone for PlacedBuilding {
+    /// Source Building.Clone copies editable properties but intentionally
+    /// does not copy the derived BibCells ownership set.
+    fn clone(&self) -> Self {
+        Self {
+            type_id: self.type_id,
+            house: self.house.clone(),
+            strength: self.strength,
+            direction: self.direction,
+            trigger: self.trigger.clone(),
+            base_priority: self.base_priority,
+            is_prebuilt: self.is_prebuilt,
+            sellable: self.sellable,
+            rebuild: self.rebuild,
+            tint: self.tint,
+            bib_cells: Vec::new(),
+        }
+    }
 }
 
 impl PlacedBuilding {
@@ -236,6 +257,17 @@ mod tests {
         assert_eq!(kind.occupy_mask, vec![(0,0),(0,2),(1,2),(0,3),(1,3)]);
         assert_eq!(kind.width, 2);
         assert_eq!(kind.height, 2);
+    }
+
+    #[test]
+    fn building_clone_copies_properties_but_not_derived_bib_ownership() {
+        let mut building = PlacedBuilding::new(1, "GDI".into(), 2);
+        building.bib_cells.push(rts_core::CellCoord::new(4, 5));
+        building.strength = 99;
+        let clone = building.clone();
+        assert_eq!(clone.strength, 99);
+        assert_eq!(clone.house, "GDI");
+        assert!(clone.bib_cells.is_empty());
     }
 
     #[test]
