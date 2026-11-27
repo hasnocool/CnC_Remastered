@@ -117,8 +117,7 @@
 
 - [x] Port byte-identical Red Alert/Tiberian Dawn `MOUSEWW.CPP` active mouse state and conditional-hide behavior to `rts-core::mouse_ww`.
 
-- [x] Port byte-identical Red Alert/Tiberian Dawn `LOAD.CPP` routines to `rts-formats::load`, including bounded file I/O, compression dispatch, reserved skip data, and scratch-tail staging.
-- [x] Port both variants' packed `GETSHAPE.CPP` metadata, shape-table extraction, prefix data and height mutation routines to `rts-core::shape_access`.
+- [x] Port byte-identical Red Alert/Tiberian Dawn `LOAD.CPP` routines to `rts-formats::load`, including bounded file I/O, compression dispatch, reserved skip data, and scratch-tail staging.- [x] Port both variants' packed `GETSHAPE.CPP` metadata, shape-table extraction, prefix data and height mutation routines to `rts-core::shape_access`.
 
 - [x] Port both variants' IFF-based `ICONSET.CPP` loader and packed control structure to `rts-formats::iconset`.
 
@@ -237,7 +236,6 @@
 
 - [x] Port REDALERT/DIALOG.CPP and TIBERIANDAWN/DIALOG.CPP dialog box/window drawing, box palettes, text wrapping, Simple/Fancy/Plain/Clipped text, font selection, palette/shadow flags, caption rendering and variant-specific style rules.
 - [x] Port REDALERT/DDE.CPP and TIBERIANDAWN/DDE.CPP active DDEML instance operations: enable callback, test/open/close poke connection, CF_TEXT POKE with 60-second timeout, destructor cleanup; preserve disabled initialize/register/dispatcher blocks as inactive.
-
 - [x] Port both CARGO.CPP variants: attach/limbo, linked-chain append, unsigned-byte quantity, attached-object query, detach and destructor reset.
 - [x] Verify REDALERT/BENCH.CPP is entirely guarded by unconditional #if (0) through end-of-file and record as inactive.
 
@@ -358,7 +356,6 @@
 - [ ] Record actual build/test output; do not infer success from source inspection.
  
 ## Milestone 4A — authentic asset ingestion (first tranche)
-
 - [x] Add explicit 256-color RGB8/RGB6 palette parsing and checked indexed-image-to-RGBA conversion; transparency is opt-in.
 - [x] Add bounds-checked SHP shape-block offsets and packed Shape_Type metadata extraction with malformed-input tests.
 - [x] Add retail TD/RA SHP header/frame-table parsing, bounded LCW keyframe decoding, Format40 referenced-frame XOR decoding with cycle detection, Format20 previous-frame XOR decoding, palette expansion to renderer-compatible RGBA images, and synthetic pixel-level fixtures.
@@ -476,12 +473,11 @@
 
 ## Retail TD/RA asset validation harness
 
-- [x] Add \`asset-validate\`, a CPU-only CLI that accepts external scenario INI, TD editor BIN, palette, and caller-ordered legacy MIX archive paths.
-- [x] Validate supplied legacy MIX indexes and resolve each map-referenced theater ICON filename using the existing Westwood filename CRC and MIX lookup APIs.
-- [x] Decode TD raw editor BIN terrain pairs and RA numeric \`[MapPack]\` Base64/LCW chunks through their existing format readers.
+- [x] Add `asset-validate`, a CPU-only CLI that accepts external scenario INI, TD editor BIN, palette, and caller-ordered legacy MIX archive paths.
+- [x] Validate supplied legacy MIX indexes and resolve each map-referenced theater ICON filename using the existing Westwood filename CRC and MIX lookup APIs.- [x] Decode TD raw editor BIN terrain pairs and RA numeric `[MapPack]` Base64/LCW chunks through their existing format readers.
 - [x] Validate theater catalog availability, referenced ICON-set parsing, logical MAP indirection, palette expansion, complete map-cell resolution, and deterministic RGBA atlas composition.
 - [x] Keep all retail assets external; add synthetic CLI parser/order/theater/checksum tests only.
 - [ ] Run the harness against legally supplied TD and RA retail scenarios, MIX archives, and palettes; record exact file/build provenance without copying assets into the repository.
 - [ ] Run Cargo formatting, workspace check, tests, and Clippy on a Rust 1.85+ host. No successful run is claimed from the current environment.
 
-Scope limits: current harness supports the existing legacy unencrypted MIX parser, TD editor BIN representation, and RA new-format MapPack representation. Encrypted/extended MIX variants, the TD engine LCW stream, older interleaved RA NewINIFormat, full INI dialect compatibility, GPU rendering, and image-to-image retail parity remain outside this validation milestone. See \`docs/RETAIL_ASSET_VALIDATION.md\`.
+Scope limits: current harness supports the existing legacy unencrypted MIX parser, TD editor BIN representation, and RA new-format MapPack representation. Encrypted/extended MIX variants, the TD engine LCW stream, older interleaved RA NewINIFormat, full INI dialect compatibility, GPU rendering, and image-to-image retail parity remain outside this validation milestone. See `docs/RETAIL_ASSET_VALIDATION.md`.
