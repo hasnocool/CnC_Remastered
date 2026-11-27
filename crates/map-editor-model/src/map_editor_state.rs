@@ -8,7 +8,7 @@ use rts_core::{CellCoord, GameVariant, MapDimensions};
 use crate::{
     MapDocument, MapDocumentError, MapSpatialIndex, OccupierId, OverlapRect,
     SpatialIndexError, OverlayInvalidation, MapUpdateError, MapUpdateWork,
-    OverlayTypeDefinition, PlacedOverlay, resource_icon, wall_icon,
+    OverlayTypeDefinition, PlacedOverlay, SmudgeTypeDefinition, PlacedSmudge, EditorColor, SmudgeTypeFlag, resource_icon, wall_icon,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -17,6 +17,9 @@ pub struct MapEditorState {
     spatial: MapSpatialIndex,
     overlay_types: BTreeMap<i8, OverlayTypeDefinition>,
     overlays: HashMap<CellCoord, (PlacedOverlay, Option<OccupierId>)>,
+    smudge_types: BTreeMap<i8, SmudgeTypeDefinition>,
+    smudges: HashMap<CellCoord, PlacedSmudge>,
+    building_bib_cells: HashMap<OccupierId, Vec<CellCoord>>,
     next_internal_occupier: u64,
 }
 
@@ -27,6 +30,9 @@ impl MapEditorState {
             spatial: MapSpatialIndex::new(dimensions),
             overlay_types: BTreeMap::new(),
             overlays: HashMap::new(),
+            smudge_types: BTreeMap::new(),
+            smudges: HashMap::new(),
+            building_bib_cells: HashMap::new(),
             next_internal_occupier: u64::MAX,
         })
     }
@@ -37,6 +43,18 @@ impl MapEditorState {
 
     pub fn register_overlay_type(&mut self, definition: OverlayTypeDefinition) {
         self.overlay_types.insert(definition.id, definition);
+    }
+
+    pub fn register_smudge_type(&mut self, definition: SmudgeTypeDefinition) {
+        self.smudge_types.insert(definition.id, definition);
+    }
+
+    pub fn smudge_at(&self, cell: CellCoord) -> Option<&PlacedSmudge> {
+        self.smudges.get(&cell)
+    }
+
+    pub fn building_bib_cells(&self, id: OccupierId) -> Option<&[CellCoord]> {
+        self.building_bib_cells.get(&id).map(Vec::as_slice)
     }
 
     pub fn overlay_at(&self, cell: CellCoord) -> Option<&PlacedOverlay> {
@@ -167,6 +185,60 @@ impl MapEditorState {
         }
     }
 
+    /// Registers a building and creates its source-defined bib smudges.
+    /// Bib placements are staged before spatial registration and committed
+    /// only after the building has been accepted by all spatial indexes.
+    pub fn add_building_with_bibs(
+        &mut self,
+        id: OccupierId,
+        anchor: CellCoord,
+        full_mask: &[(u16, u16)],
+        base_mask: &[(u16, u16)],
+        overlap_bounds: OverlapRect,
+        has_bib: bool,
+        building_width: u16,
+        building_height: u16,
+        tint: EditorColor,
+    ) -> Result<(), SpatialIndexError> {
+        let mut staged_bibs = Vec::new();
+        let selected_flags = match building_width {
+            2 => Some(SmudgeTypeFlag::Bib3.bits()),
+            3 => Some(SmudgeTypeFlag::Bib2.bits()),
+            4 => Some(SmudgeTypeFlag::Bib1.bits()),
+            _ => None,
+        };
+        if has_bib {
+            if let Some(flags) = selected_flags {
+                if let Some(definition) = self.smudge_types.values().find(|kind| kind.flags == flags) {
+                    for row in 0..definition.height {
+                        for column in 0..definition.width {
+                            let x = u32::from(anchor.x) + u32::from(column);
+                            let y = u32::from(anchor.y) + u32::from(building_height) + u32::from(row);
+                            if y == 0 || x >= u32::from(self.document.dimensions().width())
+                                || y - 1 >= u32::from(self.document.dimensions().height()) {
+                                continue;
+                            }
+                            let cell = CellCoord::new(x as u16, (y - 1) as u16);
+                            staged_bibs.push((cell, PlacedSmudge {
+                                type_id: definition.id,
+                                icon: (row * definition.width + column) as i32,
+                                data: 0,
+                                tint,
+                            }));
+                        }
+                    }
+                }
+            }
+        }
+
+        self.spatial.add_building(id, anchor, full_mask, base_mask, overlap_bounds)?;
+        let cells = staged_bibs.iter().map(|(cell, _)| *cell).collect::<Vec<_>>();
+        for (cell, smudge) in staged_bibs { self.smudges.insert(cell, smudge); }
+        self.building_bib_cells.insert(id, cells);
+        let _ = self.document.request_overlapper_rebuild();
+        Ok(())
+    }
+
     pub fn add_building(
         &mut self,
         id: OccupierId,
@@ -191,9 +263,23 @@ impl MapEditorState {
     }
 
     pub fn remove_building(&mut self, id: OccupierId) -> bool {
+        self.remove_building_bibs(id);
         let removed = self.spatial.remove_building(id);
         if removed { let _ = self.document.request_overlapper_rebuild(); }
         removed
+    }
+
+    /// Mirrors Map.RemoveBibs: only currently Bib-flagged smudges are removed.
+    /// The ownership set is cleared even when a cell was replaced by another
+    /// smudge type after the building was placed.
+    pub fn remove_building_bibs(&mut self, id: OccupierId) {
+        if let Some(cells) = self.building_bib_cells.remove(&id) {
+            for cell in cells {
+                let is_bib = self.smudges.get(&cell).and_then(|smudge| self.smudge_types.get(&smudge.type_id))
+                    .is_some_and(SmudgeTypeDefinition::is_bib);
+                if is_bib { self.smudges.remove(&cell); }
+            }
+        }
     }
 
     pub fn remove_wall(&mut self, id: OccupierId) -> bool {
