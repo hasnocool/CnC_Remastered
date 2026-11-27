@@ -361,12 +361,15 @@ impl eframe::App for EditorApp {
                             match catalog.get(self.brush) {
                                 Some(source_definition) => {
                                     match source_definition.placement_definition() {
-                                        Ok(definition) => place_terrain_with_history(
+                                        Ok(definition) => self.history.place_terrain_object(
                                             &mut self.map,
-                                            &mut self.history,
                                             cell,
                                             &definition,
-                                        ).map(|_| ()).map_err(|error| format!("{error:?}")),
+                                            source_definition.default_icon(),
+                                            None,
+                                        ).map(|id| {
+                                            self.status = format!("Terrain object {} placed at {}, {}", id.0, cell.x, cell.y);
+                                        }).map_err(|error| format!("{error:?}")),
                                         Err(error) => Err(format!("Invalid source occupancy mask: {error:?}")),
                                     }
                                 }
