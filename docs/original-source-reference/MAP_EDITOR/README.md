@@ -104,7 +104,7 @@ The model's definition/catalog layer is now documented separately from placed ma
 - RA: [DirectionTypes](RedAlert/DirectionTypes.cs.md), [HouseTypes](RedAlert/HouseTypes.cs.md), [InfantryTypes](RedAlert/InfantryTypes.cs.md), [UnitTypes](RedAlert/UnitTypes.cs.md), [BuildingTypes](RedAlert/BuildingTypes.cs.md), [OverlayTypes](RedAlert/OverlayTypes.cs.md), [SmudgeTypes](RedAlert/SmudgeTypes.cs.md), [TerrainTypes](RedAlert/TerrainTypes.cs.md), [TheaterTypes](RedAlert/TheaterTypes.cs.md).
 - TD: [DirectionTypes](TiberianDawn/DirectionTypes.cs.md), [HouseTypes](TiberianDawn/HouseTypes.cs.md), [InfantryTypes](TiberianDawn/InfantryTypes.cs.md), [UnitTypes](TiberianDawn/UnitTypes.cs.md), [BuildingTypes](TiberianDawn/BuildingTypes.cs.md), [OverlayTypes](TiberianDawn/OverlayTypes.cs.md), [SmudgeTypes](TiberianDawn/SmudgeTypes.cs.md), [TerrainTypes](TiberianDawn/TerrainTypes.cs.md), [TheaterTypes](TiberianDawn/TheaterTypes.cs.md).
 
-Eighteen registry bodies (nine classes per variant) are Body reviewed. TD/RA TemplateTypes remain Partially reviewed with declaration slices IDs0–191 catalogued; remaining IDs and full initialization/consumer/serializer parity are open. Initialization parity/tests are not claimed.
+Eighteen registry bodies (nine classes per variant) are Body reviewed. TD TemplateTypes declarations IDs0–215 are fully catalogued; RA declarations IDs0–223 are catalogued. Both files remain Partially reviewed pending full initialization, dependency, consumer and serializer parity. Initialization parity/tests are not claimed.
 
 
 The ten definition bodies are Body reviewed; the four small interfaces are Header reviewed. No typed Rust catalog mapping or parity tests are claimed.
@@ -149,3 +149,10 @@ Cumulative declaration coverage is IDs0–159 (TD216/RA401 total). TD's range co
 - [TD IDs160–191](TiberianDawn/TemplateTypes-6S-C-F.md) · [RA IDs160–191](RedAlert/TemplateTypes-6S-C-F.md) · [comparison](Variant-TemplateTypes-6S-C-F.md).
 
 Cumulative coverage is IDs0–191 (192/216 TD and 192/401 RA). TD combines River25, fords/falls, bridges, Desert shores, Winter patches and Temperate/Winter shores; RA continues Slope26–38 then Road01–19, all Temperate/Snow. All entries use Flag=None. Both paths remain Partially reviewed; TD IDs192–215 and RA IDs192–400 plus full consumer/serializer parity remain open. No typed Rust editor catalog or parity tests are claimed.
+
+
+### TemplateTypes — Tranche 6S-C-G
+
+- [TD final IDs192–215](TiberianDawn/TemplateTypes-6S-C-G.md) · [RA IDs192–223](RedAlert/TemplateTypes-6S-C-G.md) · [comparison](Variant-TemplateTypes-6S-C-G.md).
+
+TD declaration enumeration is complete (216/216). RA coverage is 224/401. TD IDs192–215 are Desert Shore40–63; RA IDs192–215 are Road20–43 and IDs216–223 are Rough01–08. All entries use Flag=None; TD is Desert-only and RA is Temperate/Snow. Both rows remain Partially reviewed until dependencies, initialization, consumers and GamePlugin serializers are fully audited. No typed Rust catalogue or parity tests are claimed.

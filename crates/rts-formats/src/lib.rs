@@ -25,10 +25,16 @@ pub mod sha_streams;
 pub mod straw;
 pub mod mix;
 pub mod palette;
+pub mod palette_rgba;
+pub mod shp;
+pub mod shp_retail;
+pub mod tmp;
 pub mod palette_fade;
 pub mod palette_interpolation;
 pub mod dipthong_tables;
 pub mod dipthong;
+pub mod ra_map_pack;
+pub mod td_map;
 
 pub use binary::{BinaryReadError, BinaryReader};
 pub use mix::{MixArchive, MixEntry, MixParseError};

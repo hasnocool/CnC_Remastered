@@ -45,3 +45,19 @@ A module is complete only when:
 - binary layouts are proven against source and legal fixtures;
 - tests cover normal, edge, malformed, and compatibility cases;
 - any intentional divergence is recorded in the porting status.
+
+## Application runtime
+
+The launcher owns process startup/shutdown and selects one of three application identities: Tiberian Dawn, Red Alert, or Map Editor. Variant crates remain independent; shared rendering and platform services are injected at the application boundary rather than imported into deterministic simulation modules.
+
+The initial launcher exposes `--app td|ra|editor`, `--list`, and an interactive terminal selector. It opens an application-specific window, initializes the renderer, drives redraw/resize events, and persists versioned settings under the platform configuration directory. GPU initialization runs on a worker thread; the event loop polls a one-shot channel rather than blocking while the adapter/device are created. The registry is an integration seam: the existing game and editor crates do not yet expose complete runtime APIs.
+
+## Rendering boundary
+
+`renderer` owns GPU objects, presentation surfaces, viewport/camera presentation values, render-layer ordering, and sprite submission data. It exposes a backend-independent `PresentationBackend` contract and a wgpu implementation. It does not own game rules, simulation clocks, random state, map mutation, or authoritative coordinates. Simulation emits presentation commands; the renderer consumes them.
+
+The initial backend uses wgpu 26.0.1 and winit 0.30.12 while retaining the workspace Rust 1.85 MSRV. It initializes an adapter/device, configures a surface, clears and presents frames, handles resize, records frame timing, and honors vsync/low-power preferences. GPU sprite pipelines, texture upload/cache management, palette-aware SHP/TMP decoding, and offscreen rendering remain follow-up work.
+
+## Settings and lifecycle
+
+Launcher configuration is versioned TOML and separates display, audio, input, performance, and network preferences. Values are validated before use. Writes are synced to a temporary file in the destination directory and atomically replace the settings file. Network settings are configuration only at this stage; transport, session discovery, cancellation, and lockstep are separate milestones.

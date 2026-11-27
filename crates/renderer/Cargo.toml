@@ -1,0 +1,13 @@
+# Filename: crates/renderer/Cargo.toml
+[package]
+name = "renderer"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+rts-core.workspace = true
+rts-formats.workspace = true
+bytemuck = { version = "1.24", features = ["derive"] }
+wgpu.workspace = true
+winit.workspace = true

@@ -22,7 +22,7 @@
 | Binary reader | Initial | Checked little-endian reads |
 | Editor CRC-32 | Initial | Standard reflected CRC-32; checked against the 123456789 vector |
 | Editor cell metrics | Initial | Row-major indexing, 8-way adjacency, clipping, bounds checks |
-| Legacy MIX archive | Partial | Reads the legacy 6-byte header and 12-byte index entries used by upstream `MixFileClass`; no filename CRC mapping yet |
+| Legacy MIX archive | Partial | Reads the legacy 6-byte header and 12-byte index entries and resolves filenames with the upstream uppercase rotate-and-add CRC; encrypted MIX variants and loose-file fallback remain outstanding |
 | Event scheduler | Initial | Stable ordering by tick and insertion sequence |
 | Simulation RNG | Ported | Exact shared 256-byte table; byte index increments before lookup; both variant Sim_IRandom scaling routines |
 | Red Alert fixed point | Ported | Q16.16 constructors, arithmetic helpers, rounding, saturation, ASCII conversion |
@@ -48,7 +48,8 @@
 | Map editor model | Initial | Cell layer IDs and waypoint storage only |
 | Tiberian Dawn gameplay | Not ported | Variant boundary only |
 | Red Alert gameplay | Not ported | Variant boundary only |
-| Rendering and audio | Not ported | No renderer/audio backend |
+| Rendering | Initial backend | wgpu textured sprites/UI, bounded GPU texture cache, multi-texture ordered draws, TMP-derived terrain atlas composition, 16×16 chunk traversal and viewport culling; authentic map/theater integration remains pending |
+| Audio | Not ported | No playback/mixing backend |
 | Networking | Not ported | No wire protocol or lockstep implementation |
 | Map editor UI and full codecs | Not ported | No GUI, triggers, team types, or full scenario serialization |
 
@@ -74,7 +75,7 @@
 
 ## Verification status
 
-No Rust build/test result is claimed in this commit. The execution environment used to prepare this change did not have `rustc` or `cargo` installed. The workspace includes unit tests for the foundations; run the commands in the README on a Rust 1.85+ host before treating this milestone as verified.
+No Rust build/test result is claimed in the latest renderer commits. The execution environment used to prepare these changes did not have `rustc` or `cargo` installed. The workspace includes unit tests for the foundations; run the commands in the README on a Rust 1.85+ host before treating this milestone as verified.
 
 
 Latest addition: `TIBERIANDAWN/ALLOC.CPP` is recorded as intentionally inactive because its full implementation is under unconditional `#if (0)`.
@@ -218,18 +219,152 @@ Latest addition: `TIBERIANDAWN/GOPTIONS.CPP` → `crates/rts-core/src/tiberian_d
 
 Partial in progress: `REDALERT/LOGIC.CPP` → `crates/rts-core/src/red_alert_logic.rs` ports the active AI scheduling, mission timer triggers and reminders, shadow growth, time-quake damage planning, Chronal Vortex ordering, mutation-safe object iteration, house/auto-sonar branches, trigger detach and recently-created cleanup. The optional `CHEAT_KEYS` monochrome `Debug_Dump` screen is still outstanding; this translation unit is not in the completed count.
 
-## Desktop platform implementation status (2026-11-26)
+## Application Runtime & Rendering Foundation — initial implementation
 
-| Area | State | Evidence / boundary |
+| Component | State | Evidence / remaining work |
 |---|---|---|
-| Shared renderer | Initial functional renderer | crates/engine/rts-render: egui painter map canvas, per-layer color rendering, selection, grid, zoom/camera primitives. Native eframe applications use its wgpu renderer. No original sprite/asset pipeline yet. |
-| Launcher | Initial functional desktop app | crates/launcher/rts-launcher: TOML config, game/editor launch buttons, process start/exit/error monitoring on a Tokio worker, LAN discovery UI, asynchronous settings save. |
-| Bootstrap | Initial executable | apps/cnc-client: starts the sibling launcher process and forwards arguments. No self-update/installer yet. |
-| Tiberian Dawn executable | Application shell | tiberian-dawn now has a standalone eframe entry point and shared map renderer; not playable gameplay. |
-| Red Alert executable | Application shell | red-alert now has a standalone eframe entry point and shared map renderer; not playable gameplay. |
-| Map editor | Initial functional editor | crates/editor/map-editor: map creation, four-layer painting, waypoint placement, grid/zoom, selection, background-thread JSON save/load. Working JSON format only; not original .MAP compatibility. |
-| Editor model serialization | Initial | Cell layers have serde support; row-major cell slice is exposed read-only; waypoint round-trip tests added. |
-| Networking | Transport foundation | rts-net: UDP discovery query/responder, bounded JSON TCP frames, lobby message types, compatibility fingerprints, deterministic tick/peer/sequence ordering. No authenticated internet matchmaking or proven source-protocol interoperability. |
-| Build verification | Not run | This implementation session used remote GitHub repository operations; no local Rust compiler/build runner was available. Do not treat compilation as verified until local commands pass. |
+| Workspace | Expanded | Eight crates; renderer and launcher are workspace members |
+| Renderer | Initial textured 2D backend | wgpu surface, RGBA upload, 128 MiB FIFO GPU texture cache, cached icon/TMP image upload, ordered multi-texture draw runs, nearest-sampled sprites, camera-aware generic terrain atlas composition, 16×16 chunk traversal and viewport culling |
+| Launcher | Graphical initial release | `cnc-remastered` opens an in-window application selector/settings UI; `--app` direct preview, `--list`, mouse selection, Escape/close handling and shared lifecycle |
+| Application registry | Initial | Tiberian Dawn, Red Alert, and Map Editor identities; runtime integration is not yet complete |
+| Settings | Initial | Versioned TOML display/audio/input/performance/network settings, validation, atomic replacement |
+| GPU startup | Non-blocking | Renderer initialization is performed on a worker; event loop polls a one-shot channel |
+| Logging | Initial | tracing subscriber, environment filter, startup and presentation error reporting |
+| Rendering parity | Partial foundation | Palette conversion, retail SHP decoding, TMP decoding, icon-set access, cached GPU upload and generic terrain composition exist; real-file validation, authentic map/theater adjacency, TRNS semantics, legacy Shape_Type pixels and game HUD remain outstanding |
+| Audio | Not implemented | Audio settings are persisted; playback/mixing remains outstanding |
+| Networking | Not implemented | Network preferences are persisted; async transport, lobby, and lockstep remain outstanding |
+| Application integration | Not implemented | Launcher registry entries and preview windows exist; TD, RA, and editor runtime APIs are not yet wired |
 
-The application layer is intentionally honest about remaining parity: the two game binaries are launchable render shells, not completed games. The renderer does not yet decode or draw original game assets, and the editor JSON format is not a legacy scenario codec.
+Dependency choice: wgpu 26.0.1 and winit 0.30.12 are used while preserving the workspace Rust 1.85 MSRV. The latest wgpu 30.0.2 release requires Rust 1.87, so adopting it would require an explicit MSRV change.
+
+**Verification status:** source files have been committed to the feature branch, but Cargo formatting, compilation, tests, and Clippy have not been run. The GitHub repository connector cannot execute Cargo commands. Do not consider this implementation verified or merge-ready until the commands in the README pass on a Rust 1.85+ host.
+
+## Graphical Launcher & Textured 2D Presentation — implementation tranche
+
+- The default `cargo run -p launcher` path now opens a graphical menu with Tiberian Dawn, Red Alert, and Map Editor cards.
+- The settings screen exposes fullscreen, four resolution presets, vsync, low-power GPU selection, frame limit, master-audio mute, edge scrolling, mouse-Y inversion, and networking enablement. Changes are persisted automatically; display/GPU changes are applied on the next launch.
+- The renderer now has separate textured-sprite and UI pipelines, an RGBA texture upload API, atlas UV regions, nearest-neighbor sampling, sprite tint/rotation, render-layer ordering, alpha blending, and a bundled 5x7 bitmap font.
+- A deterministic four-region procedural terrain atlas is drawn behind both the launcher and direct application preview windows. It is a renderer fixture, not authentic TD/RA artwork.
+- The launcher initializes the GPU on a worker thread and polls completion from the event loop. Frame pacing uses the configured frame limit.
+
+**Remaining:** authentic TD/RA map and theater ingestion, source-derived terrain transitions, real-file asset validation, legacy Shape_Type pixel decoding, in-game HUD/object rendering, audio playback, async multiplayer networking, and runtime integration for the two games and editor.
+
+**Verification:** Cargo is not installed in the current execution environment and outbound GitHub clone access is unavailable. Formatting, compilation, tests, and Clippy have therefore not been run. Treat this branch as implementation-in-progress until the Rust 1.85+ validation commands pass.
+
+ 
+## Authentic asset ingestion — first tranche
+
+- **Palette conversion:** crates/rts-formats/src/palette_rgba.rs adds a 256-entry palette, explicit RGB8/RGB6 decoding, checked indexed-image expansion and opt-in transparent-index handling. Upstream LOADPAL.CPP loads 768 bytes for IBM; component interpretation remains an explicit caller choice.
+- **SHP container metadata:** crates/rts-formats/src/shp.rs reads the u16 shape count, 32-bit frame offsets (relative to the offset-table base), and packed 26-byte Shape_Type header, validating ranges before exposing encoded frame bytes. Upstream references: TIBERIANDAWN/WIN32LIB/SHAPE.H and GETSHAPE.CPP.
+- **Retail SHP decoding:** `crates/rts-formats/src/shp_retail.rs` parses the retail 14-byte TD/RA header and 8-byte frame records, uses the bounded LCW decoder for Format80 keyframes, resolves Format40 references through their u16 frame offsets with recursive cycle detection, and applies Format20 deltas to the preceding frame. XOR commands and output extents are bounded. `decode_rgba_frame(s)` expands indexed pixels through `Palette256` into tightly packed `RgbaImage` data accepted by the renderer's RGBA texture-upload API. The legacy `shp::ShpBlock` remains separate for the in-memory ShapeBlock_Type layout.
+- **TMP terrain decoding:** `crates/rts-formats/src/tmp.rs` adds bounded Tiberian Dawn and Red Alert archive readers with their distinct header/signature offsets, fixed-size indexed tile extraction, blank-tile handling, and palette expansion to renderer-compatible RGBA images. Header/index layouts follow OpenRA's `TmpTDLoader` and `TmpRALoader`; validation against legally supplied original game archives remains outstanding.
+- **Still outstanding:** validate SHP/TMP against real TD/RA assets; implement the separate in-memory Shape_Type pixel/run variants; integrate terrain chunks/adjacency and a persistent GPU texture cache; connect game/editor runtimes to the launcher.
+- **Verification:** tests have been added but not executed. Formatting, compilation, tests and Clippy remain unverified.
+
+
+## Authentic TD/RA terrain icon-set decoding — indexed pixel access
+
+The repository already contained a shared IFF and ICON/SINF/SSET/TRNS/MAP icon-set implementation based on upstream WIN32LIB/ICONSET.CPP. This tranche extends that existing path rather than adding a second parser for later Tiberian Sun/Red Alert 2 TMP formats.
+
+- Added SINF-aware SSET size validation; malformed partial images are rejected.
+- Exposed the physical image count separately from the logical count (derived from MAP when present).
+- Added bounded accessors for 8-bit indexed physical tiles and logical-to-physical MAP lookup.
+- Treats 0xFF as an empty logical map entry and rejects out-of-range physical references.
+- Synthetic tests cover tile extraction, MAP indirection, empty entries and physical bounds.
+
+**Still unverified:** no real TD/RA theater icon sets have been loaded in this environment. The precise meaning of TRNS bytes and any non-8-bit/packed variants still require source-backed and real-file validation. Palette conversion is available and the renderer now exposes cached logical-icon upload, but this path has not been validated against a retail theater set or GPU-backed image comparison.
+
+**Verification:** tests have been added but not executed; Cargo is unavailable in this environment.
+
+
+## TMP-to-renderer texture upload integration
+
+Inspection confirmed `crates/rts-formats/src/tmp.rs` already implements bounded TD/RA TMP header parsing, tile index lookup, blank tile handling and `Palette256` expansion to `RgbaImage`. This tranche connects that existing output to the GPU renderer instead of duplicating TMP decoding.
+
+- Renderer now depends on `rts-formats` and accepts its `RgbaImage` output.
+- Added a renderer-owned 128 MiB FIFO GPU texture cache. Cached `GpuTexture` objects retain their wgpu texture and bind group; eviction drops both together.
+- Added cache lookup and byte-accounting APIs. Oversized images are rejected instead of exceeding the cache budget.
+- Existing uncached `create_texture_rgba` remains available.
+
+**Not yet verified:** no real retail TMP or SHP file was available for validation; TRNS semantics and palette encoding selection remain caller-controlled. A generic TerrainAtlas now composes referenced TMP tiles, traverses 16×16 chunks, culls to the camera viewport and submits cached textures; this is not yet an authentic TD/RA map/theater renderer. Cargo formatting, compilation, tests and Clippy have not been run in this environment.
+
+
+## TD/RA TMP terrain palette bridge
+
+The original TD/RA terrain tile path is the IFF `ICON` icon-set format (`SINF`, `SSET`, `MAP `, `TRNS`), not the later Tiberian Sun/Red Alert 2 isometric TMP format. Upstream `WIN32LIB/ICONSET.CPP` reads raw SSET bytes; the IFF reader does not decompress them. The existing `IconSet` parser already exposes physical indexed tiles and logical MAP indirection.
+
+This tranche adds `physical_icon_rgba` and `logical_icon_rgba`, using an explicitly supplied `Palette256`. Empty `MAP=0xFF` entries remain absent, and transparency remains caller-controlled rather than assuming palette index zero is transparent. The returned `RgbaImage` is accepted directly by `WgpuRenderer::cache_rgba_image`.
+
+**Not yet verified:** no legally supplied retail theater icon sets were available for pixel-level comparison, and no GPU-backed rendering test was run. The separate `tmp.rs` flat-header parser remains under audit; it must not be treated as validation of the original IFF TMP path.
+
+**Verification:** Cargo formatting, compilation, tests and Clippy remain unexecuted in this environment.
+
+
+## Renderer and terrain integration update
+
+- rts-formats TMP archives provide bounded TD/RA tile extraction and palette expansion. Real retail TMP validation remains pending.
+- TerrainAtlas packs only nonblank tiles referenced by a generic row-major TerrainMap, with deterministic tile slots and a bounded atlas size.
+- Visible terrain generation traverses 16×16 map chunks and clips work to the camera viewport.
+- WgpuRenderer::render_cached_multi resolves cached texture IDs and emits adjacent texture runs after stable render-layer sorting, preserving compositing order across texture changes.
+- The 128 MiB GPU cache remains FIFO. Texture IDs are treated as immutable content identities for the life of a cache entry.
+- Not implemented: authentic TD/RA map-file decoding, theater-specific adjacency/transition resolution, terrain animation, SHP unit/building rendering, camera input, CPU decoded-image cache, and real retail asset verification.
+
+
+## Map template representation correction
+
+The map editor model now retains both the template type ID and the per-cell logical icon index. These are distinct fields in the original TD map cell record (TType and TIcon); the renderer must not treat a template type ID as a TMP archive tile index.
+
+The authoritative TD engine path obtains the template type's image data, reads its ICON set MAP table, and uses the cell's logical icon slot to resolve the physical image. The generic TMP TerrainAtlas remains a separate fixture/adapter path. Authentic TD/RA rendering needs theater-specific template catalogs plus an IFF ICON-set atlas/composition path. RA MapPack serialization is variant-specific and must be handled independently from TD's per-cell record path.
+
+Source inspection: EA's public CnC_Tiberian_Dawn/TEMPLATE.CPP and MAP.CPP (TemplateClass::Mark, Map load/validation); the existing project source-audit notes also identify the editor's missing per-cell icon field. No proprietary game assets were added. Cargo validation remains unexecuted.
+
+
+## Template ICON-set atlas path
+
+Added TerrainAtlas::build_from_template_icon_sets. The caller supplies the theater-selected catalog of (template type, IFF IconSet) pairs. For every occupied map cell, the renderer resolves (template type, logical icon) through the corresponding IconSet MAP table, expands the physical SSET tile through the selected palette, deduplicates repeated logical references, and packs the result into the same bounded RGBA atlas used by the generic terrain renderer.
+
+The adapter rejects missing template types, duplicate catalog IDs, inconsistent icon pixel dimensions, invalid/empty MAP references, malformed image storage, invalid map dimensions, and atlas allocations beyond the 8192-axis / 128 MiB limits. It does not invent theater catalogs or asset filenames; those remain the caller's responsibility and require real TD/RA theater data validation.
+
+Cargo formatting, compilation, and tests remain unexecuted in this environment.
+
+
+## Source-derived TD/RA template catalogs
+
+Added upstream template type IDs, symbolic names, theater-availability masks, and ICON-set filename stems. TD metadata is derived from EA CnC_Tiberian_Dawn DEFINES.H / CDATA.CPP; RA metadata is derived from CnC_Red_Alert CODE/DEFINES.H / CODE/CDATA.CPP. The optional RA TEMPLATE_HILL01 entry behind FIXIT_ANTS is excluded because it is not part of the default enum/build.
+
+The catalog distinguishes TD Desert/Jungle/Temperate/Winter numbering from RA Temperate/Snow/Interior numbering. TerrainAtlas::build_from_template_catalog validates caller-loaded ICON sets against the selected variant and theater before using the existing logical-icon MAP indirection and RGBA atlas path. Asset providers still need to resolve theater suffixes and load IFF files from the user's game data; no proprietary assets are bundled.
+
+The lower-level build_from_template_icon_sets API remains available for custom mods and synthetic fixtures. Cargo formatting, compilation, tests, and Clippy remain unexecuted in this environment.
+
+
+## Red Alert MapPack decoder
+
+Added `rts_formats::ra_map_pack::RaTemplateMap` for the Red Alert MapPack binary payload. The decoder consumes the editor's framed LCW chunks (u16 compressed length, u16 decoded length, then LCW data), caps each decoded chunk at the upstream 8,192-byte scratch-buffer size, and requires the decoded stream to equal exactly three bytes per map cell. It then separates the new-format payload into a little-endian u16 template-type plane and a u8 logical-icon plane, preserving raw references for later theater/catalog checks.
+
+The caller still needs to concatenate and Base64-decode the INI `[MapPack]` values before invoking this API. No retail scenario has been supplied or validated, and this work does not implement the older interleaved `NewINIFormat` variants handled by the legacy game reader. Cargo formatting, compilation and tests remain unverified in this environment.
+
+
+## Red Alert MapPack and theater-aware template asset ingestion
+
+- Added `rts_formats::ra_map_pack::RaTemplateMap`. It decodes the Remastered Collection editor's framed LCW chunks (little-endian u16 compressed length and u16 decoded length), enforces the 8,192-byte chunk output cap, checks exact map output size, and separates the new-format stream into the row-major u16 template-type plane followed by the u8 logical-icon plane. Raw IDs are preserved for later catalog validation.
+- Added `mix::filename_crc` and `MixArchive::get_by_filename`, matching the upstream MIX filename lookup convention: ASCII-uppercase the full filename and feed it to the Westwood rotate-left/add checksum.
+- Added renderer `TemplateAssetProvider`: validates catalog type/theater availability, selects the variant-specific theater extension, searches caller-provided MIX archives in registration order, and loads the result through the existing IFF/ICON parser.
+- No proprietary assets are bundled. The provider has not yet been validated against retail MIX archives, and the RA MapPack decoder still needs a strict INI Base64 adapter and connection to the catalog-validated atlas builder. The legacy interleaved `NewINIFormat` map encoding remains separate.
+- Cargo formatting, compilation, tests and Clippy remain unverified in this environment.
+
+The provider now also exposes `build_ra_terrain_atlas`, which gathers unique template IDs from a decoded RA map, loads only the matching theater ICON sets, and passes the row-major (template type, logical icon) references into the catalog-validated renderer atlas builder. The caller still supplies the decoded map, palette, and parsed MIX archives. Retail archive/scenario validation remains outstanding.
+
+The RA MapPack decoder now also accepts the concatenated INI `[MapPack]` Base64 value directly. Its strict decoder ignores ASCII whitespace, validates quartet/padding structure, bounds the decoded compressed payload based on map dimensions and the upstream chunk limit, then invokes the LCW chunk and two-plane decoder. The API does not parse INI text or determine section key order; callers pass the already-concatenated values in section order.
+
+The TODO now separates the completed Red Alert MapPack path from the still-outstanding Tiberian Dawn binary map decoder. The legacy MIX status also reflects the newly implemented filename-to-CRC lookup; this does not claim encrypted MIX support or retail archive validation.
+
+
+## Tiberian Dawn editor binary terrain decoding
+
+Added rts_formats::td_map::TdTemplateMap for the Tiberian Dawn map-editor BIN terrain layer. Based on EA's Remastered Collection TiberianDawn/GamePlugin.cs LoadBinary, it reads one template-type byte followed by one logical-icon byte for every cell, iterating rows then columns. Width and height are supplied by the map metrics; the binary payload has no dimensions header. The decoder enforces exact byte length, checked dimensions, a bounded cell count, and fallible allocation while preserving raw type/icon values.
+
+Added TemplateAssetProvider::build_td_terrain_atlas. It rejects non-TD providers, loads the unique referenced TD template ICON sets from caller-supplied MIX archives, and composes the map through the source-derived TD theater catalog and existing IFF/ICON MAP-indirection path.
+
+This implementation targets the editor's raw BIN pair stream. It does not claim to decode the engine's separate LCW straw/stream representation, parse the accompanying INI metadata, or validate against retail scenario files. No proprietary assets were added.
+
+Synthetic regression fixtures cover row-major type/icon pairs, truncated/trailing input, zero dimensions, excessive cell counts, and provider variant rejection. Cargo formatting, compilation, tests, and Clippy remain unverified because the Rust toolchain is unavailable in this environment.

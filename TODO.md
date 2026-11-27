@@ -322,19 +322,157 @@
 - [x] Port REDALERT/SOUNDDLG.CPP: locale-dependent layout, FIXIT_CSII Win32 listbox height, theme enumeration/prefix ID, selected-track mapping, sliders and immediate sound/score options, shuffle/repeat, stop/quiet, play, FIXIT_VERSION_3 multiplayer score mirror and cleanup.
 - [x] Port REDALERT/AADATA.CPP static aircraft definitions and type helpers: source-order heap registry, case-insensitive INI names, asset paths, dimensions, occupancy/overlap, max pips and Create_And_Place=false.
 
-## Milestone 2 — desktop platform and application integration
+## Milestone 4A — Application Runtime & Rendering Foundation
 
-- [x] Add a shared GPU-backed 2D renderer abstraction using egui's wgpu-backed native renderer.
-- [x] Add a standalone launcher with TOML settings, game/editor selection, and non-blocking process supervision.
-- [x] Add a bootstrap executable that starts the launcher.
-- [x] Add standalone Tiberian Dawn and Red Alert application entry points.
-- [x] Add asynchronous UDP LAN discovery and bounded length-prefixed TCP lobby messages.
-- [x] Add protocol/build/simulation/mod compatibility fingerprints and deterministic lockstep command ordering primitives.
-- [x] Extend the editor model with read-only row-major cell access and serializable cell layers.
-- [x] Add a standalone map editor with terrain/template/overlay/smudge painting, waypoint placement, grid/zoom, new-map selection, and asynchronous JSON save/load.
-- [ ] Run cargo fmt, workspace tests, and Clippy on a Rust 1.95+ toolchain.
-- [ ] Integrate the renderer with decoded MIX/SHP/TMP/PALETTE assets and real game object draw lists.
-- [ ] Implement source-compatible TD/RA scenario serialization and round-trip fixtures.
-- [ ] Connect game simulation command streams to the network lockstep transport and verify deterministic replay.
-- [ ] Add authenticated internet matchmaking, server hosting lifecycle, NAT traversal, reconnect, and abuse controls.
-- [ ] Replace game application shells with complete variant runtime, menus, input, audio, campaigns, and gameplay.
+### Renderer — `crates/renderer`
+
+- [x] Add a dedicated renderer crate and keep it independent of authoritative simulation state.
+- [x] Integrate a wgpu window-surface backend compatible with the workspace Rust 1.85 MSRV.
+- [x] Initialize an adapter/device, configure a window surface, clear and present frames.
+- [x] Add viewport, camera, color, render-layer, texture-handle, sprite-instance, and stable sprite-batch abstractions.
+- [x] Add resize handling, frame timing, vsync selection, and low-power/high-performance adapter preference.
+- [x] Add GPU textured-sprite pipeline, WGSL shaders, RGBA texture upload, nearest-neighbor sampling, and ordered sprite execution.
+- [ ] Add palette-aware SHP/TMP rendering and game-specific presentation composition.
+- [ ] Add headless/offscreen renderer tests and platform-specific surface tests.
+
+### Launcher — `crates/launcher`
+
+- [x] Add a unified executable and application registry for Tiberian Dawn, Red Alert, and Map Editor.
+- [x] Add `--app td|ra|editor`, `--list`, and interactive terminal application selection.
+- [x] Add shared window lifecycle, renderer initialization, resize/redraw, and graceful shutdown.
+- [x] Run GPU initialization on a worker thread and poll completion without blocking the event loop.
+- [x] Add versioned TOML configuration for display, audio, input, performance, and network preferences.
+- [x] Validate settings and atomically replace the persisted configuration file.
+- [x] Add structured logging and startup error reporting.
+- [x] Add an in-window launcher menu and editable settings UI for application selection, display, performance, audio, input, and network enablement.
+- [ ] Connect each registry entry to a functioning game/editor runtime when those runtime APIs exist.
+
+### Integration and verification
+
+- [ ] Integrate the Tiberian Dawn runtime, Red Alert runtime, and map editor into the launcher lifecycle.
+- [ ] Add async networking services, session discovery, cancellation, and shutdown integration.
+- [ ] Add configuration migration tests and GPU initialization/recovery tests.
+- [ ] Run `cargo fmt --all -- --check`.
+- [ ] Run `cargo check --workspace --all-targets`.
+- [ ] Run `cargo test --workspace`.
+- [ ] Run `cargo clippy --workspace --all-targets -- -D warnings`.
+- [ ] Verify Vulkan, Metal, and DX12 backends where supported and document platform limitations.
+- [ ] Record actual build/test output; do not infer success from source inspection.
+
+ 
+## Milestone 4A — authentic asset ingestion (first tranche)
+
+- [x] Add explicit 256-color RGB8/RGB6 palette parsing and checked indexed-image-to-RGBA conversion; transparency is opt-in.
+- [x] Add bounds-checked SHP shape-block offsets and packed Shape_Type metadata extraction with malformed-input tests.
+- [x] Add retail TD/RA SHP header/frame-table parsing, bounded LCW keyframe decoding, Format40 referenced-frame XOR decoding with cycle detection, Format20 previous-frame XOR decoding, palette expansion to renderer-compatible RGBA images, and synthetic pixel-level fixtures.
+- [ ] Implement pixel/run decoding for the legacy in-memory Shape_Type payload variants (normal, compact, variable and uncompressed); this is separate from the retail keyframe SHP decoder.
+- [x] Add bounded TD and RA TMP readers with variant-specific signatures/header offsets, tile-index extraction, blank-tile handling, palette expansion, and synthetic binary fixtures.
+- [ ] Validate TMP parsing and tile output against legally supplied original TD/RA terrain archives.
+- [x] Add synthetic binary fixtures and golden pixel vectors; do not commit retail game assets.
+- [ ] Validate retail SHP parsing and decoding against legally supplied original TD/RA asset files.
+- [x] Add renderer API to upload palette-expanded RGBA images from `rts-formats` into a bounded GPU texture cache.
+- [x] Add a renderer-owned 128 MiB FIFO GPU texture cache with explicit GPU resource lifetime; bounded CPU-side decoded-image caching remains pending.
+- [ ] Implement camera-aware terrain chunks, adjacency transitions and viewport culling.
+- [ ] Wire TD, RA and editor asset/runtime providers into launcher application selection.
+
+
+## Authentic TD/RA terrain icon sets — indexed tile access
+
+- [x] Reuse the existing IFF/ICON/SINF/SSET/TRNS/MAP icon-set parser; do not introduce a second, incompatible TMP container parser.
+- [x] Validate SSET length against SINF dimensions and bitplane count.
+- [x] Track physical SSET image count separately from logical MAP count.
+- [x] Expose bounded 8-bit physical tile pixel slices and logical MAP resolution.
+- [x] Treat the legacy 0xFF map entry as an empty logical tile.
+- [ ] Validate TD and RA icon sets from legally supplied original game data, including actual MAP and TRNS semantics.
+- [ ] Connect decoded tile pixels to palette conversion and renderer texture upload.
+- [ ] Implement terrain chunk composition, adjacency transitions, camera scrolling and GPU texture caching.
+
+
+## TD/RA TMP terrain palette bridge
+
+- [x] Reuse the IFF `ICON`/`SINF`/`SSET`/`MAP `/`TRNS` loader for original TD/RA terrain icon sets; `Read_Iff_Chunk` copies raw chunk bytes and does not decompress SSET.
+- [x] Expand physical and logical indexed terrain icons through an explicitly selected `Palette256` into renderer-ready RGBA8 images.
+- [x] Preserve empty logical entries (`MAP=0xFF`) as `None`; do not invent per-pixel transparency for terrain.
+- [ ] Validate with legally supplied TD and RA theater icon sets and compare pixel output against a trusted extractor.
+- [ ] Connect logical terrain images to `WgpuRenderer::cache_rgba_image` and draw them in a scrollable terrain chunk.
+
+## Canonical IFF terrain-to-renderer bridge
+
+- Added `WgpuRenderer::cache_iconset_tile`, which resolves a logical TD/RA IFF icon through the existing `IconSet` MAP table, expands it through an explicit `Palette256`, and uploads it through the existing bounded GPU cache.
+- The caller supplies a stable `TextureId`; empty MAP entries return `None` without allocating a texture. This keeps cache identity policy outside the renderer and avoids conflating logical indices across theaters.
+- The separate flat-header `tmp.rs` archive reader is not used by this bridge. Its retail-format compatibility remains an audit item and must be checked against source definitions and real files before it is treated as the canonical TD/RA path.
+- No GPU-backed test or real theater asset validation has been performed. Cargo formatting, compilation, tests and Clippy remain unverified.
+
+## Camera-aware TMP terrain atlas and chunk composition
+
+- Added renderer::terrain::TerrainMap as a checked row-major map-cell view whose optional indices address the existing TmpArchive logical tile table.
+- Added TerrainAtlas::build: collects only referenced, nonblank tiles; palette-expands them; packs them into one bounded RGBA atlas; and retains deterministic tile-index-to-atlas-slot mapping.
+- Added TerrainAtlas::upload to reuse the existing bounded GPU texture cache and visible_batch to cull off-screen cells while traversing 16x16-cell chunks and emitting a single-texture SpriteBatch with atlas UVs.
+- Atlas dimensions are capped at 8192 per axis and 128 MiB. The caller must use a texture ID unique to the map/theater/palette identity; the existing cache treats an already-cached ID as immutable.
+- Added CPU-only tests for atlas packing, deterministic tile slots, UV generation, camera culling and empty terrain cells. Tests are authored but have not been executed.
+- This TMP-backed composition path remains separate from the IFF icon-set parser pending source-backed confirmation of each format's asset role.
+
+
+- Added cached-texture frame submission: WgpuRenderer::render_cached resolves a TextureId internally, avoiding an impossible external borrow of a texture held inside the renderer cache.
+- Added TerrainAtlas::render_visible to build the camera-culled chunk batch and submit it against its cached atlas ID in one call.
+
+
+## Application renderer — current implementation tranche
+
+- [x] Add a bounded renderer-owned FIFO GPU texture cache and palette-expanded RGBA upload.
+- [x] Add cached logical IFF icon upload through MAP indirection.
+- [x] Compose deterministic TMP terrain atlases from the nonblank tile indices referenced by a generic map grid.
+- [x] Generate camera-visible terrain sprites while traversing 16×16 chunks and culling off-screen cells.
+- [x] Submit sprites from multiple cached textures in stable render-layer order, switching bind groups only between adjacent texture runs.
+- [ ] Validate TMP, SHP, icon-set and palette behavior against legally supplied original TD/RA assets.
+- [ ] Implement theater-specific adjacency/transition resolution from source-derived map/theater metadata.
+- [x] Implement Red Alert MapPack INI Base64/LCW decoding and connect decoded RA template references to the theater MIX asset provider and catalog-validated terrain atlas builder.
+- [x] Decode the Tiberian Dawn editor BIN terrain layer as row-major (template_type: u8, logical_icon: u8) pairs using externally supplied map metrics; keep it independent of RA MapPack/LCW decoding.
+- [x] Connect decoded TD template references through the TD theater MIX asset provider and catalog-validated IFF/ICON terrain atlas builder.
+- [ ] Validate TD BIN decoding and theater ICON lookup against legally supplied retail scenarios and MIX archives.
+- [ ] Implement TRNS transparency semantics and the separate legacy Shape_Type pixel decoder.
+- [ ] Add camera input/panning, terrain animation, SHP unit/building rendering and CPU-side decoded-image caching.
+- [ ] Connect the rendered terrain and object layers to playable TD/RA and map-editor runtime providers.
+
+
+## Map-document to terrain renderer adapter
+
+- [x] Expose row-major MapDocument::template_indices() without leaking the document's internal cell storage.
+- [x] Add TerrainMap::from_template_cells() with an explicit game/theater resolver from map template IDs to TMP archive tile indices; do not assume the numeric IDs are interchangeable.
+- [x] Reject unresolved non-empty template IDs rather than silently rendering the wrong tile.
+- [x] Preserve both template type and logical icon index in map-editor cells; expose a row-major iterator of complete (type, icon) references.
+- [x] Add source-derived TD/RA template catalogs with numeric type IDs, theater masks, and ICON-set asset stems from EA DEFINES.H / CDATA.CPP metadata (excluding optional RA FIXIT_ANTS-only entry).
+- [x] Add a catalog-validated renderer entry point that rejects template types unsupported by the selected game variant/theater before resolving their ICON-set MAP indirection.
+- [x] Add a renderer atlas/composition path for multiple template ICON sets; resolve each logical icon through its set's MAP indirection and reject empty/missing logical slots.
+- [ ] Add reusable per-chunk CPU composition keyed by map revision and invalidate only edited chunks.
+- [ ] Derive adjacency/transition selection from source-backed TD/RA template rules and real theater fixtures.
+- [x] Validate map dimensions before consuming template iterators; reserve the exact expected cell capacity fallibly and reject short or oversized iterators.
+- Verification: catalog and atlas CPU regression tests are authored; Cargo formatting, compilation and tests remain unexecuted in this environment.
+
+
+## Red Alert MapPack binary decoding
+
+- [x] Add a dedicated RA MapPack decoder for the Remastered Collection/editor chunk framing: little-endian compressed length + decompressed length followed by an LCW block.
+- [x] Enforce the upstream 8,192-byte per-chunk output buffer limit, exact map output size, checked dimensions/allocation, complete chunk framing, and bounded LCW output.
+- [x] Decode the RA new-format payload as a row-major u16 little-endian template-type plane followed by a u8 logical-icon plane, preserving raw IDs for later theater/catalog validation.
+- [ ] Add a strict Base64 INI-section adapter and validate against legally supplied original RA scenario files.
+- [x] Add a theater-aware MIX-backed template ICON-set provider using source-derived catalog names, theater suffix selection, upstream filename CRCs, and the existing IFF/ICON parser.
+- [x] Connect decoded RA MapPack cells through TemplateAssetProvider to the catalog-validated terrain atlas builder.
+- [ ] Validate the complete path against legally supplied original RA scenarios and theater MIX archives.
+- Verification: synthetic chunk fixtures and malformed-input tests are authored; Cargo formatting, compilation and tests remain unexecuted.
+
+
+## Theater-aware MIX template asset provider
+
+- [x] Add the upstream MIX filename-key calculation: ASCII-uppercase the complete asset filename, then use the Westwood rotate-left/add checksum used by `MIXFILE.CPP` and `CRC.CPP`.
+- [x] Add `MixArchive::get_by_filename` without changing the existing CRC-index lookup API.
+- [x] Add renderer::TemplateAssetProvider to validate the variant/theater catalog entry, construct the theater-suffixed filename, search caller-supplied MIX archives in caller order, and parse the resolved bytes with the existing IFF/ICON loader.
+- [x] Keep asset archives caller-owned and do not bundle proprietary game files.
+- [ ] Add loose-file directory lookup.
+- [x] Add strict Base64 decoding for concatenated INI [MapPack] values, including whitespace, padding validation, and an output-size limit.
+- [ ] Validate the complete path against legally supplied retail files.
+- Verification: synthetic filename/theater checks are authored; Cargo formatting, compilation and tests remain unexecuted.
+
+- [x] Add `TemplateAssetProvider::build_ra_terrain_atlas`: collect the unique template types referenced by a decoded RA map, load their theater-specific ICON sets from MIX archives, then call the catalog-validated renderer atlas builder with each cell's (template type, logical icon) reference.
+
+- [x] Add `RaTemplateMap::decode_ini_section` so callers can pass the concatenated INI Base64 value directly; it bounds decoded compressed bytes before LCW chunk parsing.

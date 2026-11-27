@@ -160,3 +160,16 @@ TD and RA IDs160–191 are documented in [Variant-TemplateTypes-6S-C-F.md](Varia
 - This slice has no 0×0 dimensions; earlier RA IDs100–102 and 111 remain an untested runtime concern because Init has no positive-dimension guard.
 - CellLayers.template remains Option<u16>; runtime TemplateClass is not the editor catalog. No Rust code/tests changed or executed.
 - Remaining declarations: TD IDs192–215 (24), RA IDs192–400 (209). Keep both paths Partially reviewed.
+
+
+## TemplateTypes — Tranche 6S-C-G
+
+TD IDs192–215 and RA IDs192–223 are documented in [Variant-TemplateTypes-6S-C-G.md](Variant-TemplateTypes-6S-C-G.md) and per-variant guides. TD declaration coverage is complete (216/216); RA coverage is 224/401. Both rows remain Partially reviewed.
+
+- TD: Shore40–Shore63, keys sh40–sh63, Desert-only; footprints range from 1×2 to 6×1.
+- RA: Road20–Road43 then Rough01–Rough08, keys d20–d43/rf01–rf08, Temperate/Snow; Road21 is 3×2, Roads26–33 and 36–43 are 2×2, Rough01–07 are 1×1 and Rough08 is 1×2.
+- All 56 declarations use the five-argument constructor delegating to TemplateTypeFlag.None. No zero-sized dimensions occur in this slice.
+- Shared Init creates a max-dimension square bitmap and width×height icon mask, setting cells only on successful theatre tile lookup. Map.InitTheater initializes every template. No positive-dimension guard exists; earlier RA IDs100–102 and 111 remain an untested source hazard.
+- Reflection registry construction uses public static readonly TemplateType fields and ToArray without explicit sorting; GetTypes exposes the backing array as IEnumerable.
+- Rust CellLayers.template remains Option<u16>; runtime TemplateClass is not the editor registry. No Rust mapping/tests.
+- Next RA declaration slice: IDs224–255. TD has no remaining declarations. Full dependency/consumer/serializer audit remains open.
