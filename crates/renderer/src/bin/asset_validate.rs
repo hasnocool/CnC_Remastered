@@ -12,10 +12,10 @@ use std::{
     env,
     error::Error,
     fs,
-    path::{Path, PathBuf},
+    path::PathBuf,
 };
 
-use renderer::{TemplateAssetProvider, TerrainAtlas};
+use renderer::TemplateAssetProvider;
 use rts_core::{GameVariant, template_catalog::TemplateTheater};
 use rts_formats::{
     mix::{MixArchive, filename_crc},
