@@ -351,3 +351,5 @@ The caller still needs to concatenate and Base64-decode the INI `[MapPack]` valu
 - Added renderer `TemplateAssetProvider`: validates catalog type/theater availability, selects the variant-specific theater extension, searches caller-provided MIX archives in registration order, and loads the result through the existing IFF/ICON parser.
 - No proprietary assets are bundled. The provider has not yet been validated against retail MIX archives, and the RA MapPack decoder still needs a strict INI Base64 adapter and connection to the catalog-validated atlas builder. The legacy interleaved `NewINIFormat` map encoding remains separate.
 - Cargo formatting, compilation, tests and Clippy remain unverified in this environment.
+
+The provider now also exposes `build_ra_terrain_atlas`, which gathers unique template IDs from a decoded RA map, loads only the matching theater ICON sets, and passes the row-major (template type, logical icon) references into the catalog-validated renderer atlas builder. The caller still supplies the decoded map, palette, and parsed MIX archives. Retail archive/scenario validation remains outstanding.

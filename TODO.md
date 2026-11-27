@@ -454,7 +454,8 @@
 - [x] Decode the RA new-format payload as a row-major u16 little-endian template-type plane followed by a u8 logical-icon plane, preserving raw IDs for later theater/catalog validation.
 - [ ] Add a strict Base64 INI-section adapter and validate against legally supplied original RA scenario files.
 - [x] Add a theater-aware MIX-backed template ICON-set provider using source-derived catalog names, theater suffix selection, upstream filename CRCs, and the existing IFF/ICON parser.
-- [ ] Connect decoded RA cells to the catalog-validated renderer atlas builder and validate against legally supplied original game files.
+- [x] Connect decoded RA MapPack cells through TemplateAssetProvider to the catalog-validated terrain atlas builder.
+- [ ] Validate the complete path against legally supplied original RA scenarios and theater MIX archives.
 - Verification: synthetic chunk fixtures and malformed-input tests are authored; Cargo formatting, compilation and tests remain unexecuted.
 
 
@@ -464,5 +465,8 @@
 - [x] Add `MixArchive::get_by_filename` without changing the existing CRC-index lookup API.
 - [x] Add renderer::TemplateAssetProvider to validate the variant/theater catalog entry, construct the theater-suffixed filename, search caller-supplied MIX archives in caller order, and parse the resolved bytes with the existing IFF/ICON loader.
 - [x] Keep asset archives caller-owned and do not bundle proprietary game files.
-- [ ] Add loose-file directory lookup, strict INI Base64 section decoding, retail-file validation, and full RA MapPack-to-atlas integration.
+- [ ] Add loose-file directory lookup and strict INI Base64 section decoding.
+- [ ] Validate the complete path against legally supplied retail files.
 - Verification: synthetic filename/theater checks are authored; Cargo formatting, compilation and tests remain unexecuted.
+
+- [x] Add `TemplateAssetProvider::build_ra_terrain_atlas`: collect the unique template types referenced by a decoded RA map, load their theater-specific ICON sets from MIX archives, then call the catalog-validated renderer atlas builder with each cell's (template type, logical icon) reference.

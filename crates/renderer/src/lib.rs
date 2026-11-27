@@ -13,7 +13,7 @@ use winit::window::Window;
 
 pub mod terrain;
 pub mod template_assets;
-pub use template_assets::{TemplateAssetError, TemplateAssetProvider};
+pub use template_assets::{TemplateAssetError, TemplateAssetProvider, TemplateTerrainBuildError};
 pub use terrain::{TerrainAtlas, TerrainError, TerrainMap, TERRAIN_CHUNK_CELLS};
 
 pub type TextureId = u64;
