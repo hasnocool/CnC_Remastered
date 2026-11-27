@@ -5,12 +5,14 @@
 //! mutate authoritative simulation state. Coordinates supplied to draw calls
 //! are physical pixels in the current surface viewport.
 
-use std::{sync::Arc, time::{Duration, Instant}};
+use std::{collections::{HashMap, VecDeque}, sync::Arc, time::{Duration, Instant}};
+use rts_formats::palette_rgba::RgbaImage;
 use bytemuck::{Pod, Zeroable};
 use wgpu::util::DeviceExt;
 use winit::window::Window;
 
 pub type TextureId = u64;
+const DEFAULT_TEXTURE_CACHE_BYTES: usize = 128 * 1024 * 1024;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Color { pub r: f64, pub g: f64, pub b: f64, pub a: f64 }
@@ -148,6 +150,7 @@ pub enum RendererError {
     CreateSurface(String), RequestAdapter(String), RequestDevice(String),
     NoSurfaceFormats, NoPresentModes, NoAlphaModes, Surface(String),
     InvalidTextureData { width: u32, height: u32, bytes: usize },
+    TextureExceedsCacheLimit { requested: usize, limit: usize },
 }
 impl std::fmt::Display for RendererError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -160,6 +163,7 @@ impl std::fmt::Display for RendererError {
             Self::NoAlphaModes => f.write_str("surface exposes no alpha modes"),
             Self::Surface(e) => write!(f, "surface presentation failed: {e}"),
             Self::InvalidTextureData { width, height, bytes } => write!(f, "RGBA texture {width}x{height} requires {} bytes, got {bytes}", expected_rgba_bytes(*width,*height).unwrap_or(usize::MAX)),
+            Self::TextureExceedsCacheLimit { requested, limit } => write!(f, "texture requires {requested} bytes, exceeding cache limit {limit}"),
         }
     }
 }
@@ -167,6 +171,49 @@ impl std::error::Error for RendererError {}
 
 fn expected_rgba_bytes(width:u32,height:u32)->Option<usize> {
     (width as usize).checked_mul(height as usize)?.checked_mul(4)
+}
+
+/// Renderer-owned FIFO cache. GPU handles stay alive while cached; eviction
+/// drops the bind group and texture together. The byte budget is explicit.
+pub struct GpuTextureCache {
+    entries: HashMap<TextureId, GpuTexture>,
+    insertion_order: VecDeque<TextureId>,
+    bytes: usize,
+    max_bytes: usize,
+}
+impl GpuTextureCache {
+    pub fn new(max_bytes: usize) -> Self {
+        Self { entries: HashMap::new(), insertion_order: VecDeque::new(), bytes: 0, max_bytes }
+    }
+    pub fn len(&self) -> usize { self.entries.len() }
+    pub fn is_empty(&self) -> bool { self.entries.is_empty() }
+    pub fn bytes(&self) -> usize { self.bytes }
+    pub fn get(&self, id: TextureId) -> Option<&GpuTexture> { self.entries.get(&id) }
+    fn insert(&mut self, texture: GpuTexture) -> Result<(), RendererError> {
+        let size = expected_rgba_bytes(texture.width, texture.height).ok_or(RendererError::InvalidTextureData {
+            width: texture.width, height: texture.height, bytes: 0,
+        })?;
+        if size > self.max_bytes {
+            return Err(RendererError::TextureExceedsCacheLimit { requested: size, limit: self.max_bytes });
+        }
+        if let Some(old) = self.entries.remove(&texture.id) {
+            self.bytes = self.bytes.saturating_sub(expected_rgba_bytes(old.width, old.height).unwrap_or(0));
+            self.insertion_order.retain(|&id| id != texture.id);
+        }
+        while self.bytes.saturating_add(size) > self.max_bytes {
+            let Some(oldest) = self.insertion_order.pop_front() else { break; };
+            if let Some(old) = self.entries.remove(&oldest) {
+                self.bytes = self.bytes.saturating_sub(expected_rgba_bytes(old.width, old.height).unwrap_or(0));
+            }
+        }
+        self.bytes = self.bytes.saturating_add(size);
+        self.insertion_order.push_back(texture.id);
+        self.entries.insert(texture.id, texture);
+        Ok(())
+    }
+}
+impl Default for GpuTextureCache {
+    fn default() -> Self { Self::new(DEFAULT_TEXTURE_CACHE_BYTES) }
 }
 
 /// Backend-independent presentation contract. Implementations consume
@@ -190,6 +237,7 @@ pub struct WgpuRenderer {
     viewport: Viewport,
     frame_index: u64,
     last_frame: Instant,
+    texture_cache: GpuTextureCache,
 }
 
 impl WgpuRenderer {
@@ -252,10 +300,22 @@ impl WgpuRenderer {
         let sprite_pipeline = create_pipeline(&device, &sprite_layout, &sprite_shader, format, "cnc-sprite-pipeline");
         let ui_pipeline = create_pipeline(&device, &ui_layout, &ui_shader, format, "cnc-ui-pipeline");
         Ok(Self { _instance: instance, surface, device, queue, config, texture_layout, sampler,
-            sprite_pipeline, ui_pipeline, viewport, frame_index: 0, last_frame: Instant::now() })
+            sprite_pipeline, ui_pipeline, viewport, frame_index: 0, last_frame: Instant::now(),
+            texture_cache: GpuTextureCache::default() })
     }
 
     pub fn viewport(&self) -> Viewport { self.viewport }
+
+    /// Expand indexed pixels in `rts-formats` and upload the resulting RGBA8
+    /// image into the renderer-owned bounded GPU cache.
+    pub fn cache_rgba_image(&mut self, id: TextureId, image: &RgbaImage) -> Result<(), RendererError> {
+        if self.texture_cache.get(id).is_some() { return Ok(()); }
+        let texture = self.create_texture_rgba(id, image.width, image.height, &image.pixels)?;
+        self.texture_cache.insert(texture)
+    }
+
+    pub fn cached_texture(&self, id: TextureId) -> Option<&GpuTexture> { self.texture_cache.get(id) }
+    pub fn texture_cache_bytes(&self) -> usize { self.texture_cache.bytes() }
     pub fn resize(&mut self, viewport: Viewport) {
         if !viewport.is_visible() { return; }
         self.viewport = viewport;
@@ -278,7 +338,7 @@ impl WgpuRenderer {
         self.queue.write_texture(
             wgpu::TexelCopyTextureInfo { texture: &texture, mip_level: 0, origin: wgpu::Origin3d::ZERO, aspect: wgpu::TextureAspect::All },
             rgba,
-            wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(width * 4), rows_per_image: Some(height) },
+            wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(width.checked_mul(4).ok_or(RendererError::InvalidTextureData { width, height, bytes: rgba.len() })?), rows_per_image: Some(height) },
             wgpu::Extent3d { width, height, depth_or_array_layers: 1 },
         );
         let view = texture.create_view(&wgpu::TextureViewDescriptor::default());

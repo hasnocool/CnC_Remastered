@@ -274,3 +274,15 @@ The repository already contained a shared IFF and ICON/SINF/SSET/TRNS/MAP icon-s
 **Still unverified:** no real TD/RA theater icon sets have been loaded in this environment. The precise meaning of TRNS bytes and any non-8-bit/packed variants still require source-backed and real-file validation. Palette conversion and GPU upload are not yet connected.
 
 **Verification:** tests have been added but not executed; Cargo is unavailable in this environment.
+
+
+## TMP-to-renderer texture upload integration
+
+Inspection confirmed `crates/rts-formats/src/tmp.rs` already implements bounded TD/RA TMP header parsing, tile index lookup, blank tile handling and `Palette256` expansion to `RgbaImage`. This tranche connects that existing output to the GPU renderer instead of duplicating TMP decoding.
+
+- Renderer now depends on `rts-formats` and accepts its `RgbaImage` output.
+- Added a renderer-owned 128 MiB FIFO GPU texture cache. Cached `GpuTexture` objects retain their wgpu texture and bind group; eviction drops both together.
+- Added cache lookup and byte-accounting APIs. Oversized images are rejected instead of exceeding the cache budget.
+- Existing uncached `create_texture_rgba` remains available.
+
+**Not yet done:** no real retail TMP or SHP file was available for validation; TRNS semantics and palette encoding selection remain caller-controlled; no terrain chunk renderer or camera scrolling yet. Cargo formatting, compilation, tests and Clippy have not been run in this environment.

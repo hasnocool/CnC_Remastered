@@ -370,8 +370,8 @@
 - [ ] Validate TMP parsing and tile output against legally supplied original TD/RA terrain archives.
 - [x] Add synthetic binary fixtures and golden pixel vectors; do not commit retail game assets.
 - [ ] Validate retail SHP parsing and decoding against legally supplied original TD/RA asset files.
-- [ ] Connect decoded palette-indexed terrain and sprite frames to renderer texture upload.
-- [ ] Add bounded CPU/GPU texture caching and explicit device-resource lifetime.
+- [x] Add renderer API to upload palette-expanded RGBA images from `rts-formats` into a bounded GPU texture cache.
+- [x] Add a renderer-owned 128 MiB FIFO GPU texture cache with explicit GPU resource lifetime; bounded CPU-side decoded-image caching remains pending.
 - [ ] Implement camera-aware terrain chunks, adjacency transitions and viewport culling.
 - [ ] Wire TD, RA and editor asset/runtime providers into launcher application selection.
 
