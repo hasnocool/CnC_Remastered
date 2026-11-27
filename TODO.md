@@ -474,7 +474,8 @@
 ## Retail TD/RA asset validation harness
 
 - [x] Add `asset-validate`, a CPU-only CLI that accepts external scenario INI, TD editor BIN, palette, and caller-ordered legacy MIX archive paths.
-- [x] Validate supplied legacy MIX indexes and resolve each map-referenced theater ICON filename using the existing Westwood filename CRC and MIX lookup APIs.- [x] Decode TD raw editor BIN terrain pairs and RA numeric `[MapPack]` Base64/LCW chunks through their existing format readers.
+- [x] Validate supplied legacy MIX indexes and resolve each map-referenced theater ICON filename using the existing Westwood filename CRC and MIX lookup APIs.
+- [x] Decode TD raw editor BIN terrain pairs and RA numeric `[MapPack]` Base64/LCW chunks through their existing format readers.
 - [x] Validate theater catalog availability, referenced ICON-set parsing, logical MAP indirection, palette expansion, complete map-cell resolution, and deterministic RGBA atlas composition.
 - [x] Keep all retail assets external; add synthetic CLI parser/order/theater/checksum tests only.
 - [ ] Run the harness against legally supplied TD and RA retail scenarios, MIX archives, and palettes; record exact file/build provenance without copying assets into the repository.
