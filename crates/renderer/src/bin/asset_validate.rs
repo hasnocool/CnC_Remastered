@@ -370,6 +370,12 @@ mod tests {
     }
 
     #[test]
+    fn rejects_scenario_dimensions_over_the_validation_limit() {
+        assert!(checked_cell_count(1025, 1024).is_err());
+        assert_eq!(checked_cell_count(1024, 1024).unwrap(), MAX_VALIDATION_CELLS);
+    }
+
+    #[test]
     fn fnv_checksum_is_stable() {
         assert_eq!(fnv1a64(b""), 0xcbf29ce484222325);
         assert_eq!(fnv1a64(b"a"), 0xaf63dc4c8601ec8c);
