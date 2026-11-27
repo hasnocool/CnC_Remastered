@@ -384,3 +384,8 @@ The implementation preserves the audited distinction between occupancy and overl
 ## C# editor port — generic CellGrid<T> tranche
 
 Added `crates/map-editor-model/src/cell_grid.rs` and public exports. The Rust grid stores one optional value per row-major cell, supports coordinate/index access, returns explicit change events, emits one aggregate clear event, and copies by flattened length (so equal-area different-shape grids retain source behavior). Tests were added for these contracts but have not been run. Event values are returned to the caller; the C# delegate subscription model and Map aggregate wiring remain unimplemented. This is synthetic model coverage only, not retail validation.
+
+
+## C# editor Map update scheduling tranche
+
+Added `crates/map-editor-model/src/map_update.rs` and integrated `MapUpdateState` into `MapDocument`. The coordinator supports nested batches, safe underflow rejection, clipped 3x3 resource/wall invalidation, coalesced overlapper rebuild requests, and a panic-safe update guard. This ports scheduling/invalidation only: occupancy event bridges, actual overlapper rebuilds, derived icons, bib ownership, typed catalogs and section ownership remain outstanding. Tests were added but not run because the environment lacks the Rust toolchain. See `docs/port-tranches/MAP_EDITOR_UPDATE_BATCHING.md`.
