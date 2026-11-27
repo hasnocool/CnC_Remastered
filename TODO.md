@@ -411,3 +411,7 @@
 - Atlas dimensions are capped at 8192 per axis and 128 MiB. The caller must use a texture ID unique to the map/theater/palette identity; the existing cache treats an already-cached ID as immutable.
 - Added CPU-only tests for atlas packing, deterministic tile slots, UV generation, camera culling and empty terrain cells. Tests are authored but have not been executed.
 - This TMP-backed composition path remains separate from the IFF icon-set parser pending source-backed confirmation of each format's asset role.
+
+
+- Added cached-texture frame submission: WgpuRenderer::render_cached resolves a TextureId internally, avoiding an impossible external borrow of a texture held inside the renderer cache.
+- Added TerrainAtlas::render_visible to build the camera-culled chunk batch and submit it against its cached atlas ID in one call.

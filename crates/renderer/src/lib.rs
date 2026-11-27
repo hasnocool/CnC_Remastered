@@ -143,7 +143,7 @@ const ATTRIBUTES: [wgpu::VertexAttribute; 3] = wgpu::vertex_attr_array![0 => Flo
 pub struct GpuTexture {
     pub id: TextureId,
     _texture: wgpu::Texture,
-    bind_group: wgpu::BindGroup,
+    bind_group: Arc<wgpu::BindGroup>,
     pub width: u32,
     pub height: u32,
 }
@@ -155,6 +155,7 @@ pub enum RendererError {
     InvalidTextureData { width: u32, height: u32, bytes: usize },
     TextureExceedsCacheLimit { requested: usize, limit: usize },
     TerrainDecode(IconSetError),
+    TextureNotCached(TextureId),
 }
 impl std::fmt::Display for RendererError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -169,6 +170,7 @@ impl std::fmt::Display for RendererError {
             Self::InvalidTextureData { width, height, bytes } => write!(f, "RGBA texture {width}x{height} requires {} bytes, got {bytes}", expected_rgba_bytes(*width,*height).unwrap_or(usize::MAX)),
             Self::TextureExceedsCacheLimit { requested, limit } => write!(f, "texture requires {requested} bytes, exceeding cache limit {limit}"),
             Self::TerrainDecode(error) => write!(f, "terrain tile decode failed: {error}"),
+            Self::TextureNotCached(id) => write!(f, "texture {id} is not present in the GPU cache"),
         }
     }
 }
@@ -380,15 +382,59 @@ impl WgpuRenderer {
                 wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&self.sampler) },
             ],
         });
-        Ok(GpuTexture { id, _texture: texture, bind_group, width, height })
+        Ok(GpuTexture { id, _texture: texture, bind_group: Arc::new(bind_group), width, height })
     }
 
-    pub fn render(&mut self, clear: Color, sprites: Option<(&SpriteBatch, &GpuTexture)>, ui: &UiFrame) -> Result<FrameStats, RendererError> {
+    /// Render sprites using a caller-owned texture.
+    pub fn render(
+        &mut self,
+        clear: Color,
+        sprites: Option<(&SpriteBatch, &GpuTexture)>,
+        ui: &UiFrame,
+    ) -> Result<FrameStats, RendererError> {
+        self.render_inner(
+            clear,
+            sprites.map(|(batch, texture)| (batch, texture.id, texture.bind_group.as_ref())),
+            ui,
+        )
+    }
+
+    /// Render using a texture ID from the renderer-owned cache. Cloning the
+    /// Arc keeps the bind group alive without borrowing the cache across the
+    /// mutable frame submission operation.
+    pub fn render_cached(
+        &mut self,
+        clear: Color,
+        sprites: Option<(&SpriteBatch, TextureId)>,
+        ui: &UiFrame,
+    ) -> Result<FrameStats, RendererError> {
+        let bind_group = match sprites {
+            Some((_, id)) => Some(
+                self.texture_cache.get(id)
+                    .map(|texture| Arc::clone(&texture.bind_group))
+                    .ok_or(RendererError::TextureNotCached(id))?,
+            ),
+            None => None,
+        };
+        let sprite_data = match (sprites, bind_group.as_ref()) {
+            (Some((batch, id)), Some(group)) => Some((batch, id, group.as_ref())),
+            (None, None) => None,
+            _ => unreachable!("sprite texture and bind group are resolved together"),
+        };
+        self.render_inner(clear, sprite_data, ui)
+    }
+
+    fn render_inner(
+        &mut self,
+        clear: Color,
+        sprites: Option<(&SpriteBatch, TextureId, &wgpu::BindGroup)>,
+        ui: &UiFrame,
+    ) -> Result<FrameStats, RendererError> {
         let frame = self.surface.get_current_texture().map_err(|e| RendererError::Surface(e.to_string()))?;
         let view = frame.texture.create_view(&wgpu::TextureViewDescriptor::default());
         let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("cnc-frame-encoder") });
 
-        let sprite_vertices = sprites.map(|(batch, texture)| build_sprite_vertices(batch, texture.id, self.viewport));
+        let sprite_vertices = sprites.map(|(batch, texture_id, _)| build_sprite_vertices(batch, texture_id, self.viewport));
         let sprite_buffer = sprite_vertices.as_ref().filter(|v| !v.is_empty()).map(|vertices| self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("cnc-sprite-vertices"), contents: bytemuck::cast_slice(vertices), usage: wgpu::BufferUsages::VERTEX,
         }));
@@ -405,10 +451,10 @@ impl WgpuRenderer {
                 })],
                 depth_stencil_attachment: None, timestamp_writes: None, occlusion_query_set: None,
             });
-            if let (Some(buffer), Some((_, texture)), Some(vertices)) = (&sprite_buffer, sprites, &sprite_vertices) {
+            if let (Some(buffer), Some((_, _, bind_group)), Some(vertices)) = (&sprite_buffer, sprites, &sprite_vertices) {
                 if !vertices.is_empty() {
                     pass.set_pipeline(&self.sprite_pipeline);
-                    pass.set_bind_group(0, &texture.bind_group, &[]);
+                    pass.set_bind_group(0, bind_group, &[]);
                     pass.set_vertex_buffer(0, buffer.slice(..));
                     pass.draw(0..vertices.len() as u32, 0..1);
                 }

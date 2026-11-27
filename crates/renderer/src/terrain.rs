@@ -7,8 +7,8 @@ use rts_formats::{
     tmp::{TmpArchive, TmpError},
 };
 use crate::{
-    Camera2d, Color, RenderLayer, RendererError, SpriteBatch, SpriteInstance,
-    TextureId, Viewport, WgpuRenderer,
+    Camera2d, Color, FrameStats, RenderLayer, RendererError, SpriteBatch, SpriteInstance,
+    TextureId, UiFrame, Viewport, WgpuRenderer,
 };
 
 pub const TERRAIN_CHUNK_CELLS: u32 = 16;
@@ -128,6 +128,20 @@ impl TerrainAtlas {
     pub fn upload(&self, renderer: &mut WgpuRenderer) -> Result<(), TerrainError> {
         renderer.cache_rgba_image(self.texture_id, &self.image)?;
         Ok(())
+    }
+
+    /// Build the visible chunk batch and submit it using this atlas's cached texture ID.
+    pub fn render_visible(
+        &self,
+        renderer: &mut WgpuRenderer,
+        map: &TerrainMap,
+        camera: Camera2d,
+        viewport: Viewport,
+        clear: Color,
+        ui: &UiFrame,
+    ) -> Result<FrameStats, TerrainError> {
+        let batch = self.visible_batch(map, camera, viewport)?;
+        Ok(renderer.render_cached(clear, Some((&batch, self.texture_id)), ui)?)
     }
 
     /// Emit screen-space sprites for visible cells, traversing 16x16 chunks.
