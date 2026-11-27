@@ -379,6 +379,20 @@ mod tests {
     }
 
     #[test]
+    fn public_cell_updates_cannot_desynchronize_object_occupancy() {
+        let mut map = map();
+        let def = definition();
+        map.add_terrain_object(CellCoord::new(1, 1), &def, 22, None).unwrap();
+        let mut changed = *map.cell(CellCoord::new(1, 1)).unwrap();
+        changed.terrain = None;
+        assert_eq!(
+            map.set_cell(CellCoord::new(1, 1), changed),
+            Err(crate::MapDocumentError::TerrainObjectCellConflict(CellCoord::new(1, 1)))
+        );
+        assert_eq!(map.terrain_object_at(CellCoord::new(1, 1)).unwrap().terrain_type, 18);
+    }
+
+    #[test]
     fn rejects_overlapping_object_atomically() {
         let mut map = map();
         let def = definition();
