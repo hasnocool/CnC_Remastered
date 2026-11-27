@@ -2,7 +2,9 @@
 
 pub mod cell_metrics;
 pub mod cell_grid;
+pub mod map_update;
 pub use cell_grid::{CellGrid, CellGridError, CellGridEvent};
+pub use map_update::{MapUpdateError, MapUpdateState, MapUpdateWork, OverlayInvalidation};
 pub mod occupier_set;
 pub mod overlapper_set;
 pub use cell_metrics::CellMetrics;
@@ -38,6 +40,7 @@ pub struct MapDocument {
     dimensions: MapDimensions,
     cells: Vec<CellLayers>,
     waypoints: BTreeMap<u16, CellCoord>,
+    update_state: MapUpdateState,
 }
 
 impl MapDocument {
@@ -58,6 +61,7 @@ impl MapDocument {
             dimensions,
             cells: vec![CellLayers::default(); dimensions.cell_count()],
             waypoints: BTreeMap::new(),
+            update_state: MapUpdateState::new(dimensions),
         })
     }
 
@@ -128,6 +132,32 @@ impl MapDocument {
 
     pub fn waypoints(&self) -> &BTreeMap<u16, CellCoord> {
         &self.waypoints
+    }
+
+    /// Begins a nestable map update batch. Derived work is deferred until the
+    /// matching outermost end_update call.
+    pub fn begin_update(&mut self) {
+        self.update_state.begin_update();
+    }
+
+    pub fn end_update(&mut self) -> Result<Option<MapUpdateWork>, MapUpdateError> {
+        self.update_state.end_update()
+    }
+
+    pub fn invalidate_overlay(
+        &mut self,
+        coordinate: CellCoord,
+        kind: OverlayInvalidation,
+    ) -> Result<Option<MapUpdateWork>, MapUpdateError> {
+        self.update_state.invalidate_overlay(coordinate, kind)
+    }
+
+    pub fn request_overlapper_rebuild(&mut self) -> Option<MapUpdateWork> {
+        self.update_state.request_overlapper_rebuild()
+    }
+
+    pub fn update_state(&self) -> &MapUpdateState {
+        &self.update_state
     }
 }
 
