@@ -526,3 +526,17 @@ Scope limits: current harness supports the existing legacy unencrypted MIX parse
 - [ ] Add typed source-derived Building/Overlay/Terrain/InfantryGroup records and dynamic mask updates.
 - [ ] Synchronize CellGrid overlay changes with wall occupancy; implement bib Smudge ownership and derived icons.
 - [ ] Run cargo fmt/check/test/clippy once the Rust toolchain is available.
+
+
+## Map editor tranche — typed overlays and wall synchronization
+
+- [x] Add placed Overlay and Smudge records preserving Type, Icon, Data (Smudge), and Tint.
+- [x] Preserve source OverlayTypeFlag and SmudgeTypeFlag numeric values and bit semantics.
+- [x] Add one-cell OverlayType occupancy metadata.
+- [x] Add typed overlay definitions and placed-overlay storage to MapEditorState.
+- [x] Synchronize wall replacement/removal/addition across Buildings and Technos using staged spatial changes.
+- [x] Route resource and wall changes into batched 3×3 invalidation work.
+- [ ] Replace numeric CellLayers overlay storage with integrated typed/evented grid semantics without breaking serialization.
+- [ ] Implement resource and wall icon calculations; bib placement/removal and ownership.
+- [ ] Complete typed Building/BuildingType, TerrainType and InfantryGroup records and overlapper integration.
+- [ ] Run Rust formatting, compilation, tests and Clippy when the toolchain is available.
