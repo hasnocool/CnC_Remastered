@@ -4,7 +4,7 @@
 //! separate source concepts and belong in renderer-facing metadata adapters.
 //! The mask uses explicit row-major storage: index = y * width + x.
 
-use crate::MapDocument;
+use crate::{MapDocument, MapDocumentError, MapEditHistory};
 use rts_core::CellCoord;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -83,6 +83,7 @@ pub enum TerrainPlacementError {
     OutOfBounds(CellCoord),
     Occupied(CellCoord),
     MissingPlacement(CellCoord),
+    History(MapDocumentError),
 }
 
 /// Places every occupied mask cell atomically. Empty mask cells are untouched.
@@ -147,6 +148,64 @@ pub fn remove_terrain(
     Ok(cells)
 }
 
+
+
+/// Creates the validated cell replacements for a complete terrain footprint.
+fn terrain_history_changes(
+    document: &MapDocument,
+    origin: CellCoord,
+    definition: &TerrainPlacementDefinition,
+    placing: bool,
+) -> Result<Vec<(CellCoord, crate::CellLayers)>, TerrainPlacementError> {
+    let cells: Vec<_> = definition.occupancy.occupied_cells(origin).collect();
+    let expected = definition.occupancy.occupied.iter().filter(|cell| **cell).count();
+    if cells.len() != expected {
+        return Err(TerrainPlacementError::OutOfBounds(origin));
+    }
+    let mut changes = Vec::with_capacity(cells.len());
+    for coordinate in cells {
+        let mut layers = *document.cell(coordinate)
+            .ok_or(TerrainPlacementError::OutOfBounds(coordinate))?;
+        if placing {
+            if layers.terrain.is_some() { return Err(TerrainPlacementError::Occupied(coordinate)); }
+            layers.terrain = Some(definition.id);
+        } else {
+            if layers.terrain != Some(definition.id) {
+                return Err(TerrainPlacementError::MissingPlacement(coordinate));
+            }
+            layers.terrain = None;
+        }
+        changes.push((coordinate, layers));
+    }
+    Ok(changes)
+}
+
+/// Places an entire terrain footprint as one undoable history command.
+pub fn place_terrain_with_history(
+    document: &mut MapDocument,
+    history: &mut MapEditHistory,
+    origin: CellCoord,
+    definition: &TerrainPlacementDefinition,
+) -> Result<Vec<CellCoord>, TerrainPlacementError> {
+    let changes = terrain_history_changes(document, origin, definition, true)?;
+    let coordinates = changes.iter().map(|(coordinate, _)| *coordinate).collect();
+    history.apply_cells(document, &changes).map_err(TerrainPlacementError::History)?;
+    Ok(coordinates)
+}
+
+/// Removes an entire terrain footprint as one undoable history command.
+pub fn remove_terrain_with_history(
+    document: &mut MapDocument,
+    history: &mut MapEditHistory,
+    origin: CellCoord,
+    definition: &TerrainPlacementDefinition,
+) -> Result<Vec<CellCoord>, TerrainPlacementError> {
+    let changes = terrain_history_changes(document, origin, definition, false)?;
+    let coordinates = changes.iter().map(|(coordinate, _)| *coordinate).collect();
+    history.apply_cells(document, &changes).map_err(TerrainPlacementError::History)?;
+    Ok(coordinates)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -166,6 +225,47 @@ mod tests {
             occupancy: OccupancyMask::new(2, 2, vec![true, false, true, true]).unwrap(),
             transformable: false,
         }
+    }
+
+
+    #[test]
+    fn history_backed_placement_and_removal_are_single_undo_steps() {
+        let mut map = document();
+        let mut history = crate::MapEditHistory::default();
+        let origin = CellCoord::new(1, 1);
+        let definition = definition();
+        let overlay = CellLayers { overlay: Some(22), ..CellLayers::default() };
+        map.set_cell(CellCoord::new(1, 1), overlay).unwrap();
+
+        place_terrain_with_history(&mut map, &mut history, origin, &definition).unwrap();
+        assert_eq!(history.undo_depth(), 1);
+        assert_eq!(map.cell(CellCoord::new(1, 1)).unwrap().terrain, Some(7));
+        assert_eq!(map.cell(CellCoord::new(1, 1)).unwrap().overlay, Some(22));
+        history.undo(&mut map).unwrap();
+        assert!(map.cells().iter().all(|cell| cell.terrain.is_none()));
+        assert_eq!(map.cell(CellCoord::new(1, 1)).unwrap().overlay, Some(22));
+        history.redo(&mut map).unwrap();
+        assert_eq!(map.cell(CellCoord::new(2, 2)).unwrap().terrain, Some(7));
+
+        remove_terrain_with_history(&mut map, &mut history, origin, &definition).unwrap();
+        assert_eq!(history.undo_depth(), 2);
+        history.undo(&mut map).unwrap();
+        assert_eq!(map.cell(CellCoord::new(2, 2)).unwrap().terrain, Some(7));
+        history.redo(&mut map).unwrap();
+        assert!(map.cells().iter().all(|cell| cell.terrain.is_none()));
+    }
+
+    #[test]
+    fn history_backed_placement_rejects_footprint_without_history_or_partial_write() {
+        let mut map = document();
+        let mut history = crate::MapEditHistory::default();
+        map.set_cell(CellCoord::new(1, 2), CellLayers { terrain: Some(99), ..CellLayers::default() }).unwrap();
+        assert!(matches!(
+            place_terrain_with_history(&mut map, &mut history, CellCoord::new(1, 1), &definition()),
+            Err(TerrainPlacementError::Occupied(_))
+        ));
+        assert_eq!(history.undo_depth(), 0);
+        assert!(map.cells().iter().filter(|cell| cell.terrain == Some(7)).count() == 0);
     }
 
     #[test]
