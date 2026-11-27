@@ -281,7 +281,7 @@ impl MapEditorState {
     ) -> Result<(), MapEditorStateError> {
         let definition = self.building_types.get(&type_id)
             .ok_or(MapEditorStateError::UnknownBuildingType(type_id))?;
-        let overlap_height = definition.height + u16::from(definition.has_bib);
+        let overlap_height = definition.height + if definition.has_bib { 1 } else { 0 };
         let bounds = OverlapRect::new(i32::from(anchor.x), i32::from(anchor.y),
             i32::from(definition.width), i32::from(overlap_height));
         self.add_typed_building_with_overlap_bounds(id, type_id, anchor, bounds, house, direction)
