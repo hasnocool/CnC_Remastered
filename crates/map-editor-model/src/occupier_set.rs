@@ -9,7 +9,7 @@ pub struct OccupierId(pub u64);
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum OccupierError {
     DuplicateObject(OccupierId),
-    CellOutOfBounds(CellCoord),
+    CellOutOfBounds { x: u32, y: u32 },
     CellOccupied { cell: CellCoord, by: OccupierId },
 }
 
@@ -44,7 +44,7 @@ impl OccupierSet {
             let x = u32::from(anchor.x) + u32::from(dx);
             let y = u32::from(anchor.y) + u32::from(dy);
             if x >= u32::from(self.dimensions.width()) || y >= u32::from(self.dimensions.height()) {
-                return Err(OccupierError::CellOutOfBounds(CellCoord::new(x as u16, y as u16)));
+                return Err(OccupierError::CellOutOfBounds { x, y });
             }
             let cell = CellCoord::new(x as u16, y as u16);
             if !unique.contains(&cell) { unique.push(cell); }
