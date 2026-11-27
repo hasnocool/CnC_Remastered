@@ -261,11 +261,11 @@ mod tests {
     }
     #[test]
     fn supports_format40_short_and_long_command_families() {
-        let mut pixels = [0u8; 8];
+        let mut pixels = [0u8; 12];
         let delta = [2, 0xaa, 0xbb, 0x82, 0, 2, 0x0f, 0x80, 3, 0,
             0x80, 2, 0x80, 0x55, 0x66, 0x80, 1, 0xc0, 0x0f, 0x80, 0, 0];
         apply_xor_delta(&mut pixels, &delta).unwrap();
-        assert_eq!(pixels, [0xaa, 0xbb, 0, 0x0f, 0x0f, 0x55, 0x66, 0]);
+        assert_eq!(pixels, [0xaa, 0xbb, 0, 0, 0x0f, 0x0f, 0, 0, 0, 0x55, 0x66, 0x0f]);
     }
     #[test]
     fn rejects_truncated_and_out_of_bounds_delta_commands() {
