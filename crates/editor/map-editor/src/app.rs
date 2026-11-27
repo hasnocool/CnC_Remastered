@@ -1,7 +1,7 @@
 use crate::format::{MapFile, MAX_MAP_FILE_BYTES};
 use egui::RichText;
 use map_editor_model::{
-    place_terrain_with_history, CellLayers, MapDocument, MapEditHistory,
+    CellLayers, MapDocument, MapEditHistory,
     TerrainCatalog, OverlayCatalog, place_overlay_with_history,
 };
 use rts_core::{CellCoord, GameVariant, MapDimensions, template_catalog::TemplateTheater};
