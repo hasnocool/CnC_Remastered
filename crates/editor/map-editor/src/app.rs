@@ -1,6 +1,9 @@
 use crate::format::{MapFile, MAX_MAP_FILE_BYTES};
 use egui::RichText;
-use map_editor_model::{CellLayers, MapDocument};
+use map_editor_model::{
+    place_terrain_with_history, CellLayers, MapDocument, MapEditHistory, OccupancyMask,
+    TerrainPlacementDefinition,
+};
 use rts_core::{CellCoord, GameVariant, MapDimensions, template_catalog::TemplateTheater};
 use rts_assets::{TemplateAssetProvider, TerrainAssetSet};
 use rts_formats::{mix::MixArchive, palette_rgba::{Palette256, PaletteEncoding}};
@@ -27,6 +30,7 @@ enum IoEvent {
 
 pub struct EditorApp {
     map: MapDocument,
+    history: MapEditHistory,
     canvas: MapCanvas,
     selected: Option<CellCoord>,
     brush: u16,
@@ -105,6 +109,7 @@ impl EditorApp {
 
         Ok(Self {
             map,
+            history: MapEditHistory::default(),
             canvas: MapCanvas::default(),
             selected: None,
             brush: 1,
@@ -129,6 +134,7 @@ impl EditorApp {
         match MapDocument::new(variant, dimensions) {
             Ok(map) => {
                 self.map = map;
+                self.history.clear();
                 self.selected = None;
                 self.canvas.selected = None;
                 self.canvas.clear_terrain_assets();
@@ -198,6 +204,7 @@ impl eframe::App for EditorApp {
                 IoEvent::Saved(Err(error)) => self.status = format!("Save failed: {error}"),
                 IoEvent::Loaded(Ok(map)) => {
                     self.map = map;
+                    self.history.clear();
                     self.selected = None;
                     self.canvas.selected = None;
                     self.canvas.clear_terrain_assets();
@@ -223,6 +230,22 @@ impl eframe::App for EditorApp {
                 if ui.button("Save").clicked() { self.save(); }
                 if ui.button("Load").clicked() { self.load(); }
                 if ui.button("Load Theater Assets").clicked() { self.load_assets(); }
+                if ui.add_enabled(self.history.can_undo(), egui::Button::new("Undo")).clicked() {
+                    self.status = match self.history.undo(&mut self.map) {
+                        Ok(true) => "Undo applied".into(),
+                        Ok(false) => "Nothing to undo".into(),
+                        Err(error) => format!("Undo rejected: {error:?}"),
+                    };
+                    self.canvas.clear_terrain_assets();
+                }
+                if ui.add_enabled(self.history.can_redo(), egui::Button::new("Redo")).clicked() {
+                    self.status = match self.history.redo(&mut self.map) {
+                        Ok(true) => "Redo applied".into(),
+                        Ok(false) => "Nothing to redo".into(),
+                        Err(error) => format!("Redo rejected: {error:?}"),
+                    };
+                    self.canvas.clear_terrain_assets();
+                }
                 ui.checkbox(&mut self.canvas.show_grid, "Grid");
                 ui.add(egui::Slider::new(&mut self.canvas.cell_size, 8.0..=40.0).text("Zoom"));
             });
@@ -288,21 +311,47 @@ impl eframe::App for EditorApp {
                 if let Some(cell) = clicked {
                     self.selected = Some(cell);
                     self.canvas.selected = Some(cell);
-                    let mut layers = self.map.cell(cell).copied().unwrap_or_default();
-                    match self.brush_layer {
-                        PaintLayer::Terrain => layers.terrain = Some(self.brush),
-                        PaintLayer::Template => {
-                            layers.template = Some(self.brush);
-                            layers.template_icon = self.template_icon;
-                        },
-                        PaintLayer::Overlay => layers.overlay = Some(self.brush),
-                        PaintLayer::Smudge => layers.smudge = Some(self.brush),
-                    }
-                    if let Err(error) = self.map.set_cell(cell, layers) {
-                        self.status = format!("Paint failed: {error:?}");
-                    } else if matches!(self.brush_layer, PaintLayer::Template) {
-                        self.canvas.clear_terrain_assets();
-                        self.status = "Template changed; reload theater assets to refresh terrain".into();
+                    let result = match self.brush_layer {
+                        PaintLayer::Terrain => {
+                            // The source-derived TD/RA terrain catalog is not
+                            // connected yet. Keep this UI brush explicitly 1x1;
+                            // do not infer retail masks or transform behavior.
+                            let occupancy = OccupancyMask::new(1, 1, vec![true])
+                                .expect("the generic single-cell brush is valid");
+                            let definition = TerrainPlacementDefinition {
+                                id: self.brush,
+                                occupancy,
+                                transformable: false,
+                            };
+                            place_terrain_with_history(
+                                &mut self.map,
+                                &mut self.history,
+                                cell,
+                                &definition,
+                            ).map(|_| ()).map_err(|error| format!("{error:?}"))
+                        }
+                        layer => {
+                            let mut layers = self.map.cell(cell).copied().unwrap_or_default();
+                            match layer {
+                                PaintLayer::Terrain => unreachable!(),
+                                PaintLayer::Template => {
+                                    layers.template = Some(self.brush);
+                                    layers.template_icon = self.template_icon;
+                                }
+                                PaintLayer::Overlay => layers.overlay = Some(self.brush),
+                                PaintLayer::Smudge => layers.smudge = Some(self.brush),
+                            }
+                            self.history.apply_cell(&mut self.map, cell, layers)
+                                .map(|_| ()).map_err(|error| format!("{error:?}"))
+                        }
+                    };
+                    match result {
+                        Ok(()) if matches!(self.brush_layer, PaintLayer::Template) => {
+                            self.canvas.clear_terrain_assets();
+                            self.status = "Template changed; reload theater assets to refresh terrain".into();
+                        }
+                        Ok(()) => self.status = format!("{:?} painted at {}, {}", self.brush_layer, cell.x, cell.y),
+                        Err(error) => self.status = format!("Paint failed: {error}"),
                     }
                 }
             });
