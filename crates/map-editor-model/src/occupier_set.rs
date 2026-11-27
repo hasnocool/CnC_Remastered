@@ -1,6 +1,6 @@
 //! Source-derived mask occupancy index from the pinned C# map editor.
 //! Occupancy is separate from rectangle overlap; additions are preflighted atomically.
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 use rts_core::{CellCoord, MapDimensions};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -39,16 +39,16 @@ impl OccupierSet {
     /// The operation changes neither index if any point is invalid or occupied.
     pub fn add(&mut self, id: OccupierId, anchor: CellCoord, mask_points: &[(u16, u16)]) -> Result<(), OccupierError> {
         if self.objects.contains_key(&id) { return Err(OccupierError::DuplicateObject(id)); }
-        let mut unique = BTreeSet::new();
+        let mut unique = Vec::with_capacity(mask_points.len());
         for &(dx, dy) in mask_points {
             let x = u32::from(anchor.x) + u32::from(dx);
             let y = u32::from(anchor.y) + u32::from(dy);
             if x >= u32::from(self.dimensions.width()) || y >= u32::from(self.dimensions.height()) {
                 return Err(OccupierError::CellOutOfBounds(CellCoord::new(x as u16, y as u16)));
             }
-            unique.insert(CellCoord::new(x as u16, y as u16));
+            let cell = CellCoord::new(x as u16, y as u16);\n            if !unique.contains(&cell) { unique.push(cell); }
         }
-        let cells: Vec<_> = unique.into_iter().collect();
+        let cells = unique;
         for &cell in &cells {
             if let Some(by) = self.occupant_at(cell) {
                 return Err(OccupierError::CellOccupied { cell, by });
