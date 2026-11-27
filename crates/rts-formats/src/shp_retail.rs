@@ -282,12 +282,36 @@ mod tests {
         b
     }
     #[test]
-    fn decodes_keyframe_xor_keyframe_and_chained_previous_frame() {
+    fn decodes_keyframe_xor_keyframe_and_chain_base_frame_reference() {
         let shp = RetailShpFile::parse(&fixture()).unwrap();
         assert_eq!(shp.decode_frames().unwrap(), vec![
             vec![1, 2, 3], vec![0xfe, 2, 3], vec![0xfe, 2, 0xf3],
         ]);
     }
+    #[test]
+    fn resolves_full_24_bit_keyframe_reference_offsets() {
+        let table_end = HEADER + 4 * ENTRY;
+        let key_offset = 70_000usize;
+        let key = [0x81, 0x2a, 0x80];
+        let delta_offset = key_offset + key.len();
+        let delta = [1, 0x01, 0x80, 0, 0];
+        let eof = delta_offset + delta.len();
+        let mut bytes = Vec::new();
+        for value in [2u16, 0, 0, 1, 1, 1, 0] {
+            bytes.extend_from_slice(&value.to_le_bytes());
+        }
+        entry(&mut bytes, 0x80, key_offset, 0, 0);
+        entry(&mut bytes, 0x40, delta_offset, key_offset as u32, 0x80);
+        entry(&mut bytes, 0, eof, 0, 0);
+        entry(&mut bytes, 0, 0, 0, 0);
+        bytes.resize(key_offset, 0);
+        bytes.extend_from_slice(&key);
+        bytes.extend_from_slice(&delta);
+        let shp = RetailShpFile::parse(&bytes).unwrap();
+        assert_eq!(shp.decode_frames().unwrap(), vec![vec![0x2a], vec![0x2b]]);
+        assert!(table_end < key_offset);
+    }
+
     #[test]
     fn supports_format40_short_and_long_command_families() {
         let mut pixels = [0u8; 12];
