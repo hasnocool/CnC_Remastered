@@ -564,7 +564,8 @@ See `docs/port-tranches/MAP_EDITOR_DERIVED_OVERLAYS_AND_BIBS.md`.
 - [x] Add PlacedBuilding source defaults, raw/effective tint behavior, and bib-cell ownership.
 - [x] Add catalog-driven add_typed_building; derive masks, HasBib, dimensions and bib type automatically.
 - [x] Add typed cell and Building lifecycle regression tests.
-- [ ] Populate complete TD/RA BuildingType and SmudgeType catalogs from audited registries.
+- [x] Import all 60 TD and 63 RA BuildingType definitions and both 15-entry SmudgeType registries from the pinned upstream catalogs.
+- [x] Add variant-specific catalog registration and derive typed Building overlap bounds from source OccupyMask dimensions.
 - [ ] Connect overlap rectangle generation to CellMetrics and restrict document_mut bypasses.
 - [ ] Integrate typed object records with TD/RA scenario serializers without conflating catalog IDs and legacy slots.
 - [ ] Run cargo fmt, cargo test, cargo clippy on a Rust-enabled host.
