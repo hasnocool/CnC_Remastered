@@ -2,7 +2,7 @@ use crate::format::{MapFile, MAX_MAP_FILE_BYTES};
 use egui::RichText;
 use map_editor_model::{
     CellLayers, MapDocument, MapEditHistory,
-    TerrainCatalog, OverlayCatalog, place_overlay_with_history,
+    TerrainCatalog, TerrainObjectId, OverlayCatalog, place_overlay_with_history,
 };
 use rts_core::{CellCoord, GameVariant, MapDimensions, template_catalog::TemplateTheater};
 use rts_assets::{TemplateAssetProvider, TerrainAssetSet};
@@ -33,6 +33,7 @@ pub struct EditorApp {
     history: MapEditHistory,
     canvas: MapCanvas,
     selected: Option<CellCoord>,
+    selected_terrain_object: Option<TerrainObjectId>,
     brush: u16,
     template_icon: u8,
     brush_layer: PaintLayer,
@@ -112,6 +113,7 @@ impl EditorApp {
             history: MapEditHistory::default(),
             canvas: MapCanvas::default(),
             selected: None,
+            selected_terrain_object: None,
             brush: 1,
             template_icon: 0,
             brush_layer: PaintLayer::Terrain,
@@ -136,6 +138,7 @@ impl EditorApp {
                 self.map = map;
                 self.history.clear();
                 self.selected = None;
+                self.selected_terrain_object = None;
                 self.canvas.selected = None;
                 self.canvas.clear_terrain_assets();
                 self.status = "New map created".into();
@@ -230,6 +233,28 @@ impl eframe::App for EditorApp {
                 if ui.button("Save").clicked() { self.save(); }
                 if ui.button("Load").clicked() { self.load(); }
                 if ui.button("Load Theater Assets").clicked() { self.load_assets(); }
+                if ui.add_enabled(self.selected_terrain_object.is_some(), egui::Button::new("Remove selected terrain")).clicked() {
+                    let result = self.selected_terrain_object
+                        .and_then(|id| self.map.terrain_object(id).cloned().map(|object| (id, object)))
+                        .ok_or_else(|| "No terrain object selected".to_string())
+                        .and_then(|(id, object)| {
+                            let source = TerrainCatalog::all_entries(self.map.variant()).iter()
+                                .find(|definition| definition.id == object.terrain_type)
+                                .ok_or_else(|| format!("Unknown terrain type {}", object.terrain_type))?;
+                            let placement = source.placement_definition()
+                                .map_err(|error| format!("Invalid source occupancy mask: {error:?}"))?;
+                            self.history.remove_terrain_object(&mut self.map, id, &placement)
+                                .map_err(|error| format!("{error:?}"))?;
+                            Ok(())
+                        });
+                    match result {
+                        Ok(()) => {
+                            self.selected_terrain_object = None;
+                            self.status = "Terrain object removed".into();
+                        }
+                        Err(error) => self.status = format!("Terrain removal failed: {error}"),
+                    }
+                }
                 if ui.add_enabled(self.history.can_undo(), egui::Button::new("Undo")).clicked() {
                     let templates_changed = self.history.undo_changes_templates();
                     self.status = match self.history.undo(&mut self.map) {
@@ -336,6 +361,7 @@ impl eframe::App for EditorApp {
                 let (_response, clicked) = self.canvas.show(ui, &self.map);
                 if let Some(cell) = clicked {
                     self.selected = Some(cell);
+                    self.selected_terrain_object = self.map.terrain_object_at(cell).map(|object| object.id);
                     self.canvas.selected = Some(cell);
                     let result = match self.brush_layer {
                         PaintLayer::Overlay => {
@@ -368,6 +394,7 @@ impl eframe::App for EditorApp {
                                             source_definition.default_icon(),
                                             None,
                                         ).map(|id| {
+                                            self.selected_terrain_object = Some(id);
                                             self.status = format!("Terrain object {} placed at {}, {}", id.0, cell.x, cell.y);
                                         }).map_err(|error| format!("{error:?}")),
                                         Err(error) => Err(format!("Invalid source occupancy mask: {error:?}")),
