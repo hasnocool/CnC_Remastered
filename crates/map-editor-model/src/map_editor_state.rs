@@ -3,7 +3,7 @@
 //! The wrapper keeps serialized cell data separate from runtime/editor spatial
 //! indexes while providing one mutation boundary for placed buildings and walls.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use rts_core::{CellCoord, GameVariant, MapDimensions};
 use crate::{
     MapDocument, MapDocumentError, MapSpatialIndex, OccupierId, OverlapRect,
@@ -16,7 +16,7 @@ pub struct MapEditorState {
     document: MapDocument,
     spatial: MapSpatialIndex,
     overlay_types: BTreeMap<i8, OverlayTypeDefinition>,
-    overlays: BTreeMap<CellCoord, (PlacedOverlay, OccupierId)>,
+    overlays: HashMap<CellCoord, (PlacedOverlay, OccupierId)>,
     next_internal_occupier: u64,
 }
 
@@ -26,7 +26,7 @@ impl MapEditorState {
             document: MapDocument::new(variant, dimensions)?,
             spatial: MapSpatialIndex::new(dimensions),
             overlay_types: BTreeMap::new(),
-            overlays: BTreeMap::new(),
+            overlays: HashMap::new(),
             next_internal_occupier: u64::MAX,
         })
     }
@@ -101,7 +101,7 @@ impl MapEditorState {
     fn allocate_overlay_occupier(next_id: &mut u64, spatial: &MapSpatialIndex) -> Result<OccupierId, MapEditorStateError> {
         loop {
             let candidate = OccupierId(*next_id);
-            *next_id = next_id.checked_sub(1)
+            *next_id = (*next_id).checked_sub(1)
                 .ok_or(MapEditorStateError::OccupierIdsExhausted)?;
             if !spatial.contains_occupier(candidate) { return Ok(candidate); }
         }
