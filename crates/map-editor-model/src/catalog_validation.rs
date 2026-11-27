@@ -56,7 +56,7 @@ pub fn validate_building_catalog(
 
         let mut full_cells = BTreeSet::new();
         for &(x, y) in &building.occupy_mask {
-            let max_y = building.height + u16::from(building.has_bib);
+            let max_y = building.height + if building.has_bib { 1 } else { 0 };
             if x >= building.width || y >= max_y {
                 return Err(CatalogValidationError::BuildingMaskOutOfBounds(building.id));
             }
@@ -157,10 +157,11 @@ mod tests {
     fn bib_mask_must_replace_the_last_base_row_and_add_one_row() {
         let mut catalog = tiberian_dawn_building_types();
         let building = catalog.iter_mut().find(|building| building.has_bib).unwrap();
+        let building_id = building.id;
         building.occupy_mask.pop();
         assert_eq!(
             validate_building_catalog(&catalog),
-            Err(CatalogValidationError::BibMaskMismatch(building.id)),
+            Err(CatalogValidationError::BibMaskMismatch(building_id)),
         );
     }
 
