@@ -2,7 +2,7 @@ use crate::format::{MapFile, MAX_MAP_FILE_BYTES};
 use egui::RichText;
 use map_editor_model::{
     place_terrain_with_history, CellLayers, MapDocument, MapEditHistory, OccupancyMask,
-    TerrainPlacementDefinition,
+    TerrainPlacementDefinition, OverlayCatalog, place_overlay_with_history,
 };
 use rts_core::{CellCoord, GameVariant, MapDimensions, template_catalog::TemplateTheater};
 use rts_assets::{TemplateAssetProvider, TerrainAssetSet};
@@ -312,6 +312,24 @@ impl eframe::App for EditorApp {
                     self.selected = Some(cell);
                     self.canvas.selected = Some(cell);
                     let result = match self.brush_layer {
+                        PaintLayer::Overlay => {
+                            let catalog = OverlayCatalog::new(self.map.variant(), self.theater);
+                            match catalog.get(self.brush) {
+                                Some(definition) => place_overlay_with_history(
+                                    &mut self.map,
+                                    &mut self.history,
+                                    cell,
+                                    definition,
+                                    self.theater,
+                                ).map_err(|error| format!("{error:?}")),
+                                None => Err(format!(
+                                    "Overlay ID {} is not defined for {:?} in {:?}",
+                                    self.brush,
+                                    self.map.variant(),
+                                    self.theater
+                                )),
+                            }
+                        }
                         PaintLayer::Terrain => {
                             // The source-derived TD/RA terrain catalog is not
                             // connected yet. Keep this UI brush explicitly 1x1;
@@ -338,7 +356,7 @@ impl eframe::App for EditorApp {
                                     layers.template = Some(self.brush);
                                     layers.template_icon = self.template_icon;
                                 }
-                                PaintLayer::Overlay => layers.overlay = Some(self.brush),
+                                PaintLayer::Overlay => unreachable!(),
                                 PaintLayer::Smudge => layers.smudge = Some(self.brush),
                             }
                             self.history.apply_cell(&mut self.map, cell, layers)
