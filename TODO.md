@@ -514,3 +514,15 @@ Scope limits: current harness supports the existing legacy unencrypted MIX parse
 - [ ] Wire typed overlay/techno events into occupancy and overlapper indexes.
 - [ ] Implement resource/wall derived-icon recalculation and Building bib ownership.
 - [ ] Run cargo fmt/check/test/clippy once the Rust toolchain is available.
+
+
+## Map editor tranche — spatial index bridge
+
+- [x] Add a map-owned spatial index with distinct Buildings, Technos, and Overlappers collections.
+- [x] Register buildings with full occupancy in Buildings and base occupancy in Technos.
+- [x] Bridge wall registrations from Buildings into Technos while keeping walls out of Overlappers.
+- [x] Roll back occupancy registration if building overlap-bound registration fails.
+- [x] Compose MapDocument and spatial indexes through MapEditorState; request batched overlapper rebuild work on building changes.
+- [ ] Add typed source-derived Building/Overlay/Terrain/InfantryGroup records and dynamic mask updates.
+- [ ] Synchronize CellGrid overlay changes with wall occupancy; implement bib Smudge ownership and derived icons.
+- [ ] Run cargo fmt/check/test/clippy once the Rust toolchain is available.
