@@ -115,3 +115,8 @@ No Rust file was changed in this batch. No Rust build or test was run. This sour
 ## Rust mapping update — terrain object collection
 
 `MapDocument` now owns `BTreeMap<TerrainObjectId, TerrainObject>` plus a derived row-major per-cell terrain owner index. Terrain objects retain origin, source terrain type ID, icon and optional trigger. The object collection supports atomic add/remove/move operations using the source occupancy mask. Legacy cell terrain fields remain synchronized as a compatibility mirror. This is a terrain-only subset of source `Map.Technos`; no generic techno, building, overlapper, event batching, map theatre or derived overlap state is claimed.
+
+
+## Rust terrain history update
+
+The map-owned terrain object collection is now coordinated with object-level history. Placement/removal/movement transitions update the object record, per-cell owner index and legacy cell terrain/icon mirror together after validating expected state and all affected cells. This remains a terrain-specific aggregate; it does not yet represent every source `Map.Technos` type or source map update/event pipeline.
