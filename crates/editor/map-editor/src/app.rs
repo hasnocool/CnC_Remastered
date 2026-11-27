@@ -139,6 +139,7 @@ impl eframe::App for EditorApp {
                     self.map = map;
                     self.selected = None;
                     self.canvas.selected = None;
+                    self.canvas.clear_terrain_assets();
                     self.status = "Map loaded".into();
                 }
                 IoEvent::Loaded(Err(error)) => self.status = format!("Load failed: {error}"),
@@ -201,6 +202,9 @@ impl eframe::App for EditorApp {
                     }
                     if let Err(error) = self.map.set_cell(cell, layers) {
                         self.status = format!("Paint failed: {error:?}");
+                    } else if matches!(self.brush_layer, PaintLayer::Template) {
+                        self.canvas.clear_terrain_assets();
+                        self.status = "Template changed; reload theater assets to refresh terrain".into();
                     }
                 }
             });

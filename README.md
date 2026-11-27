@@ -64,9 +64,10 @@ The launcher reads `configs/launcher.toml` by default; copy `configs/launcher.to
 
 Rendering and asset responsibilities are currently split as follows:
 
-- `renderer`: low-level wgpu surface, texture cache, atlas uploads, sprite batches, camera-aware terrain composition, and GPU presentation. It also currently contains `TemplateAssetProvider` and CPU terrain-atlas construction; these backend-independent pieces should be extracted.
-- `rts-render`: egui-based map-canvas widget and camera/palette presentation helpers. It currently paints placeholder layer colors and does not yet consume authentic terrain assets.
+- `renderer`: low-level wgpu surface, texture cache, atlas uploads, sprite batches, camera-aware terrain composition, and GPU presentation. It retains a compatibility facade and wgpu-specific atlas adapter.
+- `rts-render`: egui-based map-canvas widget and camera/palette presentation helpers. It uploads decoded terrain tiles as nearest-neighbor egui textures.
 - `rts-formats`: variant-aware TD BIN, RA MapPack, TMP, ICONSET, MIX, and palette decoding.
+- `rts-assets`: backend-independent TD/RA theater lookup, ICONSET MAP indirection, palette expansion, and deduplicated RGBA terrain images.
 - `rts-assets`: source-derived theater template resolution and renderer-independent RGBA terrain tile sets.
 
 The editor can load a user-supplied MIX archive and palette, select a TD/RA theater and RGB6/RGB8 palette encoding, and decode authentic template imagery on its background asset worker. `rts-assets` returns a renderer-independent tile set; `rts-render` adapts those images to egui textures. The wgpu renderer retains its own atlas upload and sprite-batch adapter. The TD and RA binaries remain application shells, not playable game runtimes. The editor's JSON format remains a development interchange format, not Westwood scenario serialization. LAN discovery and TCP framing remain transport primitives, not authenticated multiplayer or deterministic session integration.
