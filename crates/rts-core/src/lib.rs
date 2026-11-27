@@ -18,6 +18,7 @@ pub mod rect;
 pub mod legacy_stub;
 pub mod link;
 pub mod map;
+pub mod template_catalog;
 pub mod region_size;
 pub mod inibin;
 pub mod shape_buffer;

@@ -326,3 +326,12 @@ Added TerrainAtlas::build_from_template_icon_sets. The caller supplies the theat
 The adapter rejects missing template types, duplicate catalog IDs, inconsistent icon pixel dimensions, invalid/empty MAP references, malformed image storage, invalid map dimensions, and atlas allocations beyond the 8192-axis / 128 MiB limits. It does not invent theater catalogs or asset filenames; those remain the caller's responsibility and require real TD/RA theater data validation.
 
 Cargo formatting, compilation, and tests remain unexecuted in this environment.
+
+
+## Source-derived TD/RA template catalogs
+
+Added upstream template type IDs, symbolic names, theater-availability masks, and ICON-set filename stems. TD metadata is derived from EA CnC_Tiberian_Dawn DEFINES.H / CDATA.CPP; RA metadata is derived from CnC_Red_Alert CODE/DEFINES.H / CODE/CDATA.CPP. The optional RA TEMPLATE_HILL01 entry behind FIXIT_ANTS is excluded because it is not part of the default enum/build.
+
+The catalog distinguishes TD Desert/Jungle/Temperate/Winter numbering from RA Temperate/Snow/Interior numbering. TerrainAtlas::build_from_template_catalog validates caller-loaded ICON sets against the selected variant and theater before using the existing logical-icon MAP indirection and RGBA atlas path. Asset providers still need to resolve theater suffixes and load IFF files from the user's game data; no proprietary assets are bundled.
+
+The lower-level build_from_template_icon_sets API remains available for custom mods and synthetic fixtures. Cargo formatting, compilation, tests, and Clippy remain unexecuted in this environment.

@@ -2,6 +2,7 @@
 //! Camera-aware terrain atlas construction and visible-chunk composition.
 
 use std::collections::{BTreeSet, HashMap};
+use rts_core::{GameVariant, template_catalog::{TemplateTheater, template_asset_for_theater, template_asset_metadata}};
 use rts_formats::{
     iconset::{IconSet, IconSetError},
     palette_rgba::{Palette256, RgbaImage},
@@ -22,6 +23,7 @@ pub enum TerrainError {
     InvalidTileIndex(usize),
     UnresolvedTemplateCell { template: u16, icon: u8 },
     UnknownTemplateType(u16),
+    TemplateNotAvailableInTheater { template: u16, variant: GameVariant, theater: TemplateTheater },
     DuplicateTemplateType(u16),
     InconsistentTemplateIconSize {
         template: u16,
@@ -47,8 +49,12 @@ impl std::fmt::Display for TerrainError {
                 "map template {template} icon {icon} has no resolved terrain image"
             ),
             Self::UnknownTemplateType(template) => {
-                write!(f, "map template type {template} is absent from the theater catalog")
+                write!(f, "map template type {template} is absent from the source-derived catalog")
             }
+            Self::TemplateNotAvailableInTheater { template, variant, theater } => write!(
+                f,
+                "map template type {template} is not available for {variant:?} theater {theater:?}"
+            ),
             Self::DuplicateTemplateType(template) => {
                 write!(f, "map template type {template} appears more than once in the theater catalog")
             }
@@ -201,15 +207,38 @@ impl TerrainAtlas {
         Self::from_indexed_images(texture_id, tile_width, tile_height, tiles)
     }
 
-    /// Builds a terrain atlas from authentic TD/RA template ICON sets.
+    /// Builds a terrain atlas using the source-derived TD/RA template catalog.
     ///
-    /// The supplied catalog must already be filtered to the selected game
-    /// variant and theater. Each map cell contains a template type and its
-    /// logical icon index. The icon set's MAP chunk resolves that logical
-    /// index to a physical SSET image; empty or invalid MAP entries are errors
-    /// for occupied template cells, matching the engine's map validation.
-    ///
-    /// Returns the resolved generic terrain grid alongside the packed atlas.
+    /// The caller supplies already-loaded ICON sets keyed by upstream template
+    /// type ID. This validates every supplied type against the selected game
+    /// variant and theater before using the shared MAP-indirection path.
+    pub fn build_from_template_catalog(
+        texture_id: TextureId,
+        variant: GameVariant,
+        theater: TemplateTheater,
+        width: u32,
+        height: u32,
+        templates: impl IntoIterator<Item = Option<(u16, u8)>>,
+        icon_sets: &[(u16, &IconSet)],
+        palette: &Palette256,
+    ) -> Result<(TerrainMap, Self), TerrainError> {
+        for &(template_type, _) in icon_sets {
+            if template_asset_metadata(variant, template_type).is_none() {
+                return Err(TerrainError::UnknownTemplateType(template_type));
+            }
+            if template_asset_for_theater(variant, template_type, theater).is_none() {
+                return Err(TerrainError::TemplateNotAvailableInTheater {
+                    template: template_type,
+                    variant,
+                    theater,
+                });
+            }
+        }
+        Self::build_from_template_icon_sets(texture_id, width, height, templates, icon_sets, palette)
+    }
+
+    /// Lower-level builder for custom mods and synthetic fixtures. Production
+    /// TD/RA loading should prefer build_from_template_catalog.
     pub fn build_from_template_icon_sets(
         texture_id: TextureId,
         width: u32,

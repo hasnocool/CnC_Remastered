@@ -438,7 +438,8 @@
 - [x] Add TerrainMap::from_template_cells() with an explicit game/theater resolver from map template IDs to TMP archive tile indices; do not assume the numeric IDs are interchangeable.
 - [x] Reject unresolved non-empty template IDs rather than silently rendering the wrong tile.
 - [x] Preserve both template type and logical icon index in map-editor cells; expose a row-major iterator of complete (type, icon) references.
-- [ ] Build variant/theater template catalogs that resolve each template type to its IFF ICON set, then resolve the cell's logical icon through that set's MAP table. Do not map template type IDs directly to TMP tile indices.
+- [x] Add source-derived TD/RA template catalogs with numeric type IDs, theater masks, and ICON-set asset stems from EA DEFINES.H / CDATA.CPP metadata (excluding optional RA FIXIT_ANTS-only entry).
+- [x] Add a catalog-validated renderer entry point that rejects template types unsupported by the selected game variant/theater before resolving their ICON-set MAP indirection.
 - [x] Add a renderer atlas/composition path for multiple template ICON sets; resolve each logical icon through its set's MAP indirection and reject empty/missing logical slots.
 - [ ] Add reusable per-chunk CPU composition keyed by map revision and invalidate only edited chunks.
 - [ ] Derive adjacency/transition selection from source-backed TD/RA template rules and real theater fixtures.
