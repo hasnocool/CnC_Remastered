@@ -165,7 +165,7 @@ impl BuildingTypeDefinition {
 
 /// Mutable editor Building instance. BibCells are owned by this building,
 /// matching the original model's private-set HashSet<int>.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlacedBuilding {
     pub type_id: i8,
     pub house: String,
@@ -181,10 +181,9 @@ pub struct PlacedBuilding {
 }
 
 
-impl Clone for PlacedBuilding {
-    /// Source Building.Clone copies editable properties but intentionally
-    /// does not copy the derived BibCells ownership set.
-    fn clone(&self) -> Self {
+impl PlacedBuilding {
+    /// Mirrors Building.Clone: copy editable properties but omit derived BibCells.
+    pub fn clone_without_bib_cells(&self) -> Self {
         Self {
             type_id: self.type_id,
             house: self.house.clone(),
@@ -199,9 +198,7 @@ impl Clone for PlacedBuilding {
             bib_cells: Vec::new(),
         }
     }
-}
 
-impl PlacedBuilding {
     pub fn new(type_id: i8, house: String, direction: i8) -> Self {
         Self {
             type_id, house, strength: 256, direction, trigger: "None".into(),
@@ -264,7 +261,7 @@ mod tests {
         let mut building = PlacedBuilding::new(1, "GDI".into(), 2);
         building.bib_cells.push(rts_core::CellCoord::new(4, 5));
         building.strength = 99;
-        let clone = building.clone();
+        let clone = building.clone_without_bib_cells();
         assert_eq!(clone.strength, 99);
         assert_eq!(clone.house, "GDI");
         assert!(clone.bib_cells.is_empty());
