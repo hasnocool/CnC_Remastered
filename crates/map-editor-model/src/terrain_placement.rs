@@ -80,30 +80,9 @@ pub struct TerrainPlacementDefinition {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TerrainPlacementError {
-    InvalidMask(OccupancyMaskErrorTag),
     OutOfBounds(CellCoord),
     Occupied(CellCoord),
     MissingPlacement(CellCoord),
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum OccupancyMaskErrorTag {
-    ZeroWidth,
-    ZeroHeight,
-    IncorrectCellCount,
-    EmptyMask,
-}
-
-impl From<OccupancyMaskError> for TerrainPlacementError {
-    fn from(error: OccupancyMaskError) -> Self {
-        let tag = match error {
-            OccupancyMaskError::ZeroWidth => OccupancyMaskErrorTag::ZeroWidth,
-            OccupancyMaskError::ZeroHeight => OccupancyMaskErrorTag::ZeroHeight,
-            OccupancyMaskError::IncorrectCellCount { .. } => OccupancyMaskErrorTag::IncorrectCellCount,
-            OccupancyMaskError::EmptyMask => OccupancyMaskErrorTag::EmptyMask,
-        };
-        Self::InvalidMask(tag)
-    }
 }
 
 /// Places every occupied mask cell atomically. Empty mask cells are untouched.
