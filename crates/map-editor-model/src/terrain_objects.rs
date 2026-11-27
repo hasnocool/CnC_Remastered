@@ -238,6 +238,105 @@ impl MapDocument {
         self.terrain_objects.get_mut(&id).expect("object retained").origin = destination;
         Ok(())
     }
+
+    /// Applies an expected-to-target object transition after validating both
+    /// footprints. Used by object-level undo/redo so cells, ownership index
+    /// and object metadata change as one operation.
+    pub(crate) fn transition_terrain_object(
+        &mut self,
+        expected: Option<&TerrainObject>,
+        target: Option<&TerrainObject>,
+        definition: &TerrainPlacementDefinition,
+    ) -> Result<(), TerrainObjectError> {
+        if expected.is_none() && target.is_none() {
+            return Ok(());
+        }
+        let id = expected.map(|object| object.id).or_else(|| target.map(|object| object.id))
+            .expect("one side of a terrain transition has an object");
+        if expected.is_some_and(|object| object.id != id)
+            || target.is_some_and(|object| object.id != id)
+            || expected.is_some_and(|object| object.terrain_type != definition.id)
+            || target.is_some_and(|object| object.terrain_type != definition.id)
+        {
+            return Err(TerrainObjectError::UnknownObject(id));
+        }
+        match (self.terrain_objects.get(&id), expected) {
+            (None, None) => {}
+            (Some(actual), Some(expected)) if actual == expected => {}
+            _ => return Err(TerrainObjectError::UnknownObject(id)),
+        }
+
+        let old_cells: Vec<_> = expected
+            .map(|object| definition.occupancy.occupied_cells(object.origin).collect())
+            .unwrap_or_default();
+        let new_cells: Vec<_> = target
+            .map(|object| definition.occupancy.occupied_cells(object.origin).collect())
+            .unwrap_or_default();
+        let footprint_size = definition.occupancy.occupied_cells(CellCoord::new(0, 0)).count();
+        if expected.is_some() && old_cells.len() != footprint_size {
+            return Err(TerrainObjectError::OutOfBounds(expected.unwrap().origin));
+        }
+        if target.is_some() && new_cells.len() != footprint_size {
+            return Err(TerrainObjectError::OutOfBounds(target.unwrap().origin));
+        }
+
+        let mut old_indices = Vec::with_capacity(old_cells.len());
+        for coordinate in &old_cells {
+            let index = self.dimensions.index(*coordinate)
+                .ok_or(TerrainObjectError::OutOfBounds(*coordinate))?;
+            if self.terrain_occupancy[index] != Some(id) {
+                return Err(TerrainObjectError::OccupancyMismatch(*coordinate));
+            }
+            let layers = self.cell(*coordinate).ok_or(TerrainObjectError::OutOfBounds(*coordinate))?;
+            if layers.terrain != Some(definition.id)
+                || Some(layers.terrain_icon) != expected.map(|object| object.icon)
+            {
+                return Err(TerrainObjectError::OccupancyMismatch(*coordinate));
+            }
+            old_indices.push(index);
+        }
+
+        let mut new_indices = Vec::with_capacity(new_cells.len());
+        for coordinate in &new_cells {
+            let index = self.dimensions.index(*coordinate)
+                .ok_or(TerrainObjectError::OutOfBounds(*coordinate))?;
+            if self.terrain_occupancy[index].is_some_and(|owner| owner != id) {
+                return Err(TerrainObjectError::Occupied(*coordinate));
+            }
+            let layers = self.cell(*coordinate).ok_or(TerrainObjectError::OutOfBounds(*coordinate))?;
+            if layers.terrain.is_some() && self.terrain_occupancy[index] != Some(id) {
+                return Err(TerrainObjectError::Occupied(*coordinate));
+            }
+            new_indices.push(index);
+        }
+
+        for (coordinate, index) in old_cells.iter().zip(old_indices) {
+            if !new_indices.contains(&index) {
+                self.terrain_occupancy[index] = None;
+                let mut layers = *self.cell(*coordinate).expect("prevalidated old cell");
+                layers.terrain = None;
+                layers.terrain_icon = 0;
+                self.set_cell(*coordinate, layers).expect("prevalidated old cell");
+            }
+        }
+        for (coordinate, index) in new_cells.iter().zip(new_indices) {
+            self.terrain_occupancy[index] = Some(id);
+            let mut layers = *self.cell(*coordinate).expect("prevalidated target cell");
+            layers.terrain = Some(definition.id);
+            layers.terrain_icon = target.expect("target footprint has an object").icon;
+            self.set_cell(*coordinate, layers).expect("prevalidated target cell");
+        }
+        if let Some(target) = target {
+            self.terrain_objects.insert(id, target.clone());
+            self.next_terrain_object_id = self.next_terrain_object_id.max(
+                id.0.checked_add(1).ok_or(TerrainObjectError::IdExhausted)?
+            );
+        } else {
+            self.terrain_objects.remove(&id);
+        }
+        Ok(())
+    }
+
 }
 
 #[cfg(test)]
