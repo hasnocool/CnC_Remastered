@@ -8,7 +8,7 @@ use rts_core::{CellCoord, GameVariant, MapDimensions};
 use crate::{
     MapDocument, MapDocumentError, MapSpatialIndex, OccupierId, OverlapRect,
     SpatialIndexError, OverlayInvalidation, MapUpdateError, MapUpdateWork,
-    OverlayTypeDefinition, PlacedOverlay, OccupierError,
+    OverlayTypeDefinition, PlacedOverlay,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -67,7 +67,7 @@ impl MapEditorState {
             if staged.is_wall(*id) { staged.remove_wall(*id); }
         }
         let new_id = if new_type.is_some_and(|definition| definition.is_wall()) {
-            let id = self.allocate_overlay_occupier(&staged)?;
+            let id = Self::allocate_overlay_occupier(&mut self.next_internal_occupier, &staged)?;
             let definition = new_type.expect("checked above");
             staged.add_wall(id, cell, &definition.occupy_mask())
                 .map_err(MapEditorStateError::Spatial)?;
@@ -98,10 +98,10 @@ impl MapEditorState {
         Ok(work)
     }
 
-    fn allocate_overlay_occupier(&mut self, spatial: &MapSpatialIndex) -> Result<OccupierId, MapEditorStateError> {
+    fn allocate_overlay_occupier(next_id: &mut u64, spatial: &MapSpatialIndex) -> Result<OccupierId, MapEditorStateError> {
         loop {
-            let candidate = OccupierId(self.next_internal_occupier);
-            self.next_internal_occupier = self.next_internal_occupier.checked_sub(1)
+            let candidate = OccupierId(*next_id);
+            *next_id = next_id.checked_sub(1)
                 .ok_or(MapEditorStateError::OccupierIdsExhausted)?;
             if !spatial.contains_occupier(candidate) { return Ok(candidate); }
         }
