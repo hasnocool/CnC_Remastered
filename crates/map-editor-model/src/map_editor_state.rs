@@ -279,6 +279,41 @@ mod tests {
     }
 
     #[test]
+    fn resource_icons_recompute_from_eight_neighbor_resource_counts() {
+        let mut state = MapEditorState::new(GameVariant::TiberianDawn, dimensions()).unwrap();
+        state.register_overlay_type(OverlayTypeDefinition { id: 1, name: "ore".into(), flags: 1 });
+        state.set_overlay(CellCoord::new(5, 5), Some(PlacedOverlay::new(1))).unwrap();
+        assert_eq!(state.overlay_at(CellCoord::new(5, 5)).unwrap().icon, 0);
+        state.set_overlay(CellCoord::new(6, 5), Some(PlacedOverlay::new(1))).unwrap();
+        assert_eq!(state.overlay_at(CellCoord::new(5, 5)).unwrap().icon, 1);
+        assert_eq!(state.overlay_at(CellCoord::new(6, 5)).unwrap().icon, 1);
+    }
+
+    #[test]
+    fn wall_icons_use_same_type_cardinal_neighbors_only() {
+        let mut state = MapEditorState::new(GameVariant::RedAlert, dimensions()).unwrap();
+        state.register_overlay_type(OverlayTypeDefinition { id: 1, name: "wall-a".into(), flags: 4 });
+        state.register_overlay_type(OverlayTypeDefinition { id: 2, name: "wall-b".into(), flags: 4 });
+        state.set_overlay(CellCoord::new(5, 5), Some(PlacedOverlay::new(1))).unwrap();
+        state.set_overlay(CellCoord::new(5, 4), Some(PlacedOverlay::new(1))).unwrap();
+        state.set_overlay(CellCoord::new(6, 5), Some(PlacedOverlay::new(2))).unwrap();
+        assert_eq!(state.overlay_at(CellCoord::new(5, 5)).unwrap().icon, 1);
+        assert_eq!(state.overlay_at(CellCoord::new(5, 4)).unwrap().icon, 4);
+    }
+
+    #[test]
+    fn batched_overlay_changes_apply_icons_when_update_work_is_consumed() {
+        let mut state = MapEditorState::new(GameVariant::TiberianDawn, dimensions()).unwrap();
+        state.register_overlay_type(OverlayTypeDefinition { id: 1, name: "ore".into(), flags: 1 });
+        state.document_mut().begin_update();
+        state.set_overlay(CellCoord::new(5, 5), Some(PlacedOverlay::new(1))).unwrap();
+        state.set_overlay(CellCoord::new(6, 5), Some(PlacedOverlay::new(1))).unwrap();
+        let work = state.document_mut().end_update().unwrap().unwrap();
+        state.apply_update_work(&work);
+        assert_eq!(state.overlay_at(CellCoord::new(5, 5)).unwrap().icon, 1);
+    }
+
+    #[test]
     fn aggregate_routes_building_and_wall_registration_to_distinct_indexes() {
         let mut state = MapEditorState::new(GameVariant::RedAlert, dimensions()).unwrap();
         state.add_building(
