@@ -6,6 +6,7 @@ pub mod overlay_catalog;
 pub mod template_catalog;
 pub mod terrain_placement;
 pub mod terrain_catalog;
+pub mod terrain_objects;
 pub use terrain_placement::{
     place_terrain, place_terrain_with_history, remove_terrain, remove_terrain_with_history,
     OccupancyMask, OccupancyMaskError,
@@ -24,6 +25,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 use rts_core::{CellCoord, GameVariant, MapDimensions};
+pub use terrain_objects::{TerrainObject, TerrainObjectError, TerrainObjectId};
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CellLayers {
@@ -55,6 +57,9 @@ pub struct MapDocument {
     dimensions: MapDimensions,
     cells: Vec<CellLayers>,
     waypoints: BTreeMap<u16, CellCoord>,
+    terrain_objects: BTreeMap<TerrainObjectId, TerrainObject>,
+    terrain_occupancy: Vec<Option<TerrainObjectId>>,
+    next_terrain_object_id: u64,
 }
 
 impl MapDocument {
@@ -75,6 +80,9 @@ impl MapDocument {
             dimensions,
             cells: vec![CellLayers::default(); dimensions.cell_count()],
             waypoints: BTreeMap::new(),
+            terrain_objects: BTreeMap::new(),
+            terrain_occupancy: vec![None; dimensions.cell_count()],
+            next_terrain_object_id: 1,
         })
     }
 
