@@ -110,6 +110,91 @@ impl PlacedSmudge {
     }
 }
 
+/// Source-derived immutable BuildingType catalog entry. Masks are row-major
+/// offsets from the placement anchor; the base mask excludes the bib extension.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct BuildingTypeDefinition {
+    pub id: i8,
+    pub name: String,
+    pub display_name: String,
+    pub tile_name: String,
+    pub width: u16,
+    pub height: u16,
+    pub has_bib: bool,
+    pub owner_house: String,
+    pub is_fake: bool,
+    pub has_turret: bool,
+    pub factory_overlay: Option<String>,
+    pub base_occupy_mask: Vec<(u16, u16)>,
+    pub occupy_mask: Vec<(u16, u16)>,
+}
+
+impl BuildingTypeDefinition {
+    /// Builds the full mask using the editor's exact bib rule: retain all
+    /// base rows except the final row, then append two completely occupied rows.
+    pub fn from_base_mask(
+        id: i8, name: String, display_name: String, tile_name: String,
+        base_occupy_mask: Vec<(u16, u16)>, width: u16, height: u16,
+        has_bib: bool, owner_house: String, is_fake: bool,
+        has_turret: bool, factory_overlay: Option<String>,
+    ) -> Self {
+        let occupy_mask = if has_bib && height > 0 {
+            let mut full = base_occupy_mask.iter()
+                .copied().filter(|(_, y)| *y + 1 < height).collect::<Vec<_>>();
+            for y in height..height.saturating_add(2) {
+                for x in 0..width { full.push((x, y)); }
+            }
+            full
+        } else {
+            base_occupy_mask.clone()
+        };
+        Self {
+            id, name: if is_fake && !name.is_empty() {
+                format!("{}f", &name[..name.len()-1])
+            } else { name.clone() },
+            display_name, tile_name: name, width, height, has_bib,
+            owner_house, is_fake, has_turret, factory_overlay,
+            base_occupy_mask, occupy_mask,
+        }
+    }
+}
+
+/// Mutable editor Building instance. BibCells are owned by this building,
+/// matching the original model's private-set HashSet<int>.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PlacedBuilding {
+    pub type_id: i8,
+    pub house: String,
+    pub strength: i32,
+    pub direction: i8,
+    pub trigger: String,
+    pub base_priority: i32,
+    pub is_prebuilt: bool,
+    pub sellable: bool,
+    pub rebuild: bool,
+    pub tint: EditorColor,
+    pub bib_cells: Vec<rts_core::CellCoord>,
+}
+
+impl PlacedBuilding {
+    pub fn new(type_id: i8, house: String, direction: i8) -> Self {
+        Self {
+            type_id, house, strength: 256, direction, trigger: "None".into(),
+            base_priority: -1, is_prebuilt: true, sellable: false,
+            rebuild: false, tint: EditorColor::WHITE, bib_cells: Vec::new(),
+        }
+    }
+
+    /// The source getter applies 75% alpha to non-prebuilt buildings.
+    pub const fn effective_tint(&self) -> EditorColor {
+        if self.is_prebuilt {
+            self.tint
+        } else {
+            EditorColor { alpha: ((self.tint.alpha as u16 * 75) / 100) as u8, ..self.tint }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
