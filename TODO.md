@@ -540,3 +540,17 @@ Scope limits: current harness supports the existing legacy unencrypted MIX parse
 - [ ] Implement resource and wall icon calculations; bib placement/removal and ownership.
 - [ ] Complete typed Building/BuildingType, TerrainType and InfantryGroup records and overlapper integration.
 - [ ] Run Rust formatting, compilation, tests and Clippy when the toolchain is available.
+
+
+## Map editor derived overlay and bib lifecycle tranche
+
+- [x] Port source lookup tables and derived resource/wall overlay icon calculations.
+- [x] Integrate immediate and batched derived-icon application into MapEditorState.
+- [x] Replace non-wall overlay occupier sentinel IDs with optional ownership.
+- [x] Add Building bib placement, ownership tracking, and Bib-flag-only removal.
+- [ ] Synchronize typed Overlay/Smudge instances with serialized CellLayers and scenario I/O.
+- [ ] Introduce full typed Building/BuildingType catalog ownership and route every Building lifecycle path through the bib-aware aggregate API.
+- [ ] Run Rust formatting, build, tests, and Clippy on a Rust-enabled host.
+- [ ] Validate actual TD and RA retail scenarios separately after user-provided assets arrive.
+
+See `docs/port-tranches/MAP_EDITOR_DERIVED_OVERLAYS_AND_BIBS.md`.
