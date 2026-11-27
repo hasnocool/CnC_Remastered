@@ -113,6 +113,7 @@ pub fn place_terrain(
     for coordinate in &cells {
         let mut layers = *document.cell(*coordinate).expect("validated terrain cell");
         layers.terrain = Some(definition.id);
+        layers.terrain_icon = if definition.transformable { 22 } else { 0 };
         document.set_cell(*coordinate, layers).expect("validated terrain cell");
     }
     Ok(cells)
@@ -143,6 +144,7 @@ pub fn remove_terrain(
     for coordinate in &cells {
         let mut layers = *document.cell(*coordinate).expect("validated terrain cell");
         layers.terrain = None;
+        layers.terrain_icon = 0;
         document.set_cell(*coordinate, layers).expect("validated terrain cell");
     }
     Ok(cells)
@@ -169,11 +171,13 @@ fn terrain_history_changes(
         if placing {
             if layers.terrain.is_some() { return Err(TerrainPlacementError::Occupied(coordinate)); }
             layers.terrain = Some(definition.id);
+            layers.terrain_icon = if definition.transformable { 22 } else { 0 };
         } else {
             if layers.terrain != Some(definition.id) {
                 return Err(TerrainPlacementError::MissingPlacement(coordinate));
             }
             layers.terrain = None;
+            layers.terrain_icon = 0;
         }
         changes.push((coordinate, layers));
     }
