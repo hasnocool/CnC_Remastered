@@ -251,10 +251,11 @@ mod tests {
             vec![(0,0),(1,0),(0,1)], 2, 2, true, "GDI".into(), false, true, None,
         );
         assert_eq!(kind.base_occupy_mask, vec![(0,0),(1,0),(0,1)]);
-        assert_eq!(kind.occupy_mask, vec![(0,0),(0,2),(1,2)]);
+        assert_eq!(kind.occupy_mask, vec![(0,0),(0,1),(1,1),(0,2),(1,2)]);
         assert_eq!(kind.width, 2);
         assert_eq!(kind.height, 2);
         assert_eq!(kind.occupy_mask.iter().map(|(_, y)| *y).max(), Some(2));
+        assert_eq!(kind.occupy_mask.iter().map(|(_, y)| *y).max().unwrap() + 1, kind.height + 1);
     }
 
     #[test]
