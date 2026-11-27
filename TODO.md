@@ -439,7 +439,7 @@
 - [x] Reject unresolved non-empty template IDs rather than silently rendering the wrong tile.
 - [x] Preserve both template type and logical icon index in map-editor cells; expose a row-major iterator of complete (type, icon) references.
 - [ ] Build variant/theater template catalogs that resolve each template type to its IFF ICON set, then resolve the cell's logical icon through that set's MAP table. Do not map template type IDs directly to TMP tile indices.
-- [ ] Add a renderer atlas/composition path for multiple template ICON sets, preserving each set's MAP indirection and empty logical slots.
+- [x] Add a renderer atlas/composition path for multiple template ICON sets; resolve each logical icon through its set's MAP indirection and reject empty/missing logical slots.
 - [ ] Add reusable per-chunk CPU composition keyed by map revision and invalidate only edited chunks.
 - [ ] Derive adjacency/transition selection from source-backed TD/RA template rules and real theater fixtures.
 - [x] Validate map dimensions before consuming template iterators; reserve the exact expected cell capacity fallibly and reject short or oversized iterators.

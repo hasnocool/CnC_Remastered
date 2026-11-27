@@ -317,3 +317,12 @@ The map editor model now retains both the template type ID and the per-cell logi
 The authoritative TD engine path obtains the template type's image data, reads its ICON set MAP table, and uses the cell's logical icon slot to resolve the physical image. The generic TMP TerrainAtlas remains a separate fixture/adapter path. Authentic TD/RA rendering needs theater-specific template catalogs plus an IFF ICON-set atlas/composition path. RA MapPack serialization is variant-specific and must be handled independently from TD's per-cell record path.
 
 Source inspection: EA's public CnC_Tiberian_Dawn/TEMPLATE.CPP and MAP.CPP (TemplateClass::Mark, Map load/validation); the existing project source-audit notes also identify the editor's missing per-cell icon field. No proprietary game assets were added. Cargo validation remains unexecuted.
+
+
+## Template ICON-set atlas path
+
+Added TerrainAtlas::build_from_template_icon_sets. The caller supplies the theater-selected catalog of (template type, IFF IconSet) pairs. For every occupied map cell, the renderer resolves (template type, logical icon) through the corresponding IconSet MAP table, expands the physical SSET tile through the selected palette, deduplicates repeated logical references, and packs the result into the same bounded RGBA atlas used by the generic terrain renderer.
+
+The adapter rejects missing template types, duplicate catalog IDs, inconsistent icon pixel dimensions, invalid/empty MAP references, malformed image storage, invalid map dimensions, and atlas allocations beyond the 8192-axis / 128 MiB limits. It does not invent theater catalogs or asset filenames; those remain the caller's responsibility and require real TD/RA theater data validation.
+
+Cargo formatting, compilation, and tests remain unexecuted in this environment.

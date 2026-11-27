@@ -3,6 +3,7 @@
 
 use std::collections::{BTreeSet, HashMap};
 use rts_formats::{
+    iconset::{IconSet, IconSetError},
     palette_rgba::{Palette256, RgbaImage},
     tmp::{TmpArchive, TmpError},
 };
@@ -20,11 +21,20 @@ pub enum TerrainError {
     InvalidMapDimensions { width: u32, height: u32, cells: usize },
     InvalidTileIndex(usize),
     UnresolvedTemplateCell { template: u16, icon: u8 },
+    UnknownTemplateType(u16),
+    DuplicateTemplateType(u16),
+    InconsistentTemplateIconSize {
+        template: u16,
+        expected: (u32, u32),
+        actual: (u32, u32),
+    },
+    InvalidTileImage(usize),
     MapAllocationFailed { cells: usize },
     AtlasTooLarge { width: u32, height: u32, bytes: usize },
     InvalidCamera,
     Renderer(String),
     Tmp(TmpError),
+    IconSet(IconSetError),
 }
 impl std::fmt::Display for TerrainError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -34,14 +44,28 @@ impl std::fmt::Display for TerrainError {
             Self::InvalidTileIndex(index) => write!(f, "terrain map references missing TMP tile {index}"),
             Self::UnresolvedTemplateCell { template, icon } => write!(
                 f,
-                "map template {template} icon {icon} has no resolved generic terrain tile"
+                "map template {template} icon {icon} has no resolved terrain image"
             ),
+            Self::UnknownTemplateType(template) => {
+                write!(f, "map template type {template} is absent from the theater catalog")
+            }
+            Self::DuplicateTemplateType(template) => {
+                write!(f, "map template type {template} appears more than once in the theater catalog")
+            }
+            Self::InconsistentTemplateIconSize { template, expected, actual } => write!(
+                f,
+                "map template type {template} has {actual:?} icon dimensions; expected {expected:?}"
+            ),
+            Self::InvalidTileImage(index) => {
+                write!(f, "terrain tile image {index} has invalid dimensions or pixel storage")
+            }
             Self::MapAllocationFailed { cells } => write!(f, "could not reserve terrain storage for {cells} cells"),
             Self::AtlasTooLarge { width, height, bytes } =>
                 write!(f, "terrain atlas {width}x{height} ({bytes} bytes) exceeds supported limits"),
             Self::InvalidCamera => f.write_str("terrain camera, zoom, or viewport is invalid"),
             Self::Renderer(error) => write!(f, "terrain texture upload failed: {error}"),
             Self::Tmp(error) => write!(f, "terrain TMP decode failed: {error}"),
+            Self::IconSet(error) => write!(f, "terrain ICON-set decode failed: {error}"),
         }
     }
 }
@@ -51,6 +75,9 @@ impl From<RendererError> for TerrainError {
 }
 impl From<TmpError> for TerrainError {
     fn from(value: TmpError) -> Self { Self::Tmp(value) }
+}
+impl From<IconSetError> for TerrainError {
+    fn from(value: IconSetError) -> Self { Self::IconSet(value) }
 }
 
 /// Row-major map terrain references. None means no base terrain sprite.
@@ -157,31 +184,184 @@ impl TerrainAtlas {
     ) -> Result<Self, TerrainError> {
         let mut referenced = BTreeSet::new();
         for index in map.cells.iter().flatten().copied() {
-            if archive.tile(index)?.is_some() { referenced.insert(index); }
+            if archive.tile(index)?.is_some() {
+                referenced.insert(index);
+            }
         }
+
         let tile_width = u32::from(archive.width);
         let tile_height = u32::from(archive.height);
-        let count = referenced.len().max(1);
-        let columns = (count as f64).sqrt().ceil() as u32;
-        let rows = (count as u32).div_ceil(columns);
-        let width = columns.checked_mul(tile_width).unwrap_or(u32::MAX);
-        let height = rows.checked_mul(tile_height).unwrap_or(u32::MAX);
-        let byte_count = (width as usize).checked_mul(height as usize).and_then(|n| n.checked_mul(4));
-        if width == 0 || height == 0 || width > MAX_ATLAS_DIMENSION || height > MAX_ATLAS_DIMENSION
-            || byte_count.map_or(true, |bytes| bytes > MAX_ATLAS_BYTES)
-        {
-            return Err(TerrainError::AtlasTooLarge { width, height, bytes: byte_count.unwrap_or(usize::MAX) });
-        }
-        let mut pixels = vec![0u8; byte_count.expect("atlas byte count was validated")];
-        let mut tile_slots = HashMap::with_capacity(referenced.len());
-        for (slot, tile_index) in referenced.into_iter().enumerate() {
+        let mut tiles = Vec::with_capacity(referenced.len());
+        for tile_index in referenced {
             let tile = archive.tile_rgba(tile_index, palette, None)?
                 .ok_or(TerrainError::InvalidTileIndex(tile_index))?;
-            copy_tile_into_atlas(&mut pixels, width, tile_width, tile_height, slot as u32, &tile);
+            tiles.push((tile_index, tile));
+        }
+
+        Self::from_indexed_images(texture_id, tile_width, tile_height, tiles)
+    }
+
+    /// Builds a terrain atlas from authentic TD/RA template ICON sets.
+    ///
+    /// The supplied catalog must already be filtered to the selected game
+    /// variant and theater. Each map cell contains a template type and its
+    /// logical icon index. The icon set's MAP chunk resolves that logical
+    /// index to a physical SSET image; empty or invalid MAP entries are errors
+    /// for occupied template cells, matching the engine's map validation.
+    ///
+    /// Returns the resolved generic terrain grid alongside the packed atlas.
+    pub fn build_from_template_icon_sets(
+        texture_id: TextureId,
+        width: u32,
+        height: u32,
+        templates: impl IntoIterator<Item = Option<(u16, u8)>>,
+        icon_sets: &[(u16, &IconSet)],
+        palette: &Palette256,
+    ) -> Result<(TerrainMap, Self), TerrainError> {
+        let expected = (width as usize).checked_mul(height as usize);
+        if width == 0 || height == 0 || expected.is_none() {
+            return Err(TerrainError::InvalidMapDimensions {
+                width,
+                height,
+                cells: 0,
+            });
+        }
+        let expected = expected.expect("nonzero dimensions and checked product");
+
+        let mut catalog = HashMap::with_capacity(icon_sets.len());
+        let mut tile_size = None;
+        for &(template_type, icon_set) in icon_sets {
+            if catalog.insert(template_type, icon_set).is_some() {
+                return Err(TerrainError::DuplicateTemplateType(template_type));
+            }
+            let dimensions = (
+                u32::try_from(icon_set.width()).map_err(|_| IconSetError::InvalidIconDimensions)?,
+                u32::try_from(icon_set.height()).map_err(|_| IconSetError::InvalidIconDimensions)?,
+            );
+            if dimensions.0 == 0 || dimensions.1 == 0 {
+                return Err(TerrainError::InvalidTileImage(template_type as usize));
+            }
+            if let Some(expected_size) = tile_size {
+                if dimensions != expected_size {
+                    return Err(TerrainError::InconsistentTemplateIconSize {
+                        template: template_type,
+                        expected: expected_size,
+                        actual: dimensions,
+                    });
+                }
+            } else {
+                tile_size = Some(dimensions);
+            }
+        }
+
+        let (tile_width, tile_height) = tile_size.unwrap_or((1, 1));
+        let mut cells = Vec::new();
+        cells.try_reserve_exact(expected).map_err(|_| {
+            TerrainError::MapAllocationFailed { cells: expected }
+        })?;
+        let mut image_slots = HashMap::new();
+        let mut images = Vec::new();
+
+        for template in templates {
+            if cells.len() == expected {
+                return Err(TerrainError::InvalidMapDimensions {
+                    width,
+                    height,
+                    cells: expected.saturating_add(1),
+                });
+            }
+
+            let tile = match template {
+                None => None,
+                Some((template_type, logical_icon)) => {
+                    if let Some(&slot) = image_slots.get(&(template_type, logical_icon)) {
+                        Some(slot)
+                    } else {
+                        let icon_set = catalog.get(&template_type)
+                            .copied()
+                            .ok_or(TerrainError::UnknownTemplateType(template_type))?;
+                        let next_count = images.len().checked_add(1)
+                            .ok_or(TerrainError::AtlasTooLarge {
+                                width: u32::MAX,
+                                height: u32::MAX,
+                                bytes: usize::MAX,
+                            })?;
+                        validate_atlas_layout(next_count, tile_width, tile_height)?;
+
+                        let image = icon_set
+                            .logical_icon_rgba(usize::from(logical_icon), palette, None)?
+                            .ok_or(TerrainError::UnresolvedTemplateCell {
+                                template: template_type,
+                                icon: logical_icon,
+                            })?;
+                        let slot = images.len();
+                        images.push(image);
+                        image_slots.insert((template_type, logical_icon), slot);
+                        Some(slot)
+                    }
+                }
+            };
+            cells.push(tile);
+        }
+
+        if cells.len() != expected {
+            return Err(TerrainError::InvalidMapDimensions {
+                width,
+                height,
+                cells: cells.len(),
+            });
+        }
+
+        let map = TerrainMap { width, height, cells };
+        let indexed_images = images.into_iter().enumerate().collect();
+        let atlas = Self::from_indexed_images(
+            texture_id,
+            tile_width,
+            tile_height,
+            indexed_images,
+        )?;
+        Ok((map, atlas))
+    }
+
+    fn from_indexed_images(
+        texture_id: TextureId,
+        tile_width: u32,
+        tile_height: u32,
+        tiles: Vec<(usize, RgbaImage)>,
+    ) -> Result<Self, TerrainError> {
+        let count = tiles.len().max(1);
+        let (width, height, byte_count) =
+            validate_atlas_layout(count, tile_width, tile_height)?;
+        let mut pixels = vec![0u8; byte_count];
+        let mut tile_slots = HashMap::with_capacity(tiles.len());
+
+        for (slot, (tile_index, tile)) in tiles.into_iter().enumerate() {
+            let expected_bytes = (tile_width as usize)
+                .checked_mul(tile_height as usize)
+                .and_then(|size| size.checked_mul(4));
+            if tile.width != tile_width
+                || tile.height != tile_height
+                || expected_bytes != Some(tile.pixels.len())
+            {
+                return Err(TerrainError::InvalidTileImage(tile_index));
+            }
+            copy_tile_into_atlas(
+                &mut pixels,
+                width,
+                tile_width,
+                tile_height,
+                slot as u32,
+                &tile,
+            );
             tile_slots.insert(tile_index, slot as u32);
         }
+
         Ok(Self {
-            texture_id, tile_width, tile_height, atlas_columns: columns, tile_slots,
+            texture_id,
+            tile_width,
+            tile_height,
+            atlas_columns: width / tile_width,
+            tile_slots,
             image: RgbaImage { width, height, pixels },
         })
     }
@@ -268,6 +448,40 @@ impl TerrainAtlas {
         }
         Ok(batch)
     }
+}
+
+fn validate_atlas_layout(
+    tile_count: usize,
+    tile_width: u32,
+    tile_height: u32,
+) -> Result<(u32, u32, usize), TerrainError> {
+    let count = u32::try_from(tile_count.max(1)).map_err(|_| TerrainError::AtlasTooLarge {
+        width: u32::MAX,
+        height: u32::MAX,
+        bytes: usize::MAX,
+    })?;
+    let columns = (count as f64).sqrt().ceil() as u32;
+    let rows = count.div_ceil(columns.max(1));
+    let width = columns.checked_mul(tile_width).unwrap_or(u32::MAX);
+    let height = rows.checked_mul(tile_height).unwrap_or(u32::MAX);
+    let byte_count = (width as usize)
+        .checked_mul(height as usize)
+        .and_then(|bytes| bytes.checked_mul(4));
+    if tile_width == 0
+        || tile_height == 0
+        || width == 0
+        || height == 0
+        || width > MAX_ATLAS_DIMENSION
+        || height > MAX_ATLAS_DIMENSION
+        || byte_count.is_none_or(|bytes| bytes > MAX_ATLAS_BYTES)
+    {
+        return Err(TerrainError::AtlasTooLarge {
+            width,
+            height,
+            bytes: byte_count.unwrap_or(usize::MAX),
+        });
+    }
+    Ok((width, height, byte_count.expect("validated atlas byte count")))
 }
 
 fn copy_tile_into_atlas(
