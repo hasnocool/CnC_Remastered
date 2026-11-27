@@ -27,6 +27,7 @@ pub mod mix;
 pub mod palette;
 pub mod palette_rgba;
 pub mod shp;
+pub mod shp_retail;
 pub mod palette_fade;
 pub mod palette_interpolation;
 pub mod dipthong_tables;
