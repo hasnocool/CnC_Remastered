@@ -2,6 +2,7 @@
 
 pub mod cell_metrics;
 pub mod edit_history;
+pub mod overlay_catalog;
 pub mod template_catalog;
 pub mod terrain_placement;
 pub use terrain_placement::{
@@ -11,6 +12,10 @@ pub use terrain_placement::{
 };
 pub use template_catalog::TemplateCatalog;
 pub use edit_history::MapEditHistory;
+pub use overlay_catalog::{
+    place_overlay_with_history, remove_overlay_with_history, OverlayCatalog,
+    OverlayDefinition, OverlayPlacementError, OverlayTypeFlags,
+};
 pub use cell_metrics::CellMetrics;
 
 use serde::{Deserialize, Serialize};
