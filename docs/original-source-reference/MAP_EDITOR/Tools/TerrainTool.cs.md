@@ -103,3 +103,12 @@ Still not mapped: actual Map.Technos object aggregation/clone semantics, Shift p
 ## Rust object-model progress
 
 The map model now exposes one-object-per-placement APIs (`add_terrain_object`, `remove_terrain_object`, `move_terrain_object`) and an occupancy-owner lookup. These APIs use the source terrain occupancy mask and preserve object ID, origin, type, icon and trigger. The desktop TerrainTool still uses the earlier cell-history placement path; it has not yet been switched to object-level commands because undo/redo must be extended to include object and occupancy state atomically.
+
+
+## Object-level history and editor integration
+
+The Terrain brush now writes map-owned `TerrainObject` records through `MapEditHistory::place_terrain_object`, rather than the legacy cell-only placement helper. The command retains object ID, origin, type, icon, trigger and the source occupancy definition. Undo removes the object and clears its owned occupancy/cell mirror; redo restores the same ID and metadata. The editor selects the newly placed object and supports selecting an existing object by clicking one of its occupied cells, then removing it with the dedicated Remove selected terrain action. Removal is also one undoable object command.
+
+The model history also exposes `move_terrain_object`, which records a move as one command and preserves ID/trigger/icon. The editor does not yet expose drag/pivot movement. Terrain object transition validates the expected object, old footprint ownership and complete destination before mutating the object collection, occupancy index or compatibility cell fields. Conflicts leave the command on its original history stack.
+
+The current UI selection is object-ID based for terrain only. It does not yet implement the retail normal-mode vs Shift-placement gesture, mouse-held painting, ghost preview, trigger picker/editor or full `Map.Technos` interactions.
