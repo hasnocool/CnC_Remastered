@@ -30,10 +30,12 @@ impl MapEditHistory {
     /// Returns the number of cells changed; no-op entries are ignored.
     pub fn apply_cells(&mut self, document: &mut MapDocument, replacements: &[(CellCoord, CellLayers)]) -> Result<usize, MapDocumentError> {
         let mut edits: Vec<CellEdit> = Vec::with_capacity(replacements.len());
+        let mut seen = Vec::with_capacity(replacements.len());
         for (coordinate, after) in replacements {
-            if edits.iter().any(|edit| edit.coordinate == *coordinate) {
+            if seen.contains(coordinate) {
                 return Err(MapDocumentError::DuplicateCellEdit(*coordinate));
             }
+            seen.push(*coordinate);
             let before = document.cell(*coordinate).copied()
                 .ok_or(MapDocumentError::CellOutOfBounds(*coordinate))?;
             if before != *after { edits.push(CellEdit { coordinate: *coordinate, before, after: *after }); }
@@ -97,6 +99,20 @@ mod tests {
     fn document() -> MapDocument {
         MapDocument::new(GameVariant::TiberianDawn, MapDimensions::new(4, 4).unwrap()).unwrap()
     }
+    #[test]
+    fn duplicate_after_noop_is_still_rejected() {
+        let mut map = document();
+        let mut history = MapEditHistory::default();
+        let at = CellCoord::new(0, 0);
+        let changed = CellLayers { terrain: Some(5), ..CellLayers::default() };
+        assert_eq!(
+            history.apply_cells(&mut map, &[(at, CellLayers::default()), (at, changed)]),
+            Err(MapDocumentError::DuplicateCellEdit(at))
+        );
+        assert_eq!(map.cell(at), Some(&CellLayers::default()));
+        assert_eq!(history.undo_depth(), 0);
+    }
+
     #[test]
     fn undo_redo_restore_all_cell_layers() {
         let mut map=document(); let mut h=MapEditHistory::default(); let at=CellCoord::new(1,2);
