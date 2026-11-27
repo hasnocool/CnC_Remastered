@@ -571,3 +571,12 @@ See `docs/port-tranches/MAP_EDITOR_DERIVED_OVERLAYS_AND_BIBS.md`.
 - [ ] Run cargo fmt, cargo test, cargo clippy on a Rust-enabled host.
 
 See `docs/port-tranches/MAP_EDITOR_TYPED_CELLS_AND_BUILDINGS.md`.
+
+
+### Map editor source-catalog validation tranche
+- [x] Add structural validation for BuildingType and SmudgeType catalogs (unique IDs, dimensions, masks, bib mask geometry, and required Bib1/Bib2/Bib3 entries).
+- [x] Validate selected-variant catalogs before registering either registry.
+- [ ] Port selected-theater state and enforce BuildingType theater restrictions using exact source theater identifiers.
+- [ ] Replace public mutable MapDocument access with MapEditorState-owned mutation APIs so spatial indexes cannot be bypassed.
+- [ ] Connect typed Overlay/Smudge/Building records to source-accurate TD/RA scenario serializers.
+- [ ] Run Cargo fmt, check, tests, and Clippy in a Rust-enabled environment; retail TD/RA validation remains gated on user-provided files.
