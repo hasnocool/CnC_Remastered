@@ -7,6 +7,7 @@
 
 use std::fmt;
 use crate::iff::{IffError, IffFile, FORM_HEADER_LEN};
+use crate::palette_rgba::{Palette256, PaletteError, RgbaImage};
 
 pub const ICON_CONTROL_SIZE: usize = 40;
 pub const FORM_ICON: [u8; 4] = *b"ICON";
@@ -28,11 +29,15 @@ pub enum IconSetError {
     InvalidIconDataLength { bytes: usize, bytes_per_icon: usize },
     UnsupportedBitplanes { bitplanes: u8 },
     InvalidMapIndex { logical_index: usize, physical_index: usize, physical_count: usize },
+    Palette(PaletteError),
 }
 impl fmt::Display for IconSetError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result { write!(f, "{self:?}") }
 }
 impl std::error::Error for IconSetError {}
+impl From<PaletteError> for IconSetError {
+    fn from(value: PaletteError) -> Self { Self::Palette(value) }
+}
 impl From<IffError> for IconSetError {
     fn from(value: IffError) -> Self { Self::Iff(value) }
 }
@@ -229,6 +234,45 @@ impl IconSet {
         }
         self.physical_icon_pixels(physical)
     }
+    /// Expand one physical icon through an explicitly selected game palette.
+    /// Transparency is opt-in because TD/RA terrain pixels are normally opaque;
+    /// empty logical cells are represented by MAP=0xFF and return None instead.
+    pub fn physical_icon_rgba(
+        &self,
+        index: usize,
+        palette: &Palette256,
+        transparent_index: Option<u8>,
+    ) -> Result<Option<RgbaImage>, IconSetError> {
+        self.physical_icon_pixels(index)?.map(|pixels| {
+            Ok(palette.expand_rgba(
+                u32::try_from(self.width()).map_err(|_| IconSetError::InvalidIconDimensions)?,
+                u32::try_from(self.height()).map_err(|_| IconSetError::InvalidIconDimensions)?,
+                pixels,
+                transparent_index,
+            )?)
+        }).transpose()
+    }
+
+    /// Resolve MAP indirection and expand the selected physical icon.
+    /// Returns None for an out-of-range logical index or the 0xFF empty marker.
+    pub fn logical_icon_rgba(
+        &self,
+        logical_index: usize,
+        palette: &Palette256,
+        transparent_index: Option<u8>,
+    ) -> Result<Option<RgbaImage>, IconSetError> {
+        if self.map_data().is_empty() && logical_index >= self.physical_icon_count {
+            return Ok(None);
+        }
+        let Some(pixels) = self.logical_icon_pixels(logical_index)? else { return Ok(None); };
+        Ok(Some(palette.expand_rgba(
+            u32::try_from(self.width()).map_err(|_| IconSetError::InvalidIconDimensions)?,
+            u32::try_from(self.height()).map_err(|_| IconSetError::InvalidIconDimensions)?,
+            pixels,
+            transparent_index,
+        )?))
+    }
+
     pub fn storage(&self) -> &[u8] { &self.storage }
     pub fn icon_data(&self) -> &[u8] { self.slice_at(self.control.icons_offset, self.control.map_offset.saturating_sub(self.control.icons_offset)) }
     pub fn transparency_data(&self) -> &[u8] { self.slice_at(self.control.transparency_offset, self.storage.len().saturating_sub(self.control.transparency_offset)) }
@@ -301,6 +345,20 @@ mod tests {
         assert_eq!(icon.logical_icon_pixels(1).unwrap(), None); // 0xFF empty sentinel
         assert_eq!(icon.logical_icon_pixels(2).unwrap(), icon.physical_icon_pixels(0).unwrap());
         assert!(matches!(icon.physical_icon_pixels(2).unwrap(), None));
+    }
+
+    #[test]
+    fn expands_logical_terrain_icon_to_rgba_without_assuming_transparency() {
+        use crate::palette_rgba::{PaletteEncoding, PALETTE_BYTES};
+        let icon = IconSet::load(&sample_iff(), None).unwrap();
+        let mut raw = vec![0u8; PALETTE_BYTES];
+        raw[3..6].copy_from_slice(&[11, 22, 33]);
+        raw[6..9].copy_from_slice(&[44, 55, 66]);
+        let palette = Palette256::parse(&raw, PaletteEncoding::Rgb8).unwrap();
+        let image = icon.logical_icon_rgba(0, &palette, None).unwrap().unwrap();
+        assert_eq!((image.width, image.height), (8, 8));
+        assert_eq!(&image.pixels[..8], &[44, 55, 66, 255, 11, 22, 33, 255]);
+        assert!(icon.logical_icon_rgba(1, &palette, None).unwrap().is_none());
     }
 
     #[test]

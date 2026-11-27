@@ -386,3 +386,12 @@
 - [ ] Validate TD and RA icon sets from legally supplied original game data, including actual MAP and TRNS semantics.
 - [ ] Connect decoded tile pixels to palette conversion and renderer texture upload.
 - [ ] Implement terrain chunk composition, adjacency transitions, camera scrolling and GPU texture caching.
+
+
+## TD/RA TMP terrain palette bridge
+
+- [x] Reuse the IFF `ICON`/`SINF`/`SSET`/`MAP `/`TRNS` loader for original TD/RA terrain icon sets; `Read_Iff_Chunk` copies raw chunk bytes and does not decompress SSET.
+- [x] Expand physical and logical indexed terrain icons through an explicitly selected `Palette256` into renderer-ready RGBA8 images.
+- [x] Preserve empty logical entries (`MAP=0xFF`) as `None`; do not invent per-pixel transparency for terrain.
+- [ ] Validate with legally supplied TD and RA theater icon sets and compare pixel output against a trusted extractor.
+- [ ] Connect logical terrain images to `WgpuRenderer::cache_rgba_image` and draw them in a scrollable terrain chunk.

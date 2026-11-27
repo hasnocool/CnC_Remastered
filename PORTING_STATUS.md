@@ -286,3 +286,14 @@ Inspection confirmed `crates/rts-formats/src/tmp.rs` already implements bounded 
 - Existing uncached `create_texture_rgba` remains available.
 
 **Not yet done:** no real retail TMP or SHP file was available for validation; TRNS semantics and palette encoding selection remain caller-controlled; no terrain chunk renderer or camera scrolling yet. Cargo formatting, compilation, tests and Clippy have not been run in this environment.
+
+
+## TD/RA TMP terrain palette bridge
+
+The original TD/RA terrain tile path is the IFF `ICON` icon-set format (`SINF`, `SSET`, `MAP `, `TRNS`), not the later Tiberian Sun/Red Alert 2 isometric TMP format. Upstream `WIN32LIB/ICONSET.CPP` reads raw SSET bytes; the IFF reader does not decompress them. The existing `IconSet` parser already exposes physical indexed tiles and logical MAP indirection.
+
+This tranche adds `physical_icon_rgba` and `logical_icon_rgba`, using an explicitly supplied `Palette256`. Empty `MAP=0xFF` entries remain absent, and transparency remains caller-controlled rather than assuming palette index zero is transparent. The returned `RgbaImage` is accepted directly by `WgpuRenderer::cache_rgba_image`.
+
+**Not yet verified:** no legally supplied retail theater icon sets were available for pixel-level comparison, and no GPU-backed rendering test was run. The separate `tmp.rs` flat-header parser remains under audit; it must not be treated as validation of the original IFF TMP path.
+
+**Verification:** Cargo formatting, compilation, tests and Clippy remain unexecuted in this environment.
