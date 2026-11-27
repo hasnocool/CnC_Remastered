@@ -441,7 +441,7 @@ impl WgpuRenderer {
         sprites: Option<&SpriteBatch>,
         ui: &UiFrame,
     ) -> Result<FrameStats, RendererError> {
-        let mut runs: Vec<(TextureId, Arc<wgpu::BindGroup>, Vec<Vertex>)> = Vec::new();
+        let mut runs: Vec<(TextureId, BindGroupHandle<'_>, Vec<Vertex>)> = Vec::new();
         if let Some(batch) = sprites {
             let mut ordered = batch.clone();
             for sprite in ordered.ordered() {
