@@ -20,6 +20,7 @@ cargo run -p renderer --bin asset-validate -- \
   --variant ra \
   --scenario /path/to/SCG01EA.INI \
   --palette /path/to/TEMPERAT.PAL \
+  --palette-encoding rgb6 \
   --mix /path/to/TEMPERAT.MIX \
   --mix /path/to/LOCAL.MIX
 ```
