@@ -4,7 +4,7 @@
 //! separate source concepts and belong in renderer-facing metadata adapters.
 //! The mask uses explicit row-major storage: index = y * width + x.
 
-use crate::{MapDocument, MapDocumentError};
+use crate::MapDocument;
 use rts_core::CellCoord;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
