@@ -389,3 +389,8 @@ Added `crates/map-editor-model/src/cell_grid.rs` and public exports. The Rust gr
 ## C# editor Map update scheduling tranche
 
 Added `crates/map-editor-model/src/map_update.rs` and integrated `MapUpdateState` into `MapDocument`. The coordinator supports nested batches, safe underflow rejection, clipped 3x3 resource/wall invalidation, coalesced overlapper rebuild requests, and a panic-safe update guard. This ports scheduling/invalidation only: occupancy event bridges, actual overlapper rebuilds, derived icons, bib ownership, typed catalogs and section ownership remain outstanding. Tests were added but not run because the environment lacks the Rust toolchain. See `docs/port-tranches/MAP_EDITOR_UPDATE_BATCHING.md`.
+
+
+## C# editor spatial index bridge tranche
+
+Added `map_spatial_index.rs` and `map_editor_state.rs`. The new `MapEditorState` composes the serialized `MapDocument` with distinct Buildings/Technos occupancy indexes and the independent Overlappers index. Buildings use full masks in Buildings and base masks in Technos; wall overlays are mirrored from Buildings into Technos and excluded from Overlappers. Building registration rolls back if overlap-bound registration fails, and building add/remove requests are routed through update batching. Tests are authored but unexecuted. Typed source definition objects, terrain/infantry overlapper registration, cell-grid event synchronization, bib ownership, and derived icons remain outstanding. See `docs/port-tranches/MAP_EDITOR_SPATIAL_BRIDGE.md`.
