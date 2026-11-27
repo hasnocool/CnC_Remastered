@@ -149,6 +149,28 @@ mod tests {
     }
 
     #[test]
+    fn older_version_one_files_without_terrain_objects_still_load() {
+        let json = r#"{
+            "format_version": 1,
+            "game": "tiberian_dawn",
+            "width": 1,
+            "height": 1,
+            "cells": [{
+                "template": null,
+                "template_icon": 0,
+                "terrain": null,
+                "terrain_icon": 0,
+                "overlay": null,
+                "smudge": null
+            }],
+            "waypoints": []
+        }"#;
+        let file: MapFile = serde_json::from_str(json).expect("legacy file");
+        let document = file.into_document().expect("legacy document");
+        assert_eq!(document.terrain_objects().count(), 0);
+    }
+
+    #[test]
     fn rejects_cell_count_mismatch() {
         let file = MapFile {
             format_version: 1, game: "red_alert".into(), width: 2, height: 2,
