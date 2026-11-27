@@ -79,3 +79,8 @@ Recommended Rust command surface: PlaceOverlay, RemoveOverlay, PickOverlay, and 
 - [NavigationWidget.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Widgets/NavigationWidget.cs)
 - [ViewTool.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Tools/ViewTool.cs)
 - [MainForm.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/MainForm.cs)
+
+
+## Rust implementation update — partial mapping
+
+The editor's Overlay layer now resolves the selected numeric brush ID through the variant/theatre-specific `OverlayCatalog` and calls `place_overlay_with_history`. The model rejects non-placeable resource, wall and flag categories, enforces the source tool's first/final-row add restriction, rejects occupied cells, and records one undoable cell command. A matching history-backed removal API is available. The desktop UI does not yet implement Shift placement mode, right-click removal, normal-mode picking, ghost preview, or selector presentation; resource adjacency and wall registration remain separate unfinished map-model behavior.
