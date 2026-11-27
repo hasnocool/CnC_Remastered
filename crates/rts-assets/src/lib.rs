@@ -266,4 +266,57 @@ mod tests {
         assert_eq!(assets.tile_for_cell(2, 0), None);
     }
 
+    fn iff_chunk(id: [u8; 4], data: &[u8], output: &mut Vec<u8>) {
+        output.extend_from_slice(&id);
+        output.extend_from_slice(&(data.len() as u32).to_be_bytes());
+        output.extend_from_slice(data);
+        if data.len() & 1 != 0 {
+            output.push(0);
+        }
+    }
+
+    fn icon_set_fixture() -> Vec<u8> {
+        let mut body = b"ICON".to_vec();
+        iff_chunk(*b"SINF", &[1, 1, 0, 8], &mut body);
+        iff_chunk(*b"SSET", &[1; 64], &mut body);
+        iff_chunk(*b"MAP ", &[0], &mut body);
+        let mut file = b"FORM".to_vec();
+        file.extend_from_slice(&(body.len() as u32).to_be_bytes());
+        file.extend_from_slice(&body);
+        file
+    }
+
+    fn mix_fixture(filename: &str, payload: &[u8]) -> Vec<u8> {
+        let mut file = Vec::with_capacity(18 + payload.len());
+        file.extend_from_slice(&1i16.to_le_bytes());
+        file.extend_from_slice(&(payload.len() as i32).to_le_bytes());
+        file.extend_from_slice(&rts_formats::mix::filename_crc(filename).to_le_bytes());
+        file.extend_from_slice(&0u32.to_le_bytes());
+        file.extend_from_slice(&(payload.len() as u32).to_le_bytes());
+        file.extend_from_slice(payload);
+        file
+    }
+
+    #[test]
+    fn decodes_and_deduplicates_theater_logical_icons_from_mix() {
+        let icon_set = icon_set_fixture();
+        let mix_bytes = mix_fixture("CLEAR1.TEM", &icon_set);
+        let archive = MixArchive::parse(&mix_bytes).unwrap();
+        let archives = [&archive];
+        let provider = TemplateAssetProvider::new(GameVariant::TiberianDawn, TemplateTheater::Temperate, &archives);
+        let mut palette_bytes = vec![0; rts_formats::palette_rgba::PALETTE_BYTES];
+        palette_bytes[3..6].copy_from_slice(&[11, 22, 33]);
+        let palette = Palette256::parse(&palette_bytes, rts_formats::palette_rgba::PaletteEncoding::Rgb8).unwrap();
+
+        let assets = provider.build_terrain(
+            2, 1, [Some((0, 0)), Some((0, 0))], &palette,
+        ).unwrap();
+
+        assert_eq!(assets.dimensions(), (2, 1));
+        assert_eq!(assets.tile_size(), (8, 8));
+        assert_eq!(assets.tiles().len(), 1);
+        assert_eq!(assets.cells(), &[Some(0), Some(0)]);
+        assert_eq!(&assets.tiles()[0].pixels[..4], &[11, 22, 33, 255]);
+    }
+
 }
