@@ -485,6 +485,16 @@ mod tests {
     }
 
     #[test]
+    fn rejects_cyclic_format40_references() {
+        let mut bytes = fixture();
+        let second_frame_offset = (HEADER_SIZE + 5 * FRAME_RECORD_SIZE + 5) as u16;
+        bytes[HEADER_SIZE + FRAME_RECORD_SIZE + 4..HEADER_SIZE + FRAME_RECORD_SIZE + 6]
+            .copy_from_slice(&second_frame_offset.to_le_bytes());
+        let shp = RetailShpFile::parse(&bytes).unwrap();
+        assert!(matches!(shp.decode_frame(1), Err(RetailShpError::ReferenceCycle { frame: 1 })));
+    }
+
+    #[test]
     fn rejects_bad_eof_unknown_format_and_zero_frame_count() {
         assert!(matches!(RetailShpFile::parse(&[0; 14]), Err(RetailShpError::ZeroFrameCount)));
         let mut bytes = fixture();
