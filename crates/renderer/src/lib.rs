@@ -327,6 +327,20 @@ impl WgpuRenderer {
     /// image into the renderer-owned bounded GPU cache.
     pub fn cache_rgba_image(&mut self, id: TextureId, image: &RgbaImage) -> Result<(), RendererError> {
         if self.texture_cache.get(id).is_some() { return Ok(()); }
+        let required = expected_rgba_bytes(image.width, image.height);
+        if image.width == 0 || image.height == 0 || required.is_none()
+            || required != Some(image.pixels.len())
+        {
+            return Err(RendererError::InvalidTextureData {
+                width: image.width, height: image.height, bytes: image.pixels.len(),
+            });
+        }
+        let required = required.expect("validated RGBA byte count");
+        if required > self.texture_cache.max_bytes {
+            return Err(RendererError::TextureExceedsCacheLimit {
+                requested: required, limit: self.texture_cache.max_bytes,
+            });
+        }
         let texture = self.create_texture_rgba(id, image.width, image.height, &image.pixels)?;
         self.texture_cache.insert(texture)
     }

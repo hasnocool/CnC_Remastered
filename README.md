@@ -51,7 +51,7 @@ A subsystem is not considered ported merely because a Rust module with a similar
 
 The workspace now includes:
 
-- `renderer`: wgpu surface presentation, GPU textured-sprite atlas pipeline, nearest-neighbor sampling, alpha-blended UI primitives, bitmap text, viewport/camera abstractions and render-layer batching.
+- `renderer`: wgpu surface presentation, RGBA uploads, a bounded 128 MiB FIFO GPU texture cache, cached icon-set/TMP terrain uploads, atlas UVs, nearest-neighbor sampling, rotated/tinted sprites, ordered multi-texture draw runs, alpha-blended UI primitives, bitmap text, camera-aware 16×16 terrain chunk traversal and viewport culling.
 - `launcher`: a graphical application menu, selectable TD/RA/editor entries, interactive settings, platform-persisted TOML configuration, mouse/keyboard input and a shared window lifecycle.
 - A deterministic four-region procedural terrain atlas used as a rendering fixture behind the launcher and application preview windows.
 
@@ -72,4 +72,4 @@ cargo run -p launcher -- --list
 
 The launcher settings currently expose fullscreen, resolution presets, vsync, low-power GPU selection, frame limit, master-audio enable/mute, edge scrolling, mouse-Y inversion and networking enablement. Settings are saved automatically; display/GPU settings take effect after restart.
 
-The terrain atlas is a procedural renderer fixture, not an authentic game asset. The TD, RA and editor entries remain integration boundaries rather than complete playable runtimes. Palette-aware SHP/TMP loading, asset caching, game/editor runtime integration, audio playback and asynchronous multiplayer transport remain in progress. See [TODO.md](TODO.md) and [PORTING_STATUS.md](PORTING_STATUS.md).
+The procedural terrain atlas remains a launcher fixture, not authentic game artwork. The renderer can now compose a packed atlas from map-referenced TMP tiles and submit ordered sprites from multiple cached textures. The map adapter is still a generic tile-index grid: authentic TD/RA map decoding, theater transition/adjacency rules, real retail asset validation, TRNS transparency semantics, the legacy Shape_Type pixel decoder, camera input, and runtime integration remain outstanding. TD, RA and editor entries are not yet playable runtimes. See [TODO.md](TODO.md) and [PORTING_STATUS.md](PORTING_STATUS.md).

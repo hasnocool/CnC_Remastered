@@ -415,3 +415,18 @@
 
 - Added cached-texture frame submission: WgpuRenderer::render_cached resolves a TextureId internally, avoiding an impossible external borrow of a texture held inside the renderer cache.
 - Added TerrainAtlas::render_visible to build the camera-culled chunk batch and submit it against its cached atlas ID in one call.
+
+
+## Application renderer — current implementation tranche
+
+- [x] Add a bounded renderer-owned FIFO GPU texture cache and palette-expanded RGBA upload.
+- [x] Add cached logical IFF icon upload through MAP indirection.
+- [x] Compose deterministic TMP terrain atlases from the nonblank tile indices referenced by a generic map grid.
+- [x] Generate camera-visible terrain sprites while traversing 16×16 chunks and culling off-screen cells.
+- [x] Submit sprites from multiple cached textures in stable render-layer order, switching bind groups only between adjacent texture runs.
+- [ ] Validate TMP, SHP, icon-set and palette behavior against legally supplied original TD/RA assets.
+- [ ] Implement theater-specific adjacency/transition resolution from source-derived map/theater metadata.
+- [ ] Implement authentic TD/RA map decoding and connect its terrain/template layers to the renderer.
+- [ ] Implement TRNS transparency semantics and the separate legacy Shape_Type pixel decoder.
+- [ ] Add camera input/panning, terrain animation, SHP unit/building rendering and CPU-side decoded-image caching.
+- [ ] Connect the rendered terrain and object layers to playable TD/RA and map-editor runtime providers.

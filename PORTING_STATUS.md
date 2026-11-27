@@ -48,7 +48,8 @@
 | Map editor model | Initial | Cell layer IDs and waypoint storage only |
 | Tiberian Dawn gameplay | Not ported | Variant boundary only |
 | Red Alert gameplay | Not ported | Variant boundary only |
-| Rendering and audio | Not ported | No renderer/audio backend |
+| Rendering | Initial backend | wgpu textured sprites/UI, bounded GPU texture cache, multi-texture ordered draws, TMP-derived terrain atlas composition, 16×16 chunk traversal and viewport culling; authentic map/theater integration remains pending |
+| Audio | Not ported | No playback/mixing backend |
 | Networking | Not ported | No wire protocol or lockstep implementation |
 | Map editor UI and full codecs | Not ported | No GUI, triggers, team types, or full scenario serialization |
 
@@ -74,7 +75,7 @@
 
 ## Verification status
 
-No Rust build/test result is claimed in this commit. The execution environment used to prepare this change did not have `rustc` or `cargo` installed. The workspace includes unit tests for the foundations; run the commands in the README on a Rust 1.85+ host before treating this milestone as verified.
+No Rust build/test result is claimed in the latest renderer commits. The execution environment used to prepare these changes did not have `rustc` or `cargo` installed. The workspace includes unit tests for the foundations; run the commands in the README on a Rust 1.85+ host before treating this milestone as verified.
 
 
 Latest addition: `TIBERIANDAWN/ALLOC.CPP` is recorded as intentionally inactive because its full implementation is under unconditional `#if (0)`.
@@ -297,3 +298,13 @@ This tranche adds `physical_icon_rgba` and `logical_icon_rgba`, using an explici
 **Not yet verified:** no legally supplied retail theater icon sets were available for pixel-level comparison, and no GPU-backed rendering test was run. The separate `tmp.rs` flat-header parser remains under audit; it must not be treated as validation of the original IFF TMP path.
 
 **Verification:** Cargo formatting, compilation, tests and Clippy remain unexecuted in this environment.
+
+
+## Renderer and terrain integration update
+
+- rts-formats TMP archives provide bounded TD/RA tile extraction and palette expansion. Real retail TMP validation remains pending.
+- TerrainAtlas packs only nonblank tiles referenced by a generic row-major TerrainMap, with deterministic tile slots and a bounded atlas size.
+- Visible terrain generation traverses 16×16 map chunks and clips work to the camera viewport.
+- WgpuRenderer::render_cached_multi resolves cached texture IDs and emits adjacent texture runs after stable render-layer sorting, preserving compositing order across texture changes.
+- The 128 MiB GPU cache remains FIFO. Texture IDs are treated as immutable content identities for the life of a cache entry.
+- Not implemented: authentic TD/RA map-file decoding, theater-specific adjacency/transition resolution, terrain animation, SHP unit/building rendering, camera input, CPU decoded-image cache, and real retail asset verification.
