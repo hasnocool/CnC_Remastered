@@ -46,3 +46,30 @@ This is an independent, unofficial community project. It is not affiliated with,
 ## Parity policy
 
 A subsystem is not considered ported merely because a Rust module with a similar name exists. Parity requires source traceability, behavior-focused tests, compatible fixtures where legally available, and explicit notes for any intentional differences. No 1:1 compatibility claim should be made until the corresponding subsystem has passed that process.
+
+## Application runtime (initial foundation)
+
+The workspace now includes:
+
+- `renderer`: wgpu surface presentation, RGBA uploads, a bounded 128 MiB FIFO GPU texture cache, cached icon-set/TMP terrain uploads, atlas UVs, nearest-neighbor sampling, rotated/tinted sprites, ordered multi-texture draw runs, alpha-blended UI primitives, bitmap text, camera-aware 16×16 terrain chunk traversal and viewport culling.
+- `launcher`: a graphical application menu, selectable TD/RA/editor entries, interactive settings, platform-persisted TOML configuration, mouse/keyboard input and a shared window lifecycle.
+- A deterministic four-region procedural terrain atlas used as a rendering fixture behind the launcher and application preview windows.
+
+Run the launcher with:
+
+```bash
+# Opens the graphical launcher.
+cargo run -p launcher
+
+# Direct renderer preview for a selected application boundary.
+cargo run -p launcher -- --app td
+cargo run -p launcher -- --app ra
+cargo run -p launcher -- --app editor
+
+# Print application IDs without opening a window.
+cargo run -p launcher -- --list
+```
+
+The launcher settings currently expose fullscreen, resolution presets, vsync, low-power GPU selection, frame limit, master-audio enable/mute, edge scrolling, mouse-Y inversion and networking enablement. Settings are saved automatically; display/GPU settings take effect after restart.
+
+The procedural terrain atlas remains a launcher fixture, not authentic game artwork. The renderer can now compose a packed atlas from map-referenced TMP tiles and submit ordered sprites from multiple cached textures. The map adapter is still a generic tile-index grid: authentic TD/RA map decoding, theater transition/adjacency rules, real retail asset validation, TRNS transparency semantics, the legacy Shape_Type pixel decoder, camera input, and runtime integration remain outstanding. TD, RA and editor entries are not yet playable runtimes. See [TODO.md](TODO.md) and [PORTING_STATUS.md](PORTING_STATUS.md).

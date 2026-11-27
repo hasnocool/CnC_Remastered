@@ -1,3 +1,4 @@
+# Filename: Cargo.toml
 [workspace]
 resolver = "2"
 members = [
@@ -7,6 +8,8 @@ members = [
     "crates/map-editor-model",
     "crates/tiberian-dawn",
     "crates/red-alert",
+    "crates/renderer",
+    "crates/launcher",
 ]
 
 [workspace.package]
@@ -22,3 +25,13 @@ rts-sim = { path = "crates/rts-sim" }
 map-editor-model = { path = "crates/map-editor-model" }
 tiberian-dawn = { path = "crates/tiberian-dawn" }
 red-alert = { path = "crates/red-alert" }
+renderer = { path = "crates/renderer" }
+wgpu = "26.0.1"
+winit = "0.30.12"
+pollster = "0.4"
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+directories = "6"
+tempfile = "3"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
