@@ -26,6 +26,8 @@ use rts_formats::{
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
+const MAX_VALIDATION_CELLS: usize = 1_048_576;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Variant { Td, Ra }
 
@@ -215,6 +217,7 @@ fn run() -> Result<()> {
     let ini = IniDocument::parse(&scenario_text);
     let width = ini.required_u32("map", "width")?;
     let height = ini.required_u32("map", "height")?;
+    let cell_count = checked_cell_count(width, height)?;
     let theater = match options.theater_override {
         Some(theater) => theater,
         None => ini.theater()?,
@@ -299,6 +302,16 @@ fn run() -> Result<()> {
     println!("Atlas FNV-1a 64: {checksum:#018x}");
     println!("GPU upload/rendering is intentionally not attempted; this is a deterministic CPU ingestion check.");
     Ok(())
+}
+
+fn checked_cell_count(width: u32, height: u32) -> Result<usize> {
+    let cells = usize::try_from(width).ok()
+        .and_then(|width| usize::try_from(height).ok().and_then(|height| width.checked_mul(height)))
+        .ok_or("scenario map dimensions overflow addressable memory")?;
+    if cells > MAX_VALIDATION_CELLS {
+        return Err(format!("scenario map has {cells} cells; validation limit is {MAX_VALIDATION_CELLS}").into());
+    }
+    Ok(cells)
 }
 
 fn validate_variant_theater(variant: Variant, theater: TemplateTheater) -> Result<()> {
