@@ -379,3 +379,8 @@ Implemented on `feat/application-runtime-renderer-launcher`:
 - `crates/map-editor-model/src/lib.rs`: exports both modules and their public types.
 
 The implementation preserves the audited distinction between occupancy and overlap. It does not yet implement the C# Map aggregate, synchronous event subscriptions, Building bib ownership, derived wall/resource icons, clone semantics, or UI/editor lifecycle. Unit tests were added but have not been executed in this environment; no build, formatting, or Clippy result is claimed. These are synthetic unit tests, not retail TD/RA validation.
+
+
+## C# editor port — generic CellGrid<T> tranche
+
+Added `crates/map-editor-model/src/cell_grid.rs` and public exports. The Rust grid stores one optional value per row-major cell, supports coordinate/index access, returns explicit change events, emits one aggregate clear event, and copies by flattened length (so equal-area different-shape grids retain source behavior). Tests were added for these contracts but have not been run. Event values are returned to the caller; the C# delegate subscription model and Map aggregate wiring remain unimplemented. This is synthetic model coverage only, not retail validation.
