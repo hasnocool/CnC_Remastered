@@ -49,6 +49,7 @@ pub enum MapDocumentError {
     DuplicateWaypoint(u16),
     DuplicateCellEdit(CellCoord),
     CellStateConflict(CellCoord),
+    TerrainObjectCellConflict(CellCoord),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -132,6 +133,25 @@ impl MapDocument {
         let index = self
             .dimensions
             .index(coordinate)
+            .ok_or(MapDocumentError::CellOutOfBounds(coordinate))?;
+        if let Some(owner) = self.terrain_occupancy.get(index).copied().flatten() {
+            let object = self.terrain_objects.get(&owner)
+                .ok_or(MapDocumentError::TerrainObjectCellConflict(coordinate))?;
+            if layers.terrain != Some(object.terrain_type) || layers.terrain_icon != object.icon {
+                return Err(MapDocumentError::TerrainObjectCellConflict(coordinate));
+            }
+        }
+        self.cells[index] = layers;
+        Ok(())
+    }
+
+    /// Internal write used only after terrain-object transition validation.
+    pub(crate) fn set_terrain_object_cell(
+        &mut self,
+        coordinate: CellCoord,
+        layers: CellLayers,
+    ) -> Result<(), MapDocumentError> {
+        let index = self.dimensions.index(coordinate)
             .ok_or(MapDocumentError::CellOutOfBounds(coordinate))?;
         self.cells[index] = layers;
         Ok(())
