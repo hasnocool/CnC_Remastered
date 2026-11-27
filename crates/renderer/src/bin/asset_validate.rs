@@ -140,7 +140,7 @@ fn parse_options() -> Result<Option<Options>> {
     let mut scenario = None;
     let mut td_map_bin = None;
     let mut palette = None;
-    let mut palette_encoding = PaletteEncoding::Rgb8;
+    let mut palette_encoding = None;
     let mut mix_files = Vec::new();
     let mut theater_override = None;
 
@@ -158,11 +158,11 @@ fn parse_options() -> Result<Option<Options>> {
             "--scenario" => scenario = Some(PathBuf::from(value(&mut args, "--scenario")?)),
             "--map-bin" => td_map_bin = Some(PathBuf::from(value(&mut args, "--map-bin")?)),
             "--palette" => palette = Some(PathBuf::from(value(&mut args, "--palette")?)),
-            "--palette-encoding" => palette_encoding = match value(&mut args, "--palette-encoding")?.to_ascii_lowercase().as_str() {
+            "--palette-encoding" => palette_encoding = Some(match value(&mut args, "--palette-encoding")?.to_ascii_lowercase().as_str() {
                 "rgb8" => PaletteEncoding::Rgb8,
                 "rgb6" => PaletteEncoding::Rgb6,
                 other => return Err(format!("unknown palette encoding {other:?}; expected rgb8 or rgb6").into()),
-            },
+            }),
             "--mix" => mix_files.push(PathBuf::from(value(&mut args, "--mix")?)),
             "--theater" => theater_override = Some(parse_theater(&value(&mut args, "--theater")?)?),
             other => return Err(format!("unknown argument {other:?}; use --help").into()),
@@ -175,7 +175,7 @@ fn parse_options() -> Result<Option<Options>> {
         scenario: scenario.ok_or("--scenario is required")?,
         td_map_bin,
         palette: palette.ok_or("--palette is required")?,
-        palette_encoding,
+        palette_encoding: palette_encoding.ok_or("--palette-encoding is required; choose rgb8 or rgb6 explicitly")?,
         mix_files,
         theater_override,
     };
@@ -195,7 +195,7 @@ fn print_help() {
     println!("  --scenario FILE                 Scenario INI (required)");
     println!("  --map-bin FILE                  TD editor terrain BIN (required for td)");
     println!("  --palette FILE                  768-byte RGB palette (required)");
-    println!("  --palette-encoding rgb8|rgb6    Palette component encoding (default rgb8)");
+    println!("  --palette-encoding rgb8|rgb6    Palette component encoding (required; never guessed)");
     println!("  --mix FILE                      MIX archive; repeat to define lookup order");
     println!("  --theater NAME                  Override scenario Theater metadata");
     println!("  --help                          Show this help");
