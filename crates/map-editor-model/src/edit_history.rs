@@ -1,5 +1,5 @@
 //! Transactional cell-edit history for the map editor.
-use crate::{CellLayers, MapDocument, MapDocumentError};
+use crate::{CellLayers, MapDocument, MapDocumentError, TerrainObject, TerrainObjectError, TerrainObjectId, TerrainPlacementDefinition};
 use rts_core::CellCoord;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -7,9 +7,28 @@ struct CellEdit { coordinate: CellCoord, before: CellLayers, after: CellLayers }
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct CellEditBatch { edits: Vec<CellEdit> }
 
-/// Bounded, linear undo/redo history. A batch is one indivisible command.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct MapEditHistory { undo: Vec<CellEditBatch>, redo: Vec<CellEditBatch>, capacity: usize }
+struct TerrainObjectEdit {
+    before: Option<TerrainObject>,
+    after: Option<TerrainObject>,
+    definition: TerrainPlacementDefinition,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum HistoryCommand {
+    Cells(CellEditBatch),
+    TerrainObject(TerrainObjectEdit),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TerrainHistoryError {
+    Object(TerrainObjectError),
+    UnknownObject(TerrainObjectId),
+}
+
+/// Bounded, linear undo/redo history. Every command is indivisible.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MapEditHistory { undo: Vec<HistoryCommand>, redo: Vec<HistoryCommand>, capacity: usize }
 
 impl Default for MapEditHistory { fn default() -> Self { Self::new(256) } }
 
@@ -24,21 +43,15 @@ impl MapEditHistory {
 
     /// Whether the next undo changes a template reference or logical icon.
     pub fn undo_changes_templates(&self) -> bool {
-        self.undo.last().is_some_and(|command| command.edits.iter().any(|edit| {
+        self.undo.last().is_some_and(|command| match command {\n            HistoryCommand::Cells(batch) => batch.edits.iter().any(|edit| {
             edit.before.template != edit.after.template
                 || edit.before.template_icon != edit.after.template_icon
-        }))
-    }
-
-    /// Whether the next redo changes a template reference or logical icon.
+        }),\n            HistoryCommand::TerrainObject(_) => false,\n        })\n    }\n\n    /// Whether the next redo changes a template reference or logical icon.
     pub fn redo_changes_templates(&self) -> bool {
-        self.redo.last().is_some_and(|command| command.edits.iter().any(|edit| {
+        self.redo.last().is_some_and(|command| match command {\n            HistoryCommand::Cells(batch) => batch.edits.iter().any(|edit| {
             edit.before.template != edit.after.template
                 || edit.before.template_icon != edit.after.template_icon
-        }))
-    }
-
-    pub fn apply_cell(&mut self, document: &mut MapDocument, coordinate: CellCoord, after: CellLayers) -> Result<bool, MapDocumentError> {
+        }),\n            HistoryCommand::TerrainObject(_) => false,\n        })\n    }\n\n    pub fn apply_cell(&mut self, document: &mut MapDocument, coordinate: CellCoord, after: CellLayers) -> Result<bool, MapDocumentError> {
         Ok(self.apply_cells(document, &[(coordinate, after)])? != 0)
     }
 
@@ -67,31 +80,101 @@ impl MapEditHistory {
         if self.capacity == 0 {
             self.undo.clear();
         } else {
-            self.undo.push(CellEditBatch { edits });
+            self.undo.push(HistoryCommand::Cells(CellEditBatch { edits }));
             if self.undo.len() > self.capacity { self.undo.remove(0); }
         }
         Ok(changed)
     }
 
+    /// Records one map-owned terrain object placement.
+    pub fn place_terrain_object(
+        &mut self,
+        document: &mut MapDocument,
+        origin: CellCoord,
+        definition: &TerrainPlacementDefinition,
+        icon: u8,
+        trigger: Option<String>,
+    ) -> Result<TerrainObjectId, TerrainHistoryError> {
+        let id = document.add_terrain_object(origin, definition, icon, trigger)
+            .map_err(TerrainHistoryError::Object)?;
+        let after = document.terrain_object(id).cloned()
+            .ok_or(TerrainHistoryError::UnknownObject(id))?;
+        self.record_object(TerrainObjectEdit { before: None, after: Some(after), definition: definition.clone() });
+        Ok(id)
+    }
+
+    /// Records removal of an existing map-owned terrain object.
+    pub fn remove_terrain_object(
+        &mut self,
+        document: &mut MapDocument,
+        id: TerrainObjectId,
+        definition: &TerrainPlacementDefinition,
+    ) -> Result<TerrainObject, TerrainHistoryError> {
+        let before = document.terrain_object(id).cloned()
+            .ok_or(TerrainHistoryError::UnknownObject(id))?;
+        document.transition_terrain_object(Some(&before), None, definition)
+            .map_err(TerrainHistoryError::Object)?;
+        self.record_object(TerrainObjectEdit { before: Some(before.clone()), after: None, definition: definition.clone() });
+        Ok(before)
+    }
+
+    /// Records a move while preserving object identity, icon and trigger.
+    pub fn move_terrain_object(
+        &mut self,
+        document: &mut MapDocument,
+        id: TerrainObjectId,
+        destination: CellCoord,
+        definition: &TerrainPlacementDefinition,
+    ) -> Result<(), TerrainHistoryError> {
+        let before = document.terrain_object(id).cloned()
+            .ok_or(TerrainHistoryError::UnknownObject(id))?;
+        if before.origin == destination { return Ok(()); }
+        let mut after = before.clone();
+        after.origin = destination;
+        document.transition_terrain_object(Some(&before), Some(&after), definition)
+            .map_err(TerrainHistoryError::Object)?;
+        self.record_object(TerrainObjectEdit { before: Some(before), after: Some(after), definition: definition.clone() });
+        Ok(())
+    }
+
+    fn record_object(&mut self, edit: TerrainObjectEdit) {
+        self.redo.clear();
+        if self.capacity == 0 {
+            self.undo.clear();
+        } else {
+            self.undo.push(HistoryCommand::TerrainObject(edit));
+            if self.undo.len() > self.capacity { self.undo.remove(0); }
+        }
+    }
+
     pub fn undo(&mut self, document: &mut MapDocument) -> Result<bool, MapDocumentError> {
         let Some(command) = self.undo.pop() else { return Ok(false); };
-        let invalid = command.edits.iter().find_map(|edit| {
-            match document.cell(edit.coordinate) {
-                None => Some((edit.coordinate, true)),
-                Some(actual) if *actual != edit.after => Some((edit.coordinate, false)),
-                Some(_) => None,
+        let result = match &command {
+            HistoryCommand::Cells(batch) => {
+                let invalid = batch.edits.iter().find_map(|edit| match document.cell(edit.coordinate) {
+                    None => Some((edit.coordinate, true)),
+                    Some(actual) if *actual != edit.after => Some((edit.coordinate, false)),
+                    Some(_) => None,
+                });
+                if let Some((coordinate, out_of_bounds)) = invalid {
+                    Err(if out_of_bounds { MapDocumentError::CellOutOfBounds(coordinate) }
+                        else { MapDocumentError::CellStateConflict(coordinate) })
+                } else {
+                    for edit in &batch.edits {
+                        document.set_cell(edit.coordinate, edit.before).expect("prevalidated undo coordinate");
+                    }
+                    Ok(())
+                }
             }
-        });
-        if let Some((coordinate, out_of_bounds)) = invalid {
+            HistoryCommand::TerrainObject(edit) => document
+                .transition_terrain_object(edit.after.as_ref(), edit.before.as_ref(), &edit.definition)
+                .map_err(|_| MapDocumentError::CellStateConflict(
+                    edit.after.as_ref().or(edit.before.as_ref()).map(|object| object.origin).unwrap_or(CellCoord::new(0, 0))
+                )),
+        };
+        if let Err(error) = result {
             self.undo.push(command);
-            return Err(if out_of_bounds {
-                MapDocumentError::CellOutOfBounds(coordinate)
-            } else {
-                MapDocumentError::CellStateConflict(coordinate)
-            });
-        }
-        for edit in &command.edits {
-            document.set_cell(edit.coordinate, edit.before).expect("prevalidated undo coordinate");
+            return Err(error);
         }
         self.redo.push(command);
         Ok(true)
@@ -99,23 +182,32 @@ impl MapEditHistory {
 
     pub fn redo(&mut self, document: &mut MapDocument) -> Result<bool, MapDocumentError> {
         let Some(command) = self.redo.pop() else { return Ok(false); };
-        let invalid = command.edits.iter().find_map(|edit| {
-            match document.cell(edit.coordinate) {
-                None => Some((edit.coordinate, true)),
-                Some(actual) if *actual != edit.before => Some((edit.coordinate, false)),
-                Some(_) => None,
+        let result = match &command {
+            HistoryCommand::Cells(batch) => {
+                let invalid = batch.edits.iter().find_map(|edit| match document.cell(edit.coordinate) {
+                    None => Some((edit.coordinate, true)),
+                    Some(actual) if *actual != edit.before => Some((edit.coordinate, false)),
+                    Some(_) => None,
+                });
+                if let Some((coordinate, out_of_bounds)) = invalid {
+                    Err(if out_of_bounds { MapDocumentError::CellOutOfBounds(coordinate) }
+                        else { MapDocumentError::CellStateConflict(coordinate) })
+                } else {
+                    for edit in &batch.edits {
+                        document.set_cell(edit.coordinate, edit.after).expect("prevalidated redo coordinate");
+                    }
+                    Ok(())
+                }
             }
-        });
-        if let Some((coordinate, out_of_bounds)) = invalid {
+            HistoryCommand::TerrainObject(edit) => document
+                .transition_terrain_object(edit.before.as_ref(), edit.after.as_ref(), &edit.definition)
+                .map_err(|_| MapDocumentError::CellStateConflict(
+                    edit.before.as_ref().or(edit.after.as_ref()).map(|object| object.origin).unwrap_or(CellCoord::new(0, 0))
+                )),
+        };
+        if let Err(error) = result {
             self.redo.push(command);
-            return Err(if out_of_bounds {
-                MapDocumentError::CellOutOfBounds(coordinate)
-            } else {
-                MapDocumentError::CellStateConflict(coordinate)
-            });
-        }
-        for edit in &command.edits {
-            document.set_cell(edit.coordinate, edit.after).expect("prevalidated redo coordinate");
+            return Err(error);
         }
         self.undo.push(command);
         Ok(true)
@@ -131,6 +223,57 @@ mod tests {
     fn document() -> MapDocument {
         MapDocument::new(GameVariant::TiberianDawn, MapDimensions::new(4, 4).unwrap()).unwrap()
     }
+    #[test]
+    fn terrain_object_place_remove_move_are_single_undoable_commands() {
+        use crate::OccupancyMask;
+        let mut map = document();
+        let mut history = MapEditHistory::default();
+        let definition = TerrainPlacementDefinition {
+            id: 18,
+            occupancy: OccupancyMask::new(2, 2, vec![true, false, true, true]).unwrap(),
+            transformable: true,
+        };
+        let id = history.place_terrain_object(
+            &mut map, CellCoord::new(0, 0), &definition, 22, Some("T1".into()),
+        ).unwrap();
+        assert_eq!(history.undo_depth(), 1);
+        assert_eq!(map.terrain_object_at(CellCoord::new(0, 1)).unwrap().id, id);
+        history.undo(&mut map).unwrap();
+        assert!(map.terrain_object(id).is_none());
+        assert!(map.cells().iter().all(|cell| cell.terrain.is_none()));
+        history.redo(&mut map).unwrap();
+        assert_eq!(map.terrain_object(id).unwrap().trigger.as_deref(), Some("T1"));
+
+        history.move_terrain_object(&mut map, id, CellCoord::new(2, 1), &definition).unwrap();
+        assert_eq!(map.terrain_object(id).unwrap().origin, CellCoord::new(2, 1));
+        history.undo(&mut map).unwrap();
+        assert_eq!(map.terrain_object(id).unwrap().origin, CellCoord::new(0, 0));
+        history.redo(&mut map).unwrap();
+        assert_eq!(map.terrain_object(id).unwrap().origin, CellCoord::new(2, 1));
+
+        history.remove_terrain_object(&mut map, id, &definition).unwrap();
+        assert!(map.terrain_object(id).is_none());
+        history.undo(&mut map).unwrap();
+        assert_eq!(map.terrain_object(id).unwrap().origin, CellCoord::new(2, 1));
+    }
+
+    #[test]
+    fn terrain_object_history_rejects_conflicts_without_losing_command() {
+        use crate::OccupancyMask;
+        let mut map = document();
+        let mut history = MapEditHistory::default();
+        let definition = TerrainPlacementDefinition {
+            id: 18,
+            occupancy: OccupancyMask::new(1, 1, vec![true]).unwrap(),
+            transformable: false,
+        };
+        let id = history.place_terrain_object(&mut map, CellCoord::new(0, 0), &definition, 0, None).unwrap();
+        map.set_cell(CellCoord::new(0, 0), CellLayers { terrain: None, ..CellLayers::default() }).unwrap();
+        assert_eq!(history.undo(&mut map), Err(MapDocumentError::CellStateConflict(CellCoord::new(0, 0))));
+        assert!(history.can_undo());
+        assert!(map.terrain_object(id).is_some());
+    }
+
     #[test]
     fn duplicate_after_noop_is_still_rejected() {
         let mut map = document();
