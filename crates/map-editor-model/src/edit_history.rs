@@ -1,242 +1,147 @@
 //! Transactional cell-edit history for the map editor.
-//!
-//! Commands retain complete before/after cell layers so undo and redo restore
-//! template IDs, logical template icon slots, terrain, overlays, and smudges
-//! atomically. The history is intentionally independent of UI and renderer
-//! crates.
-
 use crate::{CellLayers, MapDocument, MapDocumentError};
 use rts_core::CellCoord;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct CellEdit {
-    coordinate: CellCoord,
-    before: CellLayers,
-    after: CellLayers,
-}
-
-/// Bounded, linear undo/redo history for map-cell edits.
-///
-/// Applying a new edit after undo discards the redo branch. No-op edits are
-/// ignored and therefore do not create empty undo steps.
+struct CellEdit { coordinate: CellCoord, before: CellLayers, after: CellLayers }
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct MapEditHistory {
-    undo: Vec<CellEdit>,
-    redo: Vec<CellEdit>,
-    capacity: usize,
-}
+struct CellEditBatch { edits: Vec<CellEdit> }
 
-impl Default for MapEditHistory {
-    fn default() -> Self {
-        Self::new(256)
-    }
-}
+/// Bounded, linear undo/redo history. A batch is one indivisible command.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MapEditHistory { undo: Vec<CellEditBatch>, redo: Vec<CellEditBatch>, capacity: usize }
+
+impl Default for MapEditHistory { fn default() -> Self { Self::new(256) } }
 
 impl MapEditHistory {
-    /// Creates a history retaining at most `capacity` undo operations.
     pub fn new(capacity: usize) -> Self {
-        Self {
-            undo: Vec::with_capacity(capacity),
-            redo: Vec::new(),
-            capacity,
+        Self { undo: Vec::with_capacity(capacity), redo: Vec::new(), capacity }
+    }
+    pub fn can_undo(&self) -> bool { !self.undo.is_empty() }
+    pub fn can_redo(&self) -> bool { !self.redo.is_empty() }
+    pub fn undo_depth(&self) -> usize { self.undo.len() }
+    pub fn redo_depth(&self) -> usize { self.redo.len() }
+
+    pub fn apply_cell(&mut self, document: &mut MapDocument, coordinate: CellCoord, after: CellLayers) -> Result<bool, MapDocumentError> {
+        Ok(self.apply_cells(document, &[(coordinate, after)])? != 0)
+    }
+
+    /// Atomically applies unique cell replacements and records them as one command.
+    /// Returns the number of cells changed; no-op entries are ignored.
+    pub fn apply_cells(&mut self, document: &mut MapDocument, replacements: &[(CellCoord, CellLayers)]) -> Result<usize, MapDocumentError> {
+        let mut edits: Vec<CellEdit> = Vec::with_capacity(replacements.len());
+        for (coordinate, after) in replacements {
+            if edits.iter().any(|edit| edit.coordinate == *coordinate) {
+                return Err(MapDocumentError::DuplicateCellEdit(*coordinate));
+            }
+            let before = document.cell(*coordinate).copied()
+                .ok_or(MapDocumentError::CellOutOfBounds(*coordinate))?;
+            if before != *after { edits.push(CellEdit { coordinate: *coordinate, before, after: *after }); }
         }
-    }
+        let changed = edits.len();
+        if changed == 0 { return Ok(0); }
 
-    pub fn can_undo(&self) -> bool {
-        !self.undo.is_empty()
-    }
-
-    pub fn can_redo(&self) -> bool {
-        !self.redo.is_empty()
-    }
-
-    pub fn undo_depth(&self) -> usize {
-        self.undo.len()
-    }
-
-    pub fn redo_depth(&self) -> usize {
-        self.redo.len()
-    }
-
-    /// Applies a cell replacement and records its inverse operation.
-    pub fn apply_cell(
-        &mut self,
-        document: &mut MapDocument,
-        coordinate: CellCoord,
-        after: CellLayers,
-    ) -> Result<bool, MapDocumentError> {
-        let before = document
-            .cell(coordinate)
-            .copied()
-            .ok_or(MapDocumentError::CellOutOfBounds(coordinate))?;
-
-        if before == after {
-            return Ok(false);
+        // All coordinates and before states have been checked before mutation.
+        for edit in &edits {
+            document.set_cell(edit.coordinate, edit.after).expect("prevalidated transaction coordinate");
         }
-
-        document.set_cell(coordinate, after)?;
         self.redo.clear();
-
         if self.capacity == 0 {
             self.undo.clear();
-            return Ok(true);
+        } else {
+            self.undo.push(CellEditBatch { edits });
+            if self.undo.len() > self.capacity { self.undo.remove(0); }
         }
+        Ok(changed)
+    }
 
-        self.undo.push(CellEdit {
-            coordinate,
-            before,
-            after,
-        });
-
-        if self.undo.len() > self.capacity {
-            self.undo.remove(0);
+    pub fn undo(&mut self, document: &mut MapDocument) -> Result<bool, MapDocumentError> {
+        let Some(command) = self.undo.pop() else { return Ok(false); };
+        for edit in &command.edits {
+            let actual = document.cell(edit.coordinate).ok_or(MapDocumentError::CellOutOfBounds(edit.coordinate))?;
+            if *actual != edit.after {
+                self.undo.push(command);
+                return Err(MapDocumentError::CellStateConflict(edit.coordinate));
+            }
         }
-
+        for edit in &command.edits {
+            document.set_cell(edit.coordinate, edit.before).expect("prevalidated undo coordinate");
+        }
+        self.redo.push(command);
         Ok(true)
     }
 
-    /// Reverts the most recent edit. Returns false when history is empty.
-    pub fn undo(
-        &mut self,
-        document: &mut MapDocument,
-    ) -> Result<bool, MapDocumentError> {
-        let Some(edit) = self.undo.pop() else {
-            return Ok(false);
-        };
-
-        // Reinsert the command if the target document rejects the operation.
-        if let Err(error) = document.set_cell(edit.coordinate, edit.before) {
-            self.undo.push(edit);
-            return Err(error);
+    pub fn redo(&mut self, document: &mut MapDocument) -> Result<bool, MapDocumentError> {
+        let Some(command) = self.redo.pop() else { return Ok(false); };
+        for edit in &command.edits {
+            let actual = document.cell(edit.coordinate).ok_or(MapDocumentError::CellOutOfBounds(edit.coordinate))?;
+            if *actual != edit.before {
+                self.redo.push(command);
+                return Err(MapDocumentError::CellStateConflict(edit.coordinate));
+            }
         }
-
-        self.redo.push(edit);
+        for edit in &command.edits {
+            document.set_cell(edit.coordinate, edit.after).expect("prevalidated redo coordinate");
+        }
+        self.undo.push(command);
         Ok(true)
     }
 
-    /// Reapplies the most recently reverted edit.
-    pub fn redo(
-        &mut self,
-        document: &mut MapDocument,
-    ) -> Result<bool, MapDocumentError> {
-        let Some(edit) = self.redo.pop() else {
-            return Ok(false);
-        };
-
-        if let Err(error) = document.set_cell(edit.coordinate, edit.after) {
-            self.redo.push(edit);
-            return Err(error);
-        }
-
-        self.undo.push(edit);
-        Ok(true)
-    }
-
-    /// Clears both stacks, for example after loading or replacing a document.
-    pub fn clear(&mut self) {
-        self.undo.clear();
-        self.redo.clear();
-    }
+    pub fn clear(&mut self) { self.undo.clear(); self.redo.clear(); }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use rts_core::{GameVariant, MapDimensions};
-
     fn document() -> MapDocument {
-        MapDocument::new(
-            GameVariant::TiberianDawn,
-            MapDimensions::new(4, 4).expect("valid dimensions"),
-        )
-        .expect("valid map")
+        MapDocument::new(GameVariant::TiberianDawn, MapDimensions::new(4, 4).unwrap()).unwrap()
     }
-
     #[test]
-    fn undo_and_redo_restore_all_cell_layers() {
-        let mut map = document();
-        let mut history = MapEditHistory::default();
-        let coordinate = CellCoord::new(1, 2);
-        let layers = CellLayers {
-            template: Some(17),
-            template_icon: 9,
-            terrain: Some(4),
-            overlay: Some(12),
-            smudge: Some(3),
-        };
-
-        assert!(history.apply_cell(&mut map, coordinate, layers).unwrap());
-        assert_eq!(map.cell(coordinate), Some(&layers));
-        assert!(history.undo(&mut map).unwrap());
-        assert_eq!(map.cell(coordinate), Some(&CellLayers::default()));
-        assert!(history.redo(&mut map).unwrap());
-        assert_eq!(map.cell(coordinate), Some(&layers));
+    fn undo_redo_restore_all_cell_layers() {
+        let mut map=document(); let mut h=MapEditHistory::default(); let at=CellCoord::new(1,2);
+        let value=CellLayers{template:Some(17),template_icon:9,terrain:Some(4),overlay:Some(12),smudge:Some(3)};
+        assert!(h.apply_cell(&mut map,at,value).unwrap()); assert_eq!(map.cell(at),Some(&value));
+        assert!(h.undo(&mut map).unwrap()); assert_eq!(map.cell(at),Some(&CellLayers::default()));
+        assert!(h.redo(&mut map).unwrap()); assert_eq!(map.cell(at),Some(&value));
     }
-
     #[test]
-    fn no_op_does_not_create_history() {
-        let mut map = document();
-        let mut history = MapEditHistory::default();
-
-        assert!(!history
-            .apply_cell(&mut map, CellCoord::new(0, 0), CellLayers::default())
-            .unwrap());
-        assert_eq!(history.undo_depth(), 0);
-        assert!(!history.can_undo());
+    fn batch_is_one_atomic_undo_redo_command() {
+        let mut map=document(); let mut h=MapEditHistory::default(); let a=CellCoord::new(0,0); let b=CellCoord::new(1,0);
+        let v=CellLayers{terrain:Some(7),..CellLayers::default()};
+        assert_eq!(h.apply_cells(&mut map,&[(a,v),(b,v)]).unwrap(),2); assert_eq!(h.undo_depth(),1);
+        h.undo(&mut map).unwrap(); assert_eq!(map.cell(a),Some(&CellLayers::default())); assert_eq!(map.cell(b),Some(&CellLayers::default()));
+        h.redo(&mut map).unwrap(); assert_eq!(map.cell(a),Some(&v)); assert_eq!(map.cell(b),Some(&v));
     }
-
     #[test]
-    fn new_edit_discards_redo_branch() {
-        let mut map = document();
-        let mut history = MapEditHistory::default();
-        let first = CellLayers { template: Some(1), ..CellLayers::default() };
-        let second = CellLayers { template: Some(2), ..CellLayers::default() };
-
-        history.apply_cell(&mut map, CellCoord::new(0, 0), first).unwrap();
-        history.undo(&mut map).unwrap();
-        history.apply_cell(&mut map, CellCoord::new(1, 0), second).unwrap();
-
-        assert!(!history.can_redo());
-        assert_eq!(history.undo_depth(), 1);
+    fn undo_conflict_rejects_entire_batch() {
+        let mut map=document(); let mut h=MapEditHistory::default(); let a=CellCoord::new(0,0); let b=CellCoord::new(1,0);
+        let v=CellLayers{terrain:Some(7),..CellLayers::default()}; h.apply_cells(&mut map,&[(a,v),(b,v)]).unwrap();
+        map.set_cell(b,CellLayers{overlay:Some(9),..v}).unwrap();
+        assert_eq!(h.undo(&mut map),Err(MapDocumentError::CellStateConflict(b)));
+        assert_eq!(map.cell(a),Some(&v)); assert_eq!(map.cell(b).unwrap().overlay,Some(9)); assert!(h.can_undo());
     }
-
     #[test]
-    fn rejects_out_of_bounds_edit_without_mutating_history() {
-        let mut map = document();
-        let mut history = MapEditHistory::default();
-        let coordinate = CellCoord::new(4, 0);
-
-        assert_eq!(
-            history.apply_cell(&mut map, coordinate, CellLayers::default()),
-            Err(MapDocumentError::CellOutOfBounds(coordinate))
-        );
-        assert_eq!(history.undo_depth(), 0);
+    fn redo_conflict_rejects_entire_batch() {
+        let mut map=document(); let mut h=MapEditHistory::default(); let a=CellCoord::new(0,0); let b=CellCoord::new(1,0);
+        let v=CellLayers{terrain:Some(7),..CellLayers::default()}; h.apply_cells(&mut map,&[(a,v),(b,v)]).unwrap(); h.undo(&mut map).unwrap();
+        map.set_cell(b,CellLayers{overlay:Some(9),..CellLayers::default()}).unwrap();
+        assert_eq!(h.redo(&mut map),Err(MapDocumentError::CellStateConflict(b)));
+        assert_eq!(map.cell(a),Some(&CellLayers::default())); assert_eq!(map.cell(b).unwrap().overlay,Some(9)); assert!(h.can_redo());
     }
-
     #[test]
-    fn zero_capacity_applies_without_retaining_history() {
-        let mut map = document();
-        let mut history = MapEditHistory::new(0);
-        let layers = CellLayers { overlay: Some(8), ..CellLayers::default() };
-
-        assert!(history.apply_cell(&mut map, CellCoord::new(0, 0), layers).unwrap());
-        assert_eq!(history.undo_depth(), 0);
-        assert!(!history.can_undo());
+    fn invalid_batch_does_not_mutate_document_or_history() {
+        let mut map=document(); let mut h=MapEditHistory::default(); let a=CellCoord::new(0,0); let v=CellLayers{terrain:Some(1),..CellLayers::default()};
+        assert_eq!(h.apply_cells(&mut map,&[(a,v),(a,v)]),Err(MapDocumentError::DuplicateCellEdit(a)));
+        assert_eq!(h.apply_cells(&mut map,&[(a,v),(CellCoord::new(4,0),v)]),Err(MapDocumentError::CellOutOfBounds(CellCoord::new(4,0))));
+        assert_eq!(map.cell(a),Some(&CellLayers::default())); assert_eq!(h.undo_depth(),0);
     }
-
     #[test]
-    fn capacity_discards_oldest_undo_entry() {
-        let mut map = document();
-        let mut history = MapEditHistory::new(1);
-        let first = CellCoord::new(0, 0);
-        let second = CellCoord::new(1, 0);
-
-        history.apply_cell(&mut map, first, CellLayers { template: Some(1), ..CellLayers::default() }).unwrap();
-        history.apply_cell(&mut map, second, CellLayers { template: Some(2), ..CellLayers::default() }).unwrap();
-
-        assert_eq!(history.undo_depth(), 1);
-        history.undo(&mut map).unwrap();
-        assert_eq!(map.cell(second), Some(&CellLayers::default()));
-        assert_eq!(map.cell(first), Some(&CellLayers { template: Some(1), ..CellLayers::default() }));
+    fn no_ops_capacity_and_redo_invalidation_work() {
+        let mut map=document(); let mut h=MapEditHistory::new(1); let a=CellCoord::new(0,0);
+        assert_eq!(h.apply_cells(&mut map,&[(a,CellLayers::default())]).unwrap(),0);
+        let v=CellLayers{overlay:Some(8),..CellLayers::default()}; assert_eq!(h.apply_cells(&mut map,&[(a,v)]).unwrap(),1);
+        h.undo(&mut map).unwrap(); h.apply_cell(&mut map,CellCoord::new(1,0),v).unwrap(); assert!(!h.can_redo());
+        let mut disabled=MapEditHistory::new(0); assert_eq!(disabled.apply_cell(&mut map,a,CellLayers::default()).unwrap(),true); assert_eq!(disabled.undo_depth(),0);
     }
 }
