@@ -20,6 +20,7 @@ pub enum TerrainError {
     InvalidMapDimensions { width: u32, height: u32, cells: usize },
     InvalidTileIndex(usize),
     UnknownTemplate(u16),
+    MapAllocationFailed { cells: usize },
     AtlasTooLarge { width: u32, height: u32, bytes: usize },
     InvalidCamera,
     Renderer(String),
@@ -32,6 +33,7 @@ impl std::fmt::Display for TerrainError {
                 write!(f, "terrain map {width}x{height} does not match {cells} cell entries"),
             Self::InvalidTileIndex(index) => write!(f, "terrain map references missing TMP tile {index}"),
             Self::UnknownTemplate(template) => write!(f, "map template {template} has no resolved TMP tile"),
+            Self::MapAllocationFailed { cells } => write!(f, "could not reserve terrain storage for {cells} cells"),
             Self::AtlasTooLarge { width, height, bytes } =>
                 write!(f, "terrain atlas {width}x{height} ({bytes} bytes) exceeds supported limits"),
             Self::InvalidCamera => f.write_str("terrain camera, zoom, or viewport is invalid"),
@@ -75,15 +77,49 @@ impl TerrainMap {
         templates: impl IntoIterator<Item = Option<u16>>,
         mut resolve: impl FnMut(u16) -> Option<usize>,
     ) -> Result<Self, TerrainError> {
+        // Validate dimensions before consuming an arbitrary iterator or asking
+        // the resolver to perform any work.
+        let expected = (width as usize).checked_mul(height as usize);
+        if width == 0 || height == 0 || expected.is_none() {
+            return Err(TerrainError::InvalidMapDimensions {
+                width,
+                height,
+                cells: 0,
+            });
+        }
+        let expected = expected.expect("nonzero dimensions and checked product");
+
         let mut cells = Vec::new();
+        cells.try_reserve_exact(expected).map_err(|_| {
+            TerrainError::MapAllocationFailed { cells: expected }
+        })?;
+
         for template in templates {
+            if cells.len() == expected {
+                return Err(TerrainError::InvalidMapDimensions {
+                    width,
+                    height,
+                    cells: expected.saturating_add(1),
+                });
+            }
             let tile = match template {
-                Some(template) => Some(resolve(template).ok_or(TerrainError::UnknownTemplate(template))?),
+                Some(template) => Some(
+                    resolve(template).ok_or(TerrainError::UnknownTemplate(template))?,
+                ),
                 None => None,
             };
             cells.push(tile);
         }
-        Self::new(width, height, cells)
+
+        if cells.len() != expected {
+            return Err(TerrainError::InvalidMapDimensions {
+                width,
+                height,
+                cells: cells.len(),
+            });
+        }
+
+        Ok(Self { width, height, cells })
     }
     pub const fn width(&self) -> u32 { self.width }
     pub const fn height(&self) -> u32 { self.height }
@@ -293,6 +329,46 @@ mod tests {
             TerrainMap::from_template_cells(1, 1, [Some(99)], |_| None).unwrap_err(),
             TerrainError::UnknownTemplate(99),
         );
+    }
+
+    #[test]
+    fn rejects_template_iterators_with_too_few_or_too_many_cells() {
+        let too_few = TerrainMap::from_template_cells(2, 1, [Some(1)], |_| Some(0));
+        assert_eq!(
+            too_few.unwrap_err(),
+            TerrainError::InvalidMapDimensions { width: 2, height: 1, cells: 1 },
+        );
+
+        let too_many = TerrainMap::from_template_cells(1, 1, [Some(1), Some(2)], |_| Some(0));
+        assert_eq!(
+            too_many.unwrap_err(),
+            TerrainError::InvalidMapDimensions { width: 1, height: 1, cells: 2 },
+        );
+    }
+
+    #[test]
+    fn validates_dimensions_before_consuming_templates_or_resolving_ids() {
+        let mut consumed = false;
+        let mut resolved = false;
+        let result = TerrainMap::from_template_cells(
+            0,
+            1,
+            std::iter::from_fn(|| {
+                consumed = true;
+                Some(Some(1))
+            }),
+            |_| {
+                resolved = true;
+                Some(0)
+            },
+        );
+
+        assert_eq!(
+            result.unwrap_err(),
+            TerrainError::InvalidMapDimensions { width: 0, height: 1, cells: 0 },
+        );
+        assert!(!consumed);
+        assert!(!resolved);
     }
 
     #[test]
