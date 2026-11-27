@@ -6,6 +6,8 @@ pub mod map_update;
 pub mod map_spatial_index;
 pub mod map_editor_state;
 pub mod placed_objects;
+pub mod derived_icons;
+pub use derived_icons::{resource_icon, wall_icon, GEM_RESOURCE_ICONS, TIBERIUM_GOLD_RESOURCE_ICONS};
 pub use cell_grid::{CellGrid, CellGridError, CellGridEvent};
 pub use map_update::{MapUpdateError, MapUpdateState, MapUpdateWork, OverlayInvalidation};
 pub use map_spatial_index::{MapSpatialIndex, SpatialIndexError};
