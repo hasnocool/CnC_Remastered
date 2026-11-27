@@ -1,7 +1,12 @@
 use crate::format::{MapFile, MAX_MAP_FILE_BYTES};
 use egui::RichText;
-use map_editor_model::{CellLayers, MapDocument};
-use rts_core::{CellCoord, GameVariant, MapDimensions};
+use map_editor_model::{
+    CellLayers, MapDocument, MapEditHistory,
+    TerrainCatalog, TerrainObjectId, OverlayCatalog, place_overlay_with_history,
+};
+use rts_core::{CellCoord, GameVariant, MapDimensions, template_catalog::TemplateTheater};
+use rts_assets::{TemplateAssetProvider, TerrainAssetSet};
+use rts_formats::{mix::MixArchive, palette_rgba::{Palette256, PaletteEncoding}};
 use rts_render::MapCanvas;
 use std::{
     fs,
@@ -15,20 +20,29 @@ enum PaintLayer { Terrain, Template, Overlay, Smudge }
 enum IoCommand {
     Save(PathBuf, MapFile),
     Load(PathBuf),
+    LoadAssets { mix_path: PathBuf, palette_path: PathBuf, variant: GameVariant, theater: TemplateTheater, palette_encoding: PaletteEncoding, width: u32, height: u32, templates: Vec<Option<(u16, u8)>> },
 }
 enum IoEvent {
     Saved(Result<(), String>),
     Loaded(Result<MapDocument, String>),
+    Assets(Result<TerrainAssetSet, String>),
 }
 
 pub struct EditorApp {
     map: MapDocument,
+    history: MapEditHistory,
     canvas: MapCanvas,
     selected: Option<CellCoord>,
+    selected_terrain_object: Option<TerrainObjectId>,
     brush: u16,
+    template_icon: u8,
     brush_layer: PaintLayer,
     waypoint_number: u16,
     file_path: String,
+    mix_path: String,
+    palette_path: String,
+    theater: TemplateTheater,
+    palette_encoding: PaletteEncoding,
     status: String,
     io_tx: Sender<IoCommand>,
     io_rx: Receiver<IoEvent>,
@@ -42,7 +56,7 @@ impl EditorApp {
 
         let (event_tx, io_rx) = mpsc::channel::<IoEvent>();
         let (io_tx, command_rx) = mpsc::channel::<IoCommand>();
-        std::thread::Builder::new().name("map-editor-file-io".into()).spawn(move || {
+        std::thread::Builder::new().name("map-editor-io-worker".into()).spawn(move || {
             while let Ok(command) = command_rx.recv() {
                 match command {
                     IoCommand::Save(path, file) => {
@@ -69,18 +83,46 @@ impl EditorApp {
                             .and_then(MapFile::into_document);
                         let _ = event_tx.send(IoEvent::Loaded(result));
                     }
+                    IoCommand::LoadAssets { mix_path, palette_path, variant, theater, palette_encoding, width, height, templates } => {
+                        let result = (|| {
+                            const MAX_MIX_BYTES: u64 = 512 * 1024 * 1024;
+                            let mix_size = fs::metadata(&mix_path).map_err(|error| error.to_string())?.len();
+                            if mix_size > MAX_MIX_BYTES {
+                                return Err(format!("MIX archive exceeds the {MAX_MIX_BYTES} byte safety limit"));
+                            }
+                            let mix_bytes = fs::read(&mix_path).map_err(|error| error.to_string())?;
+                            let palette_size = fs::metadata(&palette_path).map_err(|error| error.to_string())?.len();
+                            if palette_size != 768 {
+                                return Err(format!("Palette must contain exactly 768 RGB bytes, got {palette_size}"));
+                            }
+                            let palette_bytes = fs::read(&palette_path).map_err(|error| error.to_string())?;
+                            let archive = MixArchive::parse(&mix_bytes).map_err(|error| error.to_string())?;
+                            let archives = [&archive];
+                            let provider = TemplateAssetProvider::new(variant, theater, &archives);
+                            let palette = Palette256::parse(&palette_bytes, palette_encoding).map_err(|error| error.to_string())?;
+                            provider.build_terrain(width, height, templates, &palette).map_err(|error| error.to_string())
+                        })();
+                        let _ = event_tx.send(IoEvent::Assets(result));
+                    }
                 }
             }
         }).map_err(|error| error.to_string())?;
 
         Ok(Self {
             map,
+            history: MapEditHistory::default(),
             canvas: MapCanvas::default(),
             selected: None,
+            selected_terrain_object: None,
             brush: 1,
+            template_icon: 0,
             brush_layer: PaintLayer::Terrain,
             waypoint_number: 0,
             file_path: "./maps/new-map.rtsmap.json".into(),
+            mix_path: "./assets/conquer.mix".into(),
+            palette_path: "./assets/temperat.pal".into(),
+            theater: TemplateTheater::Temperate,
+            palette_encoding: PaletteEncoding::Rgb8,
             status: "New Tiberian Dawn map".into(),
             io_tx,
             io_rx,
@@ -94,8 +136,11 @@ impl EditorApp {
         match MapDocument::new(variant, dimensions) {
             Ok(map) => {
                 self.map = map;
+                self.history.clear();
                 self.selected = None;
+                self.selected_terrain_object = None;
                 self.canvas.selected = None;
+                self.canvas.clear_terrain_assets();
                 self.status = "New map created".into();
             }
             Err(error) => self.status = format!("Could not create map: {error:?}"),
@@ -127,6 +172,31 @@ impl EditorApp {
             self.status = "Map file worker stopped".into();
         }
     }
+
+    fn load_assets(&mut self) {
+        let mix_path = PathBuf::from(self.mix_path.trim());
+        let palette_path = PathBuf::from(self.palette_path.trim());
+        if mix_path.as_os_str().is_empty() || palette_path.as_os_str().is_empty() {
+            self.status = "Enter both a MIX archive and palette path".into();
+            return;
+        }
+        let dimensions = self.map.dimensions();
+        let command = IoCommand::LoadAssets {
+            mix_path,
+            palette_path,
+            variant: self.map.variant(),
+            theater: self.theater,
+            palette_encoding: self.palette_encoding,
+            width: dimensions.width(),
+            height: dimensions.height(),
+            templates: self.map.template_cells().collect(),
+        };
+        if self.io_tx.send(command).is_ok() {
+            self.status = "Loading theater assets in background…".into();
+        } else {
+            self.status = "Asset worker stopped".into();
+        }
+    }
 }
 
 impl eframe::App for EditorApp {
@@ -137,11 +207,18 @@ impl eframe::App for EditorApp {
                 IoEvent::Saved(Err(error)) => self.status = format!("Save failed: {error}"),
                 IoEvent::Loaded(Ok(map)) => {
                     self.map = map;
+                    self.history.clear();
                     self.selected = None;
                     self.canvas.selected = None;
+                    self.canvas.clear_terrain_assets();
                     self.status = "Map loaded".into();
                 }
                 IoEvent::Loaded(Err(error)) => self.status = format!("Load failed: {error}"),
+                IoEvent::Assets(Ok(assets)) => {
+                    self.canvas.set_terrain_assets(ctx, assets);
+                    self.status = "Authentic theater terrain loaded".into();
+                }
+                IoEvent::Assets(Err(error)) => self.status = format!("Theater asset load failed: {error}"),
             }
         }
         ctx.request_repaint_after(std::time::Duration::from_millis(200));
@@ -155,6 +232,53 @@ impl eframe::App for EditorApp {
                 if ui.button("New Red Alert").clicked() { self.new_map(GameVariant::RedAlert); }
                 if ui.button("Save").clicked() { self.save(); }
                 if ui.button("Load").clicked() { self.load(); }
+                if ui.button("Load Theater Assets").clicked() { self.load_assets(); }
+                if ui.add_enabled(self.selected_terrain_object.is_some(), egui::Button::new("Remove selected terrain")).clicked() {
+                    let result = self.selected_terrain_object
+                        .and_then(|id| self.map.terrain_object(id).cloned().map(|object| (id, object)))
+                        .ok_or_else(|| "No terrain object selected".to_string())
+                        .and_then(|(id, object)| {
+                            let source = TerrainCatalog::all_entries(self.map.variant()).iter()
+                                .find(|definition| definition.id == object.terrain_type)
+                                .ok_or_else(|| format!("Unknown terrain type {}", object.terrain_type))?;
+                            let placement = source.placement_definition()
+                                .map_err(|error| format!("Invalid source occupancy mask: {error:?}"))?;
+                            self.history.remove_terrain_object(&mut self.map, id, &placement)
+                                .map_err(|error| format!("{error:?}"))?;
+                            Ok(())
+                        });
+                    match result {
+                        Ok(()) => {
+                            self.selected_terrain_object = None;
+                            self.status = "Terrain object removed".into();
+                        }
+                        Err(error) => self.status = format!("Terrain removal failed: {error}"),
+                    }
+                }
+                if ui.add_enabled(self.history.can_undo(), egui::Button::new("Undo")).clicked() {
+                    let templates_changed = self.history.undo_changes_templates();
+                    self.status = match self.history.undo(&mut self.map) {
+                        Ok(true) if templates_changed => {
+                            self.canvas.clear_terrain_assets();
+                            "Undo applied; reload theater assets to refresh templates".into()
+                        }
+                        Ok(true) => "Undo applied".into(),
+                        Ok(false) => "Nothing to undo".into(),
+                        Err(error) => format!("Undo rejected: {error:?}"),
+                    };
+                }
+                if ui.add_enabled(self.history.can_redo(), egui::Button::new("Redo")).clicked() {
+                    let templates_changed = self.history.redo_changes_templates();
+                    self.status = match self.history.redo(&mut self.map) {
+                        Ok(true) if templates_changed => {
+                            self.canvas.clear_terrain_assets();
+                            "Redo applied; reload theater assets to refresh templates".into()
+                        }
+                        Ok(true) => "Redo applied".into(),
+                        Ok(false) => "Nothing to redo".into(),
+                        Err(error) => format!("Redo rejected: {error:?}"),
+                    };
+                }
                 ui.checkbox(&mut self.canvas.show_grid, "Grid");
                 ui.add(egui::Slider::new(&mut self.canvas.cell_size, 8.0..=40.0).text("Zoom"));
             });
@@ -169,8 +293,30 @@ impl eframe::App for EditorApp {
                         ui.selectable_value(&mut self.brush_layer, PaintLayer::Overlay, "Overlay");
                         ui.selectable_value(&mut self.brush_layer, PaintLayer::Smudge, "Smudge");
                     });
-                ui.label("ID");
-                ui.add(egui::DragValue::new(&mut self.brush).range(0..=u16::MAX));
+                if matches!(self.brush_layer, PaintLayer::Terrain) {
+                    let catalog = TerrainCatalog::new(self.map.variant(), self.theater);
+                    let selected = catalog.get(self.brush)
+                        .map(|definition| format!("{} ({})", definition.name, definition.id))
+                        .unwrap_or_else(|| "Select a compatible terrain".into());
+                    egui::ComboBox::from_label("Terrain type")
+                        .selected_text(selected)
+                        .show_ui(ui, |ui| {
+                            for definition in catalog.iter() {
+                                ui.selectable_value(
+                                    &mut self.brush,
+                                    definition.id,
+                                    format!("{} ({})", definition.name, definition.id),
+                                );
+                            }
+                        });
+                } else {
+                    ui.label("ID");
+                    ui.add(egui::DragValue::new(&mut self.brush).range(0..=u16::MAX));
+                }
+                if matches!(self.brush_layer, PaintLayer::Template) {
+                    ui.label("Logical icon");
+                    ui.add(egui::DragValue::new(&mut self.template_icon).range(0..=u8::MAX));
+                }
                 ui.label("Waypoint");
                 ui.add(egui::DragValue::new(&mut self.waypoint_number));
                 if ui.button("Add at selected").clicked() {
@@ -186,21 +332,104 @@ impl eframe::App for EditorApp {
                 ui.label("Selected");
                 ui.label(self.selected.map(|cell| format!("{}, {}", cell.x, cell.y)).unwrap_or_else(|| "none".into()));
             });
+            ui.horizontal(|ui| {
+                ui.label("MIX");
+                ui.text_edit_singleline(&mut self.mix_path);
+                ui.label("Palette");
+                ui.text_edit_singleline(&mut self.palette_path);
+            });
+            ui.horizontal(|ui| {
+                egui::ComboBox::from_label("Theater")
+                    .selected_text(format!("{:?}", self.theater))
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Desert, "Desert");
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Jungle, "Jungle");
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Temperate, "Temperate");
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Winter, "Winter");
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Snow, "Snow");
+                        ui.selectable_value(&mut self.theater, TemplateTheater::Interior, "Interior");
+                    });
+                egui::ComboBox::from_label("Palette encoding")
+                    .selected_text(match self.palette_encoding { PaletteEncoding::Rgb8 => "RGB8", PaletteEncoding::Rgb6 => "RGB6" })
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(&mut self.palette_encoding, PaletteEncoding::Rgb8, "RGB8");
+                        ui.selectable_value(&mut self.palette_encoding, PaletteEncoding::Rgb6, "RGB6");
+                    });
+            });
             ui.separator();
             egui::ScrollArea::both().auto_shrink([false, false]).show(ui, |ui| {
                 let (_response, clicked) = self.canvas.show(ui, &self.map);
                 if let Some(cell) = clicked {
                     self.selected = Some(cell);
+                    self.selected_terrain_object = self.map.terrain_object_at(cell).map(|object| object.id);
                     self.canvas.selected = Some(cell);
-                    let mut layers = self.map.cell(cell).copied().unwrap_or_default();
-                    match self.brush_layer {
-                        PaintLayer::Terrain => layers.terrain = Some(self.brush),
-                        PaintLayer::Template => layers.template = Some(self.brush),
-                        PaintLayer::Overlay => layers.overlay = Some(self.brush),
-                        PaintLayer::Smudge => layers.smudge = Some(self.brush),
-                    }
-                    if let Err(error) = self.map.set_cell(cell, layers) {
-                        self.status = format!("Paint failed: {error:?}");
+                    let result = match self.brush_layer {
+                        PaintLayer::Overlay => {
+                            let catalog = OverlayCatalog::new(self.map.variant(), self.theater);
+                            match catalog.get(self.brush) {
+                                Some(definition) => place_overlay_with_history(
+                                    &mut self.map,
+                                    &mut self.history,
+                                    cell,
+                                    definition,
+                                    self.theater,
+                                ).map_err(|error| format!("{error:?}")),
+                                None => Err(format!(
+                                    "Overlay ID {} is not defined for {:?} in {:?}",
+                                    self.brush,
+                                    self.map.variant(),
+                                    self.theater
+                                )),
+                            }
+                        }
+                        PaintLayer::Terrain => {
+                            let catalog = TerrainCatalog::new(self.map.variant(), self.theater);
+                            match catalog.get(self.brush) {
+                                Some(source_definition) => {
+                                    match source_definition.placement_definition() {
+                                        Ok(definition) => self.history.place_terrain_object(
+                                            &mut self.map,
+                                            cell,
+                                            &definition,
+                                            source_definition.default_icon(),
+                                            None,
+                                        ).map(|id| {
+                                            self.selected_terrain_object = Some(id);
+                                            self.status = format!("Terrain object {} placed at {}, {}", id.0, cell.x, cell.y);
+                                        }).map_err(|error| format!("{error:?}")),
+                                        Err(error) => Err(format!("Invalid source occupancy mask: {error:?}")),
+                                    }
+                                }
+                                None => Err(format!(
+                                    "Terrain ID {} is not defined for {:?} in {:?}",
+                                    self.brush,
+                                    self.map.variant(),
+                                    self.theater
+                                )),
+                            }
+                        }
+                        layer => {
+                            let mut layers = self.map.cell(cell).copied().unwrap_or_default();
+                            match layer {
+                                PaintLayer::Terrain => unreachable!(),
+                                PaintLayer::Template => {
+                                    layers.template = Some(self.brush);
+                                    layers.template_icon = self.template_icon;
+                                }
+                                PaintLayer::Overlay => unreachable!(),
+                                PaintLayer::Smudge => layers.smudge = Some(self.brush),
+                            }
+                            self.history.apply_cell(&mut self.map, cell, layers)
+                                .map(|_| ()).map_err(|error| format!("{error:?}"))
+                        }
+                    };
+                    match result {
+                        Ok(()) if matches!(self.brush_layer, PaintLayer::Template) => {
+                            self.canvas.clear_terrain_assets();
+                            self.status = "Template changed; reload theater assets to refresh terrain".into();
+                        }
+                        Ok(()) => self.status = format!("{:?} painted at {}, {}", self.brush_layer, cell.x, cell.y),
+                        Err(error) => self.status = format!("Paint failed: {error}"),
                     }
                 }
             });

@@ -63,3 +63,8 @@ No typed OverlayType catalog exists in `map-editor-model`. Represent the bit fla
 - [ ] Rust mapping and tests.
 
 No Rust code was changed and no test was executed.
+
+
+## Rust implementation update — partial mapping
+
+`crates/map-editor-model/src/overlay_catalog.rs` now represents the exact source flag values and IsPlaceable rule, and stores variant-specific overlay definitions, IDs, display keys and theatre restrictions. History-backed place/remove commands enforce one-cell occupancy and the source OverlaysTool first/final-row placement restriction. The desktop editor validates overlay brush IDs against the selected variant and theatre catalog. Thumbnail loading, localized text resolution, resource adjacency/value tables, wall connectivity, pick behavior and dedicated removal input remain unimplemented. No Rust build or tests are claimed as executed.

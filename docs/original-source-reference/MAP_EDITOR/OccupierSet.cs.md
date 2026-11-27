@@ -49,3 +49,8 @@ No occupancy collection, per-cell owner index, arbitrary mask placement, or add/
 ## Verification
 
 Full C# body inspected. No tests were run; no Rust mapping or parity is claimed.
+
+
+## Rust mapping update — terrain occupancy subset
+
+The new `MapDocument` terrain-object collection now stores one object per placement and a derived cell-to-object-ID occupancy index. The index uses the source `OccupancyMask` offsets and validates bounds/conflicts before mutation. This maps the core Terrain subset of `OccupierSet` ownership/lookup semantics; it is not yet a generic `OccupierSet<ICellOccupier>`, and Buildings/Infantry/Units/Walls are not indexed by this implementation. Add/remove/move event streams and map update batching remain unimplemented.

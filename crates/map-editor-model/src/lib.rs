@@ -1,12 +1,31 @@
 //! Initial portable map-editor document model.
 
 pub mod cell_metrics;
+pub mod edit_history;
+pub mod overlay_catalog;
+pub mod template_catalog;
+pub mod terrain_placement;
+pub mod terrain_catalog;
+pub mod terrain_objects;
+pub use terrain_placement::{
+    place_terrain, place_terrain_with_history, remove_terrain, remove_terrain_with_history,
+    OccupancyMask, OccupancyMaskError,
+    TerrainPlacementDefinition, TerrainPlacementError,
+};
+pub use template_catalog::TemplateCatalog;
+pub use terrain_catalog::{TerrainCatalog, TerrainDefinition, TerrainTemplateFlag};
+pub use edit_history::{MapEditHistory, TerrainHistoryError};
+pub use overlay_catalog::{
+    place_overlay_with_history, remove_overlay_with_history, OverlayCatalog,
+    OverlayDefinition, OverlayPlacementError, OverlayTypeFlags,
+};
 pub use cell_metrics::CellMetrics;
 
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 use rts_core::{CellCoord, GameVariant, MapDimensions};
+pub use terrain_objects::{TerrainObject, TerrainObjectError, TerrainObjectId};
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CellLayers {
@@ -15,6 +34,9 @@ pub struct CellLayers {
     /// Ignored when template is None.
     pub template_icon: u8,
     pub terrain: Option<u16>,
+    /// Terrain shape index: 22 for transformable TerrainTypes, otherwise 0.
+    #[serde(default)]
+    pub terrain_icon: u8,
     pub overlay: Option<u16>,
     pub smudge: Option<u16>,
 }
@@ -25,6 +47,9 @@ pub enum MapDocumentError {
     CellOutOfBounds(CellCoord),
     WaypointOutOfBounds(CellCoord),
     DuplicateWaypoint(u16),
+    DuplicateCellEdit(CellCoord),
+    CellStateConflict(CellCoord),
+    TerrainObjectCellConflict(CellCoord),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -33,6 +58,9 @@ pub struct MapDocument {
     dimensions: MapDimensions,
     cells: Vec<CellLayers>,
     waypoints: BTreeMap<u16, CellCoord>,
+    terrain_objects: BTreeMap<TerrainObjectId, TerrainObject>,
+    terrain_occupancy: Vec<Option<TerrainObjectId>>,
+    next_terrain_object_id: u64,
 }
 
 impl MapDocument {
@@ -53,6 +81,9 @@ impl MapDocument {
             dimensions,
             cells: vec![CellLayers::default(); dimensions.cell_count()],
             waypoints: BTreeMap::new(),
+            terrain_objects: BTreeMap::new(),
+            terrain_occupancy: vec![None; dimensions.cell_count()],
+            next_terrain_object_id: 1,
         })
     }
 
@@ -102,6 +133,36 @@ impl MapDocument {
         let index = self
             .dimensions
             .index(coordinate)
+            .ok_or(MapDocumentError::CellOutOfBounds(coordinate))?;
+        self.validate_cell_update(coordinate, layers)?;
+        self.cells[index] = layers;
+        Ok(())
+    }
+
+    pub(crate) fn validate_cell_update(
+        &self,
+        coordinate: CellCoord,
+        layers: CellLayers,
+    ) -> Result<(), MapDocumentError> {
+        let index = self.dimensions.index(coordinate)
+            .ok_or(MapDocumentError::CellOutOfBounds(coordinate))?;
+        if let Some(owner) = self.terrain_occupancy.get(index).copied().flatten() {
+            let object = self.terrain_objects.get(&owner)
+                .ok_or(MapDocumentError::TerrainObjectCellConflict(coordinate))?;
+            if layers.terrain != Some(object.terrain_type) || layers.terrain_icon != object.icon {
+                return Err(MapDocumentError::TerrainObjectCellConflict(coordinate));
+            }
+        }
+        Ok(())
+    }
+
+    /// Internal write used only after terrain-object transition validation.
+    pub(crate) fn set_terrain_object_cell(
+        &mut self,
+        coordinate: CellCoord,
+        layers: CellLayers,
+    ) -> Result<(), MapDocumentError> {
+        let index = self.dimensions.index(coordinate)
             .ok_or(MapDocumentError::CellOutOfBounds(coordinate))?;
         self.cells[index] = layers;
         Ok(())

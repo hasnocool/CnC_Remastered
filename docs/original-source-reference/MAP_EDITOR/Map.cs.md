@@ -110,3 +110,13 @@ The constructor retains BasicSection by reference; copies catalog enumerables in
 The current crates/map-editor-model MapDocument has GameVariant, MapDimensions, Vec<CellLayers>, and a BTreeMap of waypoints. It does not represent MapSection/theatre, Basic/Briefing/Steam sections, catalogs, typed Template/Overlay/Smudge cells, Technos/Buildings/Overlappers, houses, triggers, team types, resource totals, batching/invalidation, bib lifecycle, cloning, or preview generation. The existing CellMetrics module maps only a subset of grid geometry. The current object_selection module plans selection/UI actions and is not this aggregate model.
 
 No Rust file was changed in this batch. No Rust build or test was run. This source page is Body reviewed, not Rust-mapped, Tested, or Complete.
+
+
+## Rust mapping update — terrain object collection
+
+`MapDocument` now owns `BTreeMap<TerrainObjectId, TerrainObject>` plus a derived row-major per-cell terrain owner index. Terrain objects retain origin, source terrain type ID, icon and optional trigger. The object collection supports atomic add/remove/move operations using the source occupancy mask. Legacy cell terrain fields remain synchronized as a compatibility mirror. This is a terrain-only subset of source `Map.Technos`; no generic techno, building, overlapper, event batching, map theatre or derived overlap state is claimed.
+
+
+## Rust terrain history update
+
+The map-owned terrain object collection is now coordinated with object-level history. Placement/removal/movement transitions update the object record, per-cell owner index and legacy cell terrain/icon mirror together after validating expected state and all affected cells. This remains a terrain-specific aggregate; it does not yet represent every source `Map.Technos` type or source map update/event pipeline.

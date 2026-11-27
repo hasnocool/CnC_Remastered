@@ -660,6 +660,20 @@ const RA_TEMPLATE_ASSETS: &[TemplateAssetMetadata] = &[
     TemplateAssetMetadata { type_id: 399, symbolic_name: "TEMPLATE_XTRA0016", asset_stem: "XTRA0016", theater_mask: 4 },
 ];
 
+/// Iterates the complete source-derived template catalog for one game.
+///
+/// Entries are returned in ascending type-ID order. The returned metadata is
+/// static and can be retained by editor palette models without allocation.
+pub fn template_asset_metadata_iter(
+    variant: GameVariant,
+) -> impl ExactSizeIterator<Item = &'static TemplateAssetMetadata> {
+    let entries = match variant {
+        GameVariant::TiberianDawn => TD_TEMPLATE_ASSETS,
+        GameVariant::RedAlert => RA_TEMPLATE_ASSETS,
+    };
+    entries.iter()
+}
+
 pub fn template_asset_metadata(variant: GameVariant, type_id: u16) -> Option<&'static TemplateAssetMetadata> {
     let entries = match variant {
         GameVariant::TiberianDawn => TD_TEMPLATE_ASSETS,

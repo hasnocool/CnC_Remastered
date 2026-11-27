@@ -14,6 +14,7 @@ The native projects target Win32, Windows SDK 8.1, Visual Studio toolset v141, a
 
 - `rts-core`: source-derived map extents, cell/region addressing, 8-way facing, 15 Hz clock, both variants' simulation RNGs (including Red Alert's seeded 15-bit LCG), and Red Alert Q16.16 fixed-point arithmetic.
 - `rts-formats`: checked binary readers, a bounds-checked legacy MIX parser, the original rotate-and-add `CRCEngine` checksum, plus checksum-aware push/pull stream adapters, a bounds-checked LCW codec, and framed LCW block streams.
+- `rts-assets`: backend-independent TD/RA theater template lookup, ICONSET MAP-indirection decoding, palette expansion, and deduplicated RGBA terrain images.
 - `rts-sim`: deterministic event scheduling with stable same-tick ordering.
 - `map-editor-model`: an initial typed map document with cell layers and waypoints.
 - `tiberian-dawn` / `red-alert`: separate variant boundary crates; actual game rules are not yet ported.
@@ -22,10 +23,11 @@ See [PORTING_STATUS.md](PORTING_STATUS.md), [TODO.md](TODO.md), [the 494-file C+
 
 ## Build and test
 
-Requires a Rust toolchain with Cargo (Rust 1.85 or newer):
+Requires Rust and Cargo 1.95 or newer:
 
 ```bash
 cargo fmt --all -- --check
+cargo check --workspace --all-targets
 cargo test --workspace
 cargo clippy --workspace --all-targets -- -D warnings
 ```
@@ -47,29 +49,26 @@ This is an independent, unofficial community project. It is not affiliated with,
 
 A subsystem is not considered ported merely because a Rust module with a similar name exists. Parity requires source traceability, behavior-focused tests, compatible fixtures where legally available, and explicit notes for any intentional differences. No 1:1 compatibility claim should be made until the corresponding subsystem has passed that process.
 
-## Application runtime (initial foundation)
+## Desktop platform architecture
 
-The workspace now includes:
+The sole user-facing launcher is `rts-launcher` (`crates/launcher/rts-launcher`). It owns application selection, settings, LAN discovery UI, and process supervision for the TD, RA, and map-editor executables. The optional `cnc-client` binary is only a bootstrap that locates and starts the adjacent `rts-launcher`; it does not implement a second launcher UI.
 
-- `renderer`: wgpu surface presentation, RGBA uploads, a bounded 128 MiB FIFO GPU texture cache, cached icon-set/TMP terrain uploads, atlas UVs, nearest-neighbor sampling, rotated/tinted sprites, ordered multi-texture draw runs, alpha-blended UI primitives, bitmap text, camera-aware 16×16 terrain chunk traversal and viewport culling.
-- `launcher`: a graphical application menu, selectable TD/RA/editor entries, interactive settings, platform-persisted TOML configuration, mouse/keyboard input and a shared window lifecycle.
-- A deterministic four-region procedural terrain atlas used as a rendering fixture behind the launcher and application preview windows.
-
-Run the launcher with:
+Run the launcher and bootstrap with:
 
 ```bash
-# Opens the graphical launcher.
-cargo run -p launcher
-
-# Direct renderer preview for a selected application boundary.
-cargo run -p launcher -- --app td
-cargo run -p launcher -- --app ra
-cargo run -p launcher -- --app editor
-
-# Print application IDs without opening a window.
-cargo run -p launcher -- --list
+cargo run -p rts-launcher
+cargo run -p cnc-client
 ```
 
-The launcher settings currently expose fullscreen, resolution presets, vsync, low-power GPU selection, frame limit, master-audio enable/mute, edge scrolling, mouse-Y inversion and networking enablement. Settings are saved automatically; display/GPU settings take effect after restart.
+The launcher reads `configs/launcher.toml` by default; copy `configs/launcher.toml.example` and adjust executable paths for your build layout. It supervises child processes on a dedicated Tokio worker thread. Settings persistence is moved off the egui frame callback.
 
-The procedural terrain atlas remains a launcher fixture, not authentic game artwork. The renderer can now compose a packed atlas from map-referenced TMP tiles and submit ordered sprites from multiple cached textures. The map adapter is still a generic tile-index grid: authentic TD/RA map decoding, theater transition/adjacency rules, real retail asset validation, TRNS transparency semantics, the legacy Shape_Type pixel decoder, camera input, and runtime integration remain outstanding. TD, RA and editor entries are not yet playable runtimes. See [TODO.md](TODO.md) and [PORTING_STATUS.md](PORTING_STATUS.md).
+Rendering and asset responsibilities are split as follows:
+
+- `rts-formats`: variant-aware TD BIN, RA MapPack, TMP, ICONSET, MIX, and palette decoding.
+- `rts-assets`: backend-independent TD/RA theater lookup, ICONSET MAP indirection, palette expansion, and deduplicated RGBA terrain images.
+- `renderer`: low-level wgpu surface, texture cache, atlas uploads, sprite batches, and GPU presentation. It retains a compatibility facade and wgpu-specific atlas adapter.
+- `rts-render`: egui map-canvas widget and editor interaction/presentation helpers. It uploads decoded terrain tiles as nearest-neighbor egui textures.
+
+The editor can load one user-supplied MIX archive and a 768-byte palette, select a TD/RA theater, RGB6/RGB8 palette encoding, template type, and logical icon index, and decode authentic template imagery on its background asset worker. `rts-assets` returns a renderer-independent tile set; `rts-render` adapts those images to egui textures. The wgpu renderer retains its own atlas upload and sprite-batch adapter. The TD and RA binaries remain application shells, not playable game runtimes. The editor's JSON format remains a development interchange format, not Westwood scenario serialization. LAN discovery and TCP framing remain transport primitives, not authenticated multiplayer or deterministic session integration.
+
+See [docs/PLATFORM_IMPLEMENTATION.md](docs/PLATFORM_IMPLEMENTATION.md) and [docs/PLATFORM_ARCHITECTURE.md](docs/PLATFORM_ARCHITECTURE.md) for current boundaries and remaining work.

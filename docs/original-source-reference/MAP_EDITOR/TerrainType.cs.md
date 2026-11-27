@@ -47,8 +47,20 @@ No typed TerrainType catalog exists in `map-editor-model`; the current layer is 
 
 - [x] All properties, four constructor overloads and every method body inspected.
 - [x] OreMine name substitution, transformable tile index and footprint split recorded.
-- [ ] Complete TD/RA terrain catalog and tool/map call-site audit.
+- [x] TD/RA catalog declarations and masks imported into the Rust model.
+- [x] Terrain brush resolves source definitions by variant and theatre and places source occupancy masks.
+- [x] Transformable icon selection (22 vs 0) is represented in undoable map-cell state.
 - [ ] Golden occupancy/overlap and renderer fixture tests.
-- [ ] Rust catalog mapping and missing-tile tests.
+- [ ] Missing-tile and renderer initialization tests.
+- [ ] Full Map.Technos object aggregation and collision parity.
 
-No Rust code was changed and no test was executed.
+Rust tests were added but not executed in this environment.
+
+
+## Rust mapping update — source catalog imported (partial runtime parity)
+
+Added `crates/map-editor-model/src/terrain_catalog.rs` with all 32 TD and 35 RA TerrainType declarations, original IDs/names, theatre eligibility, source-order bool[rows,columns] masks, transformable flags and TemplateTypeFlag values. The catalog filters by game variant and selected theatre. `TerrainDefinition::default_icon()` follows TerrainTool's transformable shape-index convention (22 vs 0), and history-backed terrain placement persists that icon in `CellLayers.terrain_icon`.
+
+Logical occupancy remains distinct from renderer metadata: this catalog does not fabricate RenderSize, Thumbnail or OverlapBounds. Those require actual theatre tile initialization and tile pixel dimensions. OreMine is retained as metadata; OREMINE asset-name substitution still belongs in the renderer/catalog adapter.
+
+Automated Rust tests were added for catalog counts/IDs, mask orientation and validity, theatre filtering, transformable icon selection, and undo/redo icon lifecycle. They have not been executed in this environment.

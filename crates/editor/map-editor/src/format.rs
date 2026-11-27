@@ -1,6 +1,6 @@
 //! Versioned JSON editor interchange format; not a legacy .MAP parity claim.
 
-use map_editor_model::{CellLayers, MapDocument};
+use map_editor_model::{CellLayers, MapDocument, TerrainObjectId};
 use rts_core::{CellCoord, GameVariant, MapDimensions};
 use serde::{Deserialize, Serialize};
 
@@ -13,7 +13,20 @@ pub struct MapFile {
     pub width: u16,
     pub height: u16,
     pub cells: Vec<CellLayers>,
+    #[serde(default)]
+    pub terrain_objects: Vec<TerrainObjectFile>,
     pub waypoints: Vec<WaypointFile>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TerrainObjectFile {
+    pub id: u64,
+    pub x: u16,
+    pub y: u16,
+    pub terrain_type: u16,
+    pub icon: u8,
+    #[serde(default)]
+    pub trigger: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -26,6 +39,14 @@ pub struct WaypointFile {
 impl MapFile {
     pub fn from_document(document: &MapDocument) -> Self {
         let dimensions = document.dimensions();
+        let terrain_objects = document.terrain_objects().map(|object| TerrainObjectFile {
+            id: object.id.0,
+            x: object.origin.x,
+            y: object.origin.y,
+            terrain_type: object.terrain_type,
+            icon: object.icon,
+            trigger: object.trigger.clone(),
+        }).collect();
         let waypoints = document.waypoints().iter().map(|(number, cell)| WaypointFile {
             number: *number, x: cell.x, y: cell.y,
         }).collect();
@@ -38,6 +59,7 @@ impl MapFile {
             width: dimensions.width(),
             height: dimensions.height(),
             cells: document.cells().to_vec(),
+            terrain_objects,
             waypoints,
         }
     }
@@ -61,6 +83,20 @@ impl MapFile {
         for (index, layers) in self.cells.into_iter().enumerate() {
             let coordinate = dimensions.coord(index).ok_or_else(|| "Invalid cell index".to_string())?;
             document.set_cell(coordinate, layers).map_err(|error| format!("Invalid cell: {error:?}"))?;
+        }
+        for object in self.terrain_objects {
+            let catalog = map_editor_model::TerrainCatalog::all_entries(variant);
+            let source = catalog.iter().find(|entry| entry.id == object.terrain_type)
+                .ok_or_else(|| format!("Unknown terrain type {}", object.terrain_type))?;
+            let definition = source.placement_definition()
+                .map_err(|error| format!("Invalid terrain occupancy: {error:?}"))?;
+            document.restore_terrain_object(
+                TerrainObjectId(object.id),
+                CellCoord::new(object.x, object.y),
+                &definition,
+                object.icon,
+                object.trigger,
+            ).map_err(|error| format!("Invalid terrain object {}: {error:?}", object.id))?;
         }
         for waypoint in self.waypoints {
             document.add_waypoint(waypoint.number, CellCoord::new(waypoint.x, waypoint.y))
@@ -90,10 +126,55 @@ mod tests {
     }
 
     #[test]
+    fn map_file_round_trips_terrain_object_identity_anchor_icon_and_trigger() {
+        let dimensions = MapDimensions::new(8, 6).expect("dimensions");
+        let mut document = MapDocument::new(GameVariant::TiberianDawn, dimensions).expect("document");
+        let terrain = map_editor_model::TerrainCatalog::new(
+            GameVariant::TiberianDawn,
+            rts_core::template_catalog::TemplateTheater::Temperate,
+        ).get(18).expect("transformable terrain");
+        let definition = terrain.placement_definition().expect("source mask");
+        let id = document.add_terrain_object(
+            CellCoord::new(2, 1), &definition, 22, Some("TRIGGER_1".into()),
+        ).expect("terrain object");
+        let encoded = serde_json::to_vec(&MapFile::from_document(&document)).expect("encode");
+        let decoded: MapFile = serde_json::from_slice(&encoded).expect("decode");
+        let restored = decoded.into_document().expect("restore");
+        let object = restored.terrain_object(id).expect("restored object");
+        assert_eq!(object.origin, CellCoord::new(2, 1));
+        assert_eq!(object.terrain_type, 18);
+        assert_eq!(object.icon, 22);
+        assert_eq!(object.trigger.as_deref(), Some("TRIGGER_1"));
+        assert_eq!(restored.terrain_object_at(CellCoord::new(2, 2)).unwrap().id, id);
+    }
+
+    #[test]
+    fn older_version_one_files_without_terrain_objects_still_load() {
+        let json = r#"{
+            "format_version": 1,
+            "game": "tiberian_dawn",
+            "width": 1,
+            "height": 1,
+            "cells": [{
+                "template": null,
+                "template_icon": 0,
+                "terrain": null,
+                "terrain_icon": 0,
+                "overlay": null,
+                "smudge": null
+            }],
+            "waypoints": []
+        }"#;
+        let file: MapFile = serde_json::from_str(json).expect("legacy file");
+        let document = file.into_document().expect("legacy document");
+        assert_eq!(document.terrain_objects().count(), 0);
+    }
+
+    #[test]
     fn rejects_cell_count_mismatch() {
         let file = MapFile {
             format_version: 1, game: "red_alert".into(), width: 2, height: 2,
-            cells: vec![], waypoints: vec![],
+            cells: vec![], terrain_objects: vec![], waypoints: vec![],
         };
         assert!(file.into_document().is_err());
     }
