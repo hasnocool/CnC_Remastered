@@ -61,11 +61,12 @@ cargo run -p cnc-client
 
 The launcher reads `configs/launcher.toml` by default; copy `configs/launcher.toml.example` and adjust executable paths for your build layout. It supervises child processes on a dedicated Tokio worker thread. Settings persistence is moved off the egui frame callback.
 
-Rendering is intentionally split by responsibility:
+Rendering and asset responsibilities are currently split as follows:
 
-- `renderer`: low-level wgpu surface, texture cache, atlas uploads, sprite batches, camera-aware terrain composition, and GPU presentation. It does not own editor widgets or simulation state.
-- `rts-render`: egui-based map-canvas widget and camera/palette presentation helpers for the editor and current desktop shells. It does not own GPU device/surface lifecycle, game asset decoding, or simulation state. It currently paints placeholder layer colors; authentic theater tile providers are the next integration step.
+- `renderer`: low-level wgpu surface, texture cache, atlas uploads, sprite batches, camera-aware terrain composition, and GPU presentation. It also currently contains `TemplateAssetProvider` and CPU terrain-atlas construction; these backend-independent pieces should be extracted.
+- `rts-render`: egui-based map-canvas widget and camera/palette presentation helpers. It currently paints placeholder layer colors and does not yet consume authentic terrain assets.
+- `rts-formats`: variant-aware TD BIN, RA MapPack, TMP, ICONSET, MIX, and palette decoding.
 
-The TD and RA binaries remain application shells, not playable game runtimes. The editor's JSON format remains a development interchange format, not Westwood scenario serialization. LAN discovery and TCP framing remain transport primitives, not authenticated multiplayer or deterministic session integration.
+Authentic TD/RA template assets can already be resolved from user-supplied MIX archives and composed into a `TerrainAtlas`; the missing integration is a renderer-independent asset contract and editor texture upload. The TD and RA binaries remain application shells, not playable game runtimes. The editor's JSON format remains a development interchange format, not Westwood scenario serialization. LAN discovery and TCP framing remain transport primitives, not authenticated multiplayer or deterministic session integration.
 
 See [docs/PLATFORM_IMPLEMENTATION.md](docs/PLATFORM_IMPLEMENTATION.md) and [docs/PLATFORM_ARCHITECTURE.md](docs/PLATFORM_ARCHITECTURE.md) for current boundaries and remaining work.
