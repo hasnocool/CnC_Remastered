@@ -28,14 +28,14 @@ impl RetailShpHeader {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct RetailShpFrame<'a> {
     pub data: &'a [u8], pub format: RetailShpFormat, pub file_offset: u32,
-    pub reference_offset: u16, pub reference_format: u16,
+    pub reference_offset: u32, pub reference_format: u8,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum RetailShpError {
     Truncated { needed: usize, available: usize }, TooManyFrames(usize),
     FrameTooLarge(usize), InvalidFormat(u8), InvalidOffset { offset: usize, bound: usize },
-    InvalidSentinel, FirstFrameMustBeKeyframe, MissingKeyframeReference(u16),
+    InvalidSentinel, FirstFrameMustBeKeyframe, MissingKeyframeReference(u32),
     InvalidDelta(&'static str), Lcw(lcw::LcwError),
 }
 impl fmt::Display for RetailShpError {
@@ -52,7 +52,7 @@ pub struct RetailShpFile<'a> {
     pub frames: Vec<RetailShpFrame<'a>>,
 }
 #[derive(Clone, Copy)]
-struct OffsetEntry { offset: u32, format: u8, reference_offset: u16, reference_format: u16 }
+struct OffsetEntry { offset: u32, format: u8, reference_offset: u32, reference_format: u8 }
 
 impl<'a> RetailShpFile<'a> {
     pub fn parse(bytes: &'a [u8]) -> Result<Self, RetailShpError> {
@@ -83,7 +83,8 @@ impl<'a> RetailShpFile<'a> {
             let packed = u32::from_le_bytes(bytes[at..at + 4].try_into().expect("fixed entry"));
             entries.push(OffsetEntry {
                 offset: packed & OFFSET_MASK, format: (packed >> 24) as u8,
-                reference_offset: u16_at(at + 4), reference_format: u16_at(at + 6),
+                reference_offset: { let raw = u32::from_le_bytes(bytes[at + 4..at + 8].try_into().expect("fixed reference")); raw & OFFSET_MASK },
+                reference_format: (u32::from_le_bytes(bytes[at + 4..at + 8].try_into().expect("fixed reference")) >> 24) as u8,
             });
         }
 
@@ -133,12 +134,12 @@ impl<'a> RetailShpFile<'a> {
         let size = self.header.pixel_count();
         if size == 0 { return Ok((0..self.frames.len()).map(|_| Vec::new()).collect()); }
         let mut decoded: Vec<Vec<u8>> = Vec::with_capacity(self.frames.len());
-        let mut keyframes: HashMap<u16, usize> = HashMap::new();
+        let mut keyframes: HashMap<u32, usize> = HashMap::new();
         for frame in &self.frames {
             let pixels = match frame.format {
                 RetailShpFormat::Lcw => {
                     let pixels = lcw::decompress_expected(frame.data, size)?;
-                    keyframes.insert(frame.file_offset as u16, decoded.len());
+                    keyframes.insert(frame.file_offset, decoded.len());
                     pixels
                 }
                 RetailShpFormat::XorKeyframe => {
@@ -150,9 +151,27 @@ impl<'a> RetailShpFile<'a> {
                     pixels
                 }
                 RetailShpFormat::XorPrevious => {
-                    let mut pixels = decoded.last().cloned()
-                        .ok_or(RetailShpError::FirstFrameMustBeKeyframe)?;
-                    apply_xor_delta(&mut pixels, frame.data)?;
+                    // KF_DELTA stores the frame index of the XOR-keyframe at
+                    // the beginning of this chain in the low 16 bits of its
+                    // reference word. Rebuild from that base, as Build_Frame does.
+                    let base_index = frame.reference_offset as usize;
+                    if base_index >= decoded.len()
+                        || self.frames.get(base_index).map(|base| base.format)
+                            != Some(RetailShpFormat::XorKeyframe)
+                    {
+                        return Err(RetailShpError::InvalidDelta("chain must reference an earlier XOR-keyframe"));
+                    }
+                    let mut pixels = decoded.get(base_index).cloned()
+                        .ok_or(RetailShpError::InvalidDelta("missing XOR chain base"))?;
+                    for chain_index in (base_index + 1)..=decoded.len() {
+                        let chain = &self.frames[chain_index];
+                        if chain.format != RetailShpFormat::XorPrevious
+                            || chain.reference_offset != frame.reference_offset
+                        {
+                            return Err(RetailShpError::InvalidDelta("broken XOR chain reference"));
+                        }
+                        apply_xor_delta(&mut pixels, chain.data)?;
+                    }
                     pixels
                 }
             };
@@ -229,10 +248,9 @@ pub fn apply_xor_delta(dest: &mut [u8], delta: &[u8]) -> Result<(), RetailShpErr
 #[cfg(test)]
 mod tests {
     use super::*;
-    fn entry(out: &mut Vec<u8>, format: u8, offset: usize, reference: u16) {
+    fn entry(out: &mut Vec<u8>, format: u8, offset: usize, reference: u32, reference_format: u8) {
         out.extend_from_slice(&((((format as u32) << 24) | offset as u32).to_le_bytes()));
-        out.extend_from_slice(&reference.to_le_bytes());
-        out.extend_from_slice(&0u16.to_le_bytes());
+        out.extend_from_slice(&((((reference_format as u32) << 24) | reference).to_le_bytes()));
     }
     fn fixture() -> Vec<u8> {
         let start = HEADER + 5 * ENTRY;
@@ -244,11 +262,11 @@ mod tests {
         let eof = third + d2.len();
         let mut b = Vec::new();
         for v in [3u16, 0, 0, 3, 1, 5, 0] { b.extend_from_slice(&v.to_le_bytes()); }
-        entry(&mut b, 0x80, start, 0);
-        entry(&mut b, 0x40, second, start as u16);
-        entry(&mut b, 0x20, third, 0);
-        entry(&mut b, 0, eof, 0);
-        entry(&mut b, 0, 0, 0);
+        entry(&mut b, 0x80, start, 0, 0);
+        entry(&mut b, 0x40, second, start as u32, 0x80);
+        entry(&mut b, 0x20, third, 1, 0x48);
+        entry(&mut b, 0, eof, 0, 0);
+        entry(&mut b, 0, 0, 0, 0);
         b.extend_from_slice(&key); b.extend_from_slice(&d1); b.extend_from_slice(&d2);
         b
     }
@@ -280,7 +298,7 @@ mod tests {
         let eof = start + key.len();
         let mut b = Vec::new();
         for v in [1u16, 0, 0, 1, 1, 1, 1] { b.extend_from_slice(&v.to_le_bytes()); }
-        entry(&mut b, 0x80, start, 0); entry(&mut b, 0, eof, 0); entry(&mut b, 0, 0, 0);
+        entry(&mut b, 0x80, start, 0, 0); entry(&mut b, 0, eof, 0, 0); entry(&mut b, 0, 0, 0, 0);
         b.extend_from_slice(&[0; 768]); b.extend_from_slice(&key);
         let shp = RetailShpFile::parse(&b).unwrap();
         assert_eq!(shp.embedded_palette.unwrap().len(), 768);
