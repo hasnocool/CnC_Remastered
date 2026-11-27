@@ -1,6 +1,8 @@
 //! Initial portable map-editor document model.
 
 pub mod cell_metrics;
+pub mod edit_history;
+pub use edit_history::MapEditHistory;
 pub use cell_metrics::CellMetrics;
 
 use serde::{Deserialize, Serialize};
