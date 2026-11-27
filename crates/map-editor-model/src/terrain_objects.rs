@@ -130,7 +130,7 @@ impl MapDocument {
             let mut layers = *self.cell(*coordinate).expect("prevalidated terrain cell");
             layers.terrain = Some(definition.id);
             layers.terrain_icon = icon;
-            self.set_cell(*coordinate, layers).expect("prevalidated terrain cell");
+            self.set_terrain_object_cell(*coordinate, layers).expect("prevalidated terrain cell");
         }
         self.terrain_objects.insert(id, object);
         Ok(())
@@ -171,7 +171,7 @@ impl MapDocument {
             let mut layers = *self.cell(*coordinate).expect("prevalidated terrain cell");
             layers.terrain = None;
             layers.terrain_icon = 0;
-            self.set_cell(*coordinate, layers).expect("prevalidated terrain cell");
+            self.set_terrain_object_cell(*coordinate, layers).expect("prevalidated terrain cell");
         }
         self.terrain_objects.remove(&id);
         Ok(object)
@@ -231,7 +231,7 @@ impl MapDocument {
                 let mut layers = *self.cell(*coordinate).expect("prevalidated old cell");
                 layers.terrain = None;
                 layers.terrain_icon = 0;
-                self.set_cell(*coordinate, layers).expect("prevalidated old cell");
+                self.set_terrain_object_cell(*coordinate, layers).expect("prevalidated old cell");
             }
         }
         for (coordinate, index) in new_cells.iter().zip(new_indices) {
@@ -239,7 +239,7 @@ impl MapDocument {
             let mut layers = *self.cell(*coordinate).expect("prevalidated destination cell");
             layers.terrain = Some(definition.id);
             layers.terrain_icon = object.icon;
-            self.set_cell(*coordinate, layers).expect("prevalidated destination cell");
+            self.set_terrain_object_cell(*coordinate, layers).expect("prevalidated destination cell");
         }
         self.terrain_objects.get_mut(&id).expect("object retained").origin = destination;
         Ok(())
@@ -322,7 +322,7 @@ impl MapDocument {
                 let mut layers = *self.cell(*coordinate).expect("prevalidated old cell");
                 layers.terrain = None;
                 layers.terrain_icon = 0;
-                self.set_cell(*coordinate, layers).expect("prevalidated old cell");
+                self.set_terrain_object_cell(*coordinate, layers).expect("prevalidated old cell");
             }
         }
         for (coordinate, index) in new_cells.iter().zip(new_indices) {
@@ -330,7 +330,7 @@ impl MapDocument {
             let mut layers = *self.cell(*coordinate).expect("prevalidated target cell");
             layers.terrain = Some(definition.id);
             layers.terrain_icon = target.expect("target footprint has an object").icon;
-            self.set_cell(*coordinate, layers).expect("prevalidated target cell");
+            self.set_terrain_object_cell(*coordinate, layers).expect("prevalidated target cell");
         }
         if let Some(target) = target {
             self.terrain_objects.insert(id, target.clone());
