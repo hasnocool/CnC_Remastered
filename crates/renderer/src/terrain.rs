@@ -524,7 +524,31 @@ mod tests {
         let mut raw = vec![0u8; PALETTE_BYTES];
         raw[3..6].copy_from_slice(&[200, 10, 20]);
         raw[6..9].copy_from_slice(&[10, 200, 20]);
+        raw[9..12].copy_from_slice(&[20, 30, 220]);
         Palette256::parse(&raw, PaletteEncoding::Rgb8).unwrap()
+    }
+
+    fn icon_set_fixture(second_pixel: u8, logical_map: &[u8]) -> Vec<u8> {
+        fn chunk(id: [u8; 4], data: &[u8], output: &mut Vec<u8>) {
+            output.extend_from_slice(&id);
+            output.extend_from_slice(&(data.len() as u32).to_be_bytes());
+            output.extend_from_slice(data);
+            if data.len() & 1 != 0 {
+                output.push(0);
+            }
+        }
+
+        let mut body = b"ICON".to_vec();
+        chunk(*b"SINF", &[1, 1, 0, 8], &mut body);
+        let mut pixels = vec![1u8; 64];
+        pixels.extend(std::iter::repeat_n(second_pixel, 64));
+        chunk(*b"SSET", &pixels, &mut body);
+        chunk(*b"MAP ", logical_map, &mut body);
+
+        let mut file = b"FORM".to_vec();
+        file.extend_from_slice(&(body.len() as u32).to_be_bytes());
+        file.extend_from_slice(&body);
+        file
     }
 
     #[test]
@@ -591,6 +615,51 @@ mod tests {
         );
         assert!(!consumed);
         assert!(!resolved);
+    }
+
+    #[test]
+    fn builds_atlas_from_multiple_template_icon_sets_and_map_indirection() {
+        let first_bytes = icon_set_fixture(2, &[1]);
+        let second_bytes = icon_set_fixture(3, &[1]);
+        let first = IconSet::load(&first_bytes, None).unwrap();
+        let second = IconSet::load(&second_bytes, None).unwrap();
+
+        let (map, atlas) = TerrainAtlas::build_from_template_icon_sets(
+            88,
+            3,
+            1,
+            [Some((10, 0)), None, Some((20, 0))],
+            &[(10, &first), (20, &second)],
+            &palette(),
+        ).unwrap();
+
+        assert_eq!(map.tile_at(0, 0), Some(0));
+        assert_eq!(map.tile_at(1, 0), None);
+        assert_eq!(map.tile_at(2, 0), Some(1));
+        assert_eq!(atlas.slot_for_tile(0), Some(0));
+        assert_eq!(atlas.slot_for_tile(1), Some(1));
+        assert_eq!(atlas.dimensions(), (16, 8));
+        assert_eq!(&atlas.image().pixels[0..4], &[10, 200, 20, 255]);
+        assert_eq!(&atlas.image().pixels[32..36], &[20, 30, 220, 255]);
+    }
+
+    #[test]
+    fn rejects_template_cells_whose_icon_set_map_entry_is_empty() {
+        let bytes = icon_set_fixture(2, &[u8::MAX]);
+        let icon_set = IconSet::load(&bytes, None).unwrap();
+        let result = TerrainAtlas::build_from_template_icon_sets(
+            88,
+            1,
+            1,
+            [Some((10, 0))],
+            &[(10, &icon_set)],
+            &palette(),
+        );
+
+        assert_eq!(
+            result.unwrap_err(),
+            TerrainError::UnresolvedTemplateCell { template: 10, icon: 0 },
+        );
     }
 
     #[test]
