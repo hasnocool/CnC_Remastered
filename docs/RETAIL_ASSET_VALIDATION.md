@@ -24,7 +24,7 @@ cargo run -p renderer --bin asset-validate -- \
   --mix /path/to/LOCAL.MIX
 ```
 
-Use `--help` for the complete option list. `--theater` can override scenario theater metadata when the scenario's INI dialect stores it in an unsupported location. `--palette-encoding` is explicit: the default is RGB8; use RGB6 only for a palette known to contain six-bit components.
+Use `--help` for the complete option list. `--theater` can override scenario theater metadata when the scenario's INI dialect stores it in an unsupported location. `--palette-encoding` is required so the tool never guesses: choose RGB8 or RGB6 based on the supplied palette's known encoding.
 
 ## Validation performed
 
