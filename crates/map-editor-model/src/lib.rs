@@ -247,6 +247,21 @@ mod tests {
     }
 
     #[test]
+    fn typed_overlay_and_smudge_records_round_trip_with_cell_layers() {
+        let dimensions = MapDimensions::new(2, 1).unwrap();
+        let mut map = MapDocument::new(GameVariant::RedAlert, dimensions).unwrap();
+        let cell = CellCoord::new(1, 0);
+        let overlay = PlacedOverlay { type_id: 7, icon: 3, tint: EditorColor { red: 1, green: 2, blue: 3, alpha: 4 } };
+        let smudge = PlacedSmudge { type_id: 9, icon: 5, data: 77, tint: EditorColor::WHITE };
+        map.set_overlay_instance(cell, Some(overlay.clone())).unwrap();
+        map.set_smudge_instance(cell, Some(smudge.clone())).unwrap();
+        assert_eq!(map.overlay_instance(cell), Some(&overlay));
+        assert_eq!(map.smudge_instance(cell), Some(&smudge));
+        assert_eq!(map.cell(cell).unwrap().overlay, None);
+        assert_eq!(map.cell(cell).unwrap().smudge, None);
+    }
+
+    #[test]
     fn stores_and_reads_cell_layers() {
         let dimensions = MapDimensions::new(10, 10).expect("valid dimensions");
         let mut map = MapDocument::new(GameVariant::TiberianDawn, dimensions).expect("valid map");
