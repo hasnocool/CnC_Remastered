@@ -8,7 +8,7 @@ use rts_core::{CellCoord, GameVariant, MapDimensions};
 use crate::{
     MapDocument, MapDocumentError, MapSpatialIndex, OccupierId, OverlapRect,
     SpatialIndexError, OverlayInvalidation, MapUpdateError, MapUpdateWork,
-    OverlayTypeDefinition, PlacedOverlay,
+    OverlayTypeDefinition, PlacedOverlay, resource_icon, wall_icon,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -95,7 +95,67 @@ impl MapEditorState {
                 .map_err(MapEditorStateError::Update)?;
             work = merge_update_work(work, wall_work);
         }
+        if let Some(ref derived_work) = work {
+            self.apply_update_work(derived_work);
+        }
         Ok(work)
+    }
+
+    /// Applies source-derived overlay icon updates for work returned by the
+    /// outermost end_update call. Immediate, non-batched edits apply this
+    /// automatically from set_overlay.
+    pub fn apply_update_work(&mut self, work: &MapUpdateWork) {
+        let dimensions = self.document.dimensions();
+        let resource_cells = work.resources.clone();
+        for cell in resource_cells {
+            let Some((placed, _)) = self.overlays.get(&cell) else { continue; };
+            let Some(definition) = self.overlay_types.get(&placed.type_id) else { continue; };
+            if !definition.is_resource() { continue; }
+            let is_gem = definition.is_gem();
+            let mut adjacent = 0_u8;
+            for dy in -1_i32..=1 {
+                for dx in -1_i32..=1 {
+                    if dx == 0 && dy == 0 { continue; }
+                    let x = i32::from(cell.x) + dx;
+                    let y = i32::from(cell.y) + dy;
+                    if x < 0 || y < 0 || x >= i32::from(dimensions.width()) || y >= i32::from(dimensions.height()) {
+                        continue;
+                    }
+                    let neighbor = CellCoord::new(x as u16, y as u16);
+                    if self.overlays.get(&neighbor).is_some_and(|(overlay, _)| {
+                        self.overlay_types.get(&overlay.type_id).is_some_and(|kind| kind.is_resource())
+                    }) {
+                        adjacent += 1;
+                    }
+                }
+            }
+            if let Some((overlay, _)) = self.overlays.get_mut(&cell) {
+                if let Some(icon) = resource_icon(is_gem, adjacent) { overlay.icon = icon; }
+            }
+        }
+
+        let wall_cells = work.walls.clone();
+        for cell in wall_cells {
+            let Some((placed, _)) = self.overlays.get(&cell) else { continue; };
+            let type_id = placed.type_id;
+            let Some(definition) = self.overlay_types.get(&type_id) else { continue; };
+            if !definition.is_wall() { continue; }
+            let has_same_wall = |x: i32, y: i32, overlays: &HashMap<CellCoord, (PlacedOverlay, Option<OccupierId>)>, types: &BTreeMap<i8, OverlayTypeDefinition>| {
+                if x < 0 || y < 0 || x >= i32::from(dimensions.width()) || y >= i32::from(dimensions.height()) { return false; }
+                overlays.get(&CellCoord::new(x as u16, y as u16)).is_some_and(|(overlay, _)| {
+                    overlay.type_id == type_id && types.get(&overlay.type_id).is_some_and(|kind| kind.is_wall())
+                })
+            };
+            let x = i32::from(cell.x);
+            let y = i32::from(cell.y);
+            let icon = wall_icon(
+                has_same_wall(x, y - 1, &self.overlays, &self.overlay_types),
+                has_same_wall(x + 1, y, &self.overlays, &self.overlay_types),
+                has_same_wall(x, y + 1, &self.overlays, &self.overlay_types),
+                has_same_wall(x - 1, y, &self.overlays, &self.overlay_types),
+            );
+            if let Some((overlay, _)) = self.overlays.get_mut(&cell) { overlay.icon = icon; }
+        }
     }
 
     fn allocate_overlay_occupier(next_id: &mut u64, spatial: &MapSpatialIndex) -> Result<OccupierId, MapEditorStateError> {
