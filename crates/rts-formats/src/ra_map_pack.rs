@@ -246,7 +246,7 @@ mod tests {
     #[test]
     fn decodes_base64_ini_section_and_whitespace() {
         let raw = [5, 0, 3, 0, 0x83, 1, 2, 3, 0x80];
-        let encoded = crate::base64::encode_all(&raw);
+        let encoded = String::from_utf8(crate::base64::encode_all(&raw)).unwrap();
         let wrapped = format!("{}\r\n{}", &encoded[..4], &encoded[4..]);
         let map = RaTemplateMap::decode_ini_section(&wrapped, 1, 1).unwrap();
         assert_eq!(map.cell_at(0, 0), Some(RaTemplateCell { template_type: 0x0201, icon: 3 }));
