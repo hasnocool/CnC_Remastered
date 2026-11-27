@@ -52,3 +52,7 @@ GamePlugin passes registry to Map, which copies it. Map.InitTheater initializes 
 TerrainType.Init uses OREMINE when OreMine, shape22 transformable/shape0 otherwise. Success sets RenderSize and half thumbnail; false lookup leaves existing metadata (possible stale shared state, runtime untested).
 
 Rust has numeric CellLayers.terrain only, no typed catalog/masks/theatres/flags/render cache/tool. Not Rust-mapped or Tested. Preserve data/orientation, separate occupancy/render bounds and deterministic missing-asset handling.
+
+## Rust mapping update — catalog imported
+
+All 32 source declarations are represented in `crates/map-editor-model/src/terrain_catalog.rs`, including original IDs/names, theatre lists, masks, transformable metadata and TemplateTypeFlag.None. The mask rows are preserved top-to-bottom and converted to width=columns/height=rows. Automated catalog and mask tests are present but not yet run.
