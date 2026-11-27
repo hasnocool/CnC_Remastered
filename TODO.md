@@ -452,6 +452,17 @@
 - [x] Add a dedicated RA MapPack decoder for the Remastered Collection/editor chunk framing: little-endian compressed length + decompressed length followed by an LCW block.
 - [x] Enforce the upstream 8,192-byte per-chunk output buffer limit, exact map output size, checked dimensions/allocation, complete chunk framing, and bounded LCW output.
 - [x] Decode the RA new-format payload as a row-major u16 little-endian template-type plane followed by a u8 logical-icon plane, preserving raw IDs for later theater/catalog validation.
-- [ ] Add a Base64 INI-section adapter and validate against legally supplied original RA scenario files.
-- [ ] Connect decoded RA cells to the catalog-validated renderer path and the theater-aware MIX/loose-file asset provider.
+- [ ] Add a strict Base64 INI-section adapter and validate against legally supplied original RA scenario files.
+- [x] Add a theater-aware MIX-backed template ICON-set provider using source-derived catalog names, theater suffix selection, upstream filename CRCs, and the existing IFF/ICON parser.
+- [ ] Connect decoded RA cells to the catalog-validated renderer atlas builder and validate against legally supplied original game files.
 - Verification: synthetic chunk fixtures and malformed-input tests are authored; Cargo formatting, compilation and tests remain unexecuted.
+
+
+## Theater-aware MIX template asset provider
+
+- [x] Add the upstream MIX filename-key calculation: ASCII-uppercase the complete asset filename, then use the Westwood rotate-left/add checksum used by `MIXFILE.CPP` and `CRC.CPP`.
+- [x] Add `MixArchive::get_by_filename` without changing the existing CRC-index lookup API.
+- [x] Add renderer::TemplateAssetProvider to validate the variant/theater catalog entry, construct the theater-suffixed filename, search caller-supplied MIX archives in caller order, and parse the resolved bytes with the existing IFF/ICON loader.
+- [x] Keep asset archives caller-owned and do not bundle proprietary game files.
+- [ ] Add loose-file directory lookup, strict INI Base64 section decoding, retail-file validation, and full RA MapPack-to-atlas integration.
+- Verification: synthetic filename/theater checks are authored; Cargo formatting, compilation and tests remain unexecuted.

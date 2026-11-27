@@ -342,3 +342,12 @@ The lower-level build_from_template_icon_sets API remains available for custom m
 Added `rts_formats::ra_map_pack::RaTemplateMap` for the Red Alert MapPack binary payload. The decoder consumes the editor's framed LCW chunks (u16 compressed length, u16 decoded length, then LCW data), caps each decoded chunk at the upstream 8,192-byte scratch-buffer size, and requires the decoded stream to equal exactly three bytes per map cell. It then separates the new-format payload into a little-endian u16 template-type plane and a u8 logical-icon plane, preserving raw references for later theater/catalog checks.
 
 The caller still needs to concatenate and Base64-decode the INI `[MapPack]` values before invoking this API. No retail scenario has been supplied or validated, and this work does not implement the older interleaved `NewINIFormat` variants handled by the legacy game reader. Cargo formatting, compilation and tests remain unverified in this environment.
+
+
+## Red Alert MapPack and theater-aware template asset ingestion
+
+- Added `rts_formats::ra_map_pack::RaTemplateMap`. It decodes the Remastered Collection editor's framed LCW chunks (little-endian u16 compressed length and u16 decoded length), enforces the 8,192-byte chunk output cap, checks exact map output size, and separates the new-format stream into the row-major u16 template-type plane followed by the u8 logical-icon plane. Raw IDs are preserved for later catalog validation.
+- Added `mix::filename_crc` and `MixArchive::get_by_filename`, matching the upstream MIX filename lookup convention: ASCII-uppercase the full filename and feed it to the Westwood rotate-left/add checksum.
+- Added renderer `TemplateAssetProvider`: validates catalog type/theater availability, selects the variant-specific theater extension, searches caller-provided MIX archives in registration order, and loads the result through the existing IFF/ICON parser.
+- No proprietary assets are bundled. The provider has not yet been validated against retail MIX archives, and the RA MapPack decoder still needs a strict INI Base64 adapter and connection to the catalog-validated atlas builder. The legacy interleaved `NewINIFormat` map encoding remains separate.
+- Cargo formatting, compilation, tests and Clippy remain unverified in this environment.

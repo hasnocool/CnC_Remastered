@@ -1,6 +1,12 @@
 use core::fmt;
 
-use crate::binary::{BinaryReadError, BinaryReader};
+use crate::{binary::{BinaryReadError, BinaryReader}, legacy_crc::LegacyCrcEngine};
+
+/// Calculate the filename key used by Westwood's legacy MIX index.
+pub fn filename_crc(filename: &str) -> i32 {
+    let uppercase: Vec<u8> = filename.bytes().map(|byte| byte.to_ascii_uppercase()).collect();
+    LegacyCrcEngine::default().update(&uppercase) as i32
+}
 
 const LEGACY_MIX_HEADER_SIZE: usize = 6;
 const LEGACY_MIX_ENTRY_SIZE: usize = 12;
@@ -171,6 +177,12 @@ impl<'a> MixArchive<'a> {
     pub fn get_by_crc(&self, crc: i32) -> Option<&'a [u8]> {
         self.find_by_crc(crc).and_then(|entry| self.file_data(entry))
     }
+
+    /// Resolve a legacy MIX filename using the upstream uppercase
+    /// rotate-and-add CRC calculation from MIXFILE.CPP / CRC.CPP.
+    pub fn get_by_filename(&self, filename: &str) -> Option<&'a [u8]> {
+        self.get_by_crc(filename_crc(filename))
+    }
 }
 
 #[cfg(test)]
@@ -186,6 +198,11 @@ mod tests {
         bytes.extend_from_slice(&size.to_le_bytes());
         bytes.extend_from_slice(b"abc");
         bytes
+    }
+
+    #[test]
+    fn filename_crc_is_ascii_case_insensitive() {
+        assert_eq!(filename_crc("CLEAR1.TEM"), filename_crc("clear1.tem"));
     }
 
     #[test]
