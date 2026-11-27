@@ -414,3 +414,8 @@ CellLayers now owns typed Overlay and Smudge instances (type/icon/tint and Smudg
 
 
 Latest map-editor catalog tranche: imported 60 Tiberian Dawn and 63 Red Alert BuildingType entries plus 15 SmudgeType entries per variant from the pinned C# registries. Catalog registration is variant-specific. Building bib masks and OverlapBounds now match the upstream array-dimension rule (bib adds one row to the mask dimensions while the final two rows are occupied). Rust verification remains pending where the toolchain is unavailable.
+
+
+## Map editor source-catalog validation
+
+Added structural validation for the pinned TD/RA BuildingType and SmudgeType registries. Validation checks duplicate IDs, dimensions, occupancy-mask bounds and uniqueness, exact bib mask expansion, and required Bib1/Bib2/Bib3 definitions. Variant catalog registration now validates both complete catalogs before mutating the editor state. Synthetic tests were added but not run. Theater eligibility remains unimplemented because MapDocument currently has no selected-theater state; GameVariant is not a valid substitute. Public mutable document access and scenario serialization integration also remain outstanding. See `docs/port-tranches/MAP_EDITOR_SOURCE_CATALOG_VALIDATION.md`.
