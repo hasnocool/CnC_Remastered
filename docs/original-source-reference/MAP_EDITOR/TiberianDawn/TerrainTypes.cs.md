@@ -1,6 +1,6 @@
 # Tiberian Dawn TerrainTypes.cs — static catalog body audit
 
-> **Body reviewed.** Full 73-line registry and all 32 entries, static constructor and GetTypes inspected. Rust mapping/tests open.
+> **Body reviewed; Rust catalog mapped.** Full 73-line registry and all 32 entries, static constructor and GetTypes inspected. Catalog test coverage is added but has not been executed.
 
 Upstream `CnCTDRAMapEditor/TiberianDawn/TerrainTypes.cs`; pinned `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`; blob `6b1b288d16cebdc39db99edada49795c890bf3f0`. [Source](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/TiberianDawn/TerrainTypes.cs)
 
