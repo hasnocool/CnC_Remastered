@@ -229,7 +229,7 @@ Partial in progress: `REDALERT/LOGIC.CPP` → `crates/rts-core/src/red_alert_log
 | Settings | Initial | Versioned TOML display/audio/input/performance/network settings, validation, atomic replacement |
 | GPU startup | Non-blocking | Renderer initialization is performed on a worker; event loop polls a one-shot channel |
 | Logging | Initial | tracing subscriber, environment filter, startup and presentation error reporting |
-| Rendering parity | Partial foundation | Textured RGBA sprite/terrain pipeline and bitmap UI are active; authentic SHP/TMP decode/upload, palette conversion, texture cache, terrain composition from game maps and game UI remain outstanding |
+| Rendering parity | Partial foundation | Palette conversion and retail TD/RA SHP decoding are implemented in rts-formats but are not yet connected to GPU upload; TMP decoding, texture cache, terrain composition from game maps and game UI remain outstanding |
 | Audio | Not implemented | Audio settings are persisted; playback/mixing remains outstanding |
 | Networking | Not implemented | Network preferences are persisted; async transport, lobby, and lockstep remain outstanding |
 | Application integration | Not implemented | Launcher registry entries and preview windows exist; TD, RA, and editor runtime APIs are not yet wired |
