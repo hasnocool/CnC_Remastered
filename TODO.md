@@ -445,3 +445,13 @@
 - [ ] Derive adjacency/transition selection from source-backed TD/RA template rules and real theater fixtures.
 - [x] Validate map dimensions before consuming template iterators; reserve the exact expected cell capacity fallibly and reject short or oversized iterators.
 - Verification: catalog and atlas CPU regression tests are authored; Cargo formatting, compilation and tests remain unexecuted in this environment.
+
+
+## Red Alert MapPack binary decoding
+
+- [x] Add a dedicated RA MapPack decoder for the Remastered Collection/editor chunk framing: little-endian compressed length + decompressed length followed by an LCW block.
+- [x] Enforce the upstream 8,192-byte per-chunk output buffer limit, exact map output size, checked dimensions/allocation, complete chunk framing, and bounded LCW output.
+- [x] Decode the RA new-format payload as a row-major u16 little-endian template-type plane followed by a u8 logical-icon plane, preserving raw IDs for later theater/catalog validation.
+- [ ] Add a Base64 INI-section adapter and validate against legally supplied original RA scenario files.
+- [ ] Connect decoded RA cells to the catalog-validated renderer path and the theater-aware MIX/loose-file asset provider.
+- Verification: synthetic chunk fixtures and malformed-input tests are authored; Cargo formatting, compilation and tests remain unexecuted.

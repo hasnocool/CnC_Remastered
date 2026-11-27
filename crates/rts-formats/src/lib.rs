@@ -33,6 +33,7 @@ pub mod palette_fade;
 pub mod palette_interpolation;
 pub mod dipthong_tables;
 pub mod dipthong;
+pub mod ra_map_pack;
 
 pub use binary::{BinaryReadError, BinaryReader};
 pub use mix::{MixArchive, MixEntry, MixParseError};

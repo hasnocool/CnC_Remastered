@@ -335,3 +335,10 @@ Added upstream template type IDs, symbolic names, theater-availability masks, an
 The catalog distinguishes TD Desert/Jungle/Temperate/Winter numbering from RA Temperate/Snow/Interior numbering. TerrainAtlas::build_from_template_catalog validates caller-loaded ICON sets against the selected variant and theater before using the existing logical-icon MAP indirection and RGBA atlas path. Asset providers still need to resolve theater suffixes and load IFF files from the user's game data; no proprietary assets are bundled.
 
 The lower-level build_from_template_icon_sets API remains available for custom mods and synthetic fixtures. Cargo formatting, compilation, tests, and Clippy remain unexecuted in this environment.
+
+
+## Red Alert MapPack decoder
+
+Added `rts_formats::ra_map_pack::RaTemplateMap` for the Red Alert MapPack binary payload. The decoder consumes the editor's framed LCW chunks (u16 compressed length, u16 decoded length, then LCW data), caps each decoded chunk at the upstream 8,192-byte scratch-buffer size, and requires the decoded stream to equal exactly three bytes per map cell. It then separates the new-format payload into a little-endian u16 template-type plane and a u8 logical-icon plane, preserving raw references for later theater/catalog checks.
+
+The caller still needs to concatenate and Base64-decode the INI `[MapPack]` values before invoking this API. No retail scenario has been supplied or validated, and this work does not implement the older interleaved `NewINIFormat` variants handled by the legacy game reader. Cargo formatting, compilation and tests remain unverified in this environment.
