@@ -224,13 +224,13 @@ Partial in progress: `REDALERT/LOGIC.CPP` → `crates/rts-core/src/red_alert_log
 | Component | State | Evidence / remaining work |
 |---|---|---|
 | Workspace | Expanded | Eight crates; renderer and launcher are workspace members |
-| Renderer | Initial textured 2D backend | wgpu adapter/device, surface presentation, RGBA atlas upload, nearest-sampled textured sprites, rotated quads, render-layer batching, alpha-blended UI rectangles and bundled bitmap text |
+| Renderer | Initial textured 2D backend | wgpu surface, RGBA upload, 128 MiB FIFO GPU texture cache, cached icon/TMP image upload, ordered multi-texture draw runs, nearest-sampled sprites, camera-aware generic terrain atlas composition, 16×16 chunk traversal and viewport culling |
 | Launcher | Graphical initial release | `cnc-remastered` opens an in-window application selector/settings UI; `--app` direct preview, `--list`, mouse selection, Escape/close handling and shared lifecycle |
 | Application registry | Initial | Tiberian Dawn, Red Alert, and Map Editor identities; runtime integration is not yet complete |
 | Settings | Initial | Versioned TOML display/audio/input/performance/network settings, validation, atomic replacement |
 | GPU startup | Non-blocking | Renderer initialization is performed on a worker; event loop polls a one-shot channel |
 | Logging | Initial | tracing subscriber, environment filter, startup and presentation error reporting |
-| Rendering parity | Partial foundation | Palette conversion and retail TD/RA SHP decoding are implemented in rts-formats but are not yet connected to GPU upload; TMP decoding, texture cache, terrain composition from game maps and game UI remain outstanding |
+| Rendering parity | Partial foundation | Palette conversion, retail SHP decoding, TMP decoding, icon-set access, cached GPU upload and generic terrain composition exist; real-file validation, authentic map/theater adjacency, TRNS semantics, legacy Shape_Type pixels and game HUD remain outstanding |
 | Audio | Not implemented | Audio settings are persisted; playback/mixing remains outstanding |
 | Networking | Not implemented | Network preferences are persisted; async transport, lobby, and lockstep remain outstanding |
 | Application integration | Not implemented | Launcher registry entries and preview windows exist; TD, RA, and editor runtime APIs are not yet wired |
@@ -247,7 +247,7 @@ Dependency choice: wgpu 26.0.1 and winit 0.30.12 are used while preserving the w
 - A deterministic four-region procedural terrain atlas is drawn behind both the launcher and direct application preview windows. It is a renderer fixture, not authentic TD/RA artwork.
 - The launcher initializes the GPU on a worker thread and polls completion from the event loop. Frame pacing uses the configured frame limit.
 
-**Remaining:** game-specific SHP/TMP decoding and palette upload, persistent texture cache, tile/terrain composition from actual maps, in-game HUD rendering, audio playback, async multiplayer networking, and runtime integration for the two games and editor.
+**Remaining:** authentic TD/RA map and theater ingestion, source-derived terrain transitions, real-file asset validation, legacy Shape_Type pixel decoding, in-game HUD/object rendering, audio playback, async multiplayer networking, and runtime integration for the two games and editor.
 
 **Verification:** Cargo is not installed in the current execution environment and outbound GitHub clone access is unavailable. Formatting, compilation, tests, and Clippy have therefore not been run. Treat this branch as implementation-in-progress until the Rust 1.85+ validation commands pass.
 
@@ -272,7 +272,7 @@ The repository already contained a shared IFF and ICON/SINF/SSET/TRNS/MAP icon-s
 - Treats 0xFF as an empty logical map entry and rejects out-of-range physical references.
 - Synthetic tests cover tile extraction, MAP indirection, empty entries and physical bounds.
 
-**Still unverified:** no real TD/RA theater icon sets have been loaded in this environment. The precise meaning of TRNS bytes and any non-8-bit/packed variants still require source-backed and real-file validation. Palette conversion and GPU upload are not yet connected.
+**Still unverified:** no real TD/RA theater icon sets have been loaded in this environment. The precise meaning of TRNS bytes and any non-8-bit/packed variants still require source-backed and real-file validation. Palette conversion is available and the renderer now exposes cached logical-icon upload, but this path has not been validated against a retail theater set or GPU-backed image comparison.
 
 **Verification:** tests have been added but not executed; Cargo is unavailable in this environment.
 
@@ -286,7 +286,7 @@ Inspection confirmed `crates/rts-formats/src/tmp.rs` already implements bounded 
 - Added cache lookup and byte-accounting APIs. Oversized images are rejected instead of exceeding the cache budget.
 - Existing uncached `create_texture_rgba` remains available.
 
-**Not yet done:** no real retail TMP or SHP file was available for validation; TRNS semantics and palette encoding selection remain caller-controlled; no terrain chunk renderer or camera scrolling yet. Cargo formatting, compilation, tests and Clippy have not been run in this environment.
+**Not yet verified:** no real retail TMP or SHP file was available for validation; TRNS semantics and palette encoding selection remain caller-controlled. A generic TerrainAtlas now composes referenced TMP tiles, traverses 16×16 chunks, culls to the camera viewport and submits cached textures; this is not yet an authentic TD/RA map/theater renderer. Cargo formatting, compilation, tests and Clippy have not been run in this environment.
 
 
 ## TD/RA TMP terrain palette bridge
