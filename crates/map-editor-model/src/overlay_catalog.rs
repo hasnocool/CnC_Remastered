@@ -274,12 +274,31 @@ mod tests {
         let catalog = OverlayCatalog::new(GameVariant::TiberianDawn, TemplateTheater::Temperate);
         let wall = catalog.get(1).unwrap();
         let crate_type = catalog.get(28).unwrap();
-        let desert_only = catalog.get(20).unwrap();
+        let temperate_only = catalog.get(20).unwrap();
         let at = CellCoord::new(2, 2);
         assert_eq!(place_overlay_with_history(&mut document, &mut history, at, wall, TemplateTheater::Temperate), Err(OverlayPlacementError::NotPlaceable));
-        assert_eq!(place_overlay_with_history(&mut document, &mut history, at, desert_only, TemplateTheater::Desert), Err(OverlayPlacementError::UnavailableInTheater));
+        assert_eq!(place_overlay_with_history(&mut document, &mut history, at, temperate_only, TemplateTheater::Desert), Err(OverlayPlacementError::UnavailableInTheater));
         assert_eq!(place_overlay_with_history(&mut document, &mut history, CellCoord::new(2, 0), crate_type, TemplateTheater::Temperate), Err(OverlayPlacementError::ReservedMapRow(CellCoord::new(2, 0))));
         assert_eq!(history.undo_depth(), 0);
+    }
+
+    #[test]
+    fn placement_rejects_wrong_variant_and_existing_overlay() {
+        let mut document = map(GameVariant::RedAlert);
+        let mut history = MapEditHistory::default();
+        let td_definition = *OverlayCatalog::new(GameVariant::TiberianDawn, TemplateTheater::Temperate).get(28).unwrap();
+        let at = CellCoord::new(3, 3);
+        assert_eq!(
+            place_overlay_with_history(&mut document, &mut history, at, &td_definition, TemplateTheater::Temperate),
+            Err(OverlayPlacementError::WrongVariant)
+        );
+        let ra_definition = *OverlayCatalog::new(GameVariant::RedAlert, TemplateTheater::Temperate).get(21).unwrap();
+        place_overlay_with_history(&mut document, &mut history, at, &ra_definition, TemplateTheater::Temperate).unwrap();
+        assert_eq!(
+            place_overlay_with_history(&mut document, &mut history, at, &ra_definition, TemplateTheater::Temperate),
+            Err(OverlayPlacementError::Occupied(at))
+        );
+        assert_eq!(history.undo_depth(), 1);
     }
 
     #[test]
