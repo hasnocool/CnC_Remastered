@@ -16,9 +16,8 @@ pub struct MapEditorState {
     document: MapDocument,
     spatial: MapSpatialIndex,
     overlay_types: BTreeMap<i8, OverlayTypeDefinition>,
-    overlays: HashMap<CellCoord, (PlacedOverlay, Option<OccupierId>)>,
+    wall_ids: HashMap<CellCoord, OccupierId>,
     smudge_types: BTreeMap<i8, SmudgeTypeDefinition>,
-    smudges: HashMap<CellCoord, PlacedSmudge>,
     building_bib_cells: HashMap<OccupierId, Vec<CellCoord>>,
     next_internal_occupier: u64,
 }
@@ -29,9 +28,8 @@ impl MapEditorState {
             document: MapDocument::new(variant, dimensions)?,
             spatial: MapSpatialIndex::new(dimensions),
             overlay_types: BTreeMap::new(),
-            overlays: HashMap::new(),
+            wall_ids: HashMap::new(),
             smudge_types: BTreeMap::new(),
-            smudges: HashMap::new(),
             building_bib_cells: HashMap::new(),
             next_internal_occupier: u64::MAX,
         })
@@ -59,7 +57,7 @@ impl MapEditorState {
     }
 
     pub fn smudge_at(&self, cell: CellCoord) -> Option<&PlacedSmudge> {
-        self.smudges.get(&cell)
+        self.document.smudge_instance(cell)
     }
 
     pub fn building_bib_cells(&self, id: OccupierId) -> Option<&[CellCoord]> {
@@ -67,7 +65,7 @@ impl MapEditorState {
     }
 
     pub fn overlay_at(&self, cell: CellCoord) -> Option<&PlacedOverlay> {
-        self.overlays.get(&cell).map(|(overlay, _)| overlay)
+        self.document.overlay_instance(cell)
     }
 
     /// Replaces one placed overlay and synchronizes wall occupancy before
@@ -81,7 +79,7 @@ impl MapEditorState {
         if !self.document.dimensions().contains(cell) {
             return Err(MapEditorStateError::CellOutOfBounds(cell));
         }
-        let old = self.overlays.get(&cell).map(|(placed, _)| placed.clone());
+        let old = self.document.overlay_instance(cell).cloned();
         if old == overlay { return Ok(None); }
 
         let old_type = old.as_ref().and_then(|value| self.overlay_types.get(&value.type_id));
@@ -90,7 +88,7 @@ impl MapEditorState {
         }).transpose()?;
 
         let mut staged = self.spatial.clone();
-        if let Some((_, Some(id))) = self.overlays.get(&cell) {
+        if let Some(id) = self.wall_ids.get(&cell) {
             if staged.is_wall(*id) { staged.remove_wall(*id); }
         }
         let new_id = if new_type.is_some_and(|definition| definition.is_wall()) {
@@ -102,13 +100,10 @@ impl MapEditorState {
         } else { None };
 
         self.spatial = staged;
-        if let (Some(placed), Some(id)) = (overlay.clone(), new_id) {
-            self.overlays.insert(cell, (placed, Some(id)));
-        } else if let Some(placed) = overlay.clone() {
-            self.overlays.insert(cell, (placed, None));
-        } else {
-            self.overlays.remove(&cell);
-        }
+        self.document.set_overlay_instance(cell, overlay.clone())
+            .map_err(MapEditorStateError::Document)?;
+        if let Some(id) = new_id { self.wall_ids.insert(cell, id); }
+        else { self.wall_ids.remove(&cell); }
 
         let mut work = None;
         if old_type.is_some_and(|definition| definition.is_resource())
@@ -135,7 +130,7 @@ impl MapEditorState {
         let dimensions = self.document.dimensions();
         let resource_cells = work.resources.clone();
         for cell in resource_cells {
-            let Some((placed, _)) = self.overlays.get(&cell) else { continue; };
+            let Some(placed) = self.document.overlay_instance(cell) else { continue; };
             let Some(definition) = self.overlay_types.get(&placed.type_id) else { continue; };
             if !definition.is_resource() { continue; }
             let is_gem = definition.is_gem();
@@ -149,39 +144,39 @@ impl MapEditorState {
                         continue;
                     }
                     let neighbor = CellCoord::new(x as u16, y as u16);
-                    if self.overlays.get(&neighbor).is_some_and(|(overlay, _)| {
+                    if self.document.overlay_instance(neighbor).is_some_and(|overlay| {
                         self.overlay_types.get(&overlay.type_id).is_some_and(|kind| kind.is_resource())
                     }) {
                         adjacent += 1;
                     }
                 }
             }
-            if let Some((overlay, _)) = self.overlays.get_mut(&cell) {
+            if let Some(overlay) = self.document.overlay_instance_mut(cell) {
                 if let Some(icon) = resource_icon(is_gem, adjacent) { overlay.icon = icon; }
             }
         }
 
         let wall_cells = work.walls.clone();
         for cell in wall_cells {
-            let Some((placed, _)) = self.overlays.get(&cell) else { continue; };
+            let Some(placed) = self.document.overlay_instance(cell) else { continue; };
             let type_id = placed.type_id;
             let Some(definition) = self.overlay_types.get(&type_id) else { continue; };
             if !definition.is_wall() { continue; }
-            let has_same_wall = |x: i32, y: i32, overlays: &HashMap<CellCoord, (PlacedOverlay, Option<OccupierId>)>, types: &BTreeMap<i8, OverlayTypeDefinition>| {
+            let has_same_wall = |x: i32, y: i32, document: &MapDocument, types: &BTreeMap<i8, OverlayTypeDefinition>| {
                 if x < 0 || y < 0 || x >= i32::from(dimensions.width()) || y >= i32::from(dimensions.height()) { return false; }
-                overlays.get(&CellCoord::new(x as u16, y as u16)).is_some_and(|(overlay, _)| {
+                document.overlay_instance(CellCoord::new(x as u16, y as u16)).is_some_and(|overlay| {
                     overlay.type_id == type_id && types.get(&overlay.type_id).is_some_and(|kind| kind.is_wall())
                 })
             };
             let x = i32::from(cell.x);
             let y = i32::from(cell.y);
             let icon = wall_icon(
-                has_same_wall(x, y - 1, &self.overlays, &self.overlay_types),
-                has_same_wall(x + 1, y, &self.overlays, &self.overlay_types),
-                has_same_wall(x, y + 1, &self.overlays, &self.overlay_types),
-                has_same_wall(x - 1, y, &self.overlays, &self.overlay_types),
+                has_same_wall(x, y - 1, &self.document, &self.overlay_types),
+                has_same_wall(x + 1, y, &self.document, &self.overlay_types),
+                has_same_wall(x, y + 1, &self.document, &self.overlay_types),
+                has_same_wall(x - 1, y, &self.document, &self.overlay_types),
             );
-            if let Some((overlay, _)) = self.overlays.get_mut(&cell) { overlay.icon = icon; }
+            if let Some(overlay) = self.document.overlay_instance_mut(cell) { overlay.icon = icon; }
         }
     }
 
@@ -242,7 +237,7 @@ impl MapEditorState {
 
         self.spatial.add_building(id, anchor, full_mask, base_mask, overlap_bounds)?;
         let cells = staged_bibs.iter().map(|(cell, _)| *cell).collect::<Vec<_>>();
-        for (cell, smudge) in staged_bibs { self.smudges.insert(cell, smudge); }
+        for (cell, smudge) in staged_bibs { let _ = self.document.set_smudge_instance(cell, Some(smudge)); }
         self.building_bib_cells.insert(id, cells);
         let _ = self.document.request_overlapper_rebuild();
         Ok(())
@@ -284,19 +279,20 @@ impl MapEditorState {
     pub fn remove_building_bibs(&mut self, id: OccupierId) {
         if let Some(cells) = self.building_bib_cells.remove(&id) {
             for cell in cells {
-                let is_bib = self.smudges.get(&cell).and_then(|smudge| self.smudge_types.get(&smudge.type_id))
+                let is_bib = self.document.smudge_instance(cell).and_then(|smudge| self.smudge_types.get(&smudge.type_id))
                     .is_some_and(SmudgeTypeDefinition::is_bib);
-                if is_bib { self.smudges.remove(&cell); }
+                if is_bib { let _ = self.document.set_smudge_instance(cell, None); }
             }
         }
     }
 
     pub fn remove_wall(&mut self, id: OccupierId) -> bool {
-        let cell = self.overlays.iter().find_map(|(cell, (_, overlay_id))| (*overlay_id == Some(id)).then_some(*cell));
+        let cell = self.wall_ids.iter().find_map(|(cell, overlay_id)| (*overlay_id == id).then_some(*cell));
         let removed = self.spatial.remove_wall(id);
         if removed {
             if let Some(cell) = cell {
-                self.overlays.remove(&cell);
+                let _ = self.document.set_overlay_instance(cell, None);
+                self.wall_ids.remove(&cell);
                 if let Ok(work) = self.document.invalidate_overlay(cell, OverlayInvalidation::Walls) {
                     if let Some(ref pending) = work { self.apply_update_work(pending); }
                 }
@@ -311,6 +307,7 @@ impl MapEditorState {
 pub enum MapEditorStateError {
     CellOutOfBounds(CellCoord),
     UnknownOverlayType(i8),
+    Document(MapDocumentError),
     Spatial(SpatialIndexError),
     Update(MapUpdateError),
     OccupierIdsExhausted,
@@ -344,7 +341,7 @@ mod tests {
         state.register_overlay_type(OverlayTypeDefinition { id: 4, name: "wall".into(), flags: 4 });
         state.document_mut().begin_update();
         state.set_overlay(CellCoord::new(3, 3), Some(PlacedOverlay::new(4))).unwrap();
-        let id = state.overlays.get(&CellCoord::new(3, 3)).unwrap().1.unwrap();
+        let id = *state.wall_ids.get(&CellCoord::new(3, 3)).unwrap();
         assert!(state.spatial().is_wall(id));
         assert_eq!(state.spatial().buildings().occupant_at(CellCoord::new(3, 3)), Some(id));
         assert_eq!(state.spatial().technos().occupant_at(CellCoord::new(3, 3)), Some(id));
@@ -358,7 +355,7 @@ mod tests {
         state.register_overlay_type(OverlayTypeDefinition { id: 1, name: "wall".into(), flags: 4 });
         state.register_overlay_type(OverlayTypeDefinition { id: 2, name: "crate".into(), flags: 8 });
         state.set_overlay(CellCoord::new(5, 5), Some(PlacedOverlay::new(1))).unwrap();
-        let old_id = state.overlays.get(&CellCoord::new(5, 5)).unwrap().1.unwrap();
+        let old_id = *state.wall_ids.get(&CellCoord::new(5, 5)).unwrap();
         state.set_overlay(CellCoord::new(5, 5), Some(PlacedOverlay::new(2))).unwrap();
         assert!(!state.spatial().buildings().contains(old_id));
         assert!(!state.spatial().technos().contains(old_id));
@@ -455,7 +452,7 @@ mod tests {
         ).unwrap();
         let bib_cell = CellCoord::new(3, 4);
         assert_eq!(state.smudge_at(bib_cell).unwrap().type_id, 10);
-        state.smudges.insert(bib_cell, PlacedSmudge::new(11));
+        state.document.set_smudge_instance(bib_cell, Some(PlacedSmudge::new(11))).unwrap();
         assert!(state.remove_building(OccupierId(71)));
         assert_eq!(state.smudge_at(bib_cell).unwrap().type_id, 11);
     }
