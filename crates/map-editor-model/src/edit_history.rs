@@ -146,6 +146,24 @@ mod tests {
     }
 
     #[test]
+    fn template_cache_hints_follow_undo_and_redo_command() {
+        let mut map = document();
+        let mut history = MapEditHistory::default();
+        let at = CellCoord::new(0, 0);
+        let template = CellLayers { template: Some(4), template_icon: 2, ..CellLayers::default() };
+        assert!(!history.undo_changes_templates());
+        assert!(!history.redo_changes_templates());
+        history.apply_cell(&mut map, at, template).unwrap();
+        assert!(history.undo_changes_templates());
+        assert!(!history.redo_changes_templates());
+        history.undo(&mut map).unwrap();
+        assert!(!history.undo_changes_templates());
+        assert!(history.redo_changes_templates());
+        history.redo(&mut map).unwrap();
+        assert!(history.undo_changes_templates());
+    }
+
+    #[test]
     fn undo_redo_restore_all_cell_layers() {
         let mut map=document(); let mut h=MapEditHistory::default(); let at=CellCoord::new(1,2);
         let value=CellLayers{template:Some(17),template_icon:9,terrain:Some(4),overlay:Some(12),smudge:Some(3)};
