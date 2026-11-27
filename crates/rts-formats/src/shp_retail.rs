@@ -212,12 +212,20 @@ pub fn apply_xor_delta(dest: &mut [u8], delta: &[u8]) -> Result<(), RetailShpErr
             if command != 0x80 {
                 dst = dst.checked_add(usize::from(command & 0x7f))
                     .ok_or(RetailShpError::InvalidDelta("skip overflow"))?;
+                if dst > dest.len() {
+                    return Err(RetailShpError::InvalidDelta("short skip exceeds frame"));
+                }
             } else {
                 let raw = word(delta, &mut src)?;
                 if raw == 0 { return Ok(()); }
                 match raw >> 14 {
-                    0 | 1 => dst = dst.checked_add(raw)
-                        .ok_or(RetailShpError::InvalidDelta("long skip overflow"))?,
+                    0 | 1 => {
+                        dst = dst.checked_add(raw)
+                            .ok_or(RetailShpError::InvalidDelta("long skip overflow"))?;
+                        if dst > dest.len() {
+                            return Err(RetailShpError::InvalidDelta("long skip exceeds frame"));
+                        }
+                    }
                     2 => {
                         let n = raw & 0x3fff;
                         let end_src = src.checked_add(n).ok_or(RetailShpError::InvalidDelta("source overflow"))?;
@@ -324,6 +332,8 @@ mod tests {
     fn rejects_truncated_and_out_of_bounds_delta_commands() {
         assert!(matches!(apply_xor_delta(&mut [0; 2], &[1]), Err(RetailShpError::InvalidDelta(_))));
         assert!(matches!(apply_xor_delta(&mut [0; 1], &[2, 1, 2, 0x80, 0, 0]), Err(RetailShpError::InvalidDelta(_))));
+        assert!(matches!(apply_xor_delta(&mut [0; 1], &[0x81, 0x80, 0, 0]), Err(RetailShpError::InvalidDelta(_))));
+        assert!(matches!(apply_xor_delta(&mut [0; 1], &[0x80, 2, 0, 0x80, 0, 0]), Err(RetailShpError::InvalidDelta(_))));
     }
     #[test]
     fn parses_embedded_palette_before_frame_data() {
