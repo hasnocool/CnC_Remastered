@@ -140,6 +140,16 @@ struct Vertex { position: [f32; 2], uv: [f32; 2], color: [f32; 4] }
 impl Vertex { const fn new(position: [f32;2], uv: [f32;2], color: [f32;4]) -> Self { Self { position, uv, color } } }
 const ATTRIBUTES: [wgpu::VertexAttribute; 3] = wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32x4];
 
+enum BindGroupHandle<'a> {
+    Borrowed(&'a wgpu::BindGroup),
+    Owned(Arc<wgpu::BindGroup>),
+}
+impl BindGroupHandle<'_> {
+    fn as_ref(&self) -> &wgpu::BindGroup {
+        match self { Self::Borrowed(group) => group, Self::Owned(group) => group.as_ref() }
+    }
+}
+
 pub struct GpuTexture {
     pub id: TextureId,
     _texture: wgpu::Texture,
@@ -439,7 +449,7 @@ impl WgpuRenderer {
                 let texture = self.texture_cache.get(sprite.texture)
                     .ok_or(RendererError::TextureNotCached(sprite.texture))?;
                 if runs.last().is_none_or(|run| run.0 != sprite.texture) {
-                    runs.push((sprite.texture, Arc::clone(&texture.bind_group), Vec::new()));
+                    runs.push((sprite.texture, BindGroupHandle::Owned(Arc::clone(&texture.bind_group)), Vec::new()));
                 }
                 if let Some((_, _, vertices)) = runs.last_mut() {
                     append_sprite_vertices(vertices, sprite, self.viewport);
@@ -459,7 +469,7 @@ impl WgpuRenderer {
         if let Some((batch, texture_id, bind_group)) = sprites {
             let vertices = build_sprite_vertices(batch, texture_id, self.viewport);
             if !vertices.is_empty() {
-                runs.push((texture_id, Arc::new(bind_group.clone()), vertices));
+                runs.push((texture_id, BindGroupHandle::Borrowed(bind_group), vertices));
             }
         }
         self.render_runs(clear, runs, ui)
@@ -468,7 +478,7 @@ impl WgpuRenderer {
     fn render_runs(
         &mut self,
         clear: Color,
-        runs: Vec<(TextureId, Arc<wgpu::BindGroup>, Vec<Vertex>)>,
+        runs: Vec<(TextureId, BindGroupHandle<'_>, Vec<Vertex>)>,
         ui: &UiFrame,
     ) -> Result<FrameStats, RendererError> {
         let frame = self.surface.get_current_texture().map_err(|e| RendererError::Surface(e.to_string()))?;
