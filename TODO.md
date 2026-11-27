@@ -402,3 +402,12 @@
 - The caller supplies a stable `TextureId`; empty MAP entries return `None` without allocating a texture. This keeps cache identity policy outside the renderer and avoids conflating logical indices across theaters.
 - The separate flat-header `tmp.rs` archive reader is not used by this bridge. Its retail-format compatibility remains an audit item and must be checked against source definitions and real files before it is treated as the canonical TD/RA path.
 - No GPU-backed test or real theater asset validation has been performed. Cargo formatting, compilation, tests and Clippy remain unverified.
+
+## Camera-aware TMP terrain atlas and chunk composition
+
+- Added renderer::terrain::TerrainMap as a checked row-major map-cell view whose optional indices address the existing TmpArchive logical tile table.
+- Added TerrainAtlas::build: collects only referenced, nonblank tiles; palette-expands them; packs them into one bounded RGBA atlas; and retains deterministic tile-index-to-atlas-slot mapping.
+- Added TerrainAtlas::upload to reuse the existing bounded GPU texture cache and visible_batch to cull off-screen cells while traversing 16x16-cell chunks and emitting a single-texture SpriteBatch with atlas UVs.
+- Atlas dimensions are capped at 8192 per axis and 128 MiB. The caller must use a texture ID unique to the map/theater/palette identity; the existing cache treats an already-cached ID as immutable.
+- Added CPU-only tests for atlas packing, deterministic tile slots, UV generation, camera culling and empty terrain cells. Tests are authored but have not been executed.
+- This TMP-backed composition path remains separate from the IFF icon-set parser pending source-backed confirmation of each format's asset role.

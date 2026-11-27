@@ -1,0 +1,276 @@
+// Filename: crates/renderer/src/terrain.rs
+//! Camera-aware terrain atlas construction and visible-chunk composition.
+
+use std::collections::{BTreeSet, HashMap};
+use rts_formats::{
+    palette_rgba::{Palette256, RgbaImage},
+    tmp::{TmpArchive, TmpError},
+};
+use crate::{
+    Camera2d, Color, RenderLayer, RendererError, SpriteBatch, SpriteInstance,
+    TextureId, Viewport, WgpuRenderer,
+};
+
+pub const TERRAIN_CHUNK_CELLS: u32 = 16;
+const MAX_ATLAS_DIMENSION: u32 = 8192;
+const MAX_ATLAS_BYTES: usize = 128 * 1024 * 1024;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum TerrainError {
+    InvalidMapDimensions { width: u32, height: u32, cells: usize },
+    InvalidTileIndex(usize),
+    AtlasTooLarge { width: u32, height: u32, bytes: usize },
+    InvalidCamera,
+    Renderer(String),
+    Tmp(TmpError),
+}
+impl std::fmt::Display for TerrainError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::InvalidMapDimensions { width, height, cells } =>
+                write!(f, "terrain map {width}x{height} does not match {cells} cell entries"),
+            Self::InvalidTileIndex(index) => write!(f, "terrain map references missing TMP tile {index}"),
+            Self::AtlasTooLarge { width, height, bytes } =>
+                write!(f, "terrain atlas {width}x{height} ({bytes} bytes) exceeds supported limits"),
+            Self::InvalidCamera => f.write_str("terrain camera, zoom, or viewport is invalid"),
+            Self::Renderer(error) => write!(f, "terrain texture upload failed: {error}"),
+            Self::Tmp(error) => write!(f, "terrain TMP decode failed: {error}"),
+        }
+    }
+}
+impl std::error::Error for TerrainError {}
+impl From<RendererError> for TerrainError {
+    fn from(value: RendererError) -> Self { Self::Renderer(value.to_string()) }
+}
+impl From<TmpError> for TerrainError {
+    fn from(value: TmpError) -> Self { Self::Tmp(value) }
+}
+
+/// Row-major map terrain references. None means no base terrain sprite.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TerrainMap {
+    width: u32,
+    height: u32,
+    cells: Vec<Option<usize>>,
+}
+impl TerrainMap {
+    pub fn new(width: u32, height: u32, cells: Vec<Option<usize>>) -> Result<Self, TerrainError> {
+        let expected = (width as usize).checked_mul(height as usize);
+        if width == 0 || height == 0 || expected != Some(cells.len()) {
+            return Err(TerrainError::InvalidMapDimensions { width, height, cells: cells.len() });
+        }
+        Ok(Self { width, height, cells })
+    }
+    pub const fn width(&self) -> u32 { self.width }
+    pub const fn height(&self) -> u32 { self.height }
+    pub fn tile_at(&self, x: u32, y: u32) -> Option<usize> {
+        if x >= self.width || y >= self.height { return None; }
+        self.cells.get((y as usize) * self.width as usize + x as usize).copied().flatten()
+    }
+}
+
+/// Packed RGBA atlas containing only nonblank TMP tiles referenced by a map.
+/// The texture ID must be unique for the map, theater, and palette identity.
+#[derive(Debug, Clone)]
+pub struct TerrainAtlas {
+    texture_id: TextureId,
+    tile_width: u32,
+    tile_height: u32,
+    atlas_columns: u32,
+    tile_slots: HashMap<usize, u32>,
+    image: RgbaImage,
+}
+impl TerrainAtlas {
+    pub fn build(
+        texture_id: TextureId,
+        map: &TerrainMap,
+        archive: &TmpArchive<'_>,
+        palette: &Palette256,
+    ) -> Result<Self, TerrainError> {
+        let mut referenced = BTreeSet::new();
+        for index in map.cells.iter().flatten().copied() {
+            if archive.tile(index)?.is_some() { referenced.insert(index); }
+        }
+        let tile_width = u32::from(archive.width);
+        let tile_height = u32::from(archive.height);
+        let count = referenced.len().max(1);
+        let columns = (count as f64).sqrt().ceil() as u32;
+        let rows = (count as u32).div_ceil(columns);
+        let width = columns.checked_mul(tile_width).unwrap_or(u32::MAX);
+        let height = rows.checked_mul(tile_height).unwrap_or(u32::MAX);
+        let byte_count = (width as usize).checked_mul(height as usize).and_then(|n| n.checked_mul(4));
+        if width == 0 || height == 0 || width > MAX_ATLAS_DIMENSION || height > MAX_ATLAS_DIMENSION
+            || byte_count.map_or(true, |bytes| bytes > MAX_ATLAS_BYTES)
+        {
+            return Err(TerrainError::AtlasTooLarge { width, height, bytes: byte_count.unwrap_or(usize::MAX) });
+        }
+        let mut pixels = vec![0u8; byte_count.expect("atlas byte count was validated")];
+        let mut tile_slots = HashMap::with_capacity(referenced.len());
+        for (slot, tile_index) in referenced.into_iter().enumerate() {
+            let tile = archive.tile_rgba(tile_index, palette, None)?
+                .ok_or(TerrainError::InvalidTileIndex(tile_index))?;
+            copy_tile_into_atlas(&mut pixels, width, tile_width, tile_height, slot as u32, &tile);
+            tile_slots.insert(tile_index, slot as u32);
+        }
+        Ok(Self {
+            texture_id, tile_width, tile_height, atlas_columns: columns, tile_slots,
+            image: RgbaImage { width, height, pixels },
+        })
+    }
+
+    pub const fn texture_id(&self) -> TextureId { self.texture_id }
+    pub const fn tile_size(&self) -> (u32, u32) { (self.tile_width, self.tile_height) }
+    pub const fn dimensions(&self) -> (u32, u32) { (self.image.width, self.image.height) }
+    pub fn image(&self) -> &RgbaImage { &self.image }
+    pub fn slot_for_tile(&self, tile_index: usize) -> Option<u32> {
+        self.tile_slots.get(&tile_index).copied()
+    }
+    pub fn upload(&self, renderer: &mut WgpuRenderer) -> Result<(), TerrainError> {
+        renderer.cache_rgba_image(self.texture_id, &self.image)?;
+        Ok(())
+    }
+
+    /// Emit screen-space sprites for visible cells, traversing 16x16 chunks.
+    /// Camera center is in world pixels; zoom scales position and tile size.
+    pub fn visible_batch(
+        &self, map: &TerrainMap, camera: Camera2d, viewport: Viewport,
+    ) -> Result<SpriteBatch, TerrainError> {
+        if !viewport.is_visible() || !camera.center_x.is_finite()
+            || !camera.center_y.is_finite() || !camera.zoom.is_finite() || camera.zoom <= 0.0
+        { return Err(TerrainError::InvalidCamera); }
+
+        let zoom = camera.zoom.clamp(0.05, 64.0);
+        let left = camera.center_x - viewport.width as f32 / (2.0 * zoom);
+        let top = camera.center_y - viewport.height as f32 / (2.0 * zoom);
+        let right = camera.center_x + viewport.width as f32 / (2.0 * zoom);
+        let bottom = camera.center_y + viewport.height as f32 / (2.0 * zoom);
+        let min_x = ((left / self.tile_width as f32).floor() as i64).clamp(0, map.width as i64) as u32;
+        let min_y = ((top / self.tile_height as f32).floor() as i64).clamp(0, map.height as i64) as u32;
+        let max_x = ((right / self.tile_width as f32).ceil() as i64).clamp(0, map.width as i64) as u32;
+        let max_y = ((bottom / self.tile_height as f32).ceil() as i64).clamp(0, map.height as i64) as u32;
+        let mut batch = SpriteBatch::with_capacity(
+            ((max_x - min_x) as usize).saturating_mul((max_y - min_y) as usize),
+        );
+        if min_x >= max_x || min_y >= max_y { return Ok(batch); }
+
+        for chunk_y in (min_y / TERRAIN_CHUNK_CELLS)..=((max_y - 1) / TERRAIN_CHUNK_CELLS) {
+            for chunk_x in (min_x / TERRAIN_CHUNK_CELLS)..=((max_x - 1) / TERRAIN_CHUNK_CELLS) {
+                let x0 = (chunk_x * TERRAIN_CHUNK_CELLS).max(min_x);
+                let y0 = (chunk_y * TERRAIN_CHUNK_CELLS).max(min_y);
+                let x1 = ((chunk_x + 1) * TERRAIN_CHUNK_CELLS).min(max_x);
+                let y1 = ((chunk_y + 1) * TERRAIN_CHUNK_CELLS).min(max_y);
+                for y in y0..y1 {
+                    for x in x0..x1 {
+                        let Some(tile_index) = map.tile_at(x, y) else { continue; };
+                        let Some(slot) = self.slot_for_tile(tile_index) else { continue; };
+                        let ax = slot % self.atlas_columns;
+                        let ay = slot / self.atlas_columns;
+                        let u0 = ax as f32 * self.tile_width as f32 / self.image.width as f32;
+                        let v0 = ay as f32 * self.tile_height as f32 / self.image.height as f32;
+                        let u1 = (ax + 1) as f32 * self.tile_width as f32 / self.image.width as f32;
+                        let v1 = (ay + 1) as f32 * self.tile_height as f32 / self.image.height as f32;
+                        let sx = (x as f32 * self.tile_width as f32 - camera.center_x) * zoom
+                            + viewport.width as f32 * 0.5;
+                        let sy = (y as f32 * self.tile_height as f32 - camera.center_y) * zoom
+                            + viewport.height as f32 * 0.5;
+                        let mut sprite = SpriteInstance::new(
+                            self.texture_id, RenderLayer::Terrain, sx, sy,
+                            self.tile_width as f32 * zoom, self.tile_height as f32 * zoom,
+                        );
+                        sprite.uv = [u0, v0, u1, v1];
+                        sprite.tint = Color::rgba(1.0, 1.0, 1.0, 1.0);
+                        batch.push(sprite);
+                    }
+                }
+            }
+        }
+        Ok(batch)
+    }
+}
+
+fn copy_tile_into_atlas(
+    atlas: &mut [u8], atlas_width: u32, tile_width: u32, tile_height: u32,
+    slot: u32, tile: &RgbaImage,
+) {
+    let columns = atlas_width / tile_width;
+    let ox = (slot % columns) * tile_width;
+    let oy = (slot / columns) * tile_height;
+    for row in 0..tile_height {
+        let src = (row * tile_width * 4) as usize;
+        let dst = (((oy + row) * atlas_width + ox) * 4) as usize;
+        let bytes = (tile_width * 4) as usize;
+        atlas[dst..dst + bytes].copy_from_slice(&tile.pixels[src..src + bytes]);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rts_formats::{
+        palette_rgba::{PaletteEncoding, PALETTE_BYTES},
+        tmp::TmpVariant,
+    };
+
+    fn fixture() -> Vec<u8> {
+        let mut bytes = vec![0u8; 42];
+        bytes[0..2].copy_from_slice(&2u16.to_le_bytes());
+        bytes[2..4].copy_from_slice(&2u16.to_le_bytes());
+        bytes[12..16].copy_from_slice(&32u32.to_le_bytes());
+        bytes[20..24].copy_from_slice(&0x0d1a_ffffu32.to_le_bytes());
+        bytes[24..28].copy_from_slice(&42i32.to_le_bytes());
+        bytes[28..32].copy_from_slice(&40i32.to_le_bytes());
+        bytes[32..36].copy_from_slice(&[1, 1, 1, 1]);
+        bytes[36..40].copy_from_slice(&[2, 2, 2, 2]);
+        bytes[40..42].copy_from_slice(&[0, 1]);
+        bytes
+    }
+    fn palette() -> Palette256 {
+        let mut raw = vec![0u8; PALETTE_BYTES];
+        raw[3..6].copy_from_slice(&[200, 10, 20]);
+        raw[6..9].copy_from_slice(&[10, 200, 20]);
+        Palette256::parse(&raw, PaletteEncoding::Rgb8).unwrap()
+    }
+
+    #[test]
+    fn packs_only_referenced_tiles_in_deterministic_order() {
+        let bytes = fixture();
+        let archive = TmpArchive::parse_as(&bytes, TmpVariant::TiberianDawn).unwrap();
+        let map = TerrainMap::new(3, 1, vec![Some(1), Some(0), Some(1)]).unwrap();
+        let atlas = TerrainAtlas::build(77, &map, &archive, &palette()).unwrap();
+        assert_eq!(atlas.dimensions(), (4, 2));
+        assert_eq!(atlas.tile_size(), (2, 2));
+        assert_eq!(atlas.slot_for_tile(0), Some(0));
+        assert_eq!(atlas.slot_for_tile(1), Some(1));
+        assert_eq!(&atlas.image().pixels[0..4], &[200, 10, 20, 255]);
+        assert_eq!(&atlas.image().pixels[8..12], &[10, 200, 20, 255]);
+    }
+
+    #[test]
+    fn visible_batch_culls_and_emits_atlas_uvs() {
+        let bytes = fixture();
+        let archive = TmpArchive::parse_as(&bytes, TmpVariant::TiberianDawn).unwrap();
+        let map = TerrainMap::new(3, 1, vec![Some(0), Some(1), Some(0)]).unwrap();
+        let atlas = TerrainAtlas::build(77, &map, &archive, &palette()).unwrap();
+        let batch = atlas.visible_batch(
+            &map, Camera2d { center_x: 3.0, center_y: 1.0, zoom: 1.0 }, Viewport::new(6, 2),
+        ).unwrap();
+        assert_eq!(batch.len(), 3);
+        let mut ordered = batch.clone();
+        assert_eq!(ordered.ordered()[0].texture, 77);
+        assert_eq!(ordered.ordered()[0].layer, RenderLayer::Terrain);
+        assert_eq!(ordered.ordered()[0].uv, [0.0, 0.0, 0.5, 1.0]);
+    }
+
+    #[test]
+    fn empty_cells_produce_no_sprites_or_atlas_slots() {
+        let bytes = fixture();
+        let archive = TmpArchive::parse_as(&bytes, TmpVariant::TiberianDawn).unwrap();
+        let map = TerrainMap::new(2, 1, vec![None, None]).unwrap();
+        let atlas = TerrainAtlas::build(77, &map, &archive, &palette()).unwrap();
+        assert!(atlas.slot_for_tile(0).is_none());
+        let batch = atlas.visible_batch(
+            &map, Camera2d { center_x: 2.0, center_y: 1.0, zoom: 1.0 }, Viewport::new(4, 2),
+        ).unwrap();
+        assert!(batch.is_empty());
+    }
+}

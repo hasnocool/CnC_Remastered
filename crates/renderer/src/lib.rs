@@ -11,6 +11,9 @@ use bytemuck::{Pod, Zeroable};
 use wgpu::util::DeviceExt;
 use winit::window::Window;
 
+pub mod terrain;
+pub use terrain::{TerrainAtlas, TerrainError, TerrainMap, TERRAIN_CHUNK_CELLS};
+
 pub type TextureId = u64;
 const DEFAULT_TEXTURE_CACHE_BYTES: usize = 128 * 1024 * 1024;
 
