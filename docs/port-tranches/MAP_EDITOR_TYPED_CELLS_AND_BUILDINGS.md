@@ -24,7 +24,8 @@ Source contracts used:
 - `from_base_mask` reproduces the audited bib expansion: for HasBib, copy all base rows except the last, then append two full-width occupied rows. Base mask remains unchanged.
 - Added `PlacedBuilding` with source defaults: strength 256, direction supplied by placement, Trigger=None, BasePriority=-1, IsPrebuilt=true, Sellable=false, Rebuild=false, white Tint, and owned BibCells.
 - Non-prebuilt effective tint applies 75% alpha while retaining the raw Tint.
-- `register_building_type` and `add_typed_building` form the new catalog-driven path. Callers supply a type ID and placement context; masks, HasBib, dimensions, bib type selection, defaults, tint and bib ownership are derived from registered definitions.
+- `clone_without_bib_cells` explicitly mirrors `Building.Clone` property-copy behavior; ordinary aggregate snapshots retain BibCells so the aggregate's ownership invariant remains intact.
+- `register_building_type` and `add_typed_building` form the new catalog-driven path. Callers supply a type ID and placement context; masks, HasBib, dimensions, bib type selection, defaults, tint and bib ownership are derived from registered definitions. The typed PlacedBuilding owns its BibCells directly; the separate ownership map is retained only for the older explicit-property compatibility API.
 - Building width 2/3/4 selects Bib3/Bib2/Bib1. Bib smudges are placed row-major at `anchor.y + building.height + row - 1`, with Data=0 and the building tint. Out-of-bounds cells are skipped.
 - Buildings occupancy uses the full mask; Technos occupancy uses the base mask. Removal removes only currently Bib-flagged smudges from owned cells.
 
