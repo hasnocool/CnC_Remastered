@@ -223,6 +223,27 @@ mod tests {
     }
 
     #[test]
+    fn building_type_expands_bib_mask_by_replacing_last_base_row() {
+        let kind = BuildingTypeDefinition::from_base_mask(
+            1, "FACTORY".into(), "Factory".into(), "FACTORY".into(),
+            vec![(0,0),(1,0),(0,1)], 2, 2, true, "GDI".into(), false, true, None,
+        );
+        assert_eq!(kind.base_occupy_mask, vec![(0,0),(1,0),(0,1)]);
+        assert_eq!(kind.occupy_mask, vec![(0,0),(0,2),(1,2),(0,3),(1,3)]);
+        assert_eq!(kind.width, 2);
+        assert_eq!(kind.height, 2);
+    }
+
+    #[test]
+    fn non_prebuilt_building_tint_uses_seventy_five_percent_alpha() {
+        let mut building = PlacedBuilding::new(1, "GDI".into(), 0);
+        building.is_prebuilt = false;
+        building.tint = EditorColor { red: 1, green: 2, blue: 3, alpha: 200 };
+        assert_eq!(building.effective_tint().alpha, 150);
+        assert_eq!(building.tint.alpha, 200);
+    }
+
+    #[test]
     fn bib_flags_share_the_low_bit() {
         assert_eq!(SmudgeTypeFlag::Bib1.bits(), 3);
         assert_eq!(SmudgeTypeFlag::Bib2.bits(), 5);
