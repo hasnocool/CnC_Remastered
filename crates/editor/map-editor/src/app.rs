@@ -231,20 +231,28 @@ impl eframe::App for EditorApp {
                 if ui.button("Load").clicked() { self.load(); }
                 if ui.button("Load Theater Assets").clicked() { self.load_assets(); }
                 if ui.add_enabled(self.history.can_undo(), egui::Button::new("Undo")).clicked() {
+                    let templates_changed = self.history.undo_changes_templates();
                     self.status = match self.history.undo(&mut self.map) {
+                        Ok(true) if templates_changed => {
+                            self.canvas.clear_terrain_assets();
+                            "Undo applied; reload theater assets to refresh templates".into()
+                        }
                         Ok(true) => "Undo applied".into(),
                         Ok(false) => "Nothing to undo".into(),
                         Err(error) => format!("Undo rejected: {error:?}"),
                     };
-                    self.canvas.clear_terrain_assets();
                 }
                 if ui.add_enabled(self.history.can_redo(), egui::Button::new("Redo")).clicked() {
+                    let templates_changed = self.history.redo_changes_templates();
                     self.status = match self.history.redo(&mut self.map) {
+                        Ok(true) if templates_changed => {
+                            self.canvas.clear_terrain_assets();
+                            "Redo applied; reload theater assets to refresh templates".into()
+                        }
                         Ok(true) => "Redo applied".into(),
                         Ok(false) => "Nothing to redo".into(),
                         Err(error) => format!("Redo rejected: {error:?}"),
                     };
-                    self.canvas.clear_terrain_assets();
                 }
                 ui.checkbox(&mut self.canvas.show_grid, "Grid");
                 ui.add(egui::Slider::new(&mut self.canvas.cell_size, 8.0..=40.0).text("Zoom"));
