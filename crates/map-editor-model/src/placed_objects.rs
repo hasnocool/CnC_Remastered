@@ -132,7 +132,7 @@ pub struct BuildingTypeDefinition {
 
 impl BuildingTypeDefinition {
     /// Builds the full mask using the editor's exact bib rule: retain all
-    /// base rows except the final row, then append two completely occupied rows.
+    /// base rows except the final row, then append one completely occupied row.
     pub fn from_base_mask(
         id: i8, name: String, display_name: String, tile_name: String,
         base_occupy_mask: Vec<(u16, u16)>, width: u16, height: u16,
@@ -142,7 +142,7 @@ impl BuildingTypeDefinition {
         let occupy_mask = if has_bib && height > 0 {
             let mut full = base_occupy_mask.iter()
                 .copied().filter(|(_, y)| *y < height - 1).collect::<Vec<_>>();
-            for y in height..height.saturating_add(2) {
+            for y in height..height.saturating_add(1) {
                 for x in 0..width { full.push((x, y)); }
             }
             full
@@ -156,7 +156,7 @@ impl BuildingTypeDefinition {
                 characters.push('f');
                 characters.into_iter().collect()
             } else { name.clone() },
-            display_name, tile_name: name, width, height, has_bib,
+            display_name, tile_name, width, height, has_bib,
             owner_house, theaters: None, is_fake, has_turret, factory_overlay,
             base_occupy_mask, occupy_mask,
         }
@@ -251,9 +251,10 @@ mod tests {
             vec![(0,0),(1,0),(0,1)], 2, 2, true, "GDI".into(), false, true, None,
         );
         assert_eq!(kind.base_occupy_mask, vec![(0,0),(1,0),(0,1)]);
-        assert_eq!(kind.occupy_mask, vec![(0,0),(0,2),(1,2),(0,3),(1,3)]);
+        assert_eq!(kind.occupy_mask, vec![(0,0),(0,2),(1,2)]);
         assert_eq!(kind.width, 2);
         assert_eq!(kind.height, 2);
+        assert_eq!(kind.occupy_mask.iter().map(|(_, y)| *y).max(), Some(2));
     }
 
     #[test]
@@ -283,5 +284,12 @@ mod tests {
         assert_eq!(SmudgeTypeFlag::Bib3.bits(), 9);
         assert!(SmudgeTypeFlag::is_bib_bits(SmudgeTypeFlag::Bib3.bits()));
         assert!(!SmudgeTypeFlag::is_bib_bits(0));
+    }
+}
+
+impl BuildingTypeDefinition {
+    pub fn with_theaters(mut self, theaters: Option<Vec<String>>) -> Self {
+        self.theaters = theaters;
+        self
     }
 }
