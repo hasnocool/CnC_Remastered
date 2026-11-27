@@ -648,7 +648,7 @@ mod tests {
     use super::*;
     #[test] fn catalog_counts_and_ids_match_upstream_registries() {
         let td=tiberian_dawn_building_types(); let ra=red_alert_building_types();
-        assert_eq!(td.len(), 60); assert_eq!(ra.len(), 55);
+        assert_eq!(td.len(), 60); assert_eq!(ra.len(), 63);
         assert_eq!(tiberian_dawn_smudge_types().len(), 15);
         assert_eq!(red_alert_smudge_types().len(), 15);
         assert!(td.iter().any(|v| v.id == 0 && v.name == "weap"));
