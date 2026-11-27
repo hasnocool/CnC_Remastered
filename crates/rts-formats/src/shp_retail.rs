@@ -98,7 +98,7 @@ impl<'a> RetailShpFile<'a> {
         let embedded_palette = header.has_embedded_palette().then(|| &bytes[table_end..palette_end]);
 
         let eof = entries[count];
-        if eof.format != 0 || eof.offset as usize < palette_end || eof.offset as usize > bytes.len() {
+        if eof.format != 0 || (eof.offset as usize) < palette_end || (eof.offset as usize) > bytes.len() {
             return Err(RetailShpError::InvalidSentinel);
         }
         if matches!(entries[count + 1].format, 0x20 | 0x40 | 0x80) {
