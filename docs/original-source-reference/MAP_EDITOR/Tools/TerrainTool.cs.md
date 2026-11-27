@@ -86,3 +86,8 @@ Recommended Rust command surface: place/remove/move Terrain, set type/icon/trigg
 - [TerrainToolDialog.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Tools/Dialogs/TerrainToolDialog.cs)
 - [ViewTool.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Tools/ViewTool.cs)
 - [OccupierSet.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Model/OccupierSet.cs)
+
+
+## Rust implementation update — generic editor wiring (partial)
+
+The desktop editor's Terrain layer click path now calls `place_terrain_with_history` and exposes Undo/Redo controls backed by `MapEditHistory`. The current UI deliberately constructs a 1×1 generic occupancy definition because the complete TD/RA TerrainType catalog is not yet imported. This proves the command/history connection only; it does **not** map TerrainTool's mock Terrain, Map.Technos, type selector, transformable icon-22 selection, drag/pivot movement, right-click removal, trigger properties, or render-derived overlap bounds. The source TerrainTool is therefore still only partially mapped.
