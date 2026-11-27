@@ -546,6 +546,57 @@ mod tests {
     }
 
     #[test]
+    fn typed_cell_instances_are_owned_by_map_document_layers() {
+        let mut state = MapEditorState::new(GameVariant::TiberianDawn, dimensions()).unwrap();
+        state.register_overlay_type(OverlayTypeDefinition { id: 2, name: "ore".into(), flags: 1 });
+        let cell = CellCoord::new(6, 6);
+        state.set_overlay(cell, Some(PlacedOverlay::new(2))).unwrap();
+        assert_eq!(state.document().cell(cell).unwrap().overlay_instance.as_ref().unwrap().type_id, 2);
+        assert_eq!(state.overlay_at(cell).unwrap().icon, 0);
+        state.document_mut().set_smudge_instance(cell, Some(PlacedSmudge {
+            type_id: 9, icon: 4, data: 123, tint: EditorColor { red: 4, green: 5, blue: 6, alpha: 7 },
+        })).unwrap();
+        assert_eq!(state.smudge_at(cell).unwrap().data, 123);
+    }
+
+    #[test]
+    fn typed_building_catalog_drives_masks_defaults_and_automatic_bib_lifecycle() {
+        let mut state = MapEditorState::new(GameVariant::RedAlert, dimensions()).unwrap();
+        state.register_smudge_type(SmudgeTypeDefinition {
+            id: 20, name: "BIB3".into(), flags: SmudgeTypeFlag::Bib3.bits(), width: 2, height: 1,
+        });
+        state.register_building_type(BuildingTypeDefinition::from_base_mask(
+            3, "FACTORY".into(), "Factory".into(), "FACTORY".into(),
+            vec![(0,0),(1,0),(0,1),(1,1)], 2, 2, true, "GDI".into(), false, true, None,
+        ));
+        state.add_typed_building(
+            OccupierId(90), 3, CellCoord::new(4, 4), OverlapRect::new(32,32,48,48),
+            "GDI".into(), 0,
+        ).unwrap();
+        let building = state.building(OccupierId(90)).unwrap();
+        assert_eq!(building.strength, 256);
+        assert!(building.is_prebuilt);
+        assert_eq!(building.bib_cells, vec![CellCoord::new(4,5), CellCoord::new(5,5)]);
+        assert_eq!(state.spatial().buildings().occupant_at(CellCoord::new(4,7)), Some(OccupierId(90)));
+        assert_eq!(state.spatial().technos().occupant_at(CellCoord::new(4,7)), None);
+        assert_eq!(state.smudge_at(CellCoord::new(4,5)).unwrap().type_id, 20);
+        assert!(state.remove_building(OccupierId(90)));
+        assert!(state.building(OccupierId(90)).is_none());
+        assert!(state.smudge_at(CellCoord::new(4,5)).is_none());
+    }
+
+    #[test]
+    fn typed_building_requires_registered_type_without_mutating_indexes() {
+        let mut state = MapEditorState::new(GameVariant::TiberianDawn, dimensions()).unwrap();
+        assert_eq!(
+            state.add_typed_building(OccupierId(91), 99, CellCoord::new(1,1),
+                OverlapRect::new(1,1,2,2), "GDI".into(), 0),
+            Err(MapEditorStateError::UnknownBuildingType(99)),
+        );
+        assert!(!state.spatial().buildings().contains(OccupierId(91)));
+    }
+
+    #[test]
     fn aggregate_routes_building_and_wall_registration_to_distinct_indexes() {
         let mut state = MapEditorState::new(GameVariant::RedAlert, dimensions()).unwrap();
         state.add_building(
