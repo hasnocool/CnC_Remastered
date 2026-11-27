@@ -357,3 +357,14 @@ The provider now also exposes `build_ra_terrain_atlas`, which gathers unique tem
 The RA MapPack decoder now also accepts the concatenated INI `[MapPack]` Base64 value directly. Its strict decoder ignores ASCII whitespace, validates quartet/padding structure, bounds the decoded compressed payload based on map dimensions and the upstream chunk limit, then invokes the LCW chunk and two-plane decoder. The API does not parse INI text or determine section key order; callers pass the already-concatenated values in section order.
 
 The TODO now separates the completed Red Alert MapPack path from the still-outstanding Tiberian Dawn binary map decoder. The legacy MIX status also reflects the newly implemented filename-to-CRC lookup; this does not claim encrypted MIX support or retail archive validation.
+
+
+## Tiberian Dawn editor binary terrain decoding
+
+Added rts_formats::td_map::TdTemplateMap for the Tiberian Dawn map-editor BIN terrain layer. Based on EA's Remastered Collection TiberianDawn/GamePlugin.cs LoadBinary, it reads one template-type byte followed by one logical-icon byte for every cell, iterating rows then columns. Width and height are supplied by the map metrics; the binary payload has no dimensions header. The decoder enforces exact byte length, checked dimensions, a bounded cell count, and fallible allocation while preserving raw type/icon values.
+
+Added TemplateAssetProvider::build_td_terrain_atlas. It rejects non-TD providers, loads the unique referenced TD template ICON sets from caller-supplied MIX archives, and composes the map through the source-derived TD theater catalog and existing IFF/ICON MAP-indirection path.
+
+This implementation targets the editor's raw BIN pair stream. It does not claim to decode the engine's separate LCW straw/stream representation, parse the accompanying INI metadata, or validate against retail scenario files. No proprietary assets were added.
+
+Synthetic regression fixtures cover row-major type/icon pairs, truncated/trailing input, zero dimensions, excessive cell counts, and provider variant rejection. Cargo formatting, compilation, tests, and Clippy remain unverified because the Rust toolchain is unavailable in this environment.
