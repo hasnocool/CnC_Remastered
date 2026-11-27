@@ -1,6 +1,8 @@
 //! Initial portable map-editor document model.
 
 pub mod cell_metrics;
+pub mod cell_grid;
+pub use cell_grid::{CellGrid, CellGridError, CellGridEvent};
 pub mod occupier_set;
 pub mod overlapper_set;
 pub use cell_metrics::CellMetrics;
