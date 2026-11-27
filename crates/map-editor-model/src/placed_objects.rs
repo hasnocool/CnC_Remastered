@@ -142,7 +142,7 @@ impl BuildingTypeDefinition {
         let occupy_mask = if has_bib && height > 0 {
             let mut full = base_occupy_mask.iter()
                 .copied().filter(|(_, y)| *y < height - 1).collect::<Vec<_>>();
-            for y in height..height.saturating_add(1) {
+            for y in height.saturating_sub(1)..height.saturating_add(1) {
                 for x in 0..width { full.push((x, y)); }
             }
             full
