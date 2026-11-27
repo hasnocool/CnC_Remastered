@@ -3,7 +3,8 @@
 //! The first backend uses egui's painter, which is GPU-backed by eframe/wgpu in
 //! native applications. Simulation state is deliberately not owned here.
 
-use egui::{Color32, CornerRadius, Painter, Rect, Response, Sense, Stroke, StrokeKind, Vec2};
+use egui::{Color32, ColorImage, CornerRadius, Painter, Rect, Response, Sense, Stroke, StrokeKind, TextureHandle, TextureOptions, Vec2};
+use rts_assets::TerrainAssetSet;
 use map_editor_model::MapDocument;
 use rts_core::CellCoord;
 
@@ -65,15 +66,39 @@ pub struct MapCanvas {
     pub selected: Option<CellCoord>,
     pub show_grid: bool,
     pub palette: RenderPalette,
+    terrain_dimensions: Option<(u32, u32)>,
+    terrain_cells: Vec<Option<usize>>,
+    terrain_textures: Vec<TextureHandle>,
 }
 
 impl Default for MapCanvas {
     fn default() -> Self {
-        Self { cell_size: 20.0, selected: None, show_grid: true, palette: RenderPalette::default() }
+        Self { cell_size: 20.0, selected: None, show_grid: true, palette: RenderPalette::default(), terrain_dimensions: None, terrain_cells: Vec::new(), terrain_textures: Vec::new() }
     }
 }
 
 impl MapCanvas {
+    /// Replace the current decoded theater assets with egui-owned nearest-neighbor textures.
+    /// Decoding and file I/O must happen before this method, on the asset worker.
+    pub fn set_terrain_assets(&mut self, ctx: &egui::Context, assets: TerrainAssetSet) {
+        let textures = assets.tiles().iter().enumerate().map(|(index, image)| {
+            let color_image = ColorImage::from_rgba_unmultiplied(
+                [image.width as usize, image.height as usize],
+                &image.pixels,
+            );
+            ctx.load_texture(format!("rts-terrain-tile-{index}"), color_image, TextureOptions::NEAREST)
+        }).collect();
+        self.terrain_dimensions = Some(assets.dimensions());
+        self.terrain_cells = assets.cells().to_vec();
+        self.terrain_textures = textures;
+    }
+
+    pub fn clear_terrain_assets(&mut self) {
+        self.terrain_dimensions = None;
+        self.terrain_cells.clear();
+        self.terrain_textures.clear();
+    }
+
     /// Allocate a scrollable map canvas, draw all cells, and return the clicked cell.
     pub fn show(&mut self, ui: &mut egui::Ui, map: &MapDocument) -> (Response, Option<CellCoord>) {
         let dimensions = map.dimensions();
@@ -131,7 +156,22 @@ impl MapCanvas {
                     self.palette.ground
                 };
                 let cell = cell_rect(rect, coordinate, cell_size);
-                painter.rect_filled(cell, CornerRadius::ZERO, color);
+                let tile_slot = if layers.template.is_some()
+                    && self.terrain_dimensions == Some((dimensions.width(), dimensions.height())) {
+                    self.terrain_cells.get((y as usize) * dimensions.width() as usize + x as usize).copied().flatten()
+                } else {
+                    None
+                };
+                if let Some(texture) = tile_slot.and_then(|slot| self.terrain_textures.get(slot)) {
+                    painter.image(
+                        texture.id(),
+                        cell,
+                        Rect::from_min_max(egui::Pos2::ZERO, egui::pos2(1.0, 1.0)),
+                        Color32::WHITE,
+                    );
+                } else {
+                    painter.rect_filled(cell, CornerRadius::ZERO, color);
+                }
                 if self.show_grid {
                     painter.rect_stroke(
                         cell,

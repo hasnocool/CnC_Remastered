@@ -14,6 +14,7 @@ The native projects target Win32, Windows SDK 8.1, Visual Studio toolset v141, a
 
 - `rts-core`: source-derived map extents, cell/region addressing, 8-way facing, 15 Hz clock, both variants' simulation RNGs (including Red Alert's seeded 15-bit LCG), and Red Alert Q16.16 fixed-point arithmetic.
 - `rts-formats`: checked binary readers, a bounds-checked legacy MIX parser, the original rotate-and-add `CRCEngine` checksum, plus checksum-aware push/pull stream adapters, a bounds-checked LCW codec, and framed LCW block streams.
+- `rts-assets`: backend-independent TD/RA theater template lookup, ICONSET MAP-indirection decoding, palette expansion, and deduplicated RGBA terrain images.
 - `rts-sim`: deterministic event scheduling with stable same-tick ordering.
 - `map-editor-model`: an initial typed map document with cell layers and waypoints.
 - `tiberian-dawn` / `red-alert`: separate variant boundary crates; actual game rules are not yet ported.
@@ -66,7 +67,8 @@ Rendering and asset responsibilities are currently split as follows:
 - `renderer`: low-level wgpu surface, texture cache, atlas uploads, sprite batches, camera-aware terrain composition, and GPU presentation. It also currently contains `TemplateAssetProvider` and CPU terrain-atlas construction; these backend-independent pieces should be extracted.
 - `rts-render`: egui-based map-canvas widget and camera/palette presentation helpers. It currently paints placeholder layer colors and does not yet consume authentic terrain assets.
 - `rts-formats`: variant-aware TD BIN, RA MapPack, TMP, ICONSET, MIX, and palette decoding.
+- `rts-assets`: source-derived theater template resolution and renderer-independent RGBA terrain tile sets.
 
-Authentic TD/RA template assets can already be resolved from user-supplied MIX archives and composed into a `TerrainAtlas`; the missing integration is a renderer-independent asset contract and editor texture upload. The TD and RA binaries remain application shells, not playable game runtimes. The editor's JSON format remains a development interchange format, not Westwood scenario serialization. LAN discovery and TCP framing remain transport primitives, not authenticated multiplayer or deterministic session integration.
+The editor can load a user-supplied MIX archive and palette, select a TD/RA theater and RGB6/RGB8 palette encoding, and decode authentic template imagery on its background asset worker. `rts-assets` returns a renderer-independent tile set; `rts-render` adapts those images to egui textures. The wgpu renderer retains its own atlas upload and sprite-batch adapter. The TD and RA binaries remain application shells, not playable game runtimes. The editor's JSON format remains a development interchange format, not Westwood scenario serialization. LAN discovery and TCP framing remain transport primitives, not authenticated multiplayer or deterministic session integration.
 
 See [docs/PLATFORM_IMPLEMENTATION.md](docs/PLATFORM_IMPLEMENTATION.md) and [docs/PLATFORM_ARCHITECTURE.md](docs/PLATFORM_ARCHITECTURE.md) for current boundaries and remaining work.
