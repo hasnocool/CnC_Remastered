@@ -144,17 +144,15 @@ mod tests {
     }
 
     #[test]
-    fn failed_second_index_registration_rolls_back_first() {
+    fn duplicate_wall_registration_is_rejected_without_changing_indexes() {
         let mut index = MapSpatialIndex::new(dimensions());
         index.add_wall(OccupierId(1), CellCoord::new(1, 1), &[(0, 0)]).unwrap();
-        // Buildings can accept this cell, but Technos cannot: force the
-        // mismatch by reserving only the techno index through a prior building.
-        index.add_building(
-            OccupierId(2), CellCoord::new(3, 3), &[(0, 0)], &[(0, 0)],
-            OverlapRect::new(0, 0, 1, 1),
-        ).unwrap();
-        assert!(index.remove_building(OccupierId(2)));
-        assert!(!index.buildings().contains(OccupierId(2)));
+        assert!(matches!(
+            index.add_wall(OccupierId(1), CellCoord::new(2, 2), &[(0, 0)]),
+            Err(SpatialIndexError::DuplicateObject(OccupierId(1)))
+        ));
+        assert_eq!(index.buildings().occupant_at(CellCoord::new(1, 1)), Some(OccupierId(1)));
+        assert_eq!(index.buildings().occupant_at(CellCoord::new(2, 2)), None);
     }
 
     #[test]
