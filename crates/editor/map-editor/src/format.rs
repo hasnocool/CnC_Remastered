@@ -1,6 +1,6 @@
 //! Versioned JSON editor interchange format; not a legacy .MAP parity claim.
 
-use map_editor_model::{CellLayers, MapDocument};
+use map_editor_model::{CellLayers, MapDocument, TerrainObjectId, TerrainPlacementDefinition};
 use rts_core::{CellCoord, GameVariant, MapDimensions};
 use serde::{Deserialize, Serialize};
 
@@ -13,7 +13,20 @@ pub struct MapFile {
     pub width: u16,
     pub height: u16,
     pub cells: Vec<CellLayers>,
+    #[serde(default)]
+    pub terrain_objects: Vec<TerrainObjectFile>,
     pub waypoints: Vec<WaypointFile>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TerrainObjectFile {
+    pub id: u64,
+    pub x: u16,
+    pub y: u16,
+    pub terrain_type: u16,
+    pub icon: u8,
+    #[serde(default)]
+    pub trigger: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -26,6 +39,14 @@ pub struct WaypointFile {
 impl MapFile {
     pub fn from_document(document: &MapDocument) -> Self {
         let dimensions = document.dimensions();
+        let terrain_objects = document.terrain_objects().map(|object| TerrainObjectFile {
+            id: object.id.0,
+            x: object.origin.x,
+            y: object.origin.y,
+            terrain_type: object.terrain_type,
+            icon: object.icon,
+            trigger: object.trigger.clone(),
+        }).collect();
         let waypoints = document.waypoints().iter().map(|(number, cell)| WaypointFile {
             number: *number, x: cell.x, y: cell.y,
         }).collect();
@@ -38,6 +59,7 @@ impl MapFile {
             width: dimensions.width(),
             height: dimensions.height(),
             cells: document.cells().to_vec(),
+            terrain_objects,
             waypoints,
         }
     }
@@ -61,6 +83,20 @@ impl MapFile {
         for (index, layers) in self.cells.into_iter().enumerate() {
             let coordinate = dimensions.coord(index).ok_or_else(|| "Invalid cell index".to_string())?;
             document.set_cell(coordinate, layers).map_err(|error| format!("Invalid cell: {error:?}"))?;
+        }
+        for object in self.terrain_objects {
+            let catalog = map_editor_model::TerrainCatalog::all_entries(variant);
+            let source = catalog.iter().find(|entry| entry.id == object.terrain_type)
+                .ok_or_else(|| format!("Unknown terrain type {}", object.terrain_type))?;
+            let definition = source.placement_definition()
+                .map_err(|error| format!("Invalid terrain occupancy: {error:?}"))?;
+            document.restore_terrain_object(
+                TerrainObjectId(object.id),
+                CellCoord::new(object.x, object.y),
+                &definition,
+                object.icon,
+                object.trigger,
+            ).map_err(|error| format!("Invalid terrain object {}: {error:?}", object.id))?;
         }
         for waypoint in self.waypoints {
             document.add_waypoint(waypoint.number, CellCoord::new(waypoint.x, waypoint.y))
@@ -93,7 +129,7 @@ mod tests {
     fn rejects_cell_count_mismatch() {
         let file = MapFile {
             format_version: 1, game: "red_alert".into(), width: 2, height: 2,
-            cells: vec![], waypoints: vec![],
+            cells: vec![], terrain_objects: vec![], waypoints: vec![],
         };
         assert!(file.into_document().is_err());
     }
