@@ -5,12 +5,14 @@ pub mod edit_history;
 pub mod overlay_catalog;
 pub mod template_catalog;
 pub mod terrain_placement;
+pub mod terrain_catalog;
 pub use terrain_placement::{
     place_terrain, place_terrain_with_history, remove_terrain, remove_terrain_with_history,
     OccupancyMask, OccupancyMaskError,
     TerrainPlacementDefinition, TerrainPlacementError,
 };
 pub use template_catalog::TemplateCatalog;
+pub use terrain_catalog::{TerrainCatalog, TerrainDefinition, TerrainTemplateFlag};
 pub use edit_history::MapEditHistory;
 pub use overlay_catalog::{
     place_overlay_with_history, remove_overlay_with_history, OverlayCatalog,
@@ -30,6 +32,9 @@ pub struct CellLayers {
     /// Ignored when template is None.
     pub template_icon: u8,
     pub terrain: Option<u16>,
+    /// Terrain shape index: 22 for transformable TerrainTypes, otherwise 0.
+    #[serde(default)]
+    pub terrain_icon: u8,
     pub overlay: Option<u16>,
     pub smudge: Option<u16>,
 }
