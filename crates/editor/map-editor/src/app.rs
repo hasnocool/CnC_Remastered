@@ -50,7 +50,7 @@ impl EditorApp {
 
         let (event_tx, io_rx) = mpsc::channel::<IoEvent>();
         let (io_tx, command_rx) = mpsc::channel::<IoCommand>();
-        std::thread::Builder::new().name("map-editor-file-io".into()).spawn(move || {
+        std::thread::Builder::new().name("map-editor-io-worker".into()).spawn(move || {
             while let Ok(command) = command_rx.recv() {
                 match command {
                     IoCommand::Save(path, file) => {
@@ -129,6 +129,7 @@ impl EditorApp {
                 self.map = map;
                 self.selected = None;
                 self.canvas.selected = None;
+                self.canvas.clear_terrain_assets();
                 self.status = "New map created".into();
             }
             Err(error) => self.status = format!("Could not create map: {error:?}"),
