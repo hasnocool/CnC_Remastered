@@ -1,0 +1,14 @@
+[package]
+name = "map-editor"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+eframe.workspace = true
+egui.workspace = true
+map-editor-model.workspace = true
+rts-core.workspace = true
+rts-render.workspace = true
+serde.workspace = true
+serde_json.workspace = true

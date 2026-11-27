@@ -10,12 +10,17 @@ members = [
     "crates/red-alert",
     "crates/renderer",
     "crates/launcher",
+    "crates/engine/rts-render",
+    "crates/engine/rts-net",
+    "crates/launcher/rts-launcher",
+    "crates/editor/map-editor",
+    "apps/cnc-client",
 ]
 
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.95"
 authors = ["CnC_Remastered contributors"]
 
 [workspace.dependencies]
@@ -26,12 +31,20 @@ map-editor-model = { path = "crates/map-editor-model" }
 tiberian-dawn = { path = "crates/tiberian-dawn" }
 red-alert = { path = "crates/red-alert" }
 renderer = { path = "crates/renderer" }
+rts-render = { path = "crates/engine/rts-render" }
+rts-net = { path = "crates/engine/rts-net" }
+
 wgpu = "26.0.1"
 winit = "0.30.12"
 pollster = "0.4"
+bytemuck = { version = "1.24", features = ["derive"] }
+eframe = "0.37.0"
+egui = "0.37.0"
 serde = { version = "1", features = ["derive"] }
-toml = "0.8"
+serde_json = "1"
+toml = "0.9"
 directories = "6"
 tempfile = "3"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tokio = { version = "1", features = ["rt", "macros", "net", "io-util", "sync", "time", "process"] }

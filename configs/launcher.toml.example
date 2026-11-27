@@ -1,0 +1,34 @@
+schema_version = 1
+
+[general]
+language = "en"
+check_updates = true
+remember_last_game = true
+
+[graphics]
+resolution_width = 1920
+resolution_height = 1080
+fullscreen = false
+vsync = true
+frame_limit = 144
+show_grid = true
+
+[audio]
+master_volume = 1.0
+music_volume = 0.8
+effects_volume = 1.0
+
+[network]
+enabled = true
+region = "auto"
+server_browser = true
+discovery_port = 47831
+
+[paths]
+assets = "./assets"
+maps = "./maps"
+mods = "./mods"
+saves = "./saves"
+tiberian_dawn_executable = "./target/debug/tiberian-dawn"
+red_alert_executable = "./target/debug/red-alert"
+map_editor_executable = "./target/debug/map-editor"

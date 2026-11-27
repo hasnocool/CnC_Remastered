@@ -3,11 +3,12 @@
 pub mod cell_metrics;
 pub use cell_metrics::CellMetrics;
 
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 use rts_core::{CellCoord, GameVariant, MapDimensions};
 
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CellLayers {
     pub template: Option<u16>,
     /// Logical icon slot within the selected template type's theater ICON set.
@@ -61,6 +62,11 @@ impl MapDocument {
 
     pub const fn dimensions(&self) -> MapDimensions {
         self.dimensions
+    }
+
+    /// Read-only row-major cell storage for renderers and editor serialization.
+    pub fn cells(&self) -> &[CellLayers] {
+        &self.cells
     }
 
     pub fn cell(&self, coordinate: CellCoord) -> Option<&CellLayers> {
