@@ -79,6 +79,7 @@ impl MapEditHistory {
             seen.push(*coordinate);
             let before = document.cell(*coordinate).copied()
                 .ok_or(MapDocumentError::CellOutOfBounds(*coordinate))?;
+            document.validate_cell_update(*coordinate, *after)?;
             if before != *after { edits.push(CellEdit { coordinate: *coordinate, before, after: *after }); }
         }
         let changed = edits.len();
