@@ -482,3 +482,14 @@
 - [ ] Run Cargo formatting, workspace check, tests, and Clippy on a Rust 1.85+ host. No successful run is claimed from the current environment.
 
 Scope limits: current harness supports the existing legacy unencrypted MIX parser, TD editor BIN representation, and RA new-format MapPack representation. Encrypted/extended MIX variants, the TD engine LCW stream, older interleaved RA NewINIFormat, full INI dialect compatibility, GPU rendering, and image-to-image retail parity remain outside this validation milestone. See `docs/RETAIL_ASSET_VALIDATION.md`.
+
+## Reusable terrain chunk composition cache
+
+- [x] Add a CPU-side cache for map-space terrain composition, keyed by 16x16 chunk coordinates.
+- [x] Compare exact row-major cell contents so only changed chunks are recomposed; no global map revision or hash-collision assumption is required.
+- [x] Cache map coordinates and atlas slots rather than screen-space vertices, allowing camera/zoom changes to reuse composition safely.
+- [x] Expose per-chunk invalidation, full cache clearing, and hit/miss/rebuild counters.
+- [x] Reset cached composition when the atlas identity (texture ID, tile size, or dimensions) changes.
+- [ ] Add bounded LRU eviction for very large/editor-generated maps and validate memory behavior under repeated map resizing.
+- [ ] Run renderer and workspace tests, formatting, compilation, and Clippy on a Rust 1.85+ host.
+- Verification: regression tests are authored for unchanged chunks, single-chunk edits, and camera movement; they have not been executed in this environment.
