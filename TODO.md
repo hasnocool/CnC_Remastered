@@ -364,7 +364,8 @@
 
 - [x] Add explicit 256-color RGB8/RGB6 palette parsing and checked indexed-image-to-RGBA conversion; transparency is opt-in.
 - [x] Add bounds-checked SHP shape-block offsets and packed Shape_Type metadata extraction with malformed-input tests.
-- [ ] Implement source-compatible SHP pixel/run decoding for normal, compact, variable and uncompressed shapes.
+- [x] Add retail TD/RA SHP header/frame-table parsing, LCW keyframe decoding, Format40 XOR keyframe/previous-frame decoding, and synthetic pixel-level fixtures.
+- [ ] Implement pixel/run decoding for the legacy in-memory Shape_Type payload variants (normal, compact, variable and uncompressed); this is separate from the retail keyframe SHP decoder.
 - [ ] Verify the TMP/template tile container against upstream loader code and implement its bounded decoder.
 - [ ] Add legal synthetic binary fixtures and golden vectors; do not commit retail game assets.
 - [ ] Connect decoded palette-indexed terrain and sprite frames to renderer texture upload.
