@@ -25,6 +25,9 @@ pub enum IconSetError {
     BufferTooSmall { required: usize, supplied: usize },
     SizeOverflow,
     InvalidHeader,
+    InvalidIconDataLength { bytes: usize, bytes_per_icon: usize },
+    UnsupportedBitplanes { bitplanes: u8 },
+    InvalidMapIndex { logical_index: usize, physical_index: usize, physical_count: usize },
 }
 impl fmt::Display for IconSetError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result { write!(f, "{self:?}") }
@@ -96,6 +99,8 @@ pub struct IconSet {
     control: IconSetControl,
     reported_size: usize,
     allocated_by_loader: bool,
+    physical_icon_count: usize,
+    bitplanes: u8,
 }
 
 impl IconSet {
@@ -109,9 +114,12 @@ impl IconSet {
         if sinf.len() < 4 { return Err(IconSetError::MissingInfoChunk); }
         let icon_width = (sinf[0] as i8 as i32).wrapping_shl(3);
         let icon_height = (sinf[1] as i8 as i32).wrapping_shl(3);
-        let bitplanes = sinf[3] as i8 as i32;
-        let bytes_per_icon = icon_width.wrapping_mul(icon_height).wrapping_mul(bitplanes) >> 3;
-        if bytes_per_icon <= 0 { return Err(IconSetError::InvalidIconDimensions); }
+        let bitplanes = sinf[3];
+        let bytes_per_icon = icon_width.checked_mul(icon_height)
+            .and_then(|pixels| pixels.checked_mul(i32::from(bitplanes)))
+            .map(|bits| bits / 8)
+            .filter(|bytes| *bytes > 0)
+            .ok_or(IconSetError::InvalidIconDimensions)? as usize;
 
         let icon_size = iff.chunk_size(FORM_SSET)?.ok_or(IconSetError::MissingIconChunk)?;
         let transparency_size = iff.chunk_size(FORM_TRNS)?.unwrap_or(0);
@@ -133,7 +141,14 @@ impl IconSet {
         let copied_icons = icon_data.len().min(icon_size);
         storage[ICON_CONTROL_SIZE..ICON_CONTROL_SIZE + copied_icons].copy_from_slice(&icon_data[..copied_icons]);
 
-        let mut icon_count = (copied_icons / bytes_per_icon as usize) as u32;
+        if copied_icons % bytes_per_icon != 0 {
+            return Err(IconSetError::InvalidIconDataLength {
+                bytes: copied_icons,
+                bytes_per_icon,
+            });
+        }
+        let physical_icon_count = copied_icons / bytes_per_icon;
+        let mut icon_count = physical_icon_count as u32;
         if map_size != 0 { icon_count = map_size as u32; }
 
         let map_offset = ICON_CONTROL_SIZE.checked_add(icon_size).ok_or(IconSetError::SizeOverflow)?;
@@ -165,7 +180,7 @@ impl IconSet {
         };
         storage[..ICON_CONTROL_SIZE].copy_from_slice(&control.encode()?);
 
-        Ok(Self { storage, control, reported_size: capacity, allocated_by_loader })
+        Ok(Self { storage, control, reported_size: capacity, allocated_by_loader, physical_icon_count, bitplanes })
     }
 
     pub fn control(&self) -> IconSetControl { self.control }
@@ -174,6 +189,46 @@ impl IconSet {
     pub fn height(&self) -> i16 { self.control.height }
     pub fn count(&self) -> i16 { self.control.count }
     pub fn allocated_by_loader(&self) -> bool { self.allocated_by_loader }
+    /// Number of physical images stored in SSET, before MAP indirection.
+    pub fn physical_icon_count(&self) -> usize { self.physical_icon_count }
+    /// SINF bitplane count. The TD/RA indexed renderer path currently requires 8.
+    pub fn bitplanes(&self) -> u8 { self.bitplanes }
+
+    /// Return one physical row-major indexed image. This deliberately refuses
+    /// non-8-bit sets rather than misinterpreting planar data as palette indices.
+    pub fn physical_icon_pixels(&self, index: usize) -> Result<Option<&[u8]>, IconSetError> {
+        if self.bitplanes != 8 {
+            return Err(IconSetError::UnsupportedBitplanes { bitplanes: self.bitplanes });
+        }
+        if index >= self.physical_icon_count { return Ok(None); }
+        let pixels = usize::try_from(self.width()).ok()
+            .and_then(|w| usize::try_from(self.height()).ok().and_then(|h| w.checked_mul(h)))
+            .ok_or(IconSetError::InvalidIconDimensions)?;
+        let start = index.checked_mul(pixels).ok_or(IconSetError::SizeOverflow)?;
+        let end = start.checked_add(pixels).ok_or(IconSetError::SizeOverflow)?;
+        Ok(self.icon_data().get(start..end))
+    }
+
+    /// Resolve a logical icon through MAP, or use identity mapping when MAP
+    /// is absent. 0xFF is the legacy empty-icon sentinel.
+    pub fn logical_icon_pixels(&self, logical_index: usize) -> Result<Option<&[u8]>, IconSetError> {
+        if logical_index >= self.count().max(0) as usize { return Ok(None); }
+        let physical = if self.map_data().is_empty() {
+            logical_index
+        } else {
+            let Some(&mapped) = self.map_data().get(logical_index) else { return Ok(None); };
+            if mapped == u8::MAX { return Ok(None); }
+            usize::from(mapped)
+        };
+        if physical >= self.physical_icon_count {
+            return Err(IconSetError::InvalidMapIndex {
+                logical_index,
+                physical_index: physical,
+                physical_count: self.physical_icon_count,
+            });
+        }
+        self.physical_icon_pixels(physical)
+    }
     pub fn storage(&self) -> &[u8] { &self.storage }
     pub fn icon_data(&self) -> &[u8] { self.slice_at(self.control.icons_offset, self.control.map_offset.saturating_sub(self.control.icons_offset)) }
     pub fn transparency_data(&self) -> &[u8] { self.slice_at(self.control.transparency_offset, self.storage.len().saturating_sub(self.control.transparency_offset)) }
@@ -189,7 +244,14 @@ impl IconSet {
         for offset in [control.icons_offset, control.map_offset, control.transparency_offset] {
             if offset > storage.len() { return Err(IconSetError::InvalidHeader); }
         }
-        Ok(Self { storage, control, reported_size, allocated_by_loader: control.allocated })
+        let pixels = usize::try_from(control.width).ok()
+            .and_then(|w| usize::try_from(control.height).ok().and_then(|h| w.checked_mul(h)))
+            .filter(|pixels| *pixels > 0).ok_or(IconSetError::InvalidHeader)?;
+        let icon_bytes = control.map_offset.checked_sub(control.icons_offset)
+            .ok_or(IconSetError::InvalidHeader)?;
+        if icon_bytes % pixels != 0 { return Err(IconSetError::InvalidHeader); }
+        let physical_icon_count = icon_bytes / pixels;
+        Ok(Self { storage, control, reported_size, allocated_by_loader: control.allocated, physical_icon_count, bitplanes: 8 })
     }
 }
 
@@ -207,9 +269,9 @@ mod tests {
     fn sample_iff() -> Vec<u8> {
         let mut body = b"ICON".to_vec();
         chunk(FORM_SINF, &[1, 1, 0, 1], &mut body);
-        chunk(FORM_SSET, &[1, 2, 3, 4, 5, 6, 7, 8], &mut body);
+        chunk(FORM_SSET, &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], &mut body);
         chunk(FORM_TRNS, &[9, 10], &mut body);
-        chunk(FORM_MAP, &[0, 1, 2], &mut body);
+        chunk(FORM_MAP, &[1, 255, 0], &mut body);
         let mut file = b"FORM".to_vec();
         file.extend_from_slice(&(body.len() as u32).to_be_bytes());
         file.extend_from_slice(&body);
@@ -222,11 +284,23 @@ mod tests {
         assert_eq!((icon.width(), icon.height()), (8, 8));
         assert_eq!(icon.count(), 3); // MAP chunk size overrides icon count.
         assert!(icon.allocated_by_loader());
-        assert_eq!(icon.icon_data(), &[1, 2, 3, 4, 5, 6, 7, 8]);
+        assert_eq!(icon.icon_data(), &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
         assert_eq!(icon.transparency_data(), &[9, 10]);
         assert_eq!(icon.map_data(), &[0, 1, 2]);
-        assert_eq!(icon.size(), ICON_CONTROL_SIZE + 8 + 2 + 3);
+        assert_eq!(icon.size(), ICON_CONTROL_SIZE + 16 + 2 + 3);
         assert_eq!(IconSet::from_packed(icon.storage().to_vec()).unwrap().control(), icon.control());
+    }
+
+    #[test]
+    fn decodes_physical_tiles_and_resolves_logical_map() {
+        let icon = IconSet::load(&sample_iff(), None).unwrap();
+        assert_eq!(icon.physical_icon_count(), 2);
+        assert_eq!(icon.bitplanes(), 8);
+        assert_eq!(icon.physical_icon_pixels(1).unwrap(), Some(&[9, 10, 11, 12, 13, 14, 15, 16][..]));
+        assert_eq!(icon.logical_icon_pixels(0).unwrap(), icon.physical_icon_pixels(1).unwrap());
+        assert_eq!(icon.logical_icon_pixels(1).unwrap(), None); // 0xFF empty sentinel
+        assert_eq!(icon.logical_icon_pixels(2).unwrap(), icon.physical_icon_pixels(0).unwrap());
+        assert!(matches!(icon.physical_icon_pixels(2).unwrap(), None));
     }
 
     #[test]

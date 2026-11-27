@@ -373,3 +373,15 @@
 - [ ] Add bounded CPU/GPU texture caching and explicit device-resource lifetime.
 - [ ] Implement camera-aware terrain chunks, adjacency transitions and viewport culling.
 - [ ] Wire TD, RA and editor asset/runtime providers into launcher application selection.
+
+
+## Authentic TD/RA terrain icon sets — indexed tile access
+
+- [x] Reuse the existing IFF/ICON/SINF/SSET/TRNS/MAP icon-set parser; do not introduce a second, incompatible TMP container parser.
+- [x] Validate SSET length against SINF dimensions and bitplane count.
+- [x] Track physical SSET image count separately from logical MAP count.
+- [x] Expose bounded 8-bit physical tile pixel slices and logical MAP resolution.
+- [x] Treat the legacy 0xFF map entry as an empty logical tile.
+- [ ] Validate TD and RA icon sets from legally supplied original game data, including actual MAP and TRNS semantics.
+- [ ] Connect decoded tile pixels to palette conversion and renderer texture upload.
+- [ ] Implement terrain chunk composition, adjacency transitions, camera scrolling and GPU texture caching.

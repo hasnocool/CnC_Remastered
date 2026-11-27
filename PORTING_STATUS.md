@@ -258,3 +258,18 @@ Dependency choice: wgpu 26.0.1 and winit 0.30.12 are used while preserving the w
 - **Retail SHP decoding:** `crates/rts-formats/src/shp_retail.rs` adds a separate retail 14-byte header and 8-byte frame-table parser, optional embedded palette extraction, LCW keyframe decoding, Format40 XOR-keyframe references, chain-base frame-index resolution for chained deltas, full 24-bit reference offsets, embedded-palette offset handling, and bounded parsing/decompression. The legacy `shp::ShpBlock` remains intact for the in-memory ShapeBlock_Type layout.
 - **Still outstanding:** validate against real TD/RA SHP files; integrate decoded indexed frames with palette/renderer upload; implement TMP/template decoding, terrain composition, GPU texture caching, and launcher runtime integration.
 - **Verification:** tests have been added but not executed. Formatting, compilation, tests and Clippy remain unverified.
+
+
+## Authentic TD/RA terrain icon-set decoding — indexed pixel access
+
+The repository already contained a shared IFF and ICON/SINF/SSET/TRNS/MAP icon-set implementation based on upstream WIN32LIB/ICONSET.CPP. This tranche extends that existing path rather than adding a second parser for later Tiberian Sun/Red Alert 2 TMP formats.
+
+- Added SINF-aware SSET size validation; malformed partial images are rejected.
+- Exposed the physical image count separately from the logical count (derived from MAP when present).
+- Added bounded accessors for 8-bit indexed physical tiles and logical-to-physical MAP lookup.
+- Treats 0xFF as an empty logical map entry and rejects out-of-range physical references.
+- Synthetic tests cover tile extraction, MAP indirection, empty entries and physical bounds.
+
+**Still unverified:** no real TD/RA theater icon sets have been loaded in this environment. The precise meaning of TRNS bytes and any non-8-bit/packed variants still require source-backed and real-file validation. Palette conversion and GPU upload are not yet connected.
+
+**Verification:** tests have been added but not executed; Cargo is unavailable in this environment.
