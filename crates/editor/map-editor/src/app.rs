@@ -30,6 +30,7 @@ pub struct EditorApp {
     canvas: MapCanvas,
     selected: Option<CellCoord>,
     brush: u16,
+    template_icon: u8,
     brush_layer: PaintLayer,
     waypoint_number: u16,
     file_path: String,
@@ -107,6 +108,7 @@ impl EditorApp {
             canvas: MapCanvas::default(),
             selected: None,
             brush: 1,
+            template_icon: 0,
             brush_layer: PaintLayer::Terrain,
             waypoint_number: 0,
             file_path: "./maps/new-map.rtsmap.json".into(),
@@ -237,6 +239,10 @@ impl eframe::App for EditorApp {
                     });
                 ui.label("ID");
                 ui.add(egui::DragValue::new(&mut self.brush).range(0..=u16::MAX));
+                if matches!(self.brush_layer, PaintLayer::Template) {
+                    ui.label("Logical icon");
+                    ui.add(egui::DragValue::new(&mut self.template_icon).range(0..=u8::MAX));
+                }
                 ui.label("Waypoint");
                 ui.add(egui::DragValue::new(&mut self.waypoint_number));
                 if ui.button("Add at selected").clicked() {
@@ -285,7 +291,10 @@ impl eframe::App for EditorApp {
                     let mut layers = self.map.cell(cell).copied().unwrap_or_default();
                     match self.brush_layer {
                         PaintLayer::Terrain => layers.terrain = Some(self.brush),
-                        PaintLayer::Template => layers.template = Some(self.brush),
+                        PaintLayer::Template => {
+                            layers.template = Some(self.brush);
+                            layers.template_icon = self.template_icon;
+                        },
                         PaintLayer::Overlay => layers.overlay = Some(self.brush),
                         PaintLayer::Smudge => layers.smudge = Some(self.brush),
                     }
