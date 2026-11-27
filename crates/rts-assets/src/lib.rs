@@ -250,4 +250,20 @@ mod tests {
             Err(TemplateAssetError::InvalidMapDimensions { .. })
         ));
     }
+    #[test]
+    fn builds_empty_cell_grid_without_archive_lookup() {
+        let empty: [&MixArchive<'_>; 0] = [];
+        let provider = TemplateAssetProvider::new(GameVariant::TiberianDawn, TemplateTheater::Temperate, &empty);
+        let palette = Palette256::parse(
+            &vec![0; rts_formats::palette_rgba::PALETTE_BYTES],
+            rts_formats::palette_rgba::PaletteEncoding::Rgb8,
+        ).unwrap();
+        let assets = provider.build_terrain(2, 1, [None, None], &palette).unwrap();
+        assert_eq!(assets.dimensions(), (2, 1));
+        assert_eq!(assets.tile_size(), (1, 1));
+        assert!(assets.tiles().is_empty());
+        assert_eq!(assets.cells(), &[None, None]);
+        assert_eq!(assets.tile_for_cell(2, 0), None);
+    }
+
 }

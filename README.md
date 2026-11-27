@@ -62,14 +62,13 @@ cargo run -p cnc-client
 
 The launcher reads `configs/launcher.toml` by default; copy `configs/launcher.toml.example` and adjust executable paths for your build layout. It supervises child processes on a dedicated Tokio worker thread. Settings persistence is moved off the egui frame callback.
 
-Rendering and asset responsibilities are currently split as follows:
+Rendering and asset responsibilities are split as follows:
 
-- `renderer`: low-level wgpu surface, texture cache, atlas uploads, sprite batches, camera-aware terrain composition, and GPU presentation. It retains a compatibility facade and wgpu-specific atlas adapter.
-- `rts-render`: egui-based map-canvas widget and camera/palette presentation helpers. It uploads decoded terrain tiles as nearest-neighbor egui textures.
 - `rts-formats`: variant-aware TD BIN, RA MapPack, TMP, ICONSET, MIX, and palette decoding.
 - `rts-assets`: backend-independent TD/RA theater lookup, ICONSET MAP indirection, palette expansion, and deduplicated RGBA terrain images.
-- `rts-assets`: source-derived theater template resolution and renderer-independent RGBA terrain tile sets.
+- `renderer`: low-level wgpu surface, texture cache, atlas uploads, sprite batches, and GPU presentation. It retains a compatibility facade and wgpu-specific atlas adapter.
+- `rts-render`: egui map-canvas widget and editor interaction/presentation helpers. It uploads decoded terrain tiles as nearest-neighbor egui textures.
 
-The editor can load a user-supplied MIX archive and palette, select a TD/RA theater and RGB6/RGB8 palette encoding, and decode authentic template imagery on its background asset worker. `rts-assets` returns a renderer-independent tile set; `rts-render` adapts those images to egui textures. The wgpu renderer retains its own atlas upload and sprite-batch adapter. The TD and RA binaries remain application shells, not playable game runtimes. The editor's JSON format remains a development interchange format, not Westwood scenario serialization. LAN discovery and TCP framing remain transport primitives, not authenticated multiplayer or deterministic session integration.
+The editor can load one user-supplied MIX archive and a 768-byte palette, select a TD/RA theater and RGB6/RGB8 palette encoding, and decode authentic template imagery on its background asset worker. `rts-assets` returns a renderer-independent tile set; `rts-render` adapts those images to egui textures. The wgpu renderer retains its own atlas upload and sprite-batch adapter. The TD and RA binaries remain application shells, not playable game runtimes. The editor's JSON format remains a development interchange format, not Westwood scenario serialization. LAN discovery and TCP framing remain transport primitives, not authenticated multiplayer or deterministic session integration.
 
 See [docs/PLATFORM_IMPLEMENTATION.md](docs/PLATFORM_IMPLEMENTATION.md) and [docs/PLATFORM_ARCHITECTURE.md](docs/PLATFORM_ARCHITECTURE.md) for current boundaries and remaining work.
