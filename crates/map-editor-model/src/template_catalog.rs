@@ -6,8 +6,11 @@
 //! expected asset family but does not claim that a retail archive is mounted.
 
 use rts_core::{
-    template_asset_metadata, template_asset_metadata_iter, GameVariant,
-    TemplateAssetMetadata, TemplateTheater,
+    template_catalog::{
+        template_asset_metadata, template_asset_metadata_iter, TemplateAssetMetadata,
+        TemplateTheater,
+    },
+    GameVariant,
 };
 
 /// A zero-allocation view of the templates available to a map editor palette.
