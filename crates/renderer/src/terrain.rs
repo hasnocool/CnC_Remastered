@@ -19,7 +19,7 @@ const MAX_ATLAS_BYTES: usize = 128 * 1024 * 1024;
 pub enum TerrainError {
     InvalidMapDimensions { width: u32, height: u32, cells: usize },
     InvalidTileIndex(usize),
-    UnknownTemplate(u16),
+    UnresolvedTemplateCell { template: u16, icon: u8 },
     MapAllocationFailed { cells: usize },
     AtlasTooLarge { width: u32, height: u32, bytes: usize },
     InvalidCamera,
@@ -32,7 +32,10 @@ impl std::fmt::Display for TerrainError {
             Self::InvalidMapDimensions { width, height, cells } =>
                 write!(f, "terrain map {width}x{height} does not match {cells} cell entries"),
             Self::InvalidTileIndex(index) => write!(f, "terrain map references missing TMP tile {index}"),
-            Self::UnknownTemplate(template) => write!(f, "map template {template} has no resolved TMP tile"),
+            Self::UnresolvedTemplateCell { template, icon } => write!(
+                f,
+                "map template {template} icon {icon} has no resolved generic terrain tile"
+            ),
             Self::MapAllocationFailed { cells } => write!(f, "could not reserve terrain storage for {cells} cells"),
             Self::AtlasTooLarge { width, height, bytes } =>
                 write!(f, "terrain atlas {width}x{height} ({bytes} bytes) exceeds supported limits"),
@@ -66,16 +69,18 @@ impl TerrainMap {
         Ok(Self { width, height, cells })
     }
 
-    /// Resolves row-major map-model template IDs to TMP archive tile indices.
+    /// Resolves complete row-major template references to generic TMP tile indices.
     ///
-    /// The resolver is deliberately supplied by the game/theater layer: a
-    /// template ID is not assumed to be a TMP tile index. Empty cells remain
-    /// empty, and unresolved non-empty template IDs are rejected.
+    /// Each reference contains (template_type, logical_icon). The resolver
+    /// must interpret both values; a template type is not itself a tile index.
+    /// This adapter is for callers that explicitly have a TMP-backed mapping.
+    /// Authentic TD/RA template rendering instead resolves each type to its
+    /// theater-specific IFF ICON set and follows that set's MAP indirection.
     pub fn from_template_cells(
         width: u32,
         height: u32,
-        templates: impl IntoIterator<Item = Option<u16>>,
-        mut resolve: impl FnMut(u16) -> Option<usize>,
+        templates: impl IntoIterator<Item = Option<(u16, u8)>>,
+        mut resolve: impl FnMut(u16, u8) -> Option<usize>,
     ) -> Result<Self, TerrainError> {
         // Validate dimensions before consuming an arbitrary iterator or asking
         // the resolver to perform any work.
@@ -103,8 +108,11 @@ impl TerrainMap {
                 });
             }
             let tile = match template {
-                Some(template) => Some(
-                    resolve(template).ok_or(TerrainError::UnknownTemplate(template))?,
+                Some((template, icon)) => Some(
+                    resolve(template, icon).ok_or(TerrainError::UnresolvedTemplateCell {
+                        template,
+                        icon,
+                    })?,
                 ),
                 None => None,
             };
@@ -310,10 +318,10 @@ mod tests {
         let map = TerrainMap::from_template_cells(
             3,
             1,
-            [Some(12), None, Some(4)],
-            |template| match template {
-                12 => Some(7),
-                4 => Some(2),
+            [Some((12, 3)), None, Some((4, 1))],
+            |template, icon| match (template, icon) {
+                (12, 3) => Some(7),
+                (4, 1) => Some(2),
                 _ => None,
             },
         ).unwrap();
@@ -324,10 +332,10 @@ mod tests {
     }
 
     #[test]
-    fn rejects_unresolved_map_template_ids() {
+    fn rejects_unresolved_map_template_type_and_icon_pairs() {
         assert_eq!(
-            TerrainMap::from_template_cells(1, 1, [Some(99)], |_| None).unwrap_err(),
-            TerrainError::UnknownTemplate(99),
+            TerrainMap::from_template_cells(1, 1, [Some((99, 4))], |_, _| None).unwrap_err(),
+            TerrainError::UnresolvedTemplateCell { template: 99, icon: 4 },
         );
     }
 

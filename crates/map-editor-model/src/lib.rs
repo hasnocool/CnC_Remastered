@@ -10,6 +10,9 @@ use rts_core::{CellCoord, GameVariant, MapDimensions};
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct CellLayers {
     pub template: Option<u16>,
+    /// Logical icon slot within the selected template type's theater ICON set.
+    /// Ignored when template is None.
+    pub template_icon: u8,
     pub terrain: Option<u16>,
     pub overlay: Option<u16>,
     pub smudge: Option<u16>,
@@ -74,6 +77,17 @@ impl MapDocument {
         self.cells.iter().map(|cell| cell.template)
     }
 
+    /// Iterates complete template references in row-major order.
+    ///
+    /// TD/RA map cells carry both a template type and a logical icon index.
+    /// The icon index is resolved through that type's theater-specific ICON
+    /// set; it is not a TMP archive tile index.
+    pub fn template_cells(&self) -> impl ExactSizeIterator<Item = Option<(u16, u8)>> + '_ {
+        self.cells
+            .iter()
+            .map(|cell| cell.template.map(|template| (template, cell.template_icon)))
+    }
+
     pub fn set_cell(
         &mut self,
         coordinate: CellCoord,
@@ -123,6 +137,25 @@ mod tests {
         map.set_cell(CellCoord::new(2, 0), CellLayers { template: Some(3), ..CellLayers::default() }).unwrap();
 
         assert_eq!(map.template_indices().collect::<Vec<_>>(), vec![Some(7), None, Some(3)]);
+    }
+
+    #[test]
+    fn template_cells_preserve_type_and_logical_icon_row_major() {
+        let dimensions = MapDimensions::new(3, 1).expect("valid dimensions");
+        let mut map = MapDocument::new(GameVariant::TiberianDawn, dimensions).expect("valid map");
+        map.set_cell(
+            CellCoord::new(0, 0),
+            CellLayers { template: Some(7), template_icon: 3, ..CellLayers::default() },
+        ).unwrap();
+        map.set_cell(
+            CellCoord::new(2, 0),
+            CellLayers { template: Some(3), template_icon: 11, ..CellLayers::default() },
+        ).unwrap();
+
+        assert_eq!(
+            map.template_cells().collect::<Vec<_>>(),
+            vec![Some((7, 3)), None, Some((3, 11))],
+        );
     }
 
     #[test]

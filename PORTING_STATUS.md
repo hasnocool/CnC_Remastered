@@ -308,3 +308,12 @@ This tranche adds `physical_icon_rgba` and `logical_icon_rgba`, using an explici
 - WgpuRenderer::render_cached_multi resolves cached texture IDs and emits adjacent texture runs after stable render-layer sorting, preserving compositing order across texture changes.
 - The 128 MiB GPU cache remains FIFO. Texture IDs are treated as immutable content identities for the life of a cache entry.
 - Not implemented: authentic TD/RA map-file decoding, theater-specific adjacency/transition resolution, terrain animation, SHP unit/building rendering, camera input, CPU decoded-image cache, and real retail asset verification.
+
+
+## Map template representation correction
+
+The map editor model now retains both the template type ID and the per-cell logical icon index. These are distinct fields in the original TD map cell record (TType and TIcon); the renderer must not treat a template type ID as a TMP archive tile index.
+
+The authoritative TD engine path obtains the template type's image data, reads its ICON set MAP table, and uses the cell's logical icon slot to resolve the physical image. The generic TMP TerrainAtlas remains a separate fixture/adapter path. Authentic TD/RA rendering needs theater-specific template catalogs plus an IFF ICON-set atlas/composition path. RA MapPack serialization is variant-specific and must be handled independently from TD's per-cell record path.
+
+Source inspection: EA's public CnC_Tiberian_Dawn/TEMPLATE.CPP and MAP.CPP (TemplateClass::Mark, Map load/validation); the existing project source-audit notes also identify the editor's missing per-cell icon field. No proprietary game assets were added. Cargo validation remains unexecuted.
