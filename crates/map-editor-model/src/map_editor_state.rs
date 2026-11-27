@@ -16,7 +16,7 @@ pub struct MapEditorState {
     document: MapDocument,
     spatial: MapSpatialIndex,
     overlay_types: BTreeMap<i8, OverlayTypeDefinition>,
-    overlays: HashMap<CellCoord, (PlacedOverlay, OccupierId)>,
+    overlays: HashMap<CellCoord, (PlacedOverlay, Option<OccupierId>)>,
     next_internal_occupier: u64,
 }
 
@@ -63,7 +63,7 @@ impl MapEditorState {
         }).transpose()?;
 
         let mut staged = self.spatial.clone();
-        if let Some((_, id)) = self.overlays.get(&cell) {
+        if let Some((_, Some(id))) = self.overlays.get(&cell) {
             if staged.is_wall(*id) { staged.remove_wall(*id); }
         }
         let new_id = if new_type.is_some_and(|definition| definition.is_wall()) {
@@ -76,9 +76,9 @@ impl MapEditorState {
 
         self.spatial = staged;
         if let (Some(placed), Some(id)) = (overlay.clone(), new_id) {
-            self.overlays.insert(cell, (placed, id));
+            self.overlays.insert(cell, (placed, Some(id)));
         } else if let Some(placed) = overlay.clone() {
-            self.overlays.insert(cell, (placed, OccupierId(0)));
+            self.overlays.insert(cell, (placed, None));
         } else {
             self.overlays.remove(&cell);
         }
@@ -139,7 +139,7 @@ impl MapEditorState {
     pub fn remove_wall(&mut self, id: OccupierId) -> bool {
         let removed = self.spatial.remove_wall(id);
         if removed {
-            if let Some(cell) = self.overlays.iter().find_map(|(cell, (_, overlay_id))| (*overlay_id == id).then_some(*cell)) {
+            if let Some(cell) = self.overlays.iter().find_map(|(cell, (_, overlay_id))| (*overlay_id == Some(id)).then_some(*cell)) {
                 self.overlays.remove(&cell);
             }
         }
@@ -185,7 +185,7 @@ mod tests {
         state.register_overlay_type(OverlayTypeDefinition { id: 4, name: "wall".into(), flags: 4 });
         state.document_mut().begin_update();
         state.set_overlay(CellCoord::new(3, 3), Some(PlacedOverlay::new(4))).unwrap();
-        let id = state.overlays.get(&CellCoord::new(3, 3)).unwrap().1;
+        let id = state.overlays.get(&CellCoord::new(3, 3)).unwrap().1.unwrap();
         assert!(state.spatial().is_wall(id));
         assert_eq!(state.spatial().buildings().occupant_at(CellCoord::new(3, 3)), Some(id));
         assert_eq!(state.spatial().technos().occupant_at(CellCoord::new(3, 3)), Some(id));
@@ -199,7 +199,7 @@ mod tests {
         state.register_overlay_type(OverlayTypeDefinition { id: 1, name: "wall".into(), flags: 4 });
         state.register_overlay_type(OverlayTypeDefinition { id: 2, name: "crate".into(), flags: 8 });
         state.set_overlay(CellCoord::new(5, 5), Some(PlacedOverlay::new(1))).unwrap();
-        let old_id = state.overlays.get(&CellCoord::new(5, 5)).unwrap().1;
+        let old_id = state.overlays.get(&CellCoord::new(5, 5)).unwrap().1.unwrap();
         state.set_overlay(CellCoord::new(5, 5), Some(PlacedOverlay::new(2))).unwrap();
         assert!(!state.spatial().buildings().contains(old_id));
         assert!(!state.spatial().technos().contains(old_id));
