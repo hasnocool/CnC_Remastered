@@ -45,7 +45,7 @@
 | SHA-1 and RandomStraw | Ported | Streaming SHA-1; 32 LCG state words; low-bit-first 1,024-bit seeding; chained digest scrambler |
 | Blowfish engine and streams | Ported | Source-derived P/S tables, 16-round block cipher, reverse P-array decryption, 56-byte key limit, 8-byte Pipe/Straw staging |
 | Empty translation unit | No behavior | `REDALERT/CLASS.CPP` contains no executable definitions |
-| Map editor model | Initial | Cell layer IDs and waypoint storage only |
+| Map editor model | Partial | Typed Overlay/Smudge cells, spatial indexes, derived icons, catalog-driven Building/bib lifecycle, and pinned TD/RA BuildingType/SmudgeType registries; serialization and full editor parity remain outstanding |
 | Tiberian Dawn gameplay | Not ported | Variant boundary only |
 | Red Alert gameplay | Not ported | Variant boundary only |
 | Rendering | Initial backend | wgpu textured sprites/UI, bounded GPU texture cache, multi-texture ordered draws, TMP-derived terrain atlas composition, 16×16 chunk traversal and viewport culling; authentic map/theater integration remains pending |
@@ -411,3 +411,6 @@ Implemented source-derived Tiberium/gold and gem icon lookup tables, eight-neigh
 ## Map editor — typed cell instances and catalog-driven Building lifecycle
 
 CellLayers now owns typed Overlay and Smudge instances (type/icon/tint and Smudge Data) while retaining legacy numeric format slots separately. MapEditorState uses the document's typed cells as canonical storage. Added BuildingTypeDefinition with base/full occupancy masks and source bib expansion; PlacedBuilding with source defaults, tint alpha behavior and BibCells; and catalog-driven add_typed_building, which derives masks and automatic bib placement/removal from registered definitions. Tests added but not executed. Complete TD/RA static catalog population, CellMetrics-derived overlap bounds, serializer integration, mutable-document API hardening, and Rust toolchain validation remain outstanding. Retail TD/RA validation has not been performed. See `docs/port-tranches/MAP_EDITOR_TYPED_CELLS_AND_BUILDINGS.md`.
+
+
+Latest map-editor catalog tranche: imported 60 Tiberian Dawn and 63 Red Alert BuildingType entries plus 15 SmudgeType entries per variant from the pinned C# registries. Catalog registration is variant-specific. Building bib masks and OverlapBounds now match the upstream array-dimension rule (bib adds one row to the mask dimensions while the final two rows are occupied). Rust verification remains pending where the toolchain is unavailable.
