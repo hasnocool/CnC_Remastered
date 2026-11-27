@@ -368,3 +368,14 @@ Added TemplateAssetProvider::build_td_terrain_atlas. It rejects non-TD providers
 This implementation targets the editor's raw BIN pair stream. It does not claim to decode the engine's separate LCW straw/stream representation, parse the accompanying INI metadata, or validate against retail scenario files. No proprietary assets were added.
 
 Synthetic regression fixtures cover row-major type/icon pairs, truncated/trailing input, zero dimensions, excessive cell counts, and provider variant rejection. Cargo formatting, compilation, tests, and Clippy remain unverified because the Rust toolchain is unavailable in this environment.
+
+
+## Latest C# editor model implementation tranche
+
+Implemented on `feat/application-runtime-renderer-launcher`:
+
+- `crates/map-editor-model/src/occupier_set.rs`: mask-based occupancy index, object-to-cell and cell-to-object lookups, atomic add preflight, duplicate/bounds/collision errors, remove and clear.
+- `crates/map-editor-model/src/overlapper_set.rs`: independent rectangle index, half-open intersection, and transitive overlap closure.
+- `crates/map-editor-model/src/lib.rs`: exports both modules and their public types.
+
+The implementation preserves the audited distinction between occupancy and overlap. It does not yet implement the C# Map aggregate, synchronous event subscriptions, Building bib ownership, derived wall/resource icons, clone semantics, or UI/editor lifecycle. Unit tests were added but have not been executed in this environment; no build, formatting, or Clippy result is claimed. These are synthetic unit tests, not retail TD/RA validation.
