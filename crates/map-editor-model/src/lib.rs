@@ -12,7 +12,7 @@ pub use cell_grid::{CellGrid, CellGridError, CellGridEvent};
 pub use map_update::{MapUpdateError, MapUpdateState, MapUpdateWork, OverlayInvalidation};
 pub use map_spatial_index::{MapSpatialIndex, SpatialIndexError};
 pub use map_editor_state::{MapEditorState, MapEditorStateError};
-pub use placed_objects::{EditorColor, OverlayTypeDefinition, OverlayTypeFlag, PlacedOverlay, PlacedSmudge, SmudgeTypeDefinition, SmudgeTypeFlag};
+pub use placed_objects::{BuildingTypeDefinition, EditorColor, OverlayTypeDefinition, OverlayTypeFlag, PlacedBuilding, PlacedOverlay, PlacedSmudge, SmudgeTypeDefinition, SmudgeTypeFlag};
 pub mod occupier_set;
 pub mod overlapper_set;
 pub use cell_metrics::CellMetrics;
