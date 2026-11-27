@@ -231,6 +231,24 @@ mod tests {
     }
 
     #[test]
+    fn map_document_batches_overlay_invalidation_and_overlap_rebuilds() {
+        let dimensions = MapDimensions::new(8, 8).expect("valid dimensions");
+        let mut map = MapDocument::new(GameVariant::RedAlert, dimensions).expect("valid map");
+        map.begin_update();
+        map.begin_update();
+        assert_eq!(
+            map.invalidate_overlay(CellCoord::new(3, 3), OverlayInvalidation::Walls).unwrap(),
+            None,
+        );
+        assert_eq!(map.request_overlapper_rebuild(), None);
+        assert_eq!(map.end_update().unwrap(), None);
+        let work = map.end_update().unwrap().unwrap();
+        assert_eq!(work.walls.len(), 9);
+        assert!(work.rebuild_overlappers);
+        assert_eq!(map.update_state().batch_depth(), 0);
+    }
+
+    #[test]
     fn waypoint_numbers_are_unique() {
         let dimensions = MapDimensions::new(10, 10).expect("valid dimensions");
         let mut map = MapDocument::new(GameVariant::RedAlert, dimensions).expect("valid map");
