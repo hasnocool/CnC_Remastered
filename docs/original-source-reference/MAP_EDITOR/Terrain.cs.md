@@ -18,3 +18,12 @@ Dependencies: TerrainType geometry and occupancy. Null Type invalidates geometry
 
 ## Port status
 No Rust equivalent is asserted until the current Rust workspace is inspected and behavior is mapped to implementation paths and tests.
+
+
+## Rust mapping update — map-owned terrain objects
+
+Added `crates/map-editor-model/src/terrain_objects.rs` and integrated it into `MapDocument`. Each placed terrain is represented once as `TerrainObject` with stable `TerrainObjectId`, anchor/origin `CellCoord`, source terrain type ID, icon index and optional trigger name. The document owns the object collection and a derived per-cell owner index built from the source occupancy mask.
+
+Object insertion validates the complete footprint before mutation; overlapping/out-of-bounds placements are rejected atomically. Removal checks that every occupied cell is still owned by the same object. Movement validates the full destination before releasing the old footprint and preserves identity and trigger. Existing `CellLayers.terrain` / `terrain_icon` are maintained as compatibility mirrors, not used as the object identity or occupancy index.
+
+The source C# `Terrain` also has Tint, PropertyChanged notifications and Clone behavior (which resets Tint to white). These are not yet ported. Object-level history commands and editor selection/drag integration remain open. Render overlap is not calculated from occupancy.
