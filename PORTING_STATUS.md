@@ -394,3 +394,8 @@ Added `crates/map-editor-model/src/map_update.rs` and integrated `MapUpdateState
 ## C# editor spatial index bridge tranche
 
 Added `map_spatial_index.rs` and `map_editor_state.rs`. The new `MapEditorState` composes the serialized `MapDocument` with distinct Buildings/Technos occupancy indexes and the independent Overlappers index. Buildings use full masks in Buildings and base masks in Technos; wall overlays are mirrored from Buildings into Technos and excluded from Overlappers. Building registration rolls back if overlap-bound registration fails, and building add/remove requests are routed through update batching. Tests are authored but unexecuted. Typed source definition objects, terrain/infantry overlapper registration, cell-grid event synchronization, bib ownership, and derived icons remain outstanding. See `docs/port-tranches/MAP_EDITOR_SPATIAL_BRIDGE.md`.
+
+
+## C# editor typed overlay tranche
+
+Added `placed_objects.rs` with source-derived placed Overlay/Smudge records, flag values, tint defaults, and independent Smudge Data. `MapEditorState::set_overlay` now stages wall registration/removal across Buildings and Technos and routes resource/wall invalidation through the batch coordinator. Tests are authored but unexecuted. The legacy numeric `CellLayers.overlay` is not yet integrated with the typed store; derived icon calculation, bib ownership, generic CellGrid event parity, and other typed placed-object records remain outstanding. See `docs/port-tranches/MAP_EDITOR_TYPED_OVERLAYS.md`.
