@@ -39,6 +39,15 @@ impl MapEditorState {
 
     pub fn document(&self) -> &MapDocument { &self.document }
     pub fn document_mut(&mut self) -> &mut MapDocument { &mut self.document }
+
+    pub fn begin_update(&mut self) { self.document.begin_update(); }
+
+    /// Ends one update batch and immediately applies its coalesced derived icons.
+    pub fn end_update(&mut self) -> Result<Option<MapUpdateWork>, MapUpdateError> {
+        let work = self.document.end_update()?;
+        if let Some(ref pending) = work { self.apply_update_work(pending); }
+        Ok(work)
+    }
     pub fn spatial(&self) -> &MapSpatialIndex { &self.spatial }
 
     pub fn register_overlay_type(&mut self, definition: OverlayTypeDefinition) {
@@ -391,11 +400,10 @@ mod tests {
     fn batched_overlay_changes_apply_icons_when_update_work_is_consumed() {
         let mut state = MapEditorState::new(GameVariant::TiberianDawn, dimensions()).unwrap();
         state.register_overlay_type(OverlayTypeDefinition { id: 1, name: "ore".into(), flags: 1 });
-        state.document_mut().begin_update();
+        state.begin_update();
         state.set_overlay(CellCoord::new(5, 5), Some(PlacedOverlay::new(1))).unwrap();
         state.set_overlay(CellCoord::new(6, 5), Some(PlacedOverlay::new(1))).unwrap();
-        let work = state.document_mut().end_update().unwrap().unwrap();
-        state.apply_update_work(&work);
+        let work = state.end_update().unwrap().unwrap();
         assert_eq!(state.overlay_at(CellCoord::new(5, 5)).unwrap().icon, 1);
     }
 
