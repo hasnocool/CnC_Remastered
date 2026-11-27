@@ -112,6 +112,24 @@ impl MapDocument {
             .map(|cell| cell.template.map(|template| (template, cell.template_icon)))
     }
 
+    pub fn overlay_instance(&self, coordinate: CellCoord) -> Option<&PlacedOverlay> {
+        self.cell(coordinate)?.overlay_instance.as_ref()
+    }
+
+    pub fn overlay_instance_mut(&mut self, coordinate: CellCoord) -> Option<&mut PlacedOverlay> {
+        let index = self.dimensions.index(coordinate)?;
+        self.cells.get_mut(index)?.overlay_instance.as_mut()
+    }
+
+    pub fn smudge_instance(&self, coordinate: CellCoord) -> Option<&PlacedSmudge> {
+        self.cell(coordinate)?.smudge_instance.as_ref()
+    }
+
+    pub fn smudge_instance_mut(&mut self, coordinate: CellCoord) -> Option<&mut PlacedSmudge> {
+        let index = self.dimensions.index(coordinate)?;
+        self.cells.get_mut(index)?.smudge_instance.as_mut()
+    }
+
     pub fn set_overlay_instance(
         &mut self,
         coordinate: CellCoord,
