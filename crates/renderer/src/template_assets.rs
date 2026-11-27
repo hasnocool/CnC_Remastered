@@ -190,7 +190,7 @@ mod tests {
         let map = TdTemplateMap::decode_binary(&[0, 0], 1, 1).unwrap();
         let palette = Palette256::parse(&vec![0; 768], rts_formats::palette_rgba::PaletteEncoding::Rgb8).unwrap();
         assert!(matches!(
-            provider.build_td_terrain_atlas(TextureId(77), &map, &palette),
+            provider.build_td_terrain_atlas(77, &map, &palette),
             Err(TemplateTerrainBuildError::Asset(TemplateAssetError::WrongVariant { .. }))
         ));
     }
