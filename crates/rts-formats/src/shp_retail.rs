@@ -5,7 +5,7 @@
 //! in-memory ShapeBlock_Type used by the legacy drawing routines. The retail
 //! file uses a 14-byte header, 8-byte frame records, and Format80/40/20 data.
 
-use crate::lcw;
+use crate::{lcw, palette_rgba::{Palette256, PaletteError, RgbaImage}};
 use std::{collections::HashMap, fmt};
 
 const HEADER_SIZE: usize = 14;
@@ -64,6 +64,7 @@ pub enum RetailShpError {
     MissingPreviousFrame { frame: usize },
     InvalidDelta(&'static str),
     Lcw(lcw::LcwError),
+    Palette(PaletteError),
 }
 impl fmt::Display for RetailShpError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result { write!(f, "{self:?}") }
@@ -71,6 +72,9 @@ impl fmt::Display for RetailShpError {
 impl std::error::Error for RetailShpError {}
 impl From<lcw::LcwError> for RetailShpError {
     fn from(value: lcw::LcwError) -> Self { Self::Lcw(value) }
+}
+impl From<PaletteError> for RetailShpError {
+    fn from(value: PaletteError) -> Self { Self::Palette(value) }
 }
 
 #[derive(Clone, Debug)]
@@ -234,6 +238,40 @@ impl<'a> RetailShpFile<'a> {
             self.decode_inner(index, &mut cache, &mut visiting)?;
         }
         Ok(cache.into_iter().map(|frame| frame.expect("all frames decoded")).collect())
+    }
+
+    /// Decode and palette-expand one frame into tightly packed RGBA8 pixels.
+    /// The returned dimensions and byte vector can be passed directly to
+    /// renderer::WgpuRenderer::create_texture_rgba.
+    pub fn decode_rgba_frame(
+        &self,
+        index: usize,
+        palette: &Palette256,
+        transparent_index: Option<u8>,
+    ) -> Result<RgbaImage, RetailShpError> {
+        let indexed = self.decode_frame(index)?;
+        Ok(palette.expand_rgba(
+            u32::from(self.header.width),
+            u32::from(self.header.height),
+            &indexed,
+            transparent_index,
+        )?)
+    }
+
+    /// Decode and palette-expand all frames in frame-table order.
+    pub fn decode_rgba_frames(
+        &self,
+        palette: &Palette256,
+        transparent_index: Option<u8>,
+    ) -> Result<Vec<RgbaImage>, RetailShpError> {
+        self.decode_frames()?.into_iter().map(|indexed| {
+            Ok(palette.expand_rgba(
+                u32::from(self.header.width),
+                u32::from(self.header.height),
+                &indexed,
+                transparent_index,
+            )?)
+        }).collect()
     }
 
     fn decode_inner(
@@ -410,6 +448,22 @@ mod tests {
         bytes.extend_from_slice(&delta);
         let shp = RetailShpFile::parse(&bytes).unwrap();
         assert_eq!(shp.decode_frame(2).unwrap(), [5, 5]);
+    }
+
+    #[test]
+    fn expands_decoded_indexed_frame_through_palette_for_renderer_upload() {
+        use crate::palette_rgba::{PaletteEncoding, PALETTE_BYTES};
+        let shp = RetailShpFile::parse(&fixture()).unwrap();
+        let mut raw_palette = vec![0u8; PALETTE_BYTES];
+        raw_palette[3..6].copy_from_slice(&[12, 34, 56]);
+        raw_palette[6..9].copy_from_slice(&[78, 90, 123]);
+        raw_palette[9..12].copy_from_slice(&[200, 210, 220]);
+        let palette = Palette256::parse(&raw_palette, PaletteEncoding::Rgb8).unwrap();
+        let image = shp.decode_rgba_frame(0, &palette, None).unwrap();
+        assert_eq!((image.width, image.height), (3, 1));
+        assert_eq!(image.pixels, [
+            12, 34, 56, 255, 78, 90, 123, 255, 200, 210, 220, 255,
+        ]);
     }
 
     #[test]
