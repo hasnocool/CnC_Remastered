@@ -8,9 +8,9 @@
 //!   CnCTDRAMapEditor/RedAlert/GamePlugin.cs, DecompressLCWSection (MapPack
 //!   chunks carry little-endian u16 compressed and decompressed lengths).
 //!
-//! The caller is responsible for decoding the INI section's concatenated
-//! Base64 value before passing its bytes to this module. This decoder handles
-//! only the RA LCW chunk framing and the two-plane MapPack payload.
+//! `RaTemplateMap::decode_ini_section` accepts the concatenated INI Base64
+//! value directly; `decode_lcw_chunks` is also exposed for already-decoded
+//! framed bytes. Both paths validate the RA LCW framing and two-plane payload.
 
 use crate::lcw::{self, LcwError};
 use core::fmt;
