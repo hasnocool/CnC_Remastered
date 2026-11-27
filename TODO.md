@@ -554,3 +554,19 @@ Scope limits: current harness supports the existing legacy unencrypted MIX parse
 - [ ] Validate actual TD and RA retail scenarios separately after user-provided assets arrive.
 
 See `docs/port-tranches/MAP_EDITOR_DERIVED_OVERLAYS_AND_BIBS.md`.
+
+
+## Typed Overlay/Smudge cells and catalog-driven Building lifecycle
+
+- [x] Store typed Overlay and Smudge instances in MapDocument CellLayers while retaining separate legacy numeric format slots.
+- [x] Make MapEditorState use document-owned typed cells as canonical Overlay/Smudge storage.
+- [x] Add BuildingTypeDefinition with distinct base/full masks and audited bib mask expansion.
+- [x] Add PlacedBuilding source defaults, raw/effective tint behavior, and bib-cell ownership.
+- [x] Add catalog-driven add_typed_building; derive masks, HasBib, dimensions and bib type automatically.
+- [x] Add typed cell and Building lifecycle regression tests.
+- [ ] Populate complete TD/RA BuildingType and SmudgeType catalogs from audited registries.
+- [ ] Connect overlap rectangle generation to CellMetrics and restrict document_mut bypasses.
+- [ ] Integrate typed object records with TD/RA scenario serializers without conflating catalog IDs and legacy slots.
+- [ ] Run cargo fmt, cargo test, cargo clippy on a Rust-enabled host.
+
+See `docs/port-tranches/MAP_EDITOR_TYPED_CELLS_AND_BUILDINGS.md`.
