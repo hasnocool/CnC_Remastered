@@ -1,8 +1,8 @@
 use crate::format::{MapFile, MAX_MAP_FILE_BYTES};
 use egui::RichText;
 use map_editor_model::{
-    place_terrain_with_history, CellLayers, MapDocument, MapEditHistory, OccupancyMask,
-    TerrainPlacementDefinition, OverlayCatalog, place_overlay_with_history,
+    place_terrain_with_history, CellLayers, MapDocument, MapEditHistory,
+    TerrainCatalog, OverlayCatalog, place_overlay_with_history,
 };
 use rts_core::{CellCoord, GameVariant, MapDimensions, template_catalog::TemplateTheater};
 use rts_assets::{TemplateAssetProvider, TerrainAssetSet};
@@ -268,8 +268,26 @@ impl eframe::App for EditorApp {
                         ui.selectable_value(&mut self.brush_layer, PaintLayer::Overlay, "Overlay");
                         ui.selectable_value(&mut self.brush_layer, PaintLayer::Smudge, "Smudge");
                     });
-                ui.label("ID");
-                ui.add(egui::DragValue::new(&mut self.brush).range(0..=u16::MAX));
+                if matches!(self.brush_layer, PaintLayer::Terrain) {
+                    let catalog = TerrainCatalog::new(self.map.variant(), self.theater);
+                    let selected = catalog.get(self.brush)
+                        .map(|definition| format!("{} ({})", definition.name, definition.id))
+                        .unwrap_or_else(|| "Select a compatible terrain".into());
+                    egui::ComboBox::from_label("Terrain type")
+                        .selected_text(selected)
+                        .show_ui(ui, |ui| {
+                            for definition in catalog.iter() {
+                                ui.selectable_value(
+                                    &mut self.brush,
+                                    definition.id,
+                                    format!("{} ({})", definition.name, definition.id),
+                                );
+                            }
+                        });
+                } else {
+                    ui.label("ID");
+                    ui.add(egui::DragValue::new(&mut self.brush).range(0..=u16::MAX));
+                }
                 if matches!(self.brush_layer, PaintLayer::Template) {
                     ui.label("Logical icon");
                     ui.add(egui::DragValue::new(&mut self.template_icon).range(0..=u8::MAX));
@@ -339,22 +357,26 @@ impl eframe::App for EditorApp {
                             }
                         }
                         PaintLayer::Terrain => {
-                            // The source-derived TD/RA terrain catalog is not
-                            // connected yet. Keep this UI brush explicitly 1x1;
-                            // do not infer retail masks or transform behavior.
-                            let occupancy = OccupancyMask::new(1, 1, vec![true])
-                                .expect("the generic single-cell brush is valid");
-                            let definition = TerrainPlacementDefinition {
-                                id: self.brush,
-                                occupancy,
-                                transformable: false,
-                            };
-                            place_terrain_with_history(
-                                &mut self.map,
-                                &mut self.history,
-                                cell,
-                                &definition,
-                            ).map(|_| ()).map_err(|error| format!("{error:?}"))
+                            let catalog = TerrainCatalog::new(self.map.variant(), self.theater);
+                            match catalog.get(self.brush) {
+                                Some(source_definition) => {
+                                    match source_definition.placement_definition() {
+                                        Ok(definition) => place_terrain_with_history(
+                                            &mut self.map,
+                                            &mut self.history,
+                                            cell,
+                                            &definition,
+                                        ).map(|_| ()).map_err(|error| format!("{error:?}")),
+                                        Err(error) => Err(format!("Invalid source occupancy mask: {error:?}")),
+                                    }
+                                }
+                                None => Err(format!(
+                                    "Terrain ID {} is not defined for {:?} in {:?}",
+                                    self.brush,
+                                    self.map.variant(),
+                                    self.theater
+                                )),
+                            }
                         }
                         layer => {
                             let mut layers = self.map.cell(cell).copied().unwrap_or_default();
