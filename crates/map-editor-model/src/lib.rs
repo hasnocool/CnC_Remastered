@@ -1,7 +1,11 @@
 //! Initial portable map-editor document model.
 
 pub mod cell_metrics;
+pub mod occupier_set;
+pub mod overlapper_set;
 pub use cell_metrics::CellMetrics;
+pub use occupier_set::{OccupierError, OccupierId, OccupierSet};
+pub use overlapper_set::{OverlapRect, OverlapperError, OverlapperId, OverlapperSet};
 
 use std::collections::BTreeMap;
 
