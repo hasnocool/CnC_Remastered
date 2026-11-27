@@ -399,3 +399,10 @@ Added `map_spatial_index.rs` and `map_editor_state.rs`. The new `MapEditorState`
 ## C# editor typed overlay tranche
 
 Added `placed_objects.rs` with source-derived placed Overlay/Smudge records, flag values, tint defaults, and independent Smudge Data. `MapEditorState::set_overlay` now stages wall registration/removal across Buildings and Technos and routes resource/wall invalidation through the batch coordinator. Tests are authored but unexecuted. The legacy numeric `CellLayers.overlay` is not yet integrated with the typed store; derived icon calculation, bib ownership, generic CellGrid event parity, and other typed placed-object records remain outstanding. See `docs/port-tranches/MAP_EDITOR_TYPED_OVERLAYS.md`.
+
+
+## Map editor — derived overlay icons and Building bib ownership
+
+Implemented source-derived Tiberium/gold and gem icon lookup tables, eight-neighbor resource counting, exact-type cardinal wall connectivity, and immediate/batched icon recomputation in MapEditorState. Added source-derived Building bib selection (width 2/3/4 -> Bib3/Bib2/Bib1), row-major icon assignment, tint propagation, per-building bib-cell ownership, and Bib-flag-only removal. Replaced the non-wall overlay occupier sentinel with `Option<OccupierId>`.
+
+**Remaining:** typed overlay/smudge records are not yet synchronized to serialized `CellLayers`; full BuildingType catalog and typed Building lifecycle integration remain incomplete. Tests are authored but not executed. Formatting, compilation, tests and Clippy are unverified because the Rust toolchain is unavailable. This is not retail TD/RA validation. See `docs/port-tranches/MAP_EDITOR_DERIVED_OVERLAYS_AND_BIBS.md`.
