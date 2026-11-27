@@ -1,6 +1,6 @@
 # Red Alert TerrainTypes.cs — static catalog body audit
 
-> **Body reviewed.** Full 77-line registry and all 35 entries, static constructor and GetTypes inspected. Rust mapping/tests open.
+> **Body reviewed; Rust catalog mapped.** Full 77-line registry and all 35 entries, static constructor and GetTypes inspected. Catalog test coverage is added but has not been executed.
 
 Upstream `CnCTDRAMapEditor/RedAlert/TerrainTypes.cs`; pinned `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`; blob `4cff6d34bb347fad76cf7ccbf435e61a7a9213fa`. [Source](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/RedAlert/TerrainTypes.cs)
 
