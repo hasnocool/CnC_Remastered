@@ -14,7 +14,7 @@ pub use terrain_placement::{
 };
 pub use template_catalog::TemplateCatalog;
 pub use terrain_catalog::{TerrainCatalog, TerrainDefinition, TerrainTemplateFlag};
-pub use edit_history::MapEditHistory;
+pub use edit_history::{MapEditHistory, TerrainHistoryError};
 pub use overlay_catalog::{
     place_overlay_with_history, remove_overlay_with_history, OverlayCatalog,
     OverlayDefinition, OverlayPlacementError, OverlayTypeFlags,
