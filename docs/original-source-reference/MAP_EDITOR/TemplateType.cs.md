@@ -1,9 +1,9 @@
 # TemplateType.cs — body-reviewed editor definition
 
-> **Audit status: Body reviewed.** Complete 134-line source body inspected. Template catalog data, serializer interaction and Rust mapping remain open.
+> **Audit status: Body reviewed.** Complete 134-line source body inspected. The C# type body is Body reviewed; full registry/serializer parity remains open. Rust has partial engine-side template asset metadata, not a complete C# editor-type port.
 
 - Upstream: [CnCTDRAMapEditor/Model/TemplateType.cs](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/Model/TemplateType.cs)
-- Pinned source blob: `f62e53665e9a45d5dba9e1f7d01ca61045fae64`
+- Pinned source blob: `f62e53665e9a45ddebba9e1f7d01ca61045fae64`
 - Namespace/types: `MobiusEditor.Model.TemplateTypeFlag`, `TemplateType`
 - Interface: `IBrowsableType`
 - Imports: `MobiusEditor.Interface`, `MobiusEditor.Utility`, `System`, `System.Drawing`
@@ -54,14 +54,14 @@ The array is indexed `[x,y]`, not the usual row-first `[y,x]`. Missing icons rem
 
 ## Rust port requirements
 
-No TemplateType catalog exists in `map-editor-model`; `CellLayers.template` stores only an optional numeric ID. Model icon dimensions, row-major icon IDs, x/y mask orientation, theatre availability, and flags as immutable catalog data. Use a typed icon-cell collection and deterministic mask generation. Keep thumbnail bitmaps outside the serializable map model. Explicitly dispose failed/unused image buffers in the Rust renderer.
+`map-editor-model` still has no C#-equivalent typed `TemplateType`; `CellLayers` stores `template: Option<u16>` plus `template_icon: u8`. A partial engine-side mapping exists in `rts-core::template_catalog` (TD216 and RA400 ID/name/stem/theatre-mask records), and `renderer::template_assets` resolves ICON sets from caller-supplied MIX archives. It does not model C# icon dimensions, TemplateTypeFlag, `[x,y]` IconMask, Thumbnail initialization, reflection registry semantics or TemplateTool UI. RA metadata ID400 AntHill is missing even though the C# editor declares it; see the 6S-C-J guide. Port the remaining editor metadata separately, preserve the exact mask orientation and row-major logical icon mapping, and keep disposable thumbnail images outside the serializable map model.
 
 ## Verification
 
 - [x] All properties, both constructors and every method body inspected.
 - [x] Icon iteration order, mask orientation, transparent holes and no-result path recorded.
 - [ ] Complete TD/RA template registry and all icon call sites.
-- [ ] Tile fixture/mask parity and Rust mapping.
+- [ ] Tile fixture/mask parity and full C# editor catalog mapping (partial engine-side asset mapping exists).
 - [ ] Zero-size and missing-icon runtime tests.
 
 No Rust code was changed and no test was executed.
@@ -70,3 +70,12 @@ No Rust code was changed and no test was executed.
 ## Catalog slice dependency update — Tranche 6S-C-A
 
 TD/RA TemplateTypes IDs0–31 are documented in [Variant-TemplateTypes-6S-C-A.md](Variant-TemplateTypes-6S-C-A.md). Catalog totals 216/401 and remain Partially reviewed. TD Water/Water2 lack Water flag; RA Water/Water2 carry it. Static construction/GetTypes inspected, catalog beyond ID31 open. TemplateTool/serialization traces are in comparison.
+
+## Catalog and asset-pipeline reconciliation — Tranche 6S-C-J
+
+- The RA `TemplateTypes` catalog has 401 IDs0–400; declaration slices through ID319 are now documented. IDs288–319 are 1×1, Interior-only, Flag=None.
+- `Map.InitTheater` initializes every template; `TemplateType.Init` uses `TilesetManager.GetTileData` to set thumbnails and [x,y] masks. The `TemplateTool` selector excludes missing thumbnails, wrong-theatre entries and Clear.
+- `Tileset.Load` keeps at most the first frame in its active preprocessor branch; the single-tile lookup discards FPS. `TilesetManager` uses `tilesets.Join(searchTilesets, ...)` with the dictionary as outer sequence, so searchTilesets is not explicitly the primary traversal order.
+- RA serialization uses a UInt16 type plane plus icon plane; TD uses interleaved byte pairs. Rust raw decoders exist, but full writers/INI serializers do not. Both Rust atlas builders currently pass raw empty sentinels to catalog lookup; see [Serialization-Contract.md](Serialization-Contract.md).
+- Rust asset metadata for RA IDs288–319 matches the C# keys and Interior mask=4. RA ID400 AntHill is not present in the Rust catalog; the pinned C++ header defines `FIXIT_ANTS`, but the enum and CData record are conditionally compiled. Build-macro parity remains unresolved.
+- No Rust code or tests changed/executed. No retail tile assets or C# runtime initialization were validated.

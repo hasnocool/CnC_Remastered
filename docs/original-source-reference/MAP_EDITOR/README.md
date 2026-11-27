@@ -107,7 +107,7 @@ The model's definition/catalog layer is now documented separately from placed ma
 Eighteen registry bodies (nine classes per variant) are Body reviewed. TD TemplateTypes declarations IDs0–215 are fully catalogued; RA declarations IDs0–223 are catalogued. Both files remain Partially reviewed pending full initialization, dependency, consumer and serializer parity. Initialization parity/tests are not claimed.
 
 
-The ten definition bodies are Body reviewed; the four small interfaces are Header reviewed. No typed Rust catalog mapping or parity tests are claimed.
+The ten definition bodies are Body reviewed; the four small interfaces are Header reviewed. No complete typed Rust map-editor catalog mapping or parity tests are claimed; partial engine-side template asset metadata is documented in the latest tranche.
 
 
 ### TemplateTypes — Tranche 6S-C-A (partial)
@@ -159,11 +159,18 @@ TD declaration enumeration is complete (216/216). RA coverage is 224/401. TD IDs
 
 ## Template registry declaration audit
 
-The bounded catalogue covers all 216 Tiberian Dawn IDs and Red Alert IDs0–255 of 401. The RA 6S-C-H guide records IDs224–255, including Temperate/Snow bridge declarations and three Interior-only `ARRO` entries. This is metadata enumeration, not proof of complete tile availability or Rust parity. Both registry source rows remain Partially reviewed until implementation bodies, plugin consumers, theatre initialization and serialization paths are audited.
+The bounded catalogue covers all 216 Tiberian Dawn IDs and Red Alert IDs0–319 of 401. The latest RA 6S-C-J guide records GSTR0009–0011, LWAL0001–0027 and STRP0001–0002, all 1×1 Interior-only. This is metadata enumeration, not proof of tile payload availability or full C# editor parity. Rust has partial asset metadata and ICON-set resolution; both registry source rows remain Partially reviewed until implementation bodies, consumers, theatre initialization and serializers are fully audited.
 
 
 ### TemplateTypes — Tranche 6S-C-I
 
 - [RA IDs256–287](RedAlert/TemplateTypes-6S-C-I.md) · [TD/RA comparison](Variant-TemplateTypes-6S-C-I.md).
 
-Cumulative declaration enumeration is TD216/216 and RA288/401. RA IDs256–287 are ARRO0004–0015, FLOR0001–0007, GFLR0001–0005 and GSTR0001–0008; every entry is 1×1, Interior-only and Flag=None. Both registry files remain Partially reviewed pending full initialization, consumers, plugin serialization and Rust parity. Next RA range: IDs288–319.
+Cumulative declaration enumeration is TD216/216 and RA288/401. RA IDs256–287 are ARRO0004–0015, FLOR0001–0007, GFLR0001–0005 and GSTR0001–0008; every entry is 1×1, Interior-only and Flag=None. Both registry files remain Partially reviewed pending full initialization, consumers, plugin serialization and complete editor-type parity. Rust has partial source-derived asset metadata and ICON-set resolution for these IDs, but not the C# dimensions/flags/IconMask/Thumbnail/UI behavior. Next RA range: IDs288–319.
+
+
+### TemplateTypes — Tranche 6S-C-J
+
+- [RA IDs288–319](RedAlert/TemplateTypes-6S-C-J.md) · [TD/RA comparison](Variant-TemplateTypes-6S-C-J.md).
+
+Cumulative declaration enumeration is TD216/216 and RA320/401. IDs288–319 are GSTR0009–0011, LWAL0001–0027 and STRP0001–0002; every entry is 1×1, Interior-only and Flag=None. Both C# registry paths remain Partially reviewed. Rust's source-derived asset catalog matches these 32 IDs/stems/theatre masks, but it lacks the C# dimensions, flags, IconMask/Thumbnail lifecycle and TemplateTool UI. Rust RA metadata currently omits C# ID400 AntHill; the pinned C++ `FIXIT_ANTS` macro/build contract needs reconciliation. Raw TD/RA decoders exist, but their atlas builders currently pass null-cell sentinels into catalog lookup. See [Serialization-Contract.md](Serialization-Contract.md). Next RA range: IDs320–351.

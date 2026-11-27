@@ -51,13 +51,22 @@ A concrete risk was observed: SteamDialog ignores the bool returned by plugin.Sa
 
 ## Rust parity boundary at the target commit
 
-The current crates/map-editor-model provides CellLayers, MapDocument, cell dimensions, waypoints, CellMetrics, and object-selection plans. No equivalent IGamePlugin trait, editor INI parser/writer, TD/RA scenario serializer, RA LCW MapPack codec, SteamSection model, Steamworks UGC state machine, or Workshop UI was found. crates/rts-core/src/inibin.rs is only a marker for the intentionally empty legacy REDALERT/INIBIN translation unit and must not be mistaken for the editor INI codec.
+The current crates/map-editor-model provides CellLayers (template ID plus logical icon byte), MapDocument, cell dimensions, waypoints, CellMetrics, and object-selection plans. Rust also has raw TD BIN and RA Base64/LCW MapPack decoders in `rts-formats::td_map` and `rts-formats::ra_map_pack`, plus partial template asset metadata/ICON-set resolution in `rts-core::template_catalog` and `renderer::template_assets`. These are decoders/resolvers, not full TD/RA GamePlugin serializers: no matching map-payload writers, editor INI parser/writer, complete IGamePlugin lifecycle, SteamSection model, Steamworks UGC state machine, or Workshop UI was found. `crates/rts-core/src/inibin.rs` is only a marker for the intentionally empty legacy REDALERT/INIBIN translation unit and must not be mistaken for the editor INI codec.
 
 ## Required parity tests
 
 - Golden INI parse/write tests for case-insensitive names, comments, semicolon truncation, converters, and unknown-section preservation.
 - TD paired .ini/.bin byte-for-byte round trips, including empty cells and invalid template/icon values.
-- RA MapPack/OverlayPack LCW chunk round trips, including chunk boundaries, truncated headers, invalid Base64, and map-size bounds.
+- RA MapPack LCW decode tests for chunk boundaries, truncated headers, invalid Base64, and map-size bounds; add matching encoder/decoder round trips and null-sentinel atlas integration tests.
 - TD and RA TeamTypes/Triggers schema fixtures, malformed token counts, unknown type names, and numeric overflow.
 - PGM omission of Steam metadata, MEG entry naming/casing, preview/JSON sidecar generation, and validation failure.
 - Workshop create/update callback success/failure, concurrent publish rejection, callback pump shutdown, and save-after-dialog behavior.
+
+
+## Template type resolution and Rust decoder boundary — Tranche 6S-C-J
+
+The RA editor serializer resolves MapPack types only after decoding the two planes. For each cell it reads a UInt16 type ID, finds a matching `TemplateType` by `Equals(ushort)`, nulls a type whose `Theaters` excludes the active theatre, then reads the icon plane. For non-Clear templates, `iconValue >= NumIcons` clears the cell. Save writes the UInt16 type plane followed by icon bytes; null cells use `ushort.MaxValue` and `byte.MaxValue`. TD remains interleaved byte pairs with null sentinel `0xFF,0xFF`. Source: [RA load](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/RedAlert/GamePlugin.cs#L478), [RA save](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/RedAlert/GamePlugin.cs#L1486), [TD load](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/TiberianDawn/GamePlugin.cs#L831), [TD save](https://github.com/electronicarts/CnC_Remastered_Collection/blob/f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae/CnCTDRAMapEditor/TiberianDawn/GamePlugin.cs#L1161).
+
+Rust's `TdTemplateMap` and `RaTemplateMap` preserve raw cell IDs (including TD 255 and RA 65535) rather than normalizing them to empty cells. The current `TemplateAssetProvider` atlas builders collect every raw ID and call `load_icon_sets` before atlas construction; they do not filter those sentinels. Since neither sentinel is in the corresponding source-derived catalog, maps with empty cells reach `UnknownTemplateType`. This is a source-level integration defect; it was not executed in this run. Preserve raw decode fidelity if desired, but normalize sentinels at the renderer/map-model boundary and add regression tests for both variants.
+
+Rust unit tests exist in the two decoder modules and template catalog, but they were not executed here and are not retail scenario validation. The RA asset catalog currently has IDs0–399; the C# editor registry includes ID400 AntHill, while the pinned RA `DEFINES.H` defines `FIXIT_ANTS` at line87 and conditionally includes the enum/CData entry. Reconcile this macro/build contract before claiming full catalog parity.

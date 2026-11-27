@@ -12,6 +12,7 @@ This directory explains the original Electronic Arts / Westwood Command & Conque
 6. [Red Alert source guide](REDALERT/README.md)
    - [Red Alert core runtime guides](REDALERT/OBJECT.CPP.md), [cell](REDALERT/CELL.CPP.md), [scenario](REDALERT/SCENARIO.CPP.md)
 7. [Map editor source guide](MAP_EDITOR/README.md)
+   - [Latest template catalog tranche — RA IDs288–319](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-J.md) and [TD/RA comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-J.md)
 8. [Shared graphics and asset formats](SHARED/README.md)
 9. [Cross-reference: original files to Rust port](03-rust-port-cross-reference.md)
 

@@ -1,6 +1,6 @@
 # Editor type catalog contracts
 
-> **Audit status: cross-file synthesis of ten body-reviewed definition classes and eighteen body-reviewed TD/RA static registries (nine classes per variant).** TD/RA TemplateTypes remain Partially reviewed; declaration slices IDs0–127 are catalogued (128 entries each), while TD IDs0–215 are fully enumerated; RA IDs0–287 are enumerated. RA IDs288–400 and the complete consumer/initializer/serializer review remain open. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
+> **Audit status: cross-file synthesis of ten body-reviewed definition classes and eighteen body-reviewed TD/RA static registries (nine classes per variant).** TD/RA TemplateTypes remain Partially reviewed; TD declarations IDs0–215 are fully enumerated and RA IDs0–319 are documented (320/401). RA IDs320–400 and the complete consumer/initializer/serializer review remain open. Rust has partial asset metadata/ICON resolution, not a complete C# editor catalog mapping. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
 
 ## Definition versus placed instance
 
@@ -69,11 +69,11 @@ Eight registry bodies are now reviewed: DirectionTypes, HouseTypes, InfantryType
 - Aircraft/Vessel masks are 32/64. TD has no vessel records.
 - Catalog arrays are reflection-collected without explicit sorting; GetTypes returns backing arrays. InfantryType/UnitType constructors eagerly resolve text through Globals.TheGameTextManager.
 
-TemplateTypes remains Partially reviewed in both variants. The full registries contain 216 TD and 401 RA entries; declaration slices IDs0–159 are documented, but remaining declarations and full initializer/consumer/serializer parity are open. No typed Rust editor catalog or parity tests exist.
+TemplateTypes remains Partially reviewed in both variants. The full registries contain 216 TD and 401 RA entries; current declaration coverage is TD216/216 and RA320/401. Full initializer/consumer/serializer parity remains open. Rust has partial engine-side asset metadata and ICON-set resolution, but no complete typed C# editor catalog or parity tests.
 
 ## Rust implementation comparison
 
-The current `crates/map-editor-model` tree contains `MapDocument`, `CellLayers`, `CellMetrics` and `object_selection`. CellLayers stores optional numeric IDs for template, terrain, overlay and smudge; object_selection defines generic EditorObjectKind values. There is no typed definition catalog for the ten classes above, no house/theatre/direction catalog, no thumbnail/tileset adapter, and no mask-backed type registry. Consequently none of these ten C# files is marked Rust-mapped.
+The current `crates/map-editor-model` tree contains `MapDocument`, `CellLayers`, `CellMetrics` and `object_selection`. `CellLayers` stores template ID plus logical icon byte, but no typed editor definition catalog, dimensions, flags or IconMask. Separately, `crates/rts-core/src/template_catalog.rs` contains source-derived TD/RA asset metadata and `crates/renderer/src/template_assets.rs` resolves theatre-specific ICON sets. This is partial engine/renderer mapping, not a complete C# editor catalog; none of the ten C# definition files is marked Rust-mapped.
 
 ## Required Rust decomposition
 
@@ -89,7 +89,7 @@ The current `crates/map-editor-model` tree contains `MapDocument`, `CellLayers`,
 
 ## Verification boundary
 
-The ten definition source bodies and four small interface declarations were inspected at the pinned commit. Eighteen TD/RA registry bodies (DirectionTypes, HouseTypes, InfantryTypes, UnitTypes, BuildingTypes, OverlayTypes, SmudgeTypes, TerrainTypes and TheaterTypes for both variants) were inspected. TemplateTypes remains Partially reviewed for both variants; declaration slices IDs0–127 are documented, while remaining declarations and complete consumer/initializer/serializer review are open. No Rust code changed and no Rust test, C# runtime test, image comparison, or serializer parity test was executed.
+The ten definition source bodies and four small interface declarations were inspected at the pinned commit. Eighteen TD/RA registry bodies (DirectionTypes, HouseTypes, InfantryTypes, UnitTypes, BuildingTypes, OverlayTypes, SmudgeTypes, TerrainTypes and TheaterTypes for both variants) were inspected. TemplateTypes remains Partially reviewed for both variants; TD declaration enumeration is complete (216/216) and RA declaration coverage is 320/401 (IDs0–319). RA IDs320–400 and complete consumer/initializer/serializer review remain open. No Rust code changed and no Rust test, C# runtime test, image comparison, or serializer parity test was executed.
 
 
 ## Static registry review update — Tranche 6S-A
@@ -185,3 +185,13 @@ TD IDs192–215 and RA IDs192–223 are documented in [Variant-TemplateTypes-6S-
 ## Latest declaration tranche — Red Alert IDs256–287
 
 The RA registry adds ARRO0004–0015, FLOR0001–0007, GFLR0001–0005 and GSTR0001–0008 at source lines280–311. All have 1×1 footprints, explicit Interior-only theatre lists and Flag=None. This is catalogue metadata, not evidence of tile payload availability or placement/rendering behavior. Cumulative RA declaration coverage is 288/401; the RA and TD TemplateTypes sources remain Partially reviewed pending full initializer, consumer and GamePlugin serialization audits. See [6S-C-I](RedAlert/TemplateTypes-6S-C-I.md).
+
+
+## TemplateTypes registry and renderer reconciliation — Tranche 6S-C-J
+
+- RA IDs288–319 are GSTR0009–0011, LWAL0001–0027 and STRP0001–0002; all are 1×1, Interior-only and Flag=None. Cumulative declaration coverage is TD216/216 and RA320/401. Both C# registry paths remain Partially reviewed.
+- `TemplateTypes` builds its array by reflecting public static readonly `TemplateType` fields and `ToArray()` without an explicit sort; `GetTypes()` returns the backing array. `Map.InitTheater` initializes every entry; `TemplateType.Init` constructs the thumbnail and [x,y] mask from successful theatre tile lookups. `TemplateTool` then filters for a thumbnail, active theatre and non-Clear flag.
+- Rust `template_catalog.rs` contains all 32 matching IDs/stems with RA Interior mask=4; `template_assets.rs` constructs `.INT` filenames and resolves caller-supplied MIX archives. This does not map C# icon dimensions, flags, bitmap/mask lifecycle or UI. RA Rust metadata contains 400 IDs0–399; C# ID400 AntHill is absent. The pinned RA header defines `FIXIT_ANTS` at line87, while the enum and CData registration are guarded; the build configuration needs reconciliation.
+- Rust TD/RA map payload decoders exist, but atlas builders currently include raw empty-cell sentinels (TD255/RA65535) in catalog lookup. Empty cells therefore reach UnknownTemplateType in the current provider path; this is source-level call-path evidence, not an executed runtime test.
+- `Tileset.Load` retains at most one frame under the active preprocessor branch. `TilesetManager` joins the dictionary as the outer sequence, so the supplied theatre tileset sequence is not explicitly the primary lookup order. Verify both behaviors before treating the original as a guaranteed animation/precedence contract.
+- No Rust code changed and no Rust tests or retail asset validation were executed. See [6S-C-J](RedAlert/TemplateTypes-6S-C-J.md).

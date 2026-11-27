@@ -76,13 +76,26 @@
 - Inventory status counts recomputed from 1,331 path rows: 17 Reviewed, 121 Partially reviewed, 20 Header reviewed, 67 Body reviewed, 12 Resource reviewed, 1,094 Inventory only. Rust-mapped/Tested/Complete remain 0.
 - No Rust code changed and no tests were run. Full initializer/consumer/serializer audit remains open.
 
-## Next tranche — 6S-C-J: Red Alert TemplateTypes IDs288–319
+## Tranche 6S-C-J — Red Alert TemplateTypes IDs288–319 (completed)
 
-1. Refresh target main/ref, commit/tree and both recursive trees; fetch inventory, roadmap, cross-reference, MAP_EDITOR README, TypeCatalog-Contracts and exact pinned RA source.
-2. Parse exactly IDs288–319, recording field, ID, key, dimensions, theatre whitelist, flag and source-line anchors.
-3. Add per-variant and comparison guides; update inventory, cross-reference, README, catalogue synthesis and roadmap.
-4. Keep RA TemplateTypes Partially reviewed until IDs320–400 and the full initializer, consumers and GamePlugin serialization are audited. TD also remains Partially reviewed pending dependencies, consumers and serializer parity.
-5. After RA IDs320–400, prioritize both GamePlugin serialization/INI bodies, theatre initialization consumers, editor map models and designer/resource files, Steamworks/native bindings, shared libraries and remaining engine systems.
+- Run-start refresh: target `main` was `4aeb2cb78795289240aadc6456bb9bb5a8fc4bdb` (the supplied 480eb checkpoint was not the current branch head); commit tree `4fefad4dcac995da10854fb4e7e10ff488b90efa`; recursive target tree 558 entries, complete. Pinned upstream `f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae`; recursive upstream tree 1,375 entries, complete.
+- Refreshed inventory, cross-reference, roadmap, root README, MAP_EDITOR README, TypeCatalog-Contracts and serialization/type guides. Re-fetched exact RA `TemplateTypes.cs` blob `027bb5658e2297cf2ade84f9a01567acc8238db8`.
+- Parsed exactly 32 contiguous declarations IDs288–319 at source lines312–343: GSTR0009–0011, LWAL0001–0027 and STRP0001–0002. All are 1×1, explicitly Interior-only and Flag=None through the five-argument constructor.
+- Static source cross-check against Rust `rts-core/src/template_catalog.rs`: 32/32 IDs, asset stems and Interior mask=4 match. The C# editor registry has 401 IDs0–400; Rust RA metadata has 400 IDs0–399. C# ID400 AntHill is missing from Rust metadata. The pinned RA header defines `FIXIT_ANTS` at line87, while enum/CData declarations are guarded; reconcile the Rust non-default-macro comment with the actual build/include configuration.
+- Traced `TemplateTypes.GetTypes` reflection construction, `Map.InitTheater`, `TemplateType.Init`, TilesetManager/Tileset lookup and TemplateTool filtering/placement. Tile payload existence for these keys was not runtime-validated. `Tileset.Load` retains at most one frame in its active branch; the manager's Join uses the dictionary as the outer sequence, so theatre search order is not explicitly primary.
+- Re-traced RA MapPack UInt16 type plane + icon plane and TD interleaved byte pairs. Rust has TD/RA raw decoders and partial template asset resolution, but no full GamePlugin serializers/writers or C#-equivalent editor TemplateType. Rust atlas builders currently send raw empty-cell sentinels (TD255/RA65535) into catalog lookup; the call path reaches UnknownTemplateType before atlas construction. This is source-level defect evidence, not an executed runtime failure.
+- Updated inventory, Rust cross-reference, root README, MAP_EDITOR README, TypeCatalog-Contracts, Serialization-Contract, TemplateType.cs guide and this roadmap; added the RA slice guide and TD/RA comparison. The two TemplateTypes source rows remain Partially reviewed.
+- Inventory path reconciliation: 1,331/1,331 source paths match the pinned upstream tree, no missing/extra/duplicate paths. Counts remain 17 Reviewed, 121 Partially reviewed, 20 Header reviewed, 67 Body reviewed, 12 Resource reviewed, 1,094 Inventory only. Rust-mapped/Tested/Complete remain 0 because no C#-equivalent registry or full serializer was completed.
+- No Rust code changed. Rust unit tests exist in the decoder/catalog modules but were not executed; no retail MIX/ICON assets or C# runtime validation were used.
+
+## Next tranche — 6S-C-K: Red Alert TemplateTypes IDs320–351
+
+1. Refresh target main/ref, commit/tree and both recursive trees; fetch inventory, roadmap, cross-reference, README/index, TypeCatalog-Contracts, Serialization-Contract and exact pinned RA source.
+2. Parse exactly IDs320–351, recording field, ID, key, dimensions, theatre whitelist, flag and source-line anchors.
+3. Add RA and TD/RA guides; update inventory, cross-reference, README/index, TypeCatalog-Contracts and roadmap.
+4. Continue RA IDs352–383, then IDs384–400. Resolve the ID400 AntHill/FIXIT_ANTS build-macro discrepancy against the actual include/build path.
+5. After declaration enumeration, finish both TemplateTypes initializer/consumer audits and both GamePlugin serialization/INI bodies. Address the Rust empty-sentinel atlas integration defect and missing RA ID400 metadata with explicit tests, keeping retail validation separate.
+6. Continue editor map models, .resx/designer resources, Steamworks/native bindings, shared libraries and remaining engine systems.
 
 ## Persistent verification rules
 
