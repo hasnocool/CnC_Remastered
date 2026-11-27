@@ -23,15 +23,21 @@ use std::collections::BTreeMap;
 
 use rts_core::{CellCoord, GameVariant, MapDimensions};
 
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct CellLayers {
     pub template: Option<u16>,
     /// Logical icon slot within the selected template type's theater ICON set.
     /// Ignored when template is None.
     pub template_icon: u8,
     pub terrain: Option<u16>,
+    /// Legacy serialized overlay catalog slot, retained for format adapters.
     pub overlay: Option<u16>,
+    /// Legacy serialized smudge catalog slot, retained for format adapters.
     pub smudge: Option<u16>,
+    /// Typed editor instance. The numeric slot remains independent for legacy formats.
+    pub overlay_instance: Option<PlacedOverlay>,
+    /// Typed editor instance, preserving Icon, Data and Tint.
+    pub smudge_instance: Option<PlacedSmudge>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -104,6 +110,26 @@ impl MapDocument {
         self.cells
             .iter()
             .map(|cell| cell.template.map(|template| (template, cell.template_icon)))
+    }
+
+    pub fn set_overlay_instance(
+        &mut self,
+        coordinate: CellCoord,
+        overlay: Option<PlacedOverlay>,
+    ) -> Result<Option<PlacedOverlay>, MapDocumentError> {
+        let index = self.dimensions.index(coordinate)
+            .ok_or(MapDocumentError::CellOutOfBounds(coordinate))?;
+        Ok(std::mem::replace(&mut self.cells[index].overlay_instance, overlay))
+    }
+
+    pub fn set_smudge_instance(
+        &mut self,
+        coordinate: CellCoord,
+        smudge: Option<PlacedSmudge>,
+    ) -> Result<Option<PlacedSmudge>, MapDocumentError> {
+        let index = self.dimensions.index(coordinate)
+            .ok_or(MapDocumentError::CellOutOfBounds(coordinate))?;
+        Ok(std::mem::replace(&mut self.cells[index].smudge_instance, smudge))
     }
 
     pub fn set_cell(
