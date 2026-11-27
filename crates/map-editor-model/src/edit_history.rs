@@ -59,12 +59,20 @@ impl MapEditHistory {
 
     pub fn undo(&mut self, document: &mut MapDocument) -> Result<bool, MapDocumentError> {
         let Some(command) = self.undo.pop() else { return Ok(false); };
-        for edit in &command.edits {
-            let actual = document.cell(edit.coordinate).ok_or(MapDocumentError::CellOutOfBounds(edit.coordinate))?;
-            if *actual != edit.after {
-                self.undo.push(command);
-                return Err(MapDocumentError::CellStateConflict(edit.coordinate));
+        let invalid = command.edits.iter().find_map(|edit| {
+            match document.cell(edit.coordinate) {
+                None => Some((edit.coordinate, true)),
+                Some(actual) if *actual != edit.after => Some((edit.coordinate, false)),
+                Some(_) => None,
             }
+        });
+        if let Some((coordinate, out_of_bounds)) = invalid {
+            self.undo.push(command);
+            return Err(if out_of_bounds {
+                MapDocumentError::CellOutOfBounds(coordinate)
+            } else {
+                MapDocumentError::CellStateConflict(coordinate)
+            });
         }
         for edit in &command.edits {
             document.set_cell(edit.coordinate, edit.before).expect("prevalidated undo coordinate");
@@ -75,12 +83,20 @@ impl MapEditHistory {
 
     pub fn redo(&mut self, document: &mut MapDocument) -> Result<bool, MapDocumentError> {
         let Some(command) = self.redo.pop() else { return Ok(false); };
-        for edit in &command.edits {
-            let actual = document.cell(edit.coordinate).ok_or(MapDocumentError::CellOutOfBounds(edit.coordinate))?;
-            if *actual != edit.before {
-                self.redo.push(command);
-                return Err(MapDocumentError::CellStateConflict(edit.coordinate));
+        let invalid = command.edits.iter().find_map(|edit| {
+            match document.cell(edit.coordinate) {
+                None => Some((edit.coordinate, true)),
+                Some(actual) if *actual != edit.before => Some((edit.coordinate, false)),
+                Some(_) => None,
             }
+        });
+        if let Some((coordinate, out_of_bounds)) = invalid {
+            self.redo.push(command);
+            return Err(if out_of_bounds {
+                MapDocumentError::CellOutOfBounds(coordinate)
+            } else {
+                MapDocumentError::CellStateConflict(coordinate)
+            });
         }
         for edit in &command.edits {
             document.set_cell(edit.coordinate, edit.after).expect("prevalidated redo coordinate");
