@@ -160,3 +160,10 @@ TD declaration enumeration is complete (216/216). RA coverage is 224/401. TD IDs
 ## Template registry declaration audit
 
 The bounded catalogue covers all 216 Tiberian Dawn IDs and Red Alert IDs0–255 of 401. The RA 6S-C-H guide records IDs224–255, including Temperate/Snow bridge declarations and three Interior-only `ARRO` entries. This is metadata enumeration, not proof of complete tile availability or Rust parity. Both registry source rows remain Partially reviewed until implementation bodies, plugin consumers, theatre initialization and serialization paths are audited.
+
+
+### TemplateTypes — Tranche 6S-C-I
+
+- [RA IDs256–287](RedAlert/TemplateTypes-6S-C-I.md) · [TD/RA comparison](Variant-TemplateTypes-6S-C-I.md).
+
+Cumulative declaration enumeration is TD216/216 and RA288/401. RA IDs256–287 are ARRO0004–0015, FLOR0001–0007, GFLR0001–0005 and GSTR0001–0008; every entry is 1×1, Interior-only and Flag=None. Both registry files remain Partially reviewed pending full initialization, consumers, plugin serialization and Rust parity. Next RA range: IDs288–319.

@@ -218,5 +218,12 @@ TD declaration enumeration is complete, but both inventory rows remain Partially
 
 - Pinned RA `TemplateTypes.cs` declares 401 contiguous explicit IDs0–400. Tranche 6S-C-H documents IDs224–255 (source lines248–279): Rough09–11, Road44–45, River14–15, RiverCliff01–04, Bridge1a–3f, F01–F06 and Interior-only ARRO0001–0003.
 - The five-argument constructor defaults to `TemplateTypeFlag.None`; this metadata is not proof that a tile payload exists for each theatre/key.
-- TD declaration enumeration is complete at 216/216. RA coverage is 256/401. Both inventory rows remain Partially reviewed pending full body/dependency/consumer/serialization review; neither is Rust-mapped or Tested.
+- TD declaration enumeration is complete at 216/216. RA coverage is 288/401. Both inventory rows remain Partially reviewed pending full body/dependency/consumer/serialization review; neither is Rust-mapped or Tested.
 - Rust `CellLayers.template: Option<u16>` is an untyped ID slot, not a theatre-aware template registry. See [6S-C-H guide](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-H.md) and [variant comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-H.md).
+
+
+### Red Alert TemplateTypes — Tranche 6S-C-I
+
+- Pinned RA source `027bb5658e2297cf2ade84f9a01567acc8238db8`: IDs256–287 are ARRO0004–0015, FLOR0001–0007, GFLR0001–0005 and GSTR0001–0008 (lines280–311).
+- All 32 declarations have 1×1 dimensions, explicit Interior-only theatre whitelist and Flag=None via the five-argument constructor.
+- Cumulative declaration enumeration is TD216/216 and RA288/401. Both TemplateTypes inventory rows remain Partially reviewed pending complete initializer, consumer, GamePlugin serialization and Rust parity work. See [RA slice guide](MAP_EDITOR/RedAlert/TemplateTypes-6S-C-I.md) and [variant comparison](MAP_EDITOR/Variant-TemplateTypes-6S-C-I.md).

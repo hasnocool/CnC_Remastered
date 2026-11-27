@@ -1,6 +1,6 @@
 # Editor type catalog contracts
 
-> **Audit status: cross-file synthesis of ten body-reviewed definition classes and eighteen body-reviewed TD/RA static registries (nine classes per variant).** TD/RA TemplateTypes remain Partially reviewed; declaration slices IDs0–127 are catalogued (128 entries each), while TD IDs0–215 are fully enumerated; RA IDs0–255 are enumerated. RA IDs256–400 and the complete consumer/initializer/serializer review remain open. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
+> **Audit status: cross-file synthesis of ten body-reviewed definition classes and eighteen body-reviewed TD/RA static registries (nine classes per variant).** TD/RA TemplateTypes remain Partially reviewed; declaration slices IDs0–127 are catalogued (128 entries each), while TD IDs0–215 are fully enumerated; RA IDs0–287 are enumerated. RA IDs288–400 and the complete consumer/initializer/serializer review remain open. Upstream baseline: f1f0d42bc2dcd06d5d1df943c6150ab34bf307ae.
 
 ## Definition versus placed instance
 
@@ -180,3 +180,8 @@ TD IDs192–215 and RA IDs192–223 are documented in [Variant-TemplateTypes-6S-
 - IDs253–255 are 1×1 and explicitly restricted to `TheaterTypes.Interior`; the preceding 29 declarations are Temperate/Snow.
 - A declaration does not prove a key resolves to a tile. `TemplateType.Init` performs theatre-specific lookup and mask population.
 - Coverage: TD216/216; RA256/401. Both registry paths remain Partially reviewed pending complete implementation/dependency/consumer/serialization review. Rust mapping and tests remain absent.
+
+
+## Latest declaration tranche — Red Alert IDs256–287
+
+The RA registry adds ARRO0004–0015, FLOR0001–0007, GFLR0001–0005 and GSTR0001–0008 at source lines280–311. All have 1×1 footprints, explicit Interior-only theatre lists and Flag=None. This is catalogue metadata, not evidence of tile payload availability or placement/rendering behavior. Cumulative RA declaration coverage is 288/401; the RA and TD TemplateTypes sources remain Partially reviewed pending full initializer, consumer and GamePlugin serialization audits. See [6S-C-I](RedAlert/TemplateTypes-6S-C-I.md).

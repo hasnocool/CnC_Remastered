@@ -66,13 +66,23 @@
 - Inventory reconciliation: the upstream recursive tree contains 1,331 blobs. The inventory markdown has 1,341 `- `` bullets because ten are status-key definitions, not source paths. Comparing path names to the upstream tree yields 1,331/1,331 exact matches, no missing paths and no extra source paths. Status counts remain 17 Reviewed, 121 Partially reviewed, 20 Header reviewed, 67 Body reviewed, 12 Resource reviewed, 1,094 Inventory only; Rust-mapped/Tested/Complete=0.
 - No Rust code changed; no tests or runtime bitmap/tile lookup were executed. Rust `CellLayers.template: Option<u16>` remains an untyped identifier, not a concrete RA registry mapping.
 
-## Next tranche — 6S-C-I: Red Alert TemplateTypes IDs256–287
+## Tranche 6S-C-I — Red Alert TemplateTypes IDs256–287 (completed)
 
-1. Refresh `main`, commit/tree and both recursive trees; fetch inventory, roadmap, cross-reference, MAP_EDITOR README, TypeCatalog-Contracts and exact pinned RA source.
-2. Parse exactly IDs256–287 and record field, ID, tile key, dimensions, theatre whitelist, flag and source line.
-3. Add an RA slice guide and TD/RA comparison; update inventory, cross-reference, README, catalogue synthesis and roadmap.
-4. Keep RA TemplateTypes Partially reviewed until IDs288–400 and full body, initializer, consumers and GamePlugin serialization are audited. TD remains Partially reviewed pending dependency/consumer/serializer review despite complete declaration enumeration.
-5. After RA IDs288–400, prioritize both GamePlugin full-body serialization/INI contracts, theatre initialization consumers, editor map models and designer/resource files, Steamworks/native bindings, shared libraries and remaining engine systems.
+- Run-start target main was refreshed to `d944532f54384a276bc4751e533d47ca4f2bc00f`; commit tree `b2ff7614dfaf1d0f02e897401da23db3fb3502b0`; complete recursive target tree 556 entries, `truncated=false`. Pinned upstream recursive tree contains 1,375 entries and is complete.
+- Re-fetched inventory, roadmap, Rust cross-reference and MAP_EDITOR README; fetched exact RA TemplateTypes blob `027bb5658e2297cf2ade84f9a01567acc8238db8` from pinned upstream.
+- Parsed exactly 32 contiguous declarations IDs256–287 at source lines280–311: ARRO0004–0015, FLOR0001–0007, GFLR0001–0005 and GSTR0001–0008.
+- Every declaration has a 1×1 footprint, explicit `TheaterTypes.Interior` whitelist and Flag=None through the five-argument constructor. No Temperate/Snow compatibility is declared for these IDs.
+- Added the RA slice guide and TD/RA comparison; updated inventory, Rust cross-reference, MAP_EDITOR README, TypeCatalog-Contracts and roadmap. Both TemplateTypes inventory rows remain Partially reviewed.
+- Inventory status counts recomputed from 1,331 path rows: 17 Reviewed, 121 Partially reviewed, 20 Header reviewed, 67 Body reviewed, 12 Resource reviewed, 1,094 Inventory only. Rust-mapped/Tested/Complete remain 0.
+- No Rust code changed and no tests were run. Full initializer/consumer/serializer audit remains open.
+
+## Next tranche — 6S-C-J: Red Alert TemplateTypes IDs288–319
+
+1. Refresh target main/ref, commit/tree and both recursive trees; fetch inventory, roadmap, cross-reference, MAP_EDITOR README, TypeCatalog-Contracts and exact pinned RA source.
+2. Parse exactly IDs288–319, recording field, ID, key, dimensions, theatre whitelist, flag and source-line anchors.
+3. Add per-variant and comparison guides; update inventory, cross-reference, README, catalogue synthesis and roadmap.
+4. Keep RA TemplateTypes Partially reviewed until IDs320–400 and the full initializer, consumers and GamePlugin serialization are audited. TD also remains Partially reviewed pending dependencies, consumers and serializer parity.
+5. After RA IDs320–400, prioritize both GamePlugin serialization/INI bodies, theatre initialization consumers, editor map models and designer/resource files, Steamworks/native bindings, shared libraries and remaining engine systems.
 
 ## Persistent verification rules
 
