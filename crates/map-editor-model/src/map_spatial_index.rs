@@ -41,6 +41,7 @@ impl MapSpatialIndex {
     pub fn technos(&self) -> &OccupierSet { &self.technos }
     pub fn overlappers(&self) -> &OverlapperSet { &self.overlappers }
     pub fn is_wall(&self, id: OccupierId) -> bool { self.walls.contains(&id) }
+    pub fn contains_occupier(&self, id: OccupierId) -> bool { self.buildings.contains(id) || self.technos.contains(id) }
 
     /// Adds a building to Buildings with its full mask, then to Technos with
     /// its base mask. Overlap bounds are indexed independently. All three
