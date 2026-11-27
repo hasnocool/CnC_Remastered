@@ -56,8 +56,8 @@ pub fn validate_building_catalog(
 
         let mut full_cells = BTreeSet::new();
         for &(x, y) in &building.occupy_mask {
-            let max_y = building.height + if building.has_bib { 1 } else { 0 };
-            if x >= building.width || y >= max_y {
+            let outside_y = if building.has_bib { y > building.height } else { y >= building.height };
+            if x >= building.width || outside_y {
                 return Err(CatalogValidationError::BuildingMaskOutOfBounds(building.id));
             }
             if !full_cells.insert((x, y)) {
