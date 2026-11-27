@@ -366,7 +366,8 @@
 - [x] Add bounds-checked SHP shape-block offsets and packed Shape_Type metadata extraction with malformed-input tests.
 - [x] Add retail TD/RA SHP header/frame-table parsing, bounded LCW keyframe decoding, Format40 referenced-frame XOR decoding with cycle detection, Format20 previous-frame XOR decoding, palette expansion to renderer-compatible RGBA images, and synthetic pixel-level fixtures.
 - [ ] Implement pixel/run decoding for the legacy in-memory Shape_Type payload variants (normal, compact, variable and uncompressed); this is separate from the retail keyframe SHP decoder.
-- [ ] Verify the TMP/template tile container against upstream loader code and implement its bounded decoder.
+- [x] Add bounded TD and RA TMP readers with variant-specific signatures/header offsets, tile-index extraction, blank-tile handling, palette expansion, and synthetic binary fixtures.
+- [ ] Validate TMP parsing and tile output against legally supplied original TD/RA terrain archives.
 - [x] Add synthetic binary fixtures and golden pixel vectors; do not commit retail game assets.
 - [ ] Validate retail SHP parsing and decoding against legally supplied original TD/RA asset files.
 - [ ] Connect decoded palette-indexed terrain and sprite frames to renderer texture upload.
