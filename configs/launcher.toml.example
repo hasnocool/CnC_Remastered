@@ -1,5 +1,3 @@
-schema_version = 1
-
 [general]
 language = "en"
 check_updates = true
