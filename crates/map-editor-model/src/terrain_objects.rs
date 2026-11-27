@@ -24,6 +24,7 @@ pub struct TerrainObject {
 pub enum TerrainObjectError {
     OutOfBounds(CellCoord),
     Occupied(CellCoord),
+    DuplicateObjectId(TerrainObjectId),
     UnknownObject(TerrainObjectId),
     OccupancyMismatch(CellCoord),
     IdExhausted,
@@ -78,10 +79,9 @@ impl MapDocument {
         icon: u8,
         trigger: Option<String>,
     ) -> Result<(), TerrainObjectError> {
+        let next_id = id.0.checked_add(1).ok_or(TerrainObjectError::IdExhausted)?;
         self.insert_terrain_object(id, origin, definition, icon, trigger, true)?;
-        self.next_terrain_object_id = self.next_terrain_object_id.max(
-            id.0.checked_add(1).ok_or(TerrainObjectError::IdExhausted)?
-        );
+        self.next_terrain_object_id = self.next_terrain_object_id.max(next_id);
         Ok(())
     }
 
@@ -95,7 +95,7 @@ impl MapDocument {
         allow_matching_mirror: bool,
     ) -> Result<(), TerrainObjectError> {
         if self.terrain_objects.contains_key(&id) {
-            return Err(TerrainObjectError::Occupied(origin));
+            return Err(TerrainObjectError::DuplicateObjectId(id));
         }
         let cells: Vec<_> = definition.occupancy.occupied_cells(origin).collect();
         let expected = definition.occupancy.occupied_cells(CellCoord::new(0, 0)).count();
