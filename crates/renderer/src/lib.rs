@@ -6,7 +6,7 @@
 //! are physical pixels in the current surface viewport.
 
 use std::{collections::{HashMap, VecDeque}, sync::Arc, time::{Duration, Instant}};
-use rts_formats::palette_rgba::RgbaImage;
+use rts_formats::{iconset::{IconSet, IconSetError}, palette_rgba::{Palette256, RgbaImage}};
 use bytemuck::{Pod, Zeroable};
 use wgpu::util::DeviceExt;
 use winit::window::Window;
@@ -151,6 +151,7 @@ pub enum RendererError {
     NoSurfaceFormats, NoPresentModes, NoAlphaModes, Surface(String),
     InvalidTextureData { width: u32, height: u32, bytes: usize },
     TextureExceedsCacheLimit { requested: usize, limit: usize },
+    TerrainDecode(IconSetError),
 }
 impl std::fmt::Display for RendererError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -164,6 +165,7 @@ impl std::fmt::Display for RendererError {
             Self::Surface(e) => write!(f, "surface presentation failed: {e}"),
             Self::InvalidTextureData { width, height, bytes } => write!(f, "RGBA texture {width}x{height} requires {} bytes, got {bytes}", expected_rgba_bytes(*width,*height).unwrap_or(usize::MAX)),
             Self::TextureExceedsCacheLimit { requested, limit } => write!(f, "texture requires {requested} bytes, exceeding cache limit {limit}"),
+            Self::TerrainDecode(error) => write!(f, "terrain tile decode failed: {error}"),
         }
     }
 }
@@ -314,6 +316,32 @@ impl WgpuRenderer {
         self.texture_cache.insert(texture)
     }
 
+    /// Resolve a logical TD/RA IFF icon through MAP, expand it with the
+    /// selected palette, and upload it into the renderer-owned texture cache.
+    ///
+    /// The caller owns stable texture-ID assignment (for example, a key made
+    /// from theater identity plus logical tile index). Empty MAP entries
+    /// return None and do not allocate a GPU texture.
+    pub fn cache_iconset_tile(
+        &mut self,
+        id: TextureId,
+        icon_set: &IconSet,
+        logical_index: usize,
+        palette: &Palette256,
+        transparent_index: Option<u8>,
+    ) -> Result<Option<TextureId>, RendererError> {
+        if self.texture_cache.get(id).is_some() {
+            return Ok(Some(id));
+        }
+        let Some(image) = icon_set
+            .logical_icon_rgba(logical_index, palette, transparent_index)
+            .map_err(RendererError::TerrainDecode)?
+        else {
+            return Ok(None);
+        };
+        self.cache_rgba_image(id, &image)?;
+        Ok(Some(id))
+    }
     pub fn cached_texture(&self, id: TextureId) -> Option<&GpuTexture> { self.texture_cache.get(id) }
     pub fn texture_cache_bytes(&self) -> usize { self.texture_cache.bytes() }
     pub fn resize(&mut self, viewport: Viewport) {

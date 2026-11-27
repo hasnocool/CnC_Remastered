@@ -395,3 +395,10 @@
 - [x] Preserve empty logical entries (`MAP=0xFF`) as `None`; do not invent per-pixel transparency for terrain.
 - [ ] Validate with legally supplied TD and RA theater icon sets and compare pixel output against a trusted extractor.
 - [ ] Connect logical terrain images to `WgpuRenderer::cache_rgba_image` and draw them in a scrollable terrain chunk.
+
+## Canonical IFF terrain-to-renderer bridge
+
+- Added `WgpuRenderer::cache_iconset_tile`, which resolves a logical TD/RA IFF icon through the existing `IconSet` MAP table, expands it through an explicit `Palette256`, and uploads it through the existing bounded GPU cache.
+- The caller supplies a stable `TextureId`; empty MAP entries return `None` without allocating a texture. This keeps cache identity policy outside the renderer and avoids conflating logical indices across theaters.
+- The separate flat-header `tmp.rs` archive reader is not used by this bridge. Its retail-format compatibility remains an audit item and must be checked against source definitions and real files before it is treated as the canonical TD/RA path.
+- No GPU-backed test or real theater asset validation has been performed. Cargo formatting, compilation, tests and Clippy remain unverified.
