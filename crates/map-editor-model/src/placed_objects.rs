@@ -122,6 +122,7 @@ pub struct BuildingTypeDefinition {
     pub height: u16,
     pub has_bib: bool,
     pub owner_house: String,
+    pub theaters: Option<Vec<String>>,
     pub is_fake: bool,
     pub has_turret: bool,
     pub factory_overlay: Option<String>,
@@ -150,10 +151,13 @@ impl BuildingTypeDefinition {
         };
         Self {
             id, name: if is_fake && !name.is_empty() {
-                format!("{}f", &name[..name.len()-1])
+                let mut characters = name.chars().collect::<Vec<_>>();
+                characters.pop();
+                characters.push('f');
+                characters.into_iter().collect()
             } else { name.clone() },
             display_name, tile_name: name, width, height, has_bib,
-            owner_house, is_fake, has_turret, factory_overlay,
+            owner_house, theaters: None, is_fake, has_turret, factory_overlay,
             base_occupy_mask, occupy_mask,
         }
     }
