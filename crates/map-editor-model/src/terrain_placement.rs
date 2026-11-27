@@ -260,6 +260,23 @@ mod tests {
     }
 
     #[test]
+    fn placement_sets_transformable_icon_22_and_removal_resets_icon() {
+        let mut map = document();
+        let mut history = crate::MapEditHistory::default();
+        let mut transformable = definition();
+        transformable.id = 18;
+        transformable.transformable = true;
+        place_terrain_with_history(&mut map, &mut history, CellCoord::new(1, 1), &transformable).unwrap();
+        assert_eq!(map.cell(CellCoord::new(1, 1)).unwrap().terrain_icon, 22);
+        history.undo(&mut map).unwrap();
+        assert_eq!(map.cell(CellCoord::new(1, 1)).unwrap().terrain_icon, 0);
+        history.redo(&mut map).unwrap();
+        assert_eq!(map.cell(CellCoord::new(1, 1)).unwrap().terrain_icon, 22);
+        remove_terrain_with_history(&mut map, &mut history, CellCoord::new(1, 1), &transformable).unwrap();
+        assert_eq!(map.cell(CellCoord::new(1, 1)).unwrap().terrain_icon, 0);
+    }
+
+    #[test]
     fn history_backed_placement_rejects_footprint_without_history_or_partial_write() {
         let mut map = document();
         let mut history = crate::MapEditHistory::default();
