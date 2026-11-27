@@ -444,4 +444,4 @@
 - [ ] Add reusable per-chunk CPU composition keyed by map revision and invalidate only edited chunks.
 - [ ] Derive adjacency/transition selection from source-backed TD/RA template rules and real theater fixtures.
 - [x] Validate map dimensions before consuming template iterators; reserve the exact expected cell capacity fallibly and reject short or oversized iterators.
-- Verification: integration seams and CPU tests are authored; Cargo formatting, compilation and tests remain unexecuted in this environment.
+- Verification: catalog and atlas CPU regression tests are authored; Cargo formatting, compilation and tests remain unexecuted in this environment.

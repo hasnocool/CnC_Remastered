@@ -647,6 +647,50 @@ mod tests {
     }
 
     #[test]
+    fn catalog_builder_rejects_template_type_outside_selected_theater() {
+        let bytes = icon_set_fixture(2, &[1]);
+        let icon_set = IconSet::load(&bytes, None).unwrap();
+        let result = TerrainAtlas::build_from_template_catalog(
+            88,
+            GameVariant::RedAlert,
+            TemplateTheater::Interior,
+            1,
+            1,
+            [Some((3, 0))],
+            &[(3, &icon_set)],
+            &palette(),
+        );
+
+        assert_eq!(
+            result.unwrap_err(),
+            TerrainError::TemplateNotAvailableInTheater {
+                template: 3,
+                variant: GameVariant::RedAlert,
+                theater: TemplateTheater::Interior,
+            },
+        );
+    }
+
+    #[test]
+    fn catalog_builder_accepts_source_valid_template_theater_pair() {
+        let bytes = icon_set_fixture(2, &[1]);
+        let icon_set = IconSet::load(&bytes, None).unwrap();
+        let (map, atlas) = TerrainAtlas::build_from_template_catalog(
+            88,
+            GameVariant::RedAlert,
+            TemplateTheater::Snow,
+            1,
+            1,
+            [Some((3, 0))],
+            &[(3, &icon_set)],
+            &palette(),
+        ).unwrap();
+
+        assert_eq!(map.tile_at(0, 0), Some(0));
+        assert_eq!(atlas.dimensions(), (8, 8));
+    }
+
+    #[test]
     fn builds_atlas_from_multiple_template_icon_sets_and_map_indirection() {
         let first_bytes = icon_set_fixture(2, &[1]);
         let second_bytes = icon_set_fixture(3, &[1]);
