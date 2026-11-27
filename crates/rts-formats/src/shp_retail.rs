@@ -162,6 +162,9 @@ impl<'a> RetailShpFile<'a> {
                     // KF_DELTA stores the frame index of the XOR-keyframe at
                     // the beginning of this chain in the low 16 bits of its
                     // reference word. Rebuild from that base, as Build_Frame does.
+                    if frame.reference_offset > u16::MAX as u32 {
+                        return Err(RetailShpError::InvalidDelta("chain frame reference exceeds 16-bit frame index"));
+                    }
                     let base_index = frame.reference_offset as usize;
                     if base_index >= decoded.len()
                         || self.frames.get(base_index).map(|base| base.format)
