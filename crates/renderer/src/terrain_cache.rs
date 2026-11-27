@@ -22,6 +22,8 @@ pub struct TerrainChunkCacheStats {
 #[derive(Debug, Clone)]
 struct CachedChunk {
     /// Exact row-major map content for this (possibly edge-clipped) chunk.
+    width: u32,
+    height: u32,
     cells: Vec<Option<usize>>,
     /// (map_x, map_y, atlas_slot), in row-major order.
     sprites: Vec<(u32, u32, u32)>,
@@ -124,30 +126,39 @@ impl TerrainAtlas {
                 let chunk_x1 = (chunk_x0 + TERRAIN_CHUNK_CELLS).min(map.width());
                 let chunk_y1 = (chunk_y0 + TERRAIN_CHUNK_CELLS).min(map.height());
 
+                let chunk_width = chunk_x1 - chunk_x0;
+                let chunk_height = chunk_y1 - chunk_y0;
                 let mut cells = Vec::with_capacity(
-                    ((chunk_x1 - chunk_x0) as usize)
-                        .saturating_mul((chunk_y1 - chunk_y0) as usize),
+                    (chunk_width as usize).saturating_mul(chunk_height as usize),
                 );
-                let mut composed = Vec::new();
                 for y in chunk_y0..chunk_y1 {
                     for x in chunk_x0..chunk_x1 {
-                        let tile = map.tile_at(x, y);
-                        cells.push(tile);
-                        if let Some(slot) = tile.and_then(|index| self.slot_for_tile(index)) {
-                            composed.push((x, y, slot));
-                        }
+                        cells.push(map.tile_at(x, y));
                     }
                 }
 
                 let key = (chunk_x, chunk_y);
                 let cached = match cache.chunks.get_mut(&key) {
-                    Some(existing) if existing.cells == cells => {
+                    Some(existing)
+                        if existing.width == chunk_width
+                            && existing.height == chunk_height
+                            && existing.cells == cells => {
                         cache.stats.hits = cache.stats.hits.saturating_add(1);
                         existing
                     }
                     Some(existing) => {
                         cache.stats.misses = cache.stats.misses.saturating_add(1);
                         cache.stats.rebuilds = cache.stats.rebuilds.saturating_add(1);
+                        let mut composed = Vec::new();
+                        for (index, tile) in cells.iter().copied().enumerate() {
+                            if let Some(slot) = tile.and_then(|value| self.slot_for_tile(value)) {
+                                let x = chunk_x0 + (index % chunk_width as usize) as u32;
+                                let y = chunk_y0 + (index / chunk_width as usize) as u32;
+                                composed.push((x, y, slot));
+                            }
+                        }
+                        existing.width = chunk_width;
+                        existing.height = chunk_height;
                         existing.cells = cells;
                         existing.sprites = composed;
                         existing
@@ -155,7 +166,20 @@ impl TerrainAtlas {
                     None => {
                         cache.stats.misses = cache.stats.misses.saturating_add(1);
                         cache.stats.rebuilds = cache.stats.rebuilds.saturating_add(1);
-                        cache.chunks.insert(key, CachedChunk { cells, sprites: composed });
+                        let mut composed = Vec::new();
+                        for (index, tile) in cells.iter().copied().enumerate() {
+                            if let Some(slot) = tile.and_then(|value| self.slot_for_tile(value)) {
+                                let x = chunk_x0 + (index % chunk_width as usize) as u32;
+                                let y = chunk_y0 + (index / chunk_width as usize) as u32;
+                                composed.push((x, y, slot));
+                            }
+                        }
+                        cache.chunks.insert(key, CachedChunk {
+                            width: chunk_width,
+                            height: chunk_height,
+                            cells,
+                            sprites: composed,
+                        });
                         cache.chunks.get_mut(&key).expect("chunk inserted")
                     }
                 };
