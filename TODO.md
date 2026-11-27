@@ -493,3 +493,13 @@ Scope limits: current harness supports the existing legacy unencrypted MIX parse
 - [ ] Add bounded LRU eviction for very large/editor-generated maps and validate memory behavior under repeated map resizing.
 - [ ] Run renderer and workspace tests, formatting, compilation, and Clippy on a Rust 1.85+ host.
 - Verification: regression tests are authored for unchanged chunks, single-chunk edits, and camera movement; they have not been executed in this environment.
+
+
+## Map editor tranche — generic CellGrid<T>
+
+- [x] Port row-major optional-value cell storage with coordinate and flattened-index access.
+- [x] Return explicit cell-change events with previous/current values; suppress no-op assignments.
+- [x] Return one aggregate clear event and preserve flattened-length-only CopyTo behavior.
+- [x] Add synthetic tests for indexing, events, clear, same-area shape copy, and bounds failures.
+- [ ] Add Map aggregate event wiring, typed per-layer grids, update batching, invalidation, and derived wall/resource recalculation.
+- [ ] Run cargo fmt/check/test/clippy once the Rust toolchain is available.
